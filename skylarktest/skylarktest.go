@@ -20,8 +20,8 @@ import (
 	"regexp"
 	"sync"
 
-	"github.com/google/skylark"
-	"github.com/google/skylark/skylarkstruct"
+	"github.com/wdamron/skylark"
+	"github.com/wdamron/skylark/skylarkstruct"
 )
 
 const localKey = "Reporter"
@@ -94,7 +94,7 @@ func matches(thread *skylark.Thread, _ *skylark.Builtin, args skylark.Tuple, kwa
 	}
 	ok, err := regexp.MatchString(pattern, str)
 	if err != nil {
-		return nil, fmt.Errorf("matches: %s", err)
+		return skylark.Bool(ok), fmt.Errorf("matches: %s", err)
 	}
 	return skylark.Bool(ok), nil
 }
@@ -133,5 +133,5 @@ func freeze(thread *skylark.Thread, _ *skylark.Builtin, args skylark.Tuple, kwar
 // 'go build', under which a test runs in its package directory,
 // and Blaze, under which a test runs in the root of the tree.
 var DataFile = func(pkgdir, filename string) string {
-	return filepath.Join(build.Default.GOPATH, "src/github.com/google", pkgdir, filename)
+	return filepath.Join(build.Default.GOPATH, "src/github.com/wdamron", pkgdir, filename)
 }

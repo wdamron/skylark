@@ -9,7 +9,7 @@ originally developed for) the [Bazel build tool](https://bazel.build),
 and [Bazel's build language](https://docs.bazel.build/versions/master/skylark/language.html) is based on Skylark.
 
 This document describes the Go implementation of Skylark
-at github.com/google/skylark.
+at github.com/wdamron/skylark.
 The language it defines is similar but not identical to
 [the Java-based implementation](https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/skylark/Skylark.java)
 used by Bazel.

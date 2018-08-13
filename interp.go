@@ -6,11 +6,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/google/skylark/internal/compile"
-	"github.com/google/skylark/syntax"
+	"github.com/wdamron/skylark/internal/compile"
+	"github.com/wdamron/skylark/syntax"
 )
 
 const vmdebug = false // TODO(adonovan): use a bitfield of specific kinds of error.
+
+func ResumeSuspended(thread *Thread) (Value, error) {
+	return interpret(thread, nil, nil, true)
+}
 
 // TODO(adonovan):
 // - optimize position table.
@@ -18,57 +22,49 @@ const vmdebug = false // TODO(adonovan): use a bitfield of specific kinds of err
 //   in the thread, and slicing it.
 // - opt: record MaxIterStack during compilation and preallocate the stack.
 
-func (fn *Function) Call(thread *Thread, args Tuple, kwargs []Tuple) (Value, error) {
-	if debug {
-		fmt.Printf("call of %s %v %v\n", fn.Name(), args, kwargs)
+func interpret(thread *Thread, args Tuple, kwargs []Tuple, resuming bool) (Value, error) {
+	fr := thread.frame
+	fn := fr.callable.(*Function)
+	fc := fn.funcode
+
+	nlocals := len(fc.Locals)
+	if !resuming {
+		fr.stack = make([]Value, nlocals+fc.MaxStack)
+	} else if len(fr.stack) < nlocals+fc.MaxStack {
+		existing := fr.stack
+		fr.stack = make([]Value, nlocals+fc.MaxStack)
+		copy(fr.stack, existing)
 	}
 
-	// detect recursion
-	for fr := thread.frame; fr != nil; fr = fr.parent {
-		// We look for the same function code,
-		// not function value, otherwise the user could
-		// defeat the check by writing the Y combinator.
-		if frfn, ok := fr.Callable().(*Function); ok && frfn.funcode == fn.funcode {
-			return nil, fmt.Errorf("function %s called recursively", fn.Name())
+	locals := fr.stack[:nlocals:nlocals] // local variables, starting with parameters
+	stack := fr.stack[nlocals:]
+	iterstack := fr.iterstack
+
+	code, savedpc, pc, sp := fc.Code, uint32(0), uint32(0), 0
+	if resuming {
+		code, savedpc, pc, sp = fc.Code, fr.callpc, fr.pc, int(fr.sp)
+	}
+
+	var result Value
+	var err error
+
+	if !resuming {
+		err = setArgs(locals, fn, args, kwargs)
+		if err != nil {
+			return nil, fr.errorf(fr.Position(), "%v", err)
 		}
 	}
 
-	thread.frame = &Frame{parent: thread.frame, callable: fn}
-	result, err := call(thread, args, kwargs)
-	thread.frame = thread.frame.parent
-	return result, err
-}
-
-func call(thread *Thread, args Tuple, kwargs []Tuple) (Value, error) {
-	fr := thread.frame
-	fn := fr.callable.(*Function)
-	f := fn.funcode
-	nlocals := len(f.Locals)
-	stack := make([]Value, nlocals+f.MaxStack)
-	locals := stack[:nlocals:nlocals] // local variables, starting with parameters
-	stack = stack[nlocals:]
-
-	err := setArgs(locals, fn, args, kwargs)
-	if err != nil {
-		return nil, fr.errorf(fr.Position(), "%v", err)
-	}
-
 	if vmdebug {
-		fmt.Printf("Entering %s @ %s\n", f.Name, f.Position(0))
+		fmt.Printf("Entering %s @ %s\n", fc.Name, fc.Position(0))
 		fmt.Printf("%d stack, %d locals\n", len(stack), len(locals))
-		defer fmt.Println("Leaving ", f.Name)
+		defer fmt.Println("Leaving ", fc.Name)
 	}
 
 	// TODO(adonovan): add static check that beneath this point
 	// - there is exactly one return statement
 	// - there is no redefinition of 'err'.
 
-	var iterstack []Iterator // stack of active iterators
-
-	sp := 0
-	var pc, savedpc uint32
-	var result Value
-	code := f.Code
 loop:
 	for {
 		savedpc = pc
@@ -90,7 +86,7 @@ loop:
 		}
 		if vmdebug {
 			fmt.Fprintln(os.Stderr, stack[:sp]) // very verbose!
-			compile.PrintOp(f, savedpc, op, arg)
+			compile.PrintOp(fc, savedpc, op, arg)
 		}
 
 		switch op {
@@ -203,15 +199,15 @@ loop:
 			pc = arg
 
 		case compile.CALL, compile.CALL_VAR, compile.CALL_KW, compile.CALL_VAR_KW:
-			var kwargs Value
+			var fnkwargs Value
 			if op == compile.CALL_KW || op == compile.CALL_VAR_KW {
-				kwargs = stack[sp-1]
+				fnkwargs = stack[sp-1]
 				sp--
 			}
 
-			var args Value
+			var fnargs Value
 			if op == compile.CALL_VAR || op == compile.CALL_VAR_KW {
-				args = stack[sp-1]
+				fnargs = stack[sp-1]
 				sp--
 			}
 
@@ -229,11 +225,11 @@ loop:
 					kvpairs = append(kvpairs, pair)
 				}
 			}
-			if kwargs != nil {
+			if fnkwargs != nil {
 				// Add key/value items from **kwargs dictionary.
-				dict, ok := kwargs.(*Dict)
+				dict, ok := fnkwargs.(*Dict)
 				if !ok {
-					err = fmt.Errorf("argument after ** must be a mapping, not %s", kwargs.Type())
+					err = fmt.Errorf("argument after ** must be a mapping, not %s", fnkwargs.Type())
 					break loop
 				}
 				items := dict.Items()
@@ -257,11 +253,11 @@ loop:
 				sp -= npos
 				copy(positional, stack[sp:])
 			}
-			if args != nil {
+			if fnargs != nil {
 				// Add elements from *args sequence.
-				iter := Iterate(args)
+				iter := Iterate(fnargs)
 				if iter == nil {
-					err = fmt.Errorf("argument after * must be iterable, not %s", args.Type())
+					err = fmt.Errorf("argument after * must be iterable, not %s", fnargs.Type())
 					break loop
 				}
 				var elem Value
@@ -271,23 +267,83 @@ loop:
 				iter.Done()
 			}
 
-			function := stack[sp-1]
+			fr.iterstack, fr.callpc, fr.pc, fr.sp = iterstack, savedpc, pc, uint32(sp)
+			callable := stack[sp-1]
 
 			if vmdebug {
 				fmt.Printf("VM call %s args=%s kwargs=%s @%s\n",
-					function, positional, kvpairs, f.Position(fr.callpc))
+					callable, positional, kvpairs, fc.Position(fr.callpc))
 			}
 
-			fr.callpc = savedpc
-			z, err2 := Call(thread, function, positional, kvpairs)
+			if function, ok := callable.(*Function); ok {
+				// detect recursion
+				for frame := fr; frame != nil; frame = frame.parent {
+					// We look for the same function code,
+					// not function value, otherwise the user could
+					// defeat the check by writing the Y combinator.
+					if frfn, ok := frame.Callable().(*Function); ok && frfn.funcode == function.funcode {
+						return nil, fmt.Errorf("function %s called recursively", fn.Name())
+					}
+				}
+				fr = &Frame{parent: fr, callable: function}
+				fn = function
+				fc = fn.funcode
+				nlocals = len(fc.Locals)
+				fr.stack, fr.callpc = make([]Value, nlocals+fc.MaxStack), savedpc
+				code, stack, locals, iterstack = fc.Code, fr.stack[nlocals:], fr.stack[:nlocals:nlocals], nil
+				pc, sp = 0, 0
+				if err = setArgs(locals, fn, positional, kvpairs); err != nil {
+					return nil, fr.errorf(fr.Position(), "%v", err)
+				}
+				thread.frame = fr
+				continue loop
+			}
+
+			z, err2 := Call(thread, callable, positional, kvpairs)
 			if err2 != nil {
 				err = err2
 				break loop
 			}
 			if vmdebug {
-				fmt.Printf("Resuming %s @ %s\n", f.Name, f.Position(0))
+				fmt.Printf("Resuming %s @ %s\n", fc.Name, fc.Position(0))
 			}
 			stack[sp-1] = z
+			if _, ok := z.(SuspensionType); ok {
+				result = z
+				break loop
+			}
+
+		case compile.RETURN:
+			retval := stack[sp-1]
+			parent := thread.frame.parent
+			returnToCaller := false
+			if parent == nil {
+				returnToCaller = true
+			} else if _, ok := parent.callable.(*Function); !ok {
+				returnToCaller = true
+			}
+			if returnToCaller {
+				if vmdebug {
+					fmt.Printf("Returning from %s @ %s\n", fc.Name, fc.Position(0))
+				}
+				result = retval
+				break loop
+			}
+			thread.frame = parent
+			fr = thread.frame
+			fn = fr.callable.(*Function)
+			fc = fn.funcode
+			nlocals = len(fc.Locals)
+			if len(fr.stack) < nlocals+fc.MaxStack {
+				fr.stack = make([]Value, nlocals+fc.MaxStack)
+			}
+			code, stack, locals, iterstack = fc.Code, fr.stack[nlocals:], fr.stack[:nlocals:nlocals], fr.iterstack
+			savedpc, pc, sp = fr.callpc, fr.pc, int(fr.sp)
+			stack[sp-1] = retval
+			if vmdebug {
+				fmt.Printf("Resuming %s @ %s\n", fc.Name, fc.Position(0))
+			}
+			continue loop
 
 		case compile.ITERPUSH:
 			x := stack[sp-1]
@@ -315,10 +371,6 @@ loop:
 		case compile.NOT:
 			stack[sp-1] = !stack[sp-1].Truth()
 
-		case compile.RETURN:
-			result = stack[sp-1]
-			break loop
-
 		case compile.SETINDEX:
 			z := stack[sp-1]
 			y := stack[sp-2]
@@ -343,7 +395,7 @@ loop:
 
 		case compile.ATTR:
 			x := stack[sp-1]
-			name := f.Prog.Names[arg]
+			name := fc.Prog.Names[arg]
 			y, err2 := getAttr(fr, x, name)
 			if err2 != nil {
 				err = err2
@@ -355,7 +407,7 @@ loop:
 			y := stack[sp-1]
 			x := stack[sp-2]
 			sp -= 2
-			name := f.Prog.Names[arg]
+			name := fc.Prog.Names[arg]
 			if err2 := setField(fr, x, name, y); err2 != nil {
 				err = err2
 				break loop
@@ -453,7 +505,7 @@ loop:
 			sp++
 
 		case compile.MAKEFUNC:
-			funcode := f.Prog.Functions[arg]
+			funcode := fc.Prog.Functions[arg]
 			freevars := stack[sp-1].(Tuple)
 			defaults := stack[sp-2].(Tuple)
 			sp -= 2
@@ -504,7 +556,7 @@ loop:
 		case compile.LOCAL:
 			x := locals[arg]
 			if x == nil {
-				err = fmt.Errorf("local variable %s referenced before assignment", f.Locals[arg].Name)
+				err = fmt.Errorf("local variable %s referenced before assignment", fc.Locals[arg].Name)
 				break loop
 			}
 			stack[sp] = x
@@ -517,14 +569,14 @@ loop:
 		case compile.GLOBAL:
 			x := fn.globals[arg]
 			if x == nil {
-				err = fmt.Errorf("global variable %s referenced before assignment", f.Prog.Globals[arg].Name)
+				err = fmt.Errorf("global variable %s referenced before assignment", fc.Prog.Globals[arg].Name)
 				break loop
 			}
 			stack[sp] = x
 			sp++
 
 		case compile.PREDECLARED:
-			name := f.Prog.Names[arg]
+			name := fc.Prog.Names[arg]
 			x := fn.predeclared[name]
 			if x == nil {
 				err = fmt.Errorf("internal error: predeclared variable %s is uninitialized", name)
@@ -534,7 +586,7 @@ loop:
 			sp++
 
 		case compile.UNIVERSAL:
-			stack[sp] = Universe[f.Prog.Names[arg]]
+			stack[sp] = Universe[fc.Prog.Names[arg]]
 			sp++
 
 		default:
@@ -550,7 +602,7 @@ loop:
 
 	if err != nil {
 		if _, ok := err.(*EvalError); !ok {
-			err = fr.errorf(f.Position(savedpc), "%s", err.Error())
+			err = fr.errorf(fc.Position(savedpc), "%s", err.Error())
 		}
 	}
 	return result, err

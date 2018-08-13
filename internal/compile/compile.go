@@ -30,14 +30,14 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/google/skylark/resolve"
-	"github.com/google/skylark/syntax"
+	"github.com/wdamron/skylark/resolve"
+	"github.com/wdamron/skylark/syntax"
 )
 
 const debug = false // TODO(adonovan): use a bitmap of options; and regexp to match files
 
 // Increment this to force recompilation of saved bytecode files.
-const Version = 2
+const Version = 3
 
 type Opcode uint8
 
@@ -129,10 +129,9 @@ const (
 	CALL_VAR_KW // fn positional named *args **kwargs CALL_VAR_KW<n> result
 
 	OpcodeArgMin = JMP
+	OpcodeMin    = NOP
 	OpcodeMax    = CALL_VAR_KW
 )
-
-// TODO(adonovan): add dynamic checks for missing opcodes in the tables below.
 
 var opcodeNames = [...]string{
 	AMP:         "amp",
@@ -147,6 +146,7 @@ var opcodeNames = [...]string{
 	DUP2:        "dup2",
 	DUP:         "dup",
 	EQL:         "eql",
+	EXCH:        "exch",
 	FALSE:       "false",
 	FREE:        "free",
 	GE:          "ge",
@@ -199,63 +199,91 @@ const variableStackEffect = 0x7f
 
 // stackEffect records the effect on the size of the operand stack of
 // each kind of instruction. For some instructions this requires computation.
-var stackEffect = [...]int8{
-	AMP:         -1,
-	APPEND:      -2,
-	ATTR:        0,
-	CALL:        variableStackEffect,
-	CALL_KW:     variableStackEffect,
-	CALL_VAR:    variableStackEffect,
-	CALL_VAR_KW: variableStackEffect,
-	CJMP:        -1,
-	CONSTANT:    +1,
-	DUP2:        +2,
-	DUP:         +1,
-	EQL:         -1,
-	FALSE:       +1,
-	FREE:        +1,
-	GE:          -1,
-	GLOBAL:      +1,
-	GT:          -1,
-	IN:          -1,
-	INDEX:       -1,
-	INPLACE_ADD: -1,
-	ITERJMP:     variableStackEffect,
-	ITERPOP:     0,
-	ITERPUSH:    -1,
-	JMP:         0,
-	LE:          -1,
-	LOAD:        -1,
-	LOCAL:       +1,
-	LT:          -1,
-	MAKEDICT:    +1,
-	MAKEFUNC:    -1,
-	MAKELIST:    variableStackEffect,
-	MAKETUPLE:   variableStackEffect,
-	MINUS:       -1,
-	NEQ:         -1,
-	NONE:        +1,
-	NOP:         0,
-	NOT:         0,
-	PERCENT:     -1,
-	PIPE:        -1,
-	PLUS:        -1,
-	POP:         -1,
-	PREDECLARED: +1,
-	RETURN:      -1,
-	SETDICT:     -3,
-	SETDICTUNIQ: -3,
-	SETFIELD:    -2,
-	SETGLOBAL:   -1,
-	SETINDEX:    -3,
-	SETLOCAL:    -1,
-	SLASH:       -1,
-	SLASHSLASH:  -1,
-	SLICE:       -3,
-	STAR:        -1,
-	TRUE:        +1,
-	UNIVERSAL:   +1,
-	UNPACK:      variableStackEffect,
+var stackEffect [int(OpcodeMax-OpcodeMin) + 1]int8
+
+func init() {
+	for op := OpcodeMin; op <= OpcodeMax; op++ {
+		if opcodeNames[op] == "" {
+			var prev, next string
+			if op > OpcodeMin {
+				prev = opcodeNames[op-1]
+			}
+			if op < OpcodeMax {
+				next = opcodeNames[op+1]
+			}
+			log.Fatalf("Compile: missing opcode name for %v; previous=%s next=%s", op, prev, next)
+		}
+	}
+
+	for i, _ := range stackEffect {
+		stackEffect[i] = -128
+	}
+
+	stackEffect[AMP] = -1
+	stackEffect[APPEND] = -2
+	stackEffect[ATTR] = 0
+	stackEffect[CALL] = variableStackEffect
+	stackEffect[CALL_KW] = variableStackEffect
+	stackEffect[CALL_VAR] = variableStackEffect
+	stackEffect[CALL_VAR_KW] = variableStackEffect
+	stackEffect[CJMP] = -1
+	stackEffect[CONSTANT] = +1
+	stackEffect[DUP2] = +2
+	stackEffect[DUP] = +1
+	stackEffect[EQL] = -1
+	stackEffect[EXCH] = 0
+	stackEffect[FALSE] = +1
+	stackEffect[FREE] = +1
+	stackEffect[GE] = -1
+	stackEffect[GLOBAL] = +1
+	stackEffect[GT] = -1
+	stackEffect[IN] = -1
+	stackEffect[INDEX] = -1
+	stackEffect[INPLACE_ADD] = -1
+	stackEffect[ITERJMP] = variableStackEffect
+	stackEffect[ITERPOP] = 0
+	stackEffect[ITERPUSH] = -1
+	stackEffect[JMP] = 0
+	stackEffect[LE] = -1
+	stackEffect[LOAD] = -1
+	stackEffect[LOCAL] = +1
+	stackEffect[LT] = -1
+	stackEffect[MAKEDICT] = +1
+	stackEffect[MAKEFUNC] = -1
+	stackEffect[MAKELIST] = variableStackEffect
+	stackEffect[MAKETUPLE] = variableStackEffect
+	stackEffect[MINUS] = -1
+	stackEffect[NEQ] = -1
+	stackEffect[NONE] = +1
+	stackEffect[NOP] = 0
+	stackEffect[NOT] = 0
+	stackEffect[PERCENT] = -1
+	stackEffect[PIPE] = -1
+	stackEffect[PLUS] = -1
+	stackEffect[POP] = -1
+	stackEffect[PREDECLARED] = +1
+	stackEffect[RETURN] = -1
+	stackEffect[SETDICT] = -3
+	stackEffect[SETDICTUNIQ] = -3
+	stackEffect[SETFIELD] = -2
+	stackEffect[SETGLOBAL] = -1
+	stackEffect[SETINDEX] = -3
+	stackEffect[SETLOCAL] = -1
+	stackEffect[SLASH] = -1
+	stackEffect[SLASHSLASH] = -1
+	stackEffect[SLICE] = -3
+	stackEffect[STAR] = -1
+	stackEffect[TRUE] = +1
+	stackEffect[UMINUS] = 0
+	stackEffect[UNIVERSAL] = +1
+	stackEffect[UNPACK] = variableStackEffect
+	stackEffect[UPLUS] = 0
+
+	for i, v := range stackEffect {
+		if v == -128 {
+			log.Fatalf("Compile: missing opcode stack effect for %s", opcodeNames[Opcode(i)])
+		}
+	}
 }
 
 func (op Opcode) String() string {
@@ -294,6 +322,10 @@ type Funcode struct {
 	NumParams             int
 	HasVarargs, HasKwargs bool
 }
+
+func (f *Funcode) PCLineTable() []uint16 { return f.pclinetab }
+
+func (f *Funcode) SetPCLineTable(pcline []uint16) { f.pclinetab = pcline }
 
 // An Ident is the name and position of an identifier.
 type Ident struct {

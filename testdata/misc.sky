@@ -105,7 +105,7 @@ assert.eq(str(freeze), '<built-in function freeze>')
 
 ---
 # Load does not expose pre-declared globals from other modules.
-# See github.com/google/skylark/issues/75.
+# See github.com/wdamron/skylark/issues/75.
 load('assert.sky', 'assert', 'matches') ### "matches not found in module"
 
 ---

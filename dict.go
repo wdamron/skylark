@@ -4,7 +4,65 @@
 
 package skylark
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/wdamron/skylark/syntax"
+)
+
+// A *Dict represents a Skylark dictionary.
+type Dict struct {
+	ht hashtable
+}
+
+func (d *Dict) Clear() error                                    { return d.ht.clear() }
+func (d *Dict) Delete(k Value) (v Value, found bool, err error) { return d.ht.delete(k) }
+func (d *Dict) Get(k Value) (v Value, found bool, err error)    { return d.ht.lookup(k) }
+func (d *Dict) Items() []Tuple                                  { return d.ht.items() }
+func (d *Dict) Keys() []Value                                   { return d.ht.keys() }
+func (d *Dict) Len() int                                        { return int(d.ht.len) }
+func (d *Dict) Iterate() Iterator                               { return d.ht.iterate(d) }
+func (d *Dict) Set(k, v Value) error                            { return d.ht.insert(k, v) }
+func (d *Dict) String() string                                  { return toString(d) }
+func (d *Dict) Type() string                                    { return "dict" }
+func (d *Dict) Freeze()                                         { d.ht.freeze() }
+func (d *Dict) Truth() Bool                                     { return d.Len() > 0 }
+func (d *Dict) Hash() (uint32, error)                           { return 0, fmt.Errorf("unhashable type: dict") }
+
+func (d *Dict) Attr(name string) (Value, error) { return builtinAttr(d, name, dictMethods) }
+func (d *Dict) AttrNames() []string             { return builtinAttrNames(dictMethods) }
+
+func (x *Dict) CompareSameType(op syntax.Token, y_ Value, depth int) (bool, error) {
+	y := y_.(*Dict)
+	switch op {
+	case syntax.EQL:
+		ok, err := dictsEqual(x, y, depth)
+		return ok, err
+	case syntax.NEQ:
+		ok, err := dictsEqual(x, y, depth)
+		return !ok, err
+	default:
+		return false, fmt.Errorf("%s %s %s not implemented", x.Type(), op, y.Type())
+	}
+}
+
+func dictsEqual(x, y *Dict, depth int) (bool, error) {
+	if x.Len() != y.Len() {
+		return false, nil
+	}
+	for _, xitem := range x.Items() {
+		key, xval := xitem[0], xitem[1]
+
+		if yval, found, _ := y.Get(key); !found {
+			return false, nil
+		} else if eq, err := EqualDepth(xval, yval, depth-1); err != nil {
+			return false, err
+		} else if !eq {
+			return false, nil
+		}
+	}
+	return true, nil
+}
 
 // hashtable is used to represent Skylark dict and set values.
 // It is a hash table whose key/value entries form a doubly-linked list
@@ -304,22 +362,25 @@ func (ht *hashtable) dump() {
 	}
 }
 
-func (ht *hashtable) iterate() *keyIterator {
+func (ht *hashtable) iterate(owner interface{}) *keyIterator {
 	if !ht.frozen {
 		ht.itercount++
 	}
-	return &keyIterator{ht: ht, e: ht.head}
+	return &keyIterator{ht: ht, e: ht.head, owner: owner}
 }
 
 type keyIterator struct {
-	ht *hashtable
-	e  *entry
+	ht     *hashtable
+	e      *entry
+	owner  interface{}
+	offset uint
 }
 
 func (it *keyIterator) Next(k *Value) bool {
 	if it.e != nil {
 		*k = it.e.key
 		it.e = it.e.next
+		it.offset++
 		return true
 	}
 	return false

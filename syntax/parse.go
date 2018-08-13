@@ -589,7 +589,7 @@ var precedence [maxToken]int8
 // preclevels groups operators of equal precedence.
 // Comparisons are nonassociative; other binary operators associate to the left.
 // Unary MINUS and PLUS have higher precedence so are handled in parsePrimary.
-// See https://github.com/google/skylark/blob/master/doc/spec.md#binary-operators
+// See https://github.com/wdamron/skylark/blob/master/doc/spec.md#binary-operators
 var preclevels = [...][]Token{
 	{OR},  // or
 	{AND}, // and

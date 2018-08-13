@@ -9,7 +9,7 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/google/skylark/syntax"
+	"github.com/wdamron/skylark/syntax"
 )
 
 // Int is the type of a Skylark int.
@@ -28,6 +28,8 @@ func MakeInt64(x int64) Int {
 	}
 	return Int{new(big.Int).SetInt64(x)}
 }
+
+func MakeBigInt(x *big.Int) Int { return Int{x} }
 
 // MakeUint returns a Skylark int for the specified unsigned integer.
 func MakeUint(x uint) Int { return MakeUint64(uint64(x)) }
@@ -123,6 +125,7 @@ func (i Int) Hash() (uint32, error) {
 	}
 	return 12582917 * uint32(lo+3), nil
 }
+
 func (x Int) CompareSameType(op syntax.Token, y Value, depth int) (bool, error) {
 	return threeway(op, x.bigint.Cmp(y.(Int).bigint)), nil
 }

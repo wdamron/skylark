@@ -9,10 +9,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/google/skylark"
-	"github.com/google/skylark/resolve"
-	"github.com/google/skylark/skylarkstruct"
-	"github.com/google/skylark/skylarktest"
+	"github.com/wdamron/skylark"
+	"github.com/wdamron/skylark/resolve"
+	"github.com/wdamron/skylark/skylarkstruct"
+	"github.com/wdamron/skylark/skylarktest"
 )
 
 func init() {

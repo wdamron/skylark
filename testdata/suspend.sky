@@ -1,0 +1,12 @@
+def suspend():
+	return test_suspend()
+
+a = 1
+b = 2
+c = 3
+s = a + b + c
+
+l = [a, b, c]
+d = {"a": a}
+
+suspension = suspend()

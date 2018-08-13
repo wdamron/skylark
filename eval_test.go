@@ -12,11 +12,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/skylark"
-	"github.com/google/skylark/internal/chunkedfile"
-	"github.com/google/skylark/resolve"
-	"github.com/google/skylark/skylarktest"
-	"github.com/google/skylark/syntax"
+	"github.com/wdamron/skylark"
+	"github.com/wdamron/skylark/internal/chunkedfile"
+	"github.com/wdamron/skylark/resolve"
+	"github.com/wdamron/skylark/skylarktest"
+	"github.com/wdamron/skylark/syntax"
 )
 
 func init() {
@@ -138,6 +138,83 @@ func TestExecFile(t *testing.T) {
 			}
 			chunk.Done()
 		}
+	}
+}
+
+func init() {
+	skylark.Universe["test_suspend"] = skylark.NewBuiltin("test_suspend",
+		func(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+			thread.Suspendable()
+			return skylark.Suspended, nil
+		})
+}
+
+func TestSuspend(t *testing.T) {
+	testdata := skylarktest.DataFile("skylark", ".")
+	thread := &skylark.Thread{Load: load}
+	skylarktest.SetReporter(thread, t)
+	file := "testdata/suspend.sky"
+	filename := filepath.Join(testdata, file)
+	for _, chunk := range chunkedfile.Read(filename, t) {
+		predeclared := skylark.StringDict{}
+		result, err := skylark.ExecFile(thread, filename, chunk.Source, predeclared)
+		switch err := err.(type) {
+		case *skylark.EvalError:
+			found := false
+			for _, fr := range err.Stack() {
+				posn := fr.Position()
+				if posn.Filename() == filename {
+					chunk.GotError(int(posn.Line), err.Error())
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Error(err.Backtrace())
+			}
+		case nil:
+			// success
+			susp := result["suspension"]
+			if susp != nil {
+				t.Fatalf("Expected nil suspension in result, found %v", susp)
+			}
+		default:
+			t.Error(err)
+			return
+		}
+
+		// enc := new(skylark.Encoder)
+		// thread.Resumable()
+		// _ = thread.PopFrame()
+		// t.Logf("thread: %#+v\n", thread)
+		// t.Logf("frame: %#+v\n", thread.TopFrame())
+		// t.Logf("fn name: %#+v\n", thread.TopFrame().Callable().Name())
+		// enc.EncodeState(thread)
+		// dec := skylark.NewDecoder(enc.Bytes())
+		// _, err = dec.DecodeState()
+		// if err != nil {
+		// 	t.Error(err)
+		// 	return
+		// }
+
+		// enc := new(skylark.Encoder)
+		// thread.Resumable()
+		// enc.EncodeState(thread)
+		// dec := skylark.NewDecoder(enc.Bytes())
+		// thread, err = dec.DecodeState()
+		// if err != nil {
+		// 	t.Error(err)
+		// 	return
+		// }
+		// var v skylark.Value
+		// v, err = skylark.ResumeSuspended(thread)
+		// if err != nil {
+		// 	t.Error(err)
+		// 	return
+		// }
+		// t.Logf("v: %#+v", v)
+
+		chunk.Done()
 	}
 }
 

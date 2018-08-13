@@ -75,7 +75,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/google/skylark/syntax"
+	"github.com/wdamron/skylark/syntax"
 )
 
 const debug = false

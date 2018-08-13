@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/google/skylark/resolve"
-	"github.com/google/skylark/syntax"
+	"github.com/wdamron/skylark/resolve"
+	"github.com/wdamron/skylark/syntax"
 )
 
 // TestPlusFolding ensures that the compiler generates optimized code for
