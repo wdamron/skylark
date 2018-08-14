@@ -186,6 +186,11 @@ func TestSuspend(t *testing.T) {
 			return
 		}
 
+		suspended := thread.Suspended()
+		if suspended == nil || suspended.Callable() != skylark.Universe["test_suspend"] {
+			t.Errorf("Expected test_suspend() in top frame of suspended frame for thread, found %s", suspended.Callable().Name())
+		}
+
 		thread.Resumable()
 		thread, err = skylark.NewDecoder(skylark.NewEncoder().EncodeState(thread)).DecodeState()
 		if err != nil {

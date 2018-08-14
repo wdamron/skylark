@@ -83,19 +83,13 @@ type Encoder struct {
 }
 
 type Decoder struct {
-	data []byte
-
-	// Back-references:
-
-	values   []Value
-	funcodes []*compile.Funcode
-
-	// Function shared variables:
-
-	prog        *compile.Program
-	predeclared StringDict
-	globals     []Value
-	constants   []Value
+	data        []byte             // remaining encoded data
+	values      []Value            // decoded values
+	funcodes    []*compile.Funcode // decoded compiled functions
+	prog        *compile.Program   // decoded top-level program
+	predeclared StringDict         // decoded predeclared values
+	globals     []Value            // decoded globals
+	constants   []Value            // decoded constants
 }
 
 func NewEncoder() *Encoder {

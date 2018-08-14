@@ -146,20 +146,37 @@ type Thread struct {
 	locals map[string]interface{}
 }
 
+// Suspendable associates the current stack frame as the suspended state of a thread.
 func (thread *Thread) Suspendable() {
 	thread.suspended = thread.frame
 }
 
+// Resumable restores the suspended state of a thread as the current stack frame and
+// dissociates the suspended state.
 func (thread *Thread) Resumable() {
 	thread.frame = thread.suspended
 	thread.suspended = nil
 }
 
+// Suspended returns the suspended state of a thread. A nil value will be returned
+// if the thread is not currently suspended.
+func (thread *Thread) Suspended() *Frame {
+	return thread.suspended
+}
+
+// SetFrame sets the top frame of a thread.
+func (thread *Thread) SetFrame(frame *Frame) {
+	thread.frame = frame
+	thread.suspended = nil
+}
+
+// PushFrame appends a new stack frame to a thread with the current stack frame as its parent.
 func (thread *Thread) PushFrame(frame *Frame) {
 	frame.parent = thread.frame
 	thread.frame = frame
 }
 
+// PopFrame removes the top stack frame of a thread.
 func (thread *Thread) PopFrame() {
 	if thread.frame == nil || thread.frame.parent == nil {
 		return
