@@ -299,12 +299,10 @@ loop:
 					return nil, fr.errorf(fr.Position(), "%v", err)
 				}
 
-				// thread.frame = fr
+				thread.frame = fr
 
 				continue loop
 			}
-
-			// thread.frame = fr
 
 			z, err2 := Call(thread, callable, positional, kvpairs)
 			if err2 != nil {

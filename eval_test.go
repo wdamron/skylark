@@ -183,16 +183,13 @@ func TestSuspend(t *testing.T) {
 			return
 		}
 
-		enc := new(skylark.Encoder)
 		thread.Resumable()
-		enc.EncodeState(thread)
-		dec := skylark.NewDecoder(enc.Bytes())
-		thread, err = dec.DecodeState()
+		thread, err = skylark.NewDecoder(skylark.NewEncoder().EncodeState(thread)).DecodeState()
 		if err != nil {
 			t.Error(err)
 			return
 		}
-		// if thread.TopFrame().Callable().Name() != "test_suspend" {
+
 		if thread.TopFrame().Callable() != skylark.Universe["test_suspend"] {
 			t.Errorf("Expected test_suspend() in top frame of decoded state, found %v", thread.TopFrame().Callable().Name())
 		}

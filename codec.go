@@ -79,6 +79,10 @@ type Encoder struct {
 	buf      bytes.Buffer
 }
 
+func NewEncoder() *Encoder {
+	return &Encoder{}
+}
+
 type Decoder struct {
 	values   []Value
 	funcodes []*compile.Funcode
@@ -189,8 +193,23 @@ func (dec *Decoder) DecodeRef() (byte, ref, error) {
 }
 
 // EncodeState writes the re-entrant state of the given thread.
-func (enc *Encoder) EncodeState(thread *Thread) {
+func (enc *Encoder) EncodeState(thread *Thread) []byte {
 	enc.encodeState(thread.frame, 1, nil)
+	return enc.Bytes()
+}
+
+func (enc *Encoder) encodeState(frame *Frame, count uint, anyFn *Function) {
+	if anyFn == nil {
+		anyFn, _ = frame.callable.(*Function)
+	}
+	if frame.parent != nil {
+		enc.encodeState(frame.parent, count+1, anyFn)
+	} else {
+		enc.EncodeToplevel(anyFn.funcode.Prog)
+		enc.EncodeFnShared(anyFn)
+		enc.WriteUvarint(uint64(count))
+	}
+	enc.EncodeFrame(frame)
 }
 
 func (dec *Decoder) DecodeState() (*Thread, error) {
@@ -220,18 +239,7 @@ func (dec *Decoder) DecodeState() (*Thread, error) {
 	return &Thread{frame: frame}, nil
 }
 
-func (enc *Encoder) encodeState(frame *Frame, count uint, anyFn *Function) {
-	if anyFn == nil {
-		anyFn, _ = frame.callable.(*Function)
-	}
-	if frame.parent != nil {
-		enc.encodeState(frame.parent, count+1, anyFn)
-	} else {
-		enc.EncodeToplevel(anyFn.funcode.Prog)
-		enc.EncodeFnShared(anyFn)
-		enc.WriteUvarint(uint64(count))
-	}
-	length := enc.buf.Len()
+func (enc *Encoder) EncodeFrame(frame *Frame) {
 	enc.WriteTag(T_Frame)
 	enc.WriteUvarint(uint64(frame.callpc))
 	enc.WriteUvarint(uint64(frame.sp))
@@ -239,6 +247,7 @@ func (enc *Encoder) encodeState(frame *Frame, count uint, anyFn *Function) {
 	enc.EncodePosition(frame.Position())
 	enc.EncodeValue(frame.Callable().(Value))
 	stack := frame.stack[:frame.sp]
+	enc.WriteUvarint(uint64(len(stack)))
 	for _, v := range stack {
 		if v == nil {
 			enc.WriteTag(T_None)
@@ -254,12 +263,10 @@ func (enc *Encoder) encodeState(frame *Frame, count uint, anyFn *Function) {
 		}
 		enc.EncodeIterator(v)
 	}
-	enc.WriteUvarint(uint64(enc.buf.Len() - length))
 }
 
 func (dec *Decoder) DecodeFrame() (*Frame, error) {
-	rem := dec.Remaining()
-	if rem < 2 {
+	if dec.Remaining() < 2 {
 		return nil, ErrShortBuffer
 	}
 	tag := dec.data[0]
@@ -270,25 +277,30 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 	frame := &Frame{}
 	var x uint64
 	var err error
+	// callpc
 	x, err = dec.DecodeUvarint()
 	if err != nil {
 		return frame, err
 	}
 	frame.callpc = uint32(x)
+	// sp
 	x, err = dec.DecodeUvarint()
 	if err != nil {
 		return frame, err
 	}
 	frame.sp = uint32(x)
+	// pc
 	x, err = dec.DecodeUvarint()
 	if err != nil {
 		return frame, err
 	}
 	frame.pc = uint32(x)
+	// posn
 	frame.posn, err = dec.DecodePosition()
 	if err != nil {
 		return frame, err
 	}
+	// callable
 	var v Value
 	v, err = dec.DecodeValue()
 	if err != nil {
@@ -299,13 +311,19 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 		return frame, fmt.Errorf("Codec: invalid callable for frame while decoding; frame position: %s", frame.Position())
 	}
 	frame.callable = c
-	for i := 0; i < int(frame.sp); i++ {
+	// stack
+	x, err = dec.DecodeUvarint()
+	if err != nil {
+		return frame, err
+	}
+	for i := uint64(0); i < x; i++ {
 		v, err = dec.DecodeValue()
 		if err != nil {
 			return frame, err
 		}
 		frame.stack = append(frame.stack, v)
 	}
+	// iterstack
 	x, err = dec.DecodeUvarint()
 	if err != nil {
 		return frame, err
@@ -317,14 +335,6 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 			return frame, err
 		}
 		frame.iterstack = append(frame.iterstack, it)
-	}
-	decoded := uint64(rem - dec.Remaining())
-	x, err = dec.DecodeUvarint()
-	if err != nil {
-		return frame, err
-	}
-	if decoded != x {
-		return frame, fmt.Errorf("Codec: invalid length suffix for frame while decoding; decoded=%v suffix=%v", decoded, x)
 	}
 	return frame, nil
 }
@@ -746,6 +756,7 @@ func (enc *Encoder) EncodeValue(v Value) {
 		if c, ok := v.(Codable); ok {
 			c.Encode(enc)
 		}
+		enc.WriteTag(T_None)
 	}
 }
 
