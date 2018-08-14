@@ -150,6 +150,17 @@ func Eval(thread *Thread, filename string, src interface{}, env StringDict) (Val
 	return fn.Call(thread, nil, nil)
 }
 
+// Resume resumes a suspended thread.
+//
+// The top frame will be popped before resumption if the thread
+// was suspended by a non-compiled (builtin) function.
+func Resume(thread *Thread) (Value, error) {
+	if _, isFunction := thread.TopFrame().Callable().(*Function); !isFunction {
+		thread.PopFrame()
+	}
+	return interpret(thread, nil, nil, true)
+}
+
 // Call calls the function fn with the specified positional and keyword arguments.
 func Call(thread *Thread, fn Value, args Tuple, kwargs []Tuple) (Value, error) {
 	c, ok := fn.(Callable)

@@ -150,6 +150,9 @@ func init() {
 }
 
 func TestSuspend(t *testing.T) {
+	afterIdent := "after"
+	afterVal := skylark.True
+
 	testdata := skylarktest.DataFile("skylark", ".")
 	thread := &skylark.Thread{Load: load}
 	skylarktest.SetReporter(thread, t)
@@ -174,9 +177,9 @@ func TestSuspend(t *testing.T) {
 			}
 		case nil:
 			// success
-			susp := result["suspension"]
-			if susp != nil {
-				t.Fatalf("Expected nil suspension in result, found %v", susp)
+			after := result[afterIdent]
+			if after != nil {
+				t.Fatalf("Expected values defined after suspension to not be defined in result, found %v", after)
 			}
 		default:
 			t.Error(err)
@@ -192,6 +195,21 @@ func TestSuspend(t *testing.T) {
 
 		if thread.TopFrame().Callable() != skylark.Universe["test_suspend"] {
 			t.Errorf("Expected test_suspend() in top frame of decoded state, found %v", thread.TopFrame().Callable().Name())
+		}
+
+		if thread.Caller().Callable().Name() != "suspend" {
+			t.Errorf("Expected suspend() in caller frame of decoded state, found %v", thread.Caller().Callable().Name())
+		}
+
+		bottom := thread.BottomFrame()
+		toplevelFn := bottom.Callable().(*skylark.Function)
+		_, err = skylark.Resume(thread)
+		if err != nil {
+			t.Errorf("Error after resuming suspended thread: %v", err)
+		}
+		globals := toplevelFn.Globals()
+		if globals[afterIdent] != afterVal {
+			t.Error("Expected globals after suspension point to be defined after resumption")
 		}
 
 		chunk.Done()

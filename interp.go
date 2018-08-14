@@ -12,10 +12,6 @@ import (
 
 const vmdebug = false // TODO(adonovan): use a bitfield of specific kinds of error.
 
-func ResumeSuspended(thread *Thread) (Value, error) {
-	return interpret(thread, nil, nil, true)
-}
-
 // TODO(adonovan):
 // - optimize position table.
 // - opt: reduce allocations by preallocating a large stack, saving it

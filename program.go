@@ -188,6 +188,16 @@ func (thread *Thread) Caller() *Frame { return thread.frame.parent }
 // TopFrame returns the topmost stack frame.
 func (thread *Thread) TopFrame() *Frame { return thread.frame }
 
+// BottomFrame returns the bottommost stack frame.
+// This should usually be the <toplevel> function.
+func (thread *Thread) BottomFrame() *Frame {
+	bottom := thread.frame
+	for bottom.parent != nil {
+		bottom = bottom.parent
+	}
+	return bottom
+}
+
 // A Frame records a call to a Skylark function (including module toplevel)
 // or a built-in function or method.
 type Frame struct {
