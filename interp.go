@@ -42,7 +42,7 @@ func interpret(thread *Thread, args Tuple, kwargs []Tuple, resuming bool) (Value
 
 	code, savedpc, pc, sp := fc.Code, uint32(0), uint32(0), 0
 	if resuming {
-		code, savedpc, pc, sp = fc.Code, fr.callpc, fr.pc, int(fr.sp)
+		code, pc, sp = fc.Code, fr.pc, int(fr.sp)
 	}
 
 	var result Value
@@ -267,7 +267,6 @@ loop:
 				iter.Done()
 			}
 
-			fr.iterstack, fr.callpc, fr.pc, fr.sp = iterstack, savedpc, pc, uint32(sp)
 			callable := stack[sp-1]
 
 			if vmdebug {
@@ -275,29 +274,37 @@ loop:
 					callable, positional, kvpairs, fc.Position(fr.callpc))
 			}
 
+			fr.iterstack, fr.callpc, fr.pc, fr.sp = iterstack, savedpc, pc, uint32(sp)
+
 			if function, ok := callable.(*Function); ok {
+				fr = &Frame{parent: fr, callable: function}
 				// detect recursion
-				for frame := fr; frame != nil; frame = frame.parent {
+				for frame := fr.parent; frame != nil; frame = frame.parent {
 					// We look for the same function code,
 					// not function value, otherwise the user could
 					// defeat the check by writing the Y combinator.
 					if frfn, ok := frame.Callable().(*Function); ok && frfn.funcode == function.funcode {
-						return nil, fmt.Errorf("function %s called recursively", fn.Name())
+						err = fmt.Errorf("function %s called recursively", function.Name())
+						break loop
 					}
 				}
-				fr = &Frame{parent: fr, callable: function}
+
 				fn = function
 				fc = fn.funcode
 				nlocals = len(fc.Locals)
-				fr.stack, fr.callpc = make([]Value, nlocals+fc.MaxStack), savedpc
+				fr.stack = make([]Value, nlocals+fc.MaxStack)
 				code, stack, locals, iterstack = fc.Code, fr.stack[nlocals:], fr.stack[:nlocals:nlocals], nil
 				pc, sp = 0, 0
 				if err = setArgs(locals, fn, positional, kvpairs); err != nil {
 					return nil, fr.errorf(fr.Position(), "%v", err)
 				}
-				thread.frame = fr
+
+				// thread.frame = fr
+
 				continue loop
 			}
+
+			// thread.frame = fr
 
 			z, err2 := Call(thread, callable, positional, kvpairs)
 			if err2 != nil {
@@ -315,13 +322,14 @@ loop:
 
 		case compile.RETURN:
 			retval := stack[sp-1]
-			parent := thread.frame.parent
+			parent := fr.parent
 			returnToCaller := false
 			if parent == nil {
 				returnToCaller = true
 			} else if _, ok := parent.callable.(*Function); !ok {
 				returnToCaller = true
 			}
+			thread.frame = fr
 			if returnToCaller {
 				if vmdebug {
 					fmt.Printf("Returning from %s @ %s\n", fc.Name, fc.Position(0))
@@ -329,8 +337,7 @@ loop:
 				result = retval
 				break loop
 			}
-			thread.frame = parent
-			fr = thread.frame
+			fr = parent
 			fn = fr.callable.(*Function)
 			fc = fn.funcode
 			nlocals = len(fc.Locals)

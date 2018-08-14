@@ -94,7 +94,7 @@ func matches(thread *skylark.Thread, _ *skylark.Builtin, args skylark.Tuple, kwa
 	}
 	ok, err := regexp.MatchString(pattern, str)
 	if err != nil {
-		return skylark.Bool(ok), fmt.Errorf("matches: %s", err)
+		return nil, fmt.Errorf("matches: %s", err)
 	}
 	return skylark.Bool(ok), nil
 }

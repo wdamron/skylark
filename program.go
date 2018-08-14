@@ -155,13 +155,16 @@ func (thread *Thread) Resumable() {
 	thread.suspended = nil
 }
 
-func (thread *Thread) PopFrame() *Frame {
+func (thread *Thread) PushFrame(frame *Frame) {
+	frame.parent = thread.frame
+	thread.frame = frame
+}
+
+func (thread *Thread) PopFrame() {
 	if thread.frame == nil || thread.frame.parent == nil {
-		return nil
+		return
 	}
-	top := thread.frame
 	thread.frame = thread.frame.parent
-	return top
 }
 
 // SetLocal sets the thread-local value associated with the specified key.
