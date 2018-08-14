@@ -273,18 +273,11 @@ loop:
 			fr.iterstack, fr.callpc, fr.pc, fr.sp = iterstack, savedpc, pc, uint32(sp)
 
 			if function, ok := callable.(*Function); ok {
-				fr = &Frame{parent: fr, callable: function}
-				// detect recursion
-				for frame := fr.parent; frame != nil; frame = frame.parent {
-					// We look for the same function code,
-					// not function value, otherwise the user could
-					// defeat the check by writing the Y combinator.
-					if frfn, ok := frame.Callable().(*Function); ok && frfn.funcode == function.funcode {
-						err = fmt.Errorf("function %s called recursively", function.Name())
-						break loop
-					}
+				if function.isRecursive(fr) {
+					err = fmt.Errorf("function %s called recursively", function.Name())
+					break loop
 				}
-
+				fr = &Frame{parent: fr, callable: function}
 				fn = function
 				fc = fn.funcode
 				nlocals = len(fc.Locals)
@@ -600,7 +593,9 @@ loop:
 	for _, iter := range iterstack {
 		iter.Done()
 	}
-
+	if result == nil {
+		result = None
+	}
 	if err != nil {
 		if _, ok := err.(*EvalError); !ok {
 			err = fr.errorf(fc.Position(savedpc), "%s", err.Error())

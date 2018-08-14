@@ -39,14 +39,8 @@ func (fn *Function) Call(thread *Thread, args Tuple, kwargs []Tuple) (Value, err
 		fmt.Printf("call of %s %v %v\n", fn.Name(), args, kwargs)
 	}
 
-	// detect recursion
-	for fr := thread.frame; fr != nil; fr = fr.parent {
-		// We look for the same function code,
-		// not function value, otherwise the user could
-		// defeat the check by writing the Y combinator.
-		if frfn, ok := fr.Callable().(*Function); ok && frfn.funcode == fn.funcode {
-			return nil, fmt.Errorf("function %s called recursively", fn.Name())
-		}
+	if fn.isRecursive(thread.frame) {
+		return nil, fmt.Errorf("function %s called recursively", fn.Name())
 	}
 	// push a new stack frame and jump to the function's entry-point
 	thread.frame = &Frame{parent: thread.frame, callable: fn}
@@ -55,6 +49,18 @@ func (fn *Function) Call(thread *Thread, args Tuple, kwargs []Tuple) (Value, err
 	// pop the used stack frame
 	thread.frame = thread.frame.parent
 	return result, err
+}
+
+func (fn *Function) isRecursive(frame *Frame) bool {
+	for fr := frame; fr != nil; fr = fr.parent {
+		// We look for the same function code,
+		// not function value, otherwise the user could
+		// defeat the check by writing the Y combinator.
+		if frfn, ok := fr.Callable().(*Function); ok && frfn.funcode == fn.funcode {
+			return true
+		}
+	}
+	return false
 }
 
 // Globals returns a new, unfrozen StringDict containing all global
