@@ -21,9 +21,13 @@ import (
 // See https://ep2013.europython.eu/media/conference/slides/advanced-pickling-with-stackless-python-and-spickle.pdf
 
 const (
-	T_Toplevel = iota + 1
+	T_Encoded_End = iota + 1
+	T_Toplevel
+	T_Toplevel_End
 	T_FnShared
+	T_FnShared_End
 	T_Frame
+	T_Frame_End
 	T_None
 	T_True
 	T_False
@@ -69,7 +73,6 @@ type taggedRef struct {
 }
 
 type Encoder struct {
-	values   hashtable
 	strings  map[string]ref
 	dicts    map[*hashtable]taggedRef
 	lists    map[*List]ref
@@ -79,21 +82,24 @@ type Encoder struct {
 	buf      bytes.Buffer
 }
 
-func NewEncoder() *Encoder {
-	return &Encoder{}
-}
-
 type Decoder struct {
+	data []byte
+
+	// Back-references:
+
 	values   []Value
 	funcodes []*compile.Funcode
-	data     []byte
-
-	prog *compile.Program
 
 	// Function shared variables:
+
+	prog        *compile.Program
 	predeclared StringDict
 	globals     []Value
 	constants   []Value
+}
+
+func NewEncoder() *Encoder {
+	return &Encoder{}
 }
 
 func NewDecoder(data []byte) *Decoder {
@@ -151,7 +157,7 @@ func (dec *Decoder) DecodeVarint() (int64, error) {
 }
 
 func (enc *Encoder) nextRef() ref {
-	return ref(int(enc.values.len) + len(enc.strings) + len(enc.dicts) + len(enc.lists) + len(enc.tuples) + len(enc.funcs))
+	return ref(len(enc.strings) + len(enc.dicts) + len(enc.lists) + len(enc.tuples) + len(enc.funcs))
 }
 
 func (dec *Decoder) GetRef(tag byte) (Value, error) {
@@ -160,7 +166,7 @@ func (dec *Decoder) GetRef(tag byte) (Value, error) {
 		return nil, err
 	}
 	if t != tag {
-		return nil, ErrBadTag
+		return nil, fmt.Errorf("Codec: unexpected tag (%v) while decoding ref to %v", t, tag)
 	}
 	if int(r) >= len(dec.values) {
 		return nil, fmt.Errorf("Codec: out of bounds reference; ref=%v tag=%v refs=%v", r, tag, len(dec.values))
@@ -180,12 +186,12 @@ func (dec *Decoder) DecodeRef() (byte, ref, error) {
 	}
 	tag, subtag := dec.data[0], dec.data[1]
 	if tag != T_Ref {
-		return 0, ref(0), ErrBadRef
+		return 0, ref(0), fmt.Errorf("Codec: unexpected tag (%v) while decoding ref", tag)
 	}
 	switch subtag {
 	case T_String, T_List, T_Dict, T_Set, T_Tuple, T_Function, T_Funcode:
 	default:
-		return 0, ref(0), fmt.Errorf("Codec: unsupported reference type; subtag=%v", subtag)
+		return 0, ref(0), fmt.Errorf("Codec: unexpected reference tag (%v) while decoding ref", subtag)
 	}
 	dec.data = dec.data[2:]
 	n, err := dec.DecodeUvarint()
@@ -262,6 +268,7 @@ func (enc *Encoder) EncodeFrame(frame *Frame) {
 		}
 		enc.EncodeIterator(v)
 	}
+	enc.WriteTag(T_Frame_End)
 }
 
 func (dec *Decoder) DecodeFrame() (*Frame, error) {
@@ -271,7 +278,7 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 	tag := dec.data[0]
 	dec.data = dec.data[1:]
 	if tag != T_Frame {
-		return nil, fmt.Errorf("Codec: invalid frame tag while decoding: tag=%v", tag)
+		return nil, fmt.Errorf("Codec: unexpected tag (%v) while decoding frame", tag)
 	}
 	frame := &Frame{}
 	var x uint64
@@ -279,58 +286,62 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 	// callpc
 	x, err = dec.DecodeUvarint()
 	if err != nil {
-		return frame, err
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 	}
 	frame.callpc = uint32(x)
 	// sp
 	x, err = dec.DecodeUvarint()
 	if err != nil {
-		return frame, err
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 	}
 	frame.sp = uint32(x)
 	// pc
 	x, err = dec.DecodeUvarint()
 	if err != nil {
-		return frame, err
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 	}
 	frame.pc = uint32(x)
 	// posn
 	frame.posn, err = dec.DecodePosition()
 	if err != nil {
-		return frame, err
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 	}
 	// callable
 	var v Value
 	v, err = dec.DecodeValue()
 	if err != nil {
-		return frame, err
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 	}
 	c, ok := v.(Callable)
 	if !ok {
-		return frame, fmt.Errorf("Codec: invalid callable for frame while decoding; frame position: %s", frame.Position())
+		return frame, fmt.Errorf("Codec: invalid callable while decoding frame, position: %s", frame.Position())
 	}
 	frame.callable = c
 	// stack
 	for i := 0; i < int(frame.sp); i++ {
 		v, err = dec.DecodeValue()
 		if err != nil {
-			return frame, err
+			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 		}
 		frame.stack = append(frame.stack, v)
 	}
 	// iterstack
 	x, err = dec.DecodeUvarint()
 	if err != nil {
-		return frame, err
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 	}
 	for i := uint64(0); i < x; i++ {
 		var it Iterator
 		it, _ = dec.DecodeIterator()
 		if err != nil {
-			return frame, err
+			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 		}
 		frame.iterstack = append(frame.iterstack, it)
 	}
+	if dec.data[0] != T_Frame_End {
+		return frame, fmt.Errorf("Codec: unexpected end tag (%v) while decoding frame", tag)
+	}
+	dec.data = dec.data[1:]
 	return frame, nil
 }
 
@@ -366,6 +377,7 @@ func (enc *Encoder) EncodeToplevel(p *compile.Program) {
 		enc.EncodeIdent(g)
 	}
 	enc.EncodeFuncode(p.Toplevel)
+	enc.WriteTag(T_Toplevel_End)
 }
 
 func (dec *Decoder) DecodeToplevel() error {
@@ -376,7 +388,7 @@ func (dec *Decoder) DecodeToplevel() error {
 		return ErrShortBuffer
 	}
 	if dec.data[0] != T_Toplevel {
-		return ErrBadTag
+		return fmt.Errorf("Codec: unexpected tag (%v) while decoding top level", dec.data[0])
 	}
 	dec.data = dec.data[1:]
 	dec.prog = &compile.Program{}
@@ -385,40 +397,40 @@ func (dec *Decoder) DecodeToplevel() error {
 	var err error
 	count, err = dec.DecodeUvarint()
 	if err != nil {
-		return err
+		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
 	dec.prog.Loads = make([]compile.Ident, int(count))
 	for i := uint64(0); i < count; i++ {
 		dec.prog.Loads[i], err = dec.DecodeIdent()
 		if err != nil {
-			return err
+			return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 		}
 	}
 
 	count, err = dec.DecodeUvarint()
 	if err != nil {
-		return err
+		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
 	dec.prog.Names = make([]string, int(count))
 	for i := uint64(0); i < count; i++ {
 		var name String
 		name, err = dec.DecodeString()
 		if err != nil {
-			return err
+			return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 		}
 		dec.prog.Names[i] = string(name)
 	}
 
 	count, err = dec.DecodeUvarint()
 	if err != nil {
-		return err
+		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
 	dec.prog.Constants = make([]interface{}, int(count))
 	for i := uint64(0); i < count; i++ {
 		var c Value
 		c, err = dec.DecodeValue()
 		if err != nil {
-			return err
+			return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 		}
 		switch t := c.(type) {
 		case String:
@@ -436,32 +448,37 @@ func (dec *Decoder) DecodeToplevel() error {
 
 	count, err = dec.DecodeUvarint()
 	if err != nil {
-		return err
+		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
 	dec.prog.Functions = make([]*compile.Funcode, int(count))
 	for i := uint64(0); i < count; i++ {
 		dec.prog.Functions[i], err = dec.DecodeFuncode()
 		if err != nil {
-			return err
+			return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 		}
 	}
 
 	count, err = dec.DecodeUvarint()
 	if err != nil {
-		return err
+		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
 	dec.prog.Globals = make([]compile.Ident, int(count))
 	for i := uint64(0); i < count; i++ {
 		dec.prog.Globals[i], err = dec.DecodeIdent()
 		if err != nil {
-			return err
+			return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 		}
 	}
 
 	dec.prog.Toplevel, err = dec.DecodeFuncode()
 	if err != nil {
-		return err
+		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
+
+	if dec.data[0] != T_Toplevel_End {
+		return fmt.Errorf("Codec: unexpected end tag (%v) while decoding top level", dec.data[0])
+	}
+	dec.data = dec.data[1:]
 
 	return nil
 }
@@ -493,6 +510,7 @@ func (enc *Encoder) EncodeFnShared(fn *Function) {
 		}
 		enc.EncodeValue(v)
 	}
+	enc.WriteTag(T_FnShared_End)
 }
 
 func (dec *Decoder) DecodeFnShared() error {
@@ -503,49 +521,53 @@ func (dec *Decoder) DecodeFnShared() error {
 		return ErrShortBuffer
 	}
 	if dec.data[0] != T_FnShared {
-		return ErrBadTag
+		return fmt.Errorf("Codec: unexpected tag (%v) while decoding shared sections", dec.data[0])
 	}
 	dec.data = dec.data[1:]
 	size, err := dec.DecodeUvarint()
 	if err != nil {
-		return err
+		return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 	}
 	dec.predeclared = make(StringDict, int(size))
 	for i := uint64(0); i < size; i++ {
 		var k String
 		k, err = dec.DecodeString()
 		if err != nil {
-			return err
+			return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 		}
 		var v Value
 		v, err = dec.DecodeValue()
 		if err != nil {
-			return err
+			return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 		}
 		dec.predeclared[string(k)] = v
 	}
 	size, err = dec.DecodeUvarint()
 	if err != nil {
-		return err
+		return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 	}
 	dec.globals = make([]Value, int(size))
 	for i := uint64(0); i < size; i++ {
 		dec.globals[i], err = dec.DecodeValue()
 		if err != nil {
-			return err
+			return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 		}
 	}
 	size, err = dec.DecodeUvarint()
 	if err != nil {
-		return err
+		return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 	}
 	dec.constants = make([]Value, int(size))
 	for i := uint64(0); i < size; i++ {
 		dec.constants[i], err = dec.DecodeValue()
 		if err != nil {
-			return err
+			return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 		}
 	}
+	if dec.data[0] != T_FnShared_End {
+		return fmt.Errorf("Codec: unexpected end tag (%v) while decoding shared sections", dec.data[0])
+	}
+	dec.data = dec.data[1:]
 	return nil
 }
 
@@ -558,17 +580,17 @@ func (enc *Encoder) EncodePosition(pos syntax.Position) {
 func (dec *Decoder) DecodePosition() (syntax.Position, error) {
 	f, err := dec.DecodeString()
 	if err != nil {
-		return syntax.Position{}, err
+		return syntax.Position{}, fmt.Errorf("Codec: unexpected error while decoding position: %v", err)
 	}
 	filename := string(f)
 	var line, col uint64
 	line, err = dec.DecodeUvarint()
 	if err != nil {
-		return syntax.Position{}, err
+		return syntax.Position{}, fmt.Errorf("Codec: unexpected error while decoding position: %v", err)
 	}
 	col, err = dec.DecodeUvarint()
 	if err != nil {
-		return syntax.Position{}, err
+		return syntax.Position{}, fmt.Errorf("Codec: unexpected error while decoding position: %v", err)
 	}
 	return syntax.MakePosition(&filename, int32(line), int32(col)), nil
 }
@@ -581,10 +603,13 @@ func (enc *Encoder) EncodeIdent(id compile.Ident) {
 func (dec *Decoder) DecodeIdent() (compile.Ident, error) {
 	name, err := dec.DecodeString()
 	if err != nil {
-		return compile.Ident{Name: string(name)}, err
+		return compile.Ident{Name: string(name)}, fmt.Errorf("Codec: unexpected error while decoding ident: %v", err)
 	}
 	var pos syntax.Position
 	pos, err = dec.DecodePosition()
+	if err != nil {
+		err = fmt.Errorf("Codec: unexpected error while decoding ident: %v", err)
+	}
 	return compile.Ident{string(name), pos}, err
 }
 
@@ -628,33 +653,36 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 	if dec.data[0] == T_Ref {
 		tag, r, err := dec.DecodeRef()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 		}
 		if tag != T_Funcode {
-			return nil, ErrBadTag
+			return nil, fmt.Errorf("Codec: unexpected reference tag (%v) while decoding funcode ref", tag)
 		}
 		if int(r) >= len(dec.funcodes) {
-			return nil, ErrBadRef
+			return nil, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", ErrBadRef)
 		}
 		return dec.funcodes[r], nil
+	}
+	if dec.data[0] != T_Funcode {
+		return nil, fmt.Errorf("Codec: unexpected tag (%v) while decoding funcode", dec.data[0])
 	}
 	dec.data = dec.data[1:]
 	var err error
 	fc := &compile.Funcode{}
 	fc.Pos, err = dec.DecodePosition()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	var name String
 	name, err = dec.DecodeString()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	fc.Name = string(name)
 	var count uint64
 	count, err = dec.DecodeUvarint()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	if int(count) > len(dec.data) {
 		return fc, ErrShortBuffer
@@ -665,58 +693,58 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 	dec.data = dec.data[int(count):]
 	count, err = dec.DecodeUvarint()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	pcline := make([]uint16, count)
 	for i := uint64(0); i < count; i++ {
 		var x uint64
 		x, err = dec.DecodeUvarint()
 		if err != nil {
-			return fc, err
+			return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 		}
 		pcline[i] = uint16(x)
 	}
 	fc.SetPCLineTable(pcline)
 	count, err = dec.DecodeUvarint()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	fc.Locals = make([]compile.Ident, count)
 	for i := uint64(0); i < count; i++ {
 		fc.Locals[i], err = dec.DecodeIdent()
 		if err != nil {
-			return fc, err
+			return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 		}
 	}
 	count, err = dec.DecodeUvarint()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	fc.Freevars = make([]compile.Ident, count)
 	for i := uint64(0); i < count; i++ {
 		fc.Freevars[i], err = dec.DecodeIdent()
 		if err != nil {
-			return fc, err
+			return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 		}
 	}
 	var maxstack, numparams uint64
 	maxstack, err = dec.DecodeUvarint()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	numparams, err = dec.DecodeUvarint()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	fc.MaxStack, fc.NumParams = int(maxstack), int(numparams)
 	var hasvargs, haskwargs Bool
 	hasvargs, err = dec.DecodeBool()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	haskwargs, err = dec.DecodeBool()
 	if err != nil {
-		return fc, err
+		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	dec.funcodes = append(dec.funcodes, fc)
 	fc.HasVarargs, fc.HasKwargs = bool(hasvargs), bool(haskwargs)
@@ -842,7 +870,7 @@ func (dec *Decoder) DecodeInt() (Int, error) {
 	dec.data = dec.data[1:]
 	size, err := dec.DecodeUvarint()
 	if err != nil {
-		return Int{}, err
+		return Int{}, fmt.Errorf("Codec: unexpected error while decoding int: %v", err)
 	}
 	if int(size) > len(dec.data) {
 		return Int{}, ErrShortBuffer
@@ -868,7 +896,7 @@ func (dec *Decoder) DecodeFloat() (Float, error) {
 	}
 	u, err := dec.DecodeUvarint()
 	if err != nil {
-		return Float(0.0), err
+		return Float(0.0), fmt.Errorf("Codec: unexpected error while decoding float: %v", err)
 	}
 	return Float(math.Float64frombits(u)), nil
 }
@@ -895,11 +923,11 @@ func (dec *Decoder) DecodeString() (String, error) {
 	if tag == T_Ref {
 		v, err := dec.GetRef(T_String)
 		if err != nil {
-			return String(""), err
+			return String(""), fmt.Errorf("Codec: unexpected error while decoding string: %v", err)
 		}
 		s, ok := v.(String)
 		if !ok {
-			return String(""), ErrBadRef
+			return String(""), fmt.Errorf("Codec: unexpected error while decoding string: %v", ErrBadRef)
 		}
 		return s, nil
 	}
@@ -909,7 +937,7 @@ func (dec *Decoder) DecodeString() (String, error) {
 	}
 	size, err := dec.DecodeUvarint()
 	if err != nil {
-		return String(""), err
+		return String(""), fmt.Errorf("Codec: unexpected error while decoding string: %v", err)
 	}
 	if len(dec.data) < int(size) {
 		return String(""), ErrShortBuffer
@@ -943,11 +971,11 @@ func (dec *Decoder) DecodeFunction() (*Function, error) {
 	if tag == T_Ref {
 		v, err := dec.GetRef(T_Function)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding function: %v", err)
 		}
 		fn, ok := v.(*Function)
 		if !ok {
-			return nil, ErrBadRef
+			return nil, fmt.Errorf("Codec: unexpected error while decoding function: %v", ErrBadRef)
 		}
 		return fn, nil
 	}
@@ -959,15 +987,15 @@ func (dec *Decoder) DecodeFunction() (*Function, error) {
 	fn := &Function{predeclared: dec.predeclared, globals: dec.globals, constants: dec.constants}
 	fn.defaults, err = dec.DecodeTuple()
 	if err != nil {
-		return fn, err
+		return fn, fmt.Errorf("Codec: unexpected error while decoding function: %v", err)
 	}
 	fn.freevars, err = dec.DecodeTuple()
 	if err != nil {
-		return fn, err
+		return fn, fmt.Errorf("Codec: unexpected error while decoding function: %v", err)
 	}
 	fn.funcode, err = dec.DecodeFuncode()
 	if err != nil {
-		return fn, err
+		return fn, fmt.Errorf("Codec: unexpected error while decoding function: %v", err)
 	}
 	dec.values = append(dec.values, fn)
 	return fn, nil
@@ -998,11 +1026,11 @@ func (dec *Decoder) DecodeList() (*List, error) {
 	if tag == T_Ref {
 		v, err := dec.GetRef(T_List)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding list: %v", err)
 		}
 		l, ok := v.(*List)
 		if !ok {
-			return nil, ErrBadRef
+			return nil, fmt.Errorf("Codec: unexpected error while decoding tuple: %v", ErrBadRef)
 		}
 		return l, nil
 	}
@@ -1012,18 +1040,18 @@ func (dec *Decoder) DecodeList() (*List, error) {
 	}
 	frozen, err := dec.DecodeBool()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Codec: unexpected error while decoding list: %v", err)
 	}
 	var size uint64
 	size, err = dec.DecodeUvarint()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Codec: unexpected error while decoding list: %v", err)
 	}
 	elems := make([]Value, int(size))
 	for i := uint64(0); i < size; i++ {
 		elems[i], err = dec.DecodeValue()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding list: %v", err)
 		}
 	}
 	l := NewList(elems)
@@ -1061,11 +1089,11 @@ func (dec *Decoder) DecodeDict() (*Dict, error) {
 	if tag == T_Ref {
 		v, err := dec.GetRef(T_Dict)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding dict: %v", err)
 		}
 		d, ok := v.(*Dict)
 		if !ok {
-			return nil, ErrBadRef
+			return nil, fmt.Errorf("Codec: unexpected error while decoding dict: %v", ErrBadRef)
 		}
 		return d, nil
 	}
@@ -1075,26 +1103,26 @@ func (dec *Decoder) DecodeDict() (*Dict, error) {
 	}
 	frozen, err := dec.DecodeBool()
 	if err != nil {
-		return nil, ErrBadTag
+		return nil, fmt.Errorf("Codec: unexpected error while decoding dict: %v", err)
 	}
 	size, err := dec.DecodeUvarint()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Codec: unexpected error while decoding dict: %v", err)
 	}
 	d := &Dict{}
 	for i := uint64(0); i < size; i++ {
 		var k Value
 		k, err = dec.DecodeValue()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding dict: %v", err)
 		}
 		var v Value
 		v, err = dec.DecodeValue()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding dict: %v", err)
 		}
 		if err = d.Set(k, v); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding dict: %v", err)
 		}
 	}
 	if frozen {
@@ -1130,11 +1158,11 @@ func (dec *Decoder) DecodeSet() (*Set, error) {
 	if tag == T_Ref {
 		v, err := dec.GetRef(T_Set)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding set: %v", err)
 		}
 		s, ok := v.(*Set)
 		if !ok {
-			return nil, ErrBadRef
+			return nil, fmt.Errorf("Codec: unexpected error while decoding set: %v", ErrBadRef)
 		}
 		return s, nil
 	}
@@ -1144,22 +1172,22 @@ func (dec *Decoder) DecodeSet() (*Set, error) {
 	}
 	frozen, err := dec.DecodeBool()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Codec: unexpected error while decoding set: %v", err)
 	}
 	var size uint64
 	size, err = dec.DecodeUvarint()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Codec: unexpected error while decoding set: %v", err)
 	}
 	s := &Set{}
 	for i := uint64(0); i < size; i++ {
 		var v Value
 		v, err = dec.DecodeValue()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding set: %v", err)
 		}
 		if err = s.Insert(v); err != nil {
-			return s, err
+			return s, fmt.Errorf("Codec: unexpected error while decoding set: %v", err)
 		}
 	}
 	if frozen {
@@ -1194,11 +1222,11 @@ func (dec *Decoder) DecodeTuple() (Tuple, error) {
 	if tag == T_Ref {
 		v, err := dec.GetRef(T_Tuple)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding tuple: %v", err)
 		}
 		t, ok := v.(Tuple)
 		if !ok {
-			return nil, ErrBadRef
+			return nil, fmt.Errorf("Codec: unexpected error while decoding tuple: %v", ErrBadRef)
 		}
 		return t, nil
 	}
@@ -1208,14 +1236,14 @@ func (dec *Decoder) DecodeTuple() (Tuple, error) {
 	}
 	size, err := dec.DecodeUvarint()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Codec: unexpected error while decoding tuple: %v", err)
 	}
 	t := make(Tuple, int(size))
 	for i := uint64(0); i < size; i++ {
 		var v Value
 		v, err = dec.DecodeValue()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Codec: unexpected error while decoding tuple: %v", err)
 		}
 		t = append(t, v)
 	}
@@ -1244,12 +1272,12 @@ func (dec *Decoder) DecodeBuiltin() (*Builtin, error) {
 	}
 	name, err := dec.DecodeString()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Codec: unexpected error while decoding builtin: %v", err)
 	}
 	var recv Value
 	recv, err = dec.DecodeValue()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Codec: unexpected error while decoding builtin: %v", err)
 	}
 	if recv == nil || recv == None {
 		if v, ok := Universe[string(name)]; ok {
@@ -1299,22 +1327,22 @@ func (dec *Decoder) DecodeRange() (rangeValue, error) {
 	var err error
 	start, err = dec.DecodeVarint()
 	if err != nil {
-		return r, err
+		return r, fmt.Errorf("Codec: unexpected error while decoding range start: %v", err)
 	}
 	r.start = int(start)
 	stop, err = dec.DecodeVarint()
 	if err != nil {
-		return r, err
+		return r, fmt.Errorf("Codec: unexpected error while decoding range stop: %v", err)
 	}
 	r.stop = int(stop)
 	step, err = dec.DecodeVarint()
 	if err != nil {
-		return r, err
+		return r, fmt.Errorf("Codec: unexpected error while decoding range step: %v", err)
 	}
 	r.step = int(step)
 	length, err = dec.DecodeVarint()
 	if err != nil {
-		return r, err
+		return r, fmt.Errorf("Codec: unexpected error while decoding range length: %v", err)
 	}
 	r.len = int(length)
 	return r, nil
@@ -1340,16 +1368,16 @@ func (dec *Decoder) DecodeStringIterable() (stringIterable, error) {
 	var err error
 	it.s, err = dec.DecodeString()
 	if err != nil {
-		return it, err
+		return it, fmt.Errorf("Codec: unexpected error while decoding string iterable: %v", err)
 	}
 	var codepoints, ords Bool
 	codepoints, err = dec.DecodeBool()
 	if err != nil {
-		return it, err
+		return it, fmt.Errorf("Codec: unexpected error while decoding string iterable: %v", err)
 	}
 	ords, err = dec.DecodeBool()
 	if err != nil {
-		return it, err
+		return it, fmt.Errorf("Codec: unexpected error while decoding string iterable: %v", err)
 	}
 	it.codepoints, it.ords = bool(codepoints), bool(ords)
 	return it, nil
@@ -1427,12 +1455,12 @@ func (dec *Decoder) DecodeIterator() (Iterator, error) {
 		it := stringIterator{}
 		it.si, err = dec.DecodeStringIterable()
 		if err != nil {
-			return &it, err
+			return &it, fmt.Errorf("Codec: unexpected error while decoding string iterator: %v", err)
 		}
 		var i int64
 		i, err := dec.DecodeVarint()
 		if err != nil {
-			return &it, err
+			return &it, fmt.Errorf("Codec: unexpected error while decoding string iterator: %v", err)
 		}
 		it.i = int(i)
 		return &it, nil
@@ -1440,12 +1468,12 @@ func (dec *Decoder) DecodeIterator() (Iterator, error) {
 		it := listIterator{}
 		it.l, err = dec.DecodeList()
 		if err != nil {
-			return &it, err
+			return &it, fmt.Errorf("Codec: unexpected error while decoding list iterator: %v", err)
 		}
 		var i int64
 		i, err := dec.DecodeVarint()
 		if err != nil {
-			return &it, err
+			return &it, fmt.Errorf("Codec: unexpected error while decoding list iterator: %v", err)
 		}
 		it.i = int(i)
 		return &it, nil
@@ -1456,12 +1484,12 @@ func (dec *Decoder) DecodeIterator() (Iterator, error) {
 			var d *Dict
 			d, err = dec.DecodeDict()
 			if err != nil {
-				return &it, err
+				return &it, fmt.Errorf("Codec: unexpected error while decoding key (dict) iterator: %v", err)
 			}
 			var offset uint64
 			offset, err := dec.DecodeUvarint()
 			if err != nil {
-				return &it, err
+				return &it, fmt.Errorf("Codec: unexpected error while decoding key (dict) iterator: %v", err)
 			}
 			e := d.ht.head
 			for i := uint64(0); i < offset && e != nil; i++ {
@@ -1476,12 +1504,12 @@ func (dec *Decoder) DecodeIterator() (Iterator, error) {
 			var s *Set
 			s, err = dec.DecodeSet()
 			if err != nil {
-				return &it, err
+				return &it, fmt.Errorf("Codec: unexpected error while decoding key (set) iterator: %v", err)
 			}
 			var offset uint64
 			offset, err := dec.DecodeUvarint()
 			if err != nil {
-				return &it, err
+				return &it, fmt.Errorf("Codec: unexpected error while decoding key (set) iterator: %v", err)
 			}
 			e := s.ht.head
 			for i := uint64(0); i < offset && e != nil; i++ {
@@ -1493,22 +1521,22 @@ func (dec *Decoder) DecodeIterator() (Iterator, error) {
 			it.offset = uint(offset)
 			return &it, nil
 		default:
-			return &it, ErrBadTag
+			return &it, fmt.Errorf("Codec: unexpected error while decoding key iterator: %v", ErrBadTag)
 		}
 	case T_TupleIterator:
 		it := tupleIterator{}
 		it.elems, err = dec.DecodeTuple()
-		return &it, err
+		return &it, fmt.Errorf("Codec: unexpected error while decoding tuple iterator: %v", err)
 	case T_RangeIterator:
 		it := rangeIterator{}
 		it.r, err = dec.DecodeRange()
 		if err != nil {
-			return &it, err
+			return &it, fmt.Errorf("Codec: unexpected error while decoding range iterator: %v", err)
 		}
 		var i int64
 		i, err = dec.DecodeVarint()
 		if err != nil {
-			return &it, err
+			return &it, fmt.Errorf("Codec: unexpected error while decoding range iterator: %v", err)
 		}
 		it.i = int(i)
 		return &it, err
@@ -1519,12 +1547,12 @@ func (dec *Decoder) DecodeIterator() (Iterator, error) {
 			v, vlen, err = custom(dec)
 			dec.data = dec.data[vlen:]
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("Codec: unexpected error while decoding custom iterator: %v", err)
 			}
 			var it Iterator
 			it, ok = v.(Iterator)
 			if !ok {
-				return nil, ErrBadTag
+				return nil, fmt.Errorf("Codec: unexpected error while decoding custom iterator: %v", ErrBadRef)
 			}
 			return it, nil
 		}
