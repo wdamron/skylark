@@ -247,7 +247,6 @@ func (enc *Encoder) EncodeFrame(frame *Frame) {
 	enc.EncodePosition(frame.Position())
 	enc.EncodeValue(frame.Callable().(Value))
 	stack := frame.stack[:frame.sp]
-	enc.WriteUvarint(uint64(len(stack)))
 	for _, v := range stack {
 		if v == nil {
 			enc.WriteTag(T_None)
@@ -312,11 +311,7 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 	}
 	frame.callable = c
 	// stack
-	x, err = dec.DecodeUvarint()
-	if err != nil {
-		return frame, err
-	}
-	for i := uint64(0); i < x; i++ {
+	for i := 0; i < int(frame.sp); i++ {
 		v, err = dec.DecodeValue()
 		if err != nil {
 			return frame, err
