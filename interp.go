@@ -272,6 +272,7 @@ loop:
 
 			fr.iterstack, fr.callpc, fr.pc, fr.sp = iterstack, savedpc, pc, uint32(sp)
 
+			// If the callable is a compiled function, jump directly to its entry-point:
 			if function, ok := callable.(*Function); ok {
 				if function.isRecursive(fr) {
 					err = fmt.Errorf("function %s called recursively", function.Name())
@@ -293,6 +294,7 @@ loop:
 				continue loop
 			}
 
+			// If the callable is a non-compiled (builtin) functions/method, call it directly:
 			z, err2 := Call(thread, callable, positional, kvpairs)
 			if err2 != nil {
 				err = err2
@@ -317,6 +319,7 @@ loop:
 				returnToCaller = true
 			}
 			thread.frame = fr
+			// If the caller is not a compiled function, return to it directly:
 			if returnToCaller {
 				if vmdebug {
 					fmt.Printf("Returning from %s @ %s\n", fc.Name, fc.Position(0))
@@ -324,6 +327,7 @@ loop:
 				result = retval
 				break loop
 			}
+			// If the caller is a compiled function, jump to its frame's next instruction (PC):
 			fr = parent
 			fn = fr.callable.(*Function)
 			fc = fn.funcode
