@@ -69,7 +69,13 @@ func init() {
 	}
 }
 
-type builtinMethod func(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error)
+type builtinMethod func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error)
+
+// type Builtin struct {
+// 	name string
+// 	fn   func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error)
+// 	recv Value // for bound methods (e.g. "".startswith)
+// }
 
 // methods of built-in types
 // https://github.com/google/skylark/blob/master/doc/spec.md#built-in-methods
@@ -137,16 +143,16 @@ var (
 	}
 )
 
-func builtinMethodOf(recv Value, name string) builtinMethod {
+func builtinMethodOf(recv Value, name string) *Builtin {
 	switch recv.(type) {
 	case String:
-		return stringMethods[name]
+		return &Builtin{name: name, fn: stringMethods[name], recv: recv}
 	case *List:
-		return listMethods[name]
+		return &Builtin{name: name, fn: listMethods[name], recv: recv}
 	case *Dict:
-		return dictMethods[name]
+		return &Builtin{name: name, fn: dictMethods[name], recv: recv}
 	case *Set:
-		return setMethods[name]
+		return &Builtin{name: name, fn: setMethods[name], recv: recv}
 	}
 	return nil
 }
@@ -156,12 +162,7 @@ func builtinAttr(recv Value, name string, methods map[string]builtinMethod) (Val
 	if method == nil {
 		return nil, nil // no such method
 	}
-
-	// Allocate a closure over 'method'.
-	impl := func(thread *Thread, b *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
-		return method(b.Name(), b.Receiver(), args, kwargs)
-	}
-	return NewBuiltin(name, impl).BindReceiver(recv), nil
+	return &Builtin{name: name, fn: method, recv: recv}, nil
 }
 
 func builtinAttrNames(methods map[string]builtinMethod) []string {
@@ -1097,12 +1098,12 @@ func zip(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) 
 // ---- methods of built-in types ---
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·get
-func dict_get(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
+func dict_get(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	var key, dflt Value
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &key, &dflt); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &key, &dflt); err != nil {
 		return nil, err
 	}
-	if v, ok, err := recv.(*Dict).Get(key); err != nil {
+	if v, ok, err := fn.recv.(*Dict).Get(key); err != nil {
 		return nil, err
 	} else if ok {
 		return v, nil
@@ -1113,19 +1114,19 @@ func dict_get(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, err
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·clear
-func dict_clear(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func dict_clear(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	return None, recv.(*Dict).Clear()
+	return None, fn.recv.(*Dict).Clear()
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·items
-func dict_items(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func dict_items(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	items := recv.(*Dict).Items()
+	items := fn.recv.(*Dict).Items()
 	res := make([]Value, len(items))
 	for i, item := range items {
 		res[i] = item // convert [2]Value to Value
@@ -1134,18 +1135,18 @@ func dict_items(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, e
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·keys
-func dict_keys(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func dict_keys(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	return NewList(recv.(*Dict).Keys()), nil
+	return NewList(fn.recv.(*Dict).Keys()), nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·pop
-func dict_pop(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := recv_.(*Dict)
+func dict_pop(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := fn.recv.(*Dict)
 	var k, d Value
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &k, &d); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &k, &d); err != nil {
 		return nil, err
 	}
 	if v, found, err := recv.Delete(k); err != nil {
@@ -1159,11 +1160,11 @@ func dict_pop(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, er
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·popitem
-func dict_popitem(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func dict_popitem(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	recv := recv_.(*Dict)
+	recv := fn.recv.(*Dict)
 	k, ok := recv.ht.first()
 	if !ok {
 		return nil, fmt.Errorf("popitem: empty dict")
@@ -1176,12 +1177,12 @@ func dict_popitem(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·setdefault
-func dict_setdefault(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
+func dict_setdefault(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	var key, dflt Value = nil, None
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &key, &dflt); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &key, &dflt); err != nil {
 		return nil, err
 	}
-	dict := recv.(*Dict)
+	dict := fn.recv.(*Dict)
 	if v, ok, err := dict.Get(key); err != nil {
 		return nil, err
 	} else if ok {
@@ -1192,22 +1193,22 @@ func dict_setdefault(fnname string, recv Value, args Tuple, kwargs []Tuple) (Val
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·update
-func dict_update(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
+func dict_update(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(args) > 1 {
 		return nil, fmt.Errorf("update: got %d arguments, want at most 1", len(args))
 	}
-	if err := updateDict(recv.(*Dict), args, kwargs); err != nil {
+	if err := updateDict(fn.recv.(*Dict), args, kwargs); err != nil {
 		return nil, fmt.Errorf("update: %v", err)
 	}
 	return None, nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·update
-func dict_values(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func dict_values(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	items := recv.(*Dict).Items()
+	items := fn.recv.(*Dict).Items()
 	res := make([]Value, len(items))
 	for i, item := range items {
 		res[i] = item[1]
@@ -1216,10 +1217,10 @@ func dict_values(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, 
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#list·append
-func list_append(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := recv_.(*List)
+func list_append(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := fn.recv.(*List)
 	var object Value
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &object); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &object); err != nil {
 		return nil, err
 	}
 	if err := recv.checkMutable("append to", true); err != nil {
@@ -1230,18 +1231,18 @@ func list_append(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value,
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#list·clear
-func list_clear(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func list_clear(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	return None, recv_.(*List).Clear()
+	return None, fn.recv.(*List).Clear()
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#list·extend
-func list_extend(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := recv_.(*List)
+func list_extend(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := fn.recv.(*List)
 	var iterable Iterable
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &iterable); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &iterable); err != nil {
 		return nil, err
 	}
 	if err := recv.checkMutable("extend", true); err != nil {
@@ -1252,16 +1253,16 @@ func list_extend(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value,
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#list·index
-func list_index(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := recv_.(*List)
+func list_index(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := fn.recv.(*List)
 	var value, start_, end_ Value
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &value, &start_, &end_); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &value, &start_, &end_); err != nil {
 		return nil, err
 	}
 
 	start, end, err := indices(start_, end_, recv.Len())
 	if err != nil {
-		return nil, fmt.Errorf("%s: %s", fnname, err)
+		return nil, fmt.Errorf("%s: %s", fn.name, err)
 	}
 
 	for i := start; i < end; i++ {
@@ -1275,11 +1276,11 @@ func list_index(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, 
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#list·insert
-func list_insert(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := recv_.(*List)
+func list_insert(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := fn.recv.(*List)
 	var index int
 	var object Value
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 2, &index, &object); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 2, &index, &object); err != nil {
 		return nil, err
 	}
 	if err := recv.checkMutable("insert into", true); err != nil {
@@ -1305,10 +1306,10 @@ func list_insert(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value,
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#list·remove
-func list_remove(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := recv_.(*List)
+func list_remove(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := fn.recv.(*List)
 	var value Value
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &value); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &value); err != nil {
 		return nil, err
 	}
 	if err := recv.checkMutable("remove from", true); err != nil {
@@ -1326,10 +1327,10 @@ func list_remove(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value,
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#list·pop
-func list_pop(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	list := recv.(*List)
+func list_pop(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	list := fn.recv.(*List)
 	index := list.Len() - 1
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0, &index); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0, &index); err != nil {
 		return nil, err
 	}
 	if index < 0 || index >= list.Len() {
@@ -1344,11 +1345,11 @@ func list_pop(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, err
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·capitalize
-func string_capitalize(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_capitalize(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	return String(strings.Title(string(recv.(String)))), nil
+	return String(strings.Title(string(fn.recv.(String)))), nil
 }
 
 // string_iterable returns an unspecified iterable value whose iterator yields:
@@ -1356,30 +1357,30 @@ func string_capitalize(fnname string, recv Value, args Tuple, kwargs []Tuple) (V
 // - codepoints: successive substrings that encode a single Unicode code point.
 // - elem_ords: numeric values of successive bytes
 // - codepoint_ords: numeric values of successive Unicode code points
-func string_iterable(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_iterable(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
 	return stringIterable{
-		s:          recv.(String),
-		ords:       fnname[len(fnname)-2] == 'd',
-		codepoints: fnname[0] == 'c',
+		s:          fn.recv.(String),
+		ords:       fn.name[len(fn.name)-2] == 'd',
+		codepoints: fn.name[0] == 'c',
 	}, nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·count
-func string_count(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := string(recv_.(String))
+func string_count(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := string(fn.recv.(String))
 
 	var sub string
 	var start_, end_ Value
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &sub, &start_, &end_); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &sub, &start_, &end_); err != nil {
 		return nil, err
 	}
 
 	start, end, err := indices(start_, end_, len(recv))
 	if err != nil {
-		return nil, fmt.Errorf("%s: %s", fnname, err)
+		return nil, fmt.Errorf("%s: %s", fn.name, err)
 	}
 
 	var slice string
@@ -1390,11 +1391,11 @@ func string_count(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·isalnum
-func string_isalnum(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_isalnum(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	recv := string(recv_.(String))
+	recv := string(fn.recv.(String))
 	for _, r := range recv {
 		if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
 			return False, nil
@@ -1404,11 +1405,11 @@ func string_isalnum(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Val
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·isalpha
-func string_isalpha(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_isalpha(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	recv := string(recv_.(String))
+	recv := string(fn.recv.(String))
 	for _, r := range recv {
 		if !unicode.IsLetter(r) {
 			return False, nil
@@ -1418,11 +1419,11 @@ func string_isalpha(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Val
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·isdigit
-func string_isdigit(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_isdigit(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	recv := string(recv_.(String))
+	recv := string(fn.recv.(String))
 	for _, r := range recv {
 		if !unicode.IsDigit(r) {
 			return False, nil
@@ -1432,11 +1433,11 @@ func string_isdigit(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Val
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·islower
-func string_islower(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_islower(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	recv := string(recv_.(String))
+	recv := string(fn.recv.(String))
 	return Bool(isCasedString(recv) && recv == strings.ToLower(recv)), nil
 }
 
@@ -1451,11 +1452,11 @@ func isCasedString(s string) bool {
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·isspace
-func string_isspace(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_isspace(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	recv := string(recv_.(String))
+	recv := string(fn.recv.(String))
 	for _, r := range recv {
 		if !unicode.IsSpace(r) {
 			return False, nil
@@ -1465,11 +1466,11 @@ func string_isspace(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Val
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·istitle
-func string_istitle(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_istitle(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	recv := string(recv_.(String))
+	recv := string(fn.recv.(String))
 
 	// Python semantics differ from x==strings.{To,}Title(x) in Go:
 	// "uppercase characters may only follow uncased characters and
@@ -1496,22 +1497,22 @@ func string_istitle(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Val
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·isupper
-func string_isupper(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_isupper(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	recv := string(recv_.(String))
+	recv := string(fn.recv.(String))
 	return Bool(isCasedString(recv) && recv == strings.ToUpper(recv)), nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·find
-func string_find(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	return string_find_impl(fnname, string(recv.(String)), args, kwargs, true, false)
+func string_find(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	return string_find_impl(fn.name, string(fn.recv.(String)), args, kwargs, true, false)
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·format
-func string_format(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	format := string(recv_.(String))
+func string_format(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	format := string(fn.recv.(String))
 	var auto, manual bool // kinds of positional indexing used
 	path := make([]Value, 0, 4)
 	var buf bytes.Buffer
@@ -1651,15 +1652,15 @@ func string_format(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Valu
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·index
-func string_index(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	return string_find_impl(fnname, string(recv.(String)), args, kwargs, false, false)
+func string_index(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	return string_find_impl(fn.name, string(fn.recv.(String)), args, kwargs, false, false)
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·join
-func string_join(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := string(recv_.(String))
+func string_join(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := string(fn.recv.(String))
 	var iterable Iterable
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &iterable); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &iterable); err != nil {
 		return nil, err
 	}
 	iter := iterable.Iterate()
@@ -1680,40 +1681,40 @@ func string_join(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value,
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·lower
-func string_lower(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_lower(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	return String(strings.ToLower(string(recv.(String)))), nil
+	return String(strings.ToLower(string(fn.recv.(String)))), nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·lstrip
-func string_lstrip(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_lstrip(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	return String(strings.TrimLeftFunc(string(recv.(String)), unicode.IsSpace)), nil
+	return String(strings.TrimLeftFunc(string(fn.recv.(String)), unicode.IsSpace)), nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·partition
-func string_partition(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := string(recv_.(String))
+func string_partition(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := string(fn.recv.(String))
 	var sep string
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &sep); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &sep); err != nil {
 		return nil, err
 	}
 	if sep == "" {
-		return nil, fmt.Errorf("%s: empty separator", fnname)
+		return nil, fmt.Errorf("%s: empty separator", fn.name)
 	}
 	var i int
-	if fnname[0] == 'p' {
+	if fn.name[0] == 'p' {
 		i = strings.Index(recv, sep) // partition
 	} else {
 		i = strings.LastIndex(recv, sep) // rpartition
 	}
 	tuple := make(Tuple, 0, 3)
 	if i < 0 {
-		if fnname[0] == 'p' {
+		if fn.name[0] == 'p' {
 			tuple = append(tuple, String(recv), String(""), String(""))
 		} else {
 			tuple = append(tuple, String(""), String(""), String(recv))
@@ -1725,45 +1726,45 @@ func string_partition(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (V
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·replace
-func string_replace(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := string(recv_.(String))
+func string_replace(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := string(fn.recv.(String))
 	var old, new string
 	count := -1
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 2, &old, &new, &count); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 2, &old, &new, &count); err != nil {
 		return nil, err
 	}
 	return String(strings.Replace(recv, old, new, count)), nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·rfind
-func string_rfind(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	return string_find_impl(fnname, string(recv.(String)), args, kwargs, true, true)
+func string_rfind(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	return string_find_impl(fn.name, string(fn.recv.(String)), args, kwargs, true, true)
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·rindex
-func string_rindex(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	return string_find_impl(fnname, string(recv.(String)), args, kwargs, false, true)
+func string_rindex(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	return string_find_impl(fn.name, string(fn.recv.(String)), args, kwargs, false, true)
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·rstrip
-func string_rstrip(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_rstrip(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	return String(strings.TrimRightFunc(string(recv.(String)), unicode.IsSpace)), nil
+	return String(strings.TrimRightFunc(string(fn.recv.(String)), unicode.IsSpace)), nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·startswith
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·endswith
-func string_startswith(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
+func string_startswith(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	var x Value
 	var start, end Value = None, None
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 1, &x, &start, &end); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 1, &x, &start, &end); err != nil {
 		return nil, err
 	}
 
 	// compute effective substring.
-	s := string(recv_.(String))
+	s := string(fn.recv.(String))
 	if start, end, err := indices(start, end, len(s)); err != nil {
 		return nil, err
 	} else {
@@ -1774,7 +1775,7 @@ func string_startswith(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (
 	}
 
 	f := strings.HasPrefix
-	if fnname[0] == 'e' { // endswith
+	if fn.name[0] == 'e' { // endswith
 		f = strings.HasSuffix
 	}
 
@@ -1784,7 +1785,7 @@ func string_startswith(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (
 			prefix, ok := AsString(x)
 			if !ok {
 				return nil, fmt.Errorf("%s: want string, got %s, for element %d",
-					fnname, x.Type(), i)
+					fn.name, x.Type(), i)
 			}
 			if f(s, prefix) {
 				return True, nil
@@ -1794,20 +1795,20 @@ func string_startswith(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (
 	case String:
 		return Bool(f(s, string(x))), nil
 	}
-	return nil, fmt.Errorf("%s: got %s, want string or tuple of string", fnname, x.Type())
+	return nil, fmt.Errorf("%s: got %s, want string or tuple of string", fn.name, x.Type())
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·strip
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·lstrip
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·rstrip
-func string_strip(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
+func string_strip(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	var chars string
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0, &chars); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0, &chars); err != nil {
 		return nil, err
 	}
-	recv := string(recv_.(String))
+	recv := string(fn.recv.(String))
 	var s string
-	switch fnname[0] {
+	switch fn.name[0] {
 	case 's': // strip
 		if chars != "" {
 			s = strings.Trim(recv, chars)
@@ -1831,28 +1832,28 @@ func string_strip(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·title
-func string_title(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_title(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	return String(strings.Title(strings.ToLower(string(recv.(String))))), nil
+	return String(strings.Title(strings.ToLower(string(fn.recv.(String))))), nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·upper
-func string_upper(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0); err != nil {
+func string_upper(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0); err != nil {
 		return nil, err
 	}
-	return String(strings.ToUpper(string(recv.(String)))), nil
+	return String(strings.ToUpper(string(fn.recv.(String)))), nil
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·split
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·rsplit
-func string_split(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value, error) {
-	recv := string(recv_.(String))
+func string_split(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+	recv := string(fn.recv.(String))
 	var sep_ Value
 	maxsplit := -1
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0, &sep_, &maxsplit); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0, &sep_, &maxsplit); err != nil {
 		return nil, err
 	}
 
@@ -1862,7 +1863,7 @@ func string_split(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value
 		// special case: split on whitespace
 		if maxsplit < 0 {
 			res = strings.Fields(recv)
-		} else if fnname == "split" {
+		} else if fn.name == "split" {
 			res = splitspace(recv, maxsplit)
 		} else { // rsplit
 			res = rsplitspace(recv, maxsplit)
@@ -1875,7 +1876,7 @@ func string_split(fnname string, recv_ Value, args Tuple, kwargs []Tuple) (Value
 		// usual case: split on non-empty separator
 		if maxsplit < 0 {
 			res = strings.Split(recv, sep)
-		} else if fnname == "split" {
+		} else if fn.name == "split" {
 			res = strings.SplitN(recv, sep, maxsplit+1)
 		} else { // rsplit
 			res = strings.Split(recv, sep)
@@ -1951,12 +1952,12 @@ func splitspace(s string, max int) []string {
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·splitlines
-func string_splitlines(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
+func string_splitlines(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	var keepends bool
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0, &keepends); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0, &keepends); err != nil {
 		return nil, err
 	}
-	s := string(recv.(String))
+	s := string(fn.recv.(String))
 	var lines []string
 	// TODO(adonovan): handle CRLF correctly.
 	if keepends {
@@ -1975,14 +1976,14 @@ func string_splitlines(fnname string, recv Value, args Tuple, kwargs []Tuple) (V
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#set·union.
-func set_union(fnname string, recv Value, args Tuple, kwargs []Tuple) (Value, error) {
+func set_union(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	var iterable Iterable
-	if err := UnpackPositionalArgs(fnname, args, kwargs, 0, &iterable); err != nil {
+	if err := UnpackPositionalArgs(fn.name, args, kwargs, 0, &iterable); err != nil {
 		return nil, err
 	}
 	iter := iterable.Iterate()
 	defer iter.Done()
-	union, err := recv.(*Set).Union(iter)
+	union, err := fn.recv.(*Set).Union(iter)
 	if err != nil {
 		return nil, fmt.Errorf("union: %v", err)
 	}

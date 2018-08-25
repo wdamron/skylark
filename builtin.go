@@ -10,7 +10,7 @@ package skylark
 // A Builtin is a function implemented in Go.
 type Builtin struct {
 	name string
-	fn   func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error)
+	fn   builtinMethod
 	recv Value // for bound methods (e.g. "".startswith)
 }
 

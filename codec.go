@@ -949,11 +949,7 @@ func (dec *Decoder) DecodeBuiltin() (*Builtin, error) {
 	if method == nil {
 		return nil, fmt.Errorf("Codec: builtin method not found; name=%s", string(name))
 	}
-	// Allocate a closure over 'method'.
-	impl := func(thread *Thread, b *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
-		return method(b.Name(), b.Receiver(), args, kwargs)
-	}
-	return NewBuiltin(string(name), impl).BindReceiver(recv), nil
+	return method, nil
 }
 
 func (enc *Encoder) EncodeRange(r rangeValue) {
