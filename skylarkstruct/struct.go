@@ -27,8 +27,8 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/wdamron/skylark"
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark"
+	"github.com/google/skylark/syntax"
 )
 
 // Make is the implementation of a built-in function that instantiates

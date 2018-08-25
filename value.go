@@ -67,7 +67,7 @@ import (
 	"math"
 	"reflect"
 
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 // Value is a value in the Skylark interpreter.

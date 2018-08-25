@@ -30,8 +30,8 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/wdamron/skylark/resolve"
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/resolve"
+	"github.com/google/skylark/syntax"
 )
 
 const debug = false // TODO(adonovan): use a bitmap of options; and regexp to match files
@@ -74,12 +74,16 @@ const (
 	PERCENT
 	AMP
 	PIPE
+	CIRCUMFLEX
+	LTLT
+	GTGT
 
 	IN
 
 	// unary operators
 	UPLUS  // x UPLUS x
 	UMINUS // x UMINUS -x
+	TILDE  // x TILDE ~x
 
 	NONE  // - NONE None
 	TRUE  // - TRUE True
@@ -141,6 +145,7 @@ var opcodeNames = [...]string{
 	CALL_KW:     "call_kw ",
 	CALL_VAR:    "call_var",
 	CALL_VAR_KW: "call_var_kw",
+	CIRCUMFLEX:  "circumflex",
 	CJMP:        "cjmp",
 	CONSTANT:    "constant",
 	DUP2:        "dup2",
@@ -152,6 +157,7 @@ var opcodeNames = [...]string{
 	GE:          "ge",
 	GLOBAL:      "global",
 	GT:          "gt",
+	GTGT:        "gtgt",
 	IN:          "in",
 	INDEX:       "index",
 	INPLACE_ADD: "inplace_add",
@@ -163,6 +169,7 @@ var opcodeNames = [...]string{
 	LOAD:        "load",
 	LOCAL:       "local",
 	LT:          "lt",
+	LTLT:        "ltlt",
 	MAKEDICT:    "makedict",
 	MAKEFUNC:    "makefunc",
 	MAKELIST:    "makelist",
@@ -188,6 +195,7 @@ var opcodeNames = [...]string{
 	SLASHSLASH:  "slashslash",
 	SLICE:       "slice",
 	STAR:        "star",
+	TILDE:       "tilde",
 	TRUE:        "true",
 	UMINUS:      "uminus",
 	UNIVERSAL:   "universal",
@@ -226,6 +234,7 @@ func init() {
 	stackEffect[CALL_KW] = variableStackEffect
 	stackEffect[CALL_VAR] = variableStackEffect
 	stackEffect[CALL_VAR_KW] = variableStackEffect
+	stackEffect[CIRCUMFLEX] = -1
 	stackEffect[CJMP] = -1
 	stackEffect[CONSTANT] = +1
 	stackEffect[DUP2] = +2
@@ -237,6 +246,7 @@ func init() {
 	stackEffect[GE] = -1
 	stackEffect[GLOBAL] = +1
 	stackEffect[GT] = -1
+	stackEffect[GTGT] = -1
 	stackEffect[IN] = -1
 	stackEffect[INDEX] = -1
 	stackEffect[INPLACE_ADD] = -1
@@ -248,6 +258,7 @@ func init() {
 	stackEffect[LOAD] = -1
 	stackEffect[LOCAL] = +1
 	stackEffect[LT] = -1
+	stackEffect[LTLT] = -1
 	stackEffect[MAKEDICT] = +1
 	stackEffect[MAKEFUNC] = -1
 	stackEffect[MAKELIST] = variableStackEffect
@@ -987,7 +998,12 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 			syntax.STAR_EQ,
 			syntax.SLASH_EQ,
 			syntax.SLASHSLASH_EQ,
-			syntax.PERCENT_EQ:
+			syntax.PERCENT_EQ,
+			syntax.AMP_EQ,
+			syntax.PIPE_EQ,
+			syntax.CIRCUMFLEX_EQ,
+			syntax.LTLT_EQ,
+			syntax.GTGT_EQ:
 			// augmented assignment: x += y
 
 			var set func()
@@ -1243,6 +1259,8 @@ func (fcomp *fcomp) expr(e syntax.Expr) {
 			fcomp.emit(UPLUS)
 		case syntax.NOT:
 			fcomp.emit(NOT)
+		case syntax.TILDE:
+			fcomp.emit(TILDE)
 		default:
 			log.Fatalf("%s: unexpected unary op: %s", e.OpPos, e.Op)
 		}
@@ -1467,6 +1485,12 @@ func (fcomp *fcomp) binop(pos syntax.Position, op syntax.Token) {
 		fcomp.emit(AMP)
 	case syntax.PIPE:
 		fcomp.emit(PIPE)
+	case syntax.CIRCUMFLEX:
+		fcomp.emit(CIRCUMFLEX)
+	case syntax.LTLT:
+		fcomp.emit(LTLT)
+	case syntax.GTGT:
+		fcomp.emit(GTGT)
 	case syntax.IN:
 		fcomp.emit(IN)
 	case syntax.NOT_IN:

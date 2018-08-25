@@ -13,7 +13,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 const magic = "!sky"

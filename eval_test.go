@@ -12,12 +12,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wdamron/skylark"
-	"github.com/wdamron/skylark/internal/chunkedfile"
-	"github.com/wdamron/skylark/resolve"
-	"github.com/wdamron/skylark/skylarkstruct"
-	"github.com/wdamron/skylark/skylarktest"
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark"
+	"github.com/google/skylark/internal/chunkedfile"
+	"github.com/google/skylark/resolve"
+	"github.com/google/skylark/skylarkstruct"
+	"github.com/google/skylark/skylarktest"
+	"github.com/google/skylark/syntax"
 )
 
 func init() {
@@ -26,6 +26,7 @@ func init() {
 	resolve.AllowNestedDef = true
 	resolve.AllowFloat = true
 	resolve.AllowSet = true
+	resolve.AllowBitwise = true
 }
 
 func TestEvalExpr(t *testing.T) {

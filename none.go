@@ -8,7 +8,7 @@
 package skylark
 
 import (
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 // NoneType is the type of None.  Its only legal value is None.

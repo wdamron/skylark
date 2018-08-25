@@ -12,7 +12,7 @@ import (
 	"math/big"
 	"strconv"
 
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 // Float is the type of a Skylark float.

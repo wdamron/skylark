@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wdamron/skylark/internal/chunkedfile"
-	"github.com/wdamron/skylark/resolve"
-	"github.com/wdamron/skylark/skylarktest"
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/internal/chunkedfile"
+	"github.com/google/skylark/resolve"
+	"github.com/google/skylark/skylarktest"
+	"github.com/google/skylark/syntax"
 )
 
 func TestResolve(t *testing.T) {

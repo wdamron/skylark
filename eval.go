@@ -14,9 +14,9 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/wdamron/skylark/internal/compile"
-	"github.com/wdamron/skylark/resolve"
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/internal/compile"
+	"github.com/google/skylark/resolve"
+	"github.com/google/skylark/syntax"
 )
 
 const debug = false
@@ -296,7 +296,7 @@ func setIndex(fr *Frame, x, y, z Value) error {
 	return nil
 }
 
-// Unary applies a unary operator (+, -, not) to its operand.
+// Unary applies a unary operator (+, -, ~, not) to its operand.
 func Unary(op syntax.Token, x Value) (Value, error) {
 	switch op {
 	case syntax.MINUS:
@@ -310,6 +310,10 @@ func Unary(op syntax.Token, x Value) (Value, error) {
 		switch x.(type) {
 		case Int, Float:
 			return x, nil
+		}
+	case syntax.TILDE:
+		if xint, ok := x.(Int); ok {
+			return xint.Not(), nil
 		}
 	case syntax.NOT:
 		return !x.Truth(), nil
@@ -625,6 +629,48 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 			}
 		}
 
+	case syntax.CIRCUMFLEX:
+		switch x := x.(type) {
+		case Int:
+			if y, ok := y.(Int); ok {
+				return x.Xor(y), nil
+			}
+		case *Set: // symmetric difference
+			if y, ok := y.(*Set); ok {
+				set := new(Set)
+				for _, xelem := range x.elems() {
+					if found, _ := y.Has(xelem); !found {
+						set.Insert(xelem)
+					}
+				}
+				for _, yelem := range y.elems() {
+					if found, _ := x.Has(yelem); !found {
+						set.Insert(yelem)
+					}
+				}
+				return set, nil
+			}
+		}
+
+	case syntax.LTLT, syntax.GTGT:
+		if x, ok := x.(Int); ok {
+			y, err := AsInt32(y)
+			if err != nil {
+				return nil, err
+			}
+			if y < 0 {
+				return nil, fmt.Errorf("negative shift count: %v", y)
+			}
+			if op == syntax.LTLT {
+				if y >= 512 {
+					return nil, fmt.Errorf("shift count too large: %v", y)
+				}
+				return x.Lsh(uint(y)), nil
+			} else {
+				return x.Rsh(uint(y)), nil
+			}
+		}
+
 	default:
 		// unknown operator
 		goto unknown
@@ -932,7 +978,7 @@ func (is *intset) len() int {
 	return len(is.large)
 }
 
-// https://github.com/wdamron/skylark/blob/master/doc/spec.md#string-interpolation
+// https://github.com/google/skylark/blob/master/doc/spec.md#string-interpolation
 func interpolate(format string, x Value) (Value, error) {
 	var buf bytes.Buffer
 	path := make([]Value, 0, 4)

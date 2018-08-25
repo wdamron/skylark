@@ -8,7 +8,7 @@
 package skylark
 
 import (
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 // SuspensionType is the type of Suspension.  Its only legal value is Suspension.

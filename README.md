@@ -1,5 +1,5 @@
 
-<!-- This file is the project homepage at github.com/wdamron/skylark -->
+<!-- This file is the project homepage at github.com/google/skylark -->
 
 # Skylark in Go
 
@@ -35,11 +35,11 @@ languages and compilers.
 
 * About the Go implementation: [doc/impl.md](doc/impl.md)
 
-* API documentation: [godoc.org/github.com/wdamron/skylark](https://godoc.org/github.com/wdamron/skylark)
+* API documentation: [godoc.org/github.com/google/skylark](https://godoc.org/github.com/google/skylark)
 
 * Mailing list: [skylark-go](https://groups.google.com/forum/#!forum/skylark-go)
 
-* Issue tracker: [https://github.com/wdamron/skylark/issues](https://github.com/wdamron/skylark/issues)
+* Issue tracker: [https://github.com/google/skylark/issues](https://github.com/google/skylark/issues)
 
 * Travis CI: ![Travis CI](https://travis-ci.org/google/skylark.svg) [https://travis-ci.org/google/skylark](https://travis-ci.org/google/skylark)
 
@@ -48,8 +48,8 @@ languages and compilers.
 Build the code:
 
 ```shell
-$ go get github.com/wdamron/skylark/...
-$ go build github.com/wdamron/skylark/cmd/skylark
+$ go get github.com/google/skylark/...
+$ go build github.com/google/skylark/cmd/skylark
 ```
 
 Run the interpreter:
@@ -150,7 +150,7 @@ Skylark in Go is Copyright (c) 2017 The Bazel Authors.
 All rights reserved.
 
 It is provided under a 3-clause BSD license:
-[LICENSE](https://github.com/wdamron/skylark/blob/master/LICENSE).
+[LICENSE](https://github.com/google/skylark/blob/master/LICENSE).
 
 The name "Skylark" is a code name of the Bazel project.
 We plan to rename the language before the end of 2017 to reflect its

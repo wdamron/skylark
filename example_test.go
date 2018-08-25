@@ -13,7 +13,7 @@ import (
 	"sync/atomic"
 	"unsafe"
 
-	"github.com/wdamron/skylark"
+	"github.com/google/skylark"
 )
 
 // ExampleExecFile demonstrates a simple embedding

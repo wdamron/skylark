@@ -10,9 +10,9 @@ import (
 	"log"
 	"math/big"
 
-	"github.com/wdamron/skylark/internal/compile"
-	"github.com/wdamron/skylark/resolve"
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/internal/compile"
+	"github.com/google/skylark/resolve"
+	"github.com/google/skylark/syntax"
 )
 
 // A Program is a compiled Skylark program.

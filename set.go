@@ -10,7 +10,7 @@ package skylark
 import (
 	"fmt"
 
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 // A Set represents a Skylark set value.

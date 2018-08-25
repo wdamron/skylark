@@ -14,8 +14,8 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/wdamron/skylark/internal/compile"
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/internal/compile"
+	"github.com/google/skylark/syntax"
 )
 
 // See https://ep2013.europython.eu/media/conference/slides/advanced-pickling-with-stackless-python-and-spickle.pdf

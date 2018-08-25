@@ -10,7 +10,7 @@ package skylark
 import (
 	"fmt"
 
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 // A *List represents a Skylark list value.

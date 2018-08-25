@@ -11,9 +11,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wdamron/skylark/internal/chunkedfile"
-	"github.com/wdamron/skylark/skylarktest"
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/internal/chunkedfile"
+	"github.com/google/skylark/skylarktest"
+	"github.com/google/skylark/syntax"
 )
 
 func TestExprParseTrees(t *testing.T) {
@@ -105,7 +105,7 @@ func TestExprParseTrees(t *testing.T) {
 		{`a and not b`,
 			`(BinaryExpr X=a Op=and Y=(UnaryExpr Op=not X=b))`},
 		{`[e for x in y if cond1 if cond2]`,
-			`(Comprehension Body=e Clauses=((ForClause Vars=x X=y) (IfClause Cond=cond1) (IfClause Cond=cond2)))`}, // github.com/wdamron/skylark issue 53
+			`(Comprehension Body=e Clauses=((ForClause Vars=x X=y) (IfClause Cond=cond1) (IfClause Cond=cond2)))`}, // github.com/google/skylark issue 53
 	} {
 		e, err := syntax.ParseExpr("foo.sky", test.input, 0)
 		if err != nil {

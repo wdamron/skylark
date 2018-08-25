@@ -10,8 +10,8 @@ package skylark
 import (
 	"fmt"
 
-	"github.com/wdamron/skylark/internal/compile"
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/internal/compile"
+	"github.com/google/skylark/syntax"
 )
 
 // A Function is a function defined by a Skylark def statement or lambda expression.

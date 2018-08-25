@@ -7,7 +7,7 @@ package skylarkstruct
 import (
 	"fmt"
 
-	"github.com/wdamron/skylark"
+	"github.com/google/skylark"
 )
 
 func init() {

@@ -30,8 +30,11 @@ package resolve
 //
 // Python-style resolution requires multiple passes because a name is
 // determined to be local to a function only if the function contains a
-// "binding" use of it, and this use may lexically follow a non-binding
-// use.  In the first pass, we inspect each function, recording in
+// "binding" use of it; similarly, a name is determined be global (as
+// opposed to predeclared) if the module contains a binding use at the
+// top level. For both locals and globals, a non-binding use may
+// lexically precede the binding to which it is resolved.
+// In the first pass, we inspect each function, recording in
 // 'uses' each identifier and the environment block in which it occurs.
 // If a use of a name is binding, such as a function parameter or
 // assignment, we add the name to the block's bindings mapping and add a
@@ -66,7 +69,8 @@ package resolve
 //
 // Skylark enforces that all global names are assigned at most once on
 // all control flow paths by forbidding if/else statements and loops at
-// top level.
+// top level. A global may be used before it is defined, leading to a
+// dynamic error.
 //
 // TODO(adonovan): opt: reuse local slots once locals go out of scope.
 
@@ -75,7 +79,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 const debug = false
@@ -90,6 +94,7 @@ var (
 	AllowFloat          = false // allow floating point literals, the 'float' built-in, and x / y
 	AllowSet            = false // allow the 'set' built-in
 	AllowGlobalReassign = false // allow reassignment to globals declared in same file (deprecated)
+	AllowBitwise        = false // allow bitwise operations (&, |, ^, ~, <<, and >>)
 )
 
 // File resolves the specified file.
@@ -270,7 +275,7 @@ func (b *block) String() string {
 		return "function block at " + fmt.Sprint(b.function.Span())
 	}
 	if b.comp != nil {
-		return "comprehension block at " + fmt.Sprint(b.function.Span())
+		return "comprehension block at " + fmt.Sprint(b.comp.Span())
 	}
 	return "module block"
 }
@@ -331,12 +336,6 @@ func (r *resolver) bind(id *syntax.Ident, allowRebind bool) bool {
 }
 
 func (r *resolver) use(id *syntax.Ident) {
-	// Reference outside any local (comprehension/function) block?
-	if r.env.isModule() {
-		r.useGlobal(id)
-		return
-	}
-
 	b := r.container()
 	b.uses = append(b.uses, use{id, r.env})
 }
@@ -404,6 +403,12 @@ func (r *resolver) stmt(stmt syntax.Stmt) {
 		r.stmts(stmt.False)
 
 	case *syntax.AssignStmt:
+		if !AllowBitwise {
+			switch stmt.Op {
+			case syntax.AMP_EQ, syntax.PIPE_EQ, syntax.CIRCUMFLEX_EQ, syntax.LTLT_EQ, syntax.GTGT_EQ:
+				r.errorf(stmt.OpPos, doesnt+"support bitwise operations")
+			}
+		}
 		r.expr(stmt.RHS)
 		// x += y may be a re-binding of a global variable,
 		// but we cannot tell without knowing the type of x.
@@ -591,11 +596,20 @@ func (r *resolver) expr(e syntax.Expr) {
 		}
 
 	case *syntax.UnaryExpr:
+		if !AllowBitwise && e.Op == syntax.TILDE {
+			r.errorf(e.OpPos, doesnt+"support bitwise operations")
+		}
 		r.expr(e.X)
 
 	case *syntax.BinaryExpr:
 		if !AllowFloat && e.Op == syntax.SLASH {
 			r.errorf(e.OpPos, doesnt+"support floating point (use //)")
+		}
+		if !AllowBitwise {
+			switch e.Op {
+			case syntax.AMP, syntax.PIPE, syntax.CIRCUMFLEX, syntax.LTLT, syntax.GTGT:
+				r.errorf(e.OpPos, doesnt+"support bitwise operations")
+			}
 		}
 		r.expr(e.X)
 		r.expr(e.Y)

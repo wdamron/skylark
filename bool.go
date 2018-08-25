@@ -8,7 +8,7 @@
 package skylark
 
 import (
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 // Bool is the type of a Skylark bool.

@@ -7,7 +7,7 @@ package skylark
 import (
 	"fmt"
 
-	"github.com/wdamron/skylark/syntax"
+	"github.com/google/skylark/syntax"
 )
 
 // A *Dict represents a Skylark dictionary.

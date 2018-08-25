@@ -12,7 +12,7 @@ import (
 	"io/ioutil"
 	"math/big"
 
-	"github.com/wdamron/skylark/internal/compile"
+	"github.com/google/skylark/internal/compile"
 )
 
 func EncodeState(thread *Thread) ([]byte, error) {

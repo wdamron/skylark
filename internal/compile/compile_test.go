@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wdamron/skylark"
+	"github.com/google/skylark"
 )
 
 // TestSerialization verifies that a serialized program can be loaded,
