@@ -21,36 +21,36 @@ import (
 // See https://ep2013.europython.eu/media/conference/slides/advanced-pickling-with-stackless-python-and-spickle.pdf
 
 const (
-	T_Encoded_End = iota + 1
-	T_Toplevel
-	T_Toplevel_End
-	T_FnShared
-	T_FnShared_End
-	T_Frame
-	T_Frame_End
-	T_None
-	T_True
-	T_False
-	T_Int
-	T_Float
-	T_String
-	T_StringIterable
-	T_StringIterator
-	T_Function
-	T_Builtin
-	T_List
-	T_ListIterator
-	T_Dict
-	T_KeyIterator
-	T_Set
-	T_Tuple
-	T_TupleIterator
-	T_Range
-	T_RangeIterator
-	T_Ref
-	T_Funcode
-	T_Custom
-	T_CustomIterator
+	T_Encoded_End    = 1
+	T_Toplevel       = 2
+	T_Toplevel_End   = 3
+	T_FnShared       = 4
+	T_FnShared_End   = 5
+	T_Frame          = 6
+	T_Frame_End      = 7
+	T_None           = 8
+	T_True           = 9
+	T_False          = 10
+	T_Int            = 11
+	T_Float          = 12
+	T_String         = 13
+	T_StringIterable = 14
+	T_StringIterator = 15
+	T_Function       = 16
+	T_Builtin        = 17
+	T_List           = 18
+	T_ListIterator   = 19
+	T_Dict           = 20
+	T_KeyIterator    = 21
+	T_Set            = 22
+	T_Tuple          = 23
+	T_TupleIterator  = 24
+	T_Range          = 25
+	T_RangeIterator  = 26
+	T_Ref            = 27
+	T_Funcode        = 28
+	T_Custom         = 29
+	T_CustomIterator = 30
 )
 
 var (
@@ -420,13 +420,11 @@ func (enc *Encoder) EncodeValue(v Value) {
 		enc.EncodeBuiltin(t)
 	case rangeValue:
 		enc.EncodeRange(t)
+	case Codable:
+		enc.WriteTag(T_Custom)
+		enc.EncodeString(String(t.Type()))
+		t.Encode(enc)
 	default:
-		if c, ok := v.(Codable); ok {
-			enc.WriteTag(T_Custom)
-			enc.EncodeString(String(c.Type()))
-			c.Encode(enc)
-			return
-		}
 		enc.WriteTag(T_None)
 	}
 }
@@ -467,6 +465,7 @@ func (dec *Decoder) DecodeValue() (Value, error) {
 	case T_Ref:
 		return dec.GetRef(dec.Data[1])
 	case T_Custom:
+		dec.Data = dec.Data[1:]
 		typeName, err := dec.DecodeString()
 		if err != nil {
 			return nil, fmt.Errorf("Codec: missing type name for custom type decoder: %v", err)
@@ -1035,64 +1034,42 @@ func (dec *Decoder) DecodeStringIterable() (stringIterable, error) {
 	return it, nil
 }
 
-func (enc *Encoder) EncodeStringIterator(it *stringIterator) {
-	enc.WriteTag(T_StringIterator)
-	enc.EncodeStringIterable(it.si)
-	enc.WriteVarint(int64(it.i))
-}
-
-func (enc *Encoder) EncodeListIterator(it *listIterator) {
-	enc.WriteTag(T_ListIterator)
-	enc.EncodeList(it.l)
-	enc.WriteVarint(int64(it.i))
-}
-
-func (enc *Encoder) EncodeKeyIterator(it *keyIterator) {
-	enc.WriteTag(T_KeyIterator)
-	switch t := it.owner.(type) {
-	case *Dict:
-		enc.EncodeDict(t)
-	case *Set:
-		enc.EncodeSet(t)
-	}
-	enc.WriteUvarint(uint64(it.offset))
-}
-
-func (enc *Encoder) EncodeTupleIterator(it *tupleIterator) {
-	enc.WriteTag(T_TupleIterator)
-	enc.EncodeTuple(it.elems)
-}
-
-func (enc *Encoder) EncodeRangeIterator(it *rangeIterator) {
-	enc.WriteTag(T_RangeIterator)
-	enc.EncodeRange(it.r)
-	enc.WriteVarint(int64(it.i))
-}
-
 func (enc *Encoder) EncodeIterator(it Iterator) {
 	if it == nil {
 		enc.WriteTag(T_None)
 	}
 	switch t := it.(type) {
 	case *stringIterator:
-		enc.EncodeStringIterator(t)
+		enc.WriteTag(T_StringIterator)
+		enc.EncodeStringIterable(t.si)
+		enc.WriteVarint(int64(t.i))
 	case *listIterator:
-		enc.EncodeListIterator(t)
+		enc.WriteTag(T_ListIterator)
+		enc.EncodeList(t.l)
+		enc.WriteVarint(int64(t.i))
 	case *keyIterator:
-		enc.EncodeKeyIterator(t)
+		enc.WriteTag(T_KeyIterator)
+		switch ot := t.owner.(type) {
+		case *Dict:
+			enc.EncodeDict(ot)
+		case *Set:
+			enc.EncodeSet(ot)
+		}
+		enc.WriteUvarint(uint64(t.offset))
 	case *tupleIterator:
-		enc.EncodeTupleIterator(t)
+		enc.WriteTag(T_TupleIterator)
+		enc.EncodeTuple(t.elems)
 	case *rangeIterator:
-		enc.EncodeRangeIterator(t)
+		enc.WriteTag(T_RangeIterator)
+		enc.EncodeRange(t.r)
+		enc.WriteVarint(int64(t.i))
+	case Codable:
+		enc.WriteTag(T_CustomIterator)
+		enc.EncodeString(String(t.Type()))
+		t.Encode(enc)
 	case nil:
 		enc.WriteTag(T_None)
 	default:
-		if c, ok := it.(Codable); ok {
-			enc.WriteTag(T_CustomIterator)
-			enc.EncodeString(String(c.Type()))
-			c.Encode(enc)
-			return
-		}
 		enc.WriteTag(T_None)
 	}
 }

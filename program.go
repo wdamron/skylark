@@ -225,6 +225,11 @@ func (thread *Thread) BottomFrame() *Frame {
 	return bottom
 }
 
+func (thread *Thread) ToplevelFn() *Function {
+	fn, _ := thread.BottomFrame().Callable().(*Function)
+	return fn
+}
+
 // A Frame records a call to a Skylark function (including module toplevel)
 // or a built-in function or method.
 type Frame struct {

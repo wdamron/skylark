@@ -63,6 +63,12 @@ func (fn *Function) isRecursive(frame *Frame) bool {
 	return false
 }
 
+// Predeclared returns the StringDict containing all predeclared
+// variables injected into the function's module.
+func (fn *Function) Predeclared() StringDict {
+	return fn.predeclared
+}
+
 // Globals returns a new, unfrozen StringDict containing all global
 // variables so far defined in the function's module.
 func (fn *Function) Globals() StringDict {

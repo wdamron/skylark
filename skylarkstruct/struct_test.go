@@ -40,6 +40,30 @@ func Test(t *testing.T) {
 	}
 }
 
+func TestStructCodec(t *testing.T) {
+	enc := skylark.NewEncoder()
+	enc.EncodeValue(skylarkstruct.FromStringDict(skylarkstruct.Default, skylark.StringDict{
+		"a": skylark.String("a"),
+		"b": skylark.String("b"),
+		"c": skylark.String("c"),
+	}))
+
+	dec := skylark.NewDecoder(enc.Bytes())
+	v, err := dec.DecodeValue()
+	if err != nil {
+		t.Error(err)
+	}
+	s, ok := v.(*skylarkstruct.Struct)
+	if !ok {
+		t.Errorf("Expected *Struct type for decoded value; found %#+v", v)
+	}
+	d := skylark.StringDict{}
+	s.ToStringDict(d)
+	if d["a"] != skylark.String("a") || d["b"] != skylark.String("b") || d["c"] != skylark.String("c") {
+		t.Errorf("Missing fields in decoded struct: found a=%v b=%v c=%v", d["a"], d["b"], d["c"])
+	}
+}
+
 // load implements the 'load' operation as used in the evaluator tests.
 func load(thread *skylark.Thread, module string) (skylark.StringDict, error) {
 	if module == "assert.sky" {

@@ -40,6 +40,7 @@ func (enc *Encoder) EncodeState(thread *Thread) ([]byte, error) {
 	if err = wr.Close(); err != nil {
 		return nil, err
 	}
+	enc.buf.Reset()
 	return buf.Bytes(), nil
 }
 

@@ -15,6 +15,7 @@ import (
 	"github.com/wdamron/skylark"
 	"github.com/wdamron/skylark/internal/chunkedfile"
 	"github.com/wdamron/skylark/resolve"
+	"github.com/wdamron/skylark/skylarkstruct"
 	"github.com/wdamron/skylark/skylarktest"
 	"github.com/wdamron/skylark/syntax"
 )
@@ -161,18 +162,25 @@ c = 3
 sum_abc = a + b + c
 
 l = [a, b, c]
-d = {"a": a}
+struct_abc = struct_val.a + struct_val.b + struct_val.c # predeclared
+d = {"abc": struct_abc}
 
 response = long_running()
 `
 	thread := &skylark.Thread{Load: load}
 	skylarktest.SetReporter(thread, t)
 	filename := "suspend.sky"
-	predeclared := skylark.StringDict{}
+	predeclared := skylark.StringDict{
+		"struct_val": skylarkstruct.FromStringDict(skylarkstruct.Default, skylark.StringDict{
+			"a": skylark.String("a"),
+			"b": skylark.String("b"),
+			"c": skylark.String("c"),
+		}),
+	}
 	result, err := skylark.ExecFile(thread, filename, script, predeclared)
 	switch err := err.(type) {
 	case *skylark.EvalError:
-		t.Error(err.Backtrace())
+		t.Fatal(err.Backtrace())
 	case nil:
 		// success
 		response := result["response"]
@@ -186,56 +194,71 @@ response = long_running()
 
 	suspended := thread.SuspendedFrame()
 	if suspended == nil || suspended.Callable() != skylark.Universe["long_running_builtin"] {
-		t.Errorf("Expected long_running_builtin() in top frame of suspended frame for thread, found %s", suspended.Callable().Name())
+		t.Fatalf("Expected long_running_builtin() in top frame of suspended frame for thread, found %s", suspended.Callable().Name())
 	}
 
 	snapshot, err := skylark.EncodeState(thread)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	t.Logf("Encoded/compressed snapshot size: %dB", len(snapshot))
 
 	thread, err = skylark.DecodeState(snapshot)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 		return
 	}
 
 	if thread.TopFrame().Callable() != skylark.Universe["long_running_builtin"] {
-		t.Errorf("Expected long_running_builtin() in top frame of decoded state, found %v", thread.TopFrame().Callable().Name())
+		t.Fatalf("Expected long_running_builtin() in top frame of decoded state, found %v", thread.TopFrame().Callable().Name())
 	}
 
 	if thread.Caller().Callable().Name() != "long_running" {
-		t.Errorf("Expected long_running() in caller frame of decoded state, found %v", thread.Caller().Callable().Name())
+		t.Fatalf("Expected long_running() in caller frame of decoded state, found %v", thread.Caller().Callable().Name())
+	}
+
+	thread.Resumable()
+	predeclared = thread.ToplevelFn().Predeclared()
+	sval, ok := predeclared["struct_val"].(*skylarkstruct.Struct)
+	if sval == nil || !ok {
+		t.Fatalf("Missing predeclared struct value in decoded state, found %#+v", predeclared["struct_val"])
+	}
+	sdict := skylark.StringDict{}
+	sval.ToStringDict(sdict)
+	if sdict["a"] != skylark.String("a") || sdict["a"] != skylark.String("a") || sdict["a"] != skylark.String("a") {
+		t.Fatalf("Missing entries in decoded struct value, found a=%v b=%v c=%v", sdict["a"], sdict["b"], sdict["c"])
 	}
 
 	result, err = skylark.Resume(thread, skylark.String("abc123"))
 	if err != nil {
-		t.Errorf("Error after resuming suspended thread: %v", err)
+		t.Fatalf("Error after resuming suspended thread: %v", err)
 	}
 	if result["response"] == nil || result["response"].(skylark.String) != skylark.String("abc123") {
-		t.Error("Expected injected return value to be returned from suspending function after resuming")
+		t.Fatal("Expected injected return value to be returned from suspending function after resuming")
 	}
 	sum, ok := result["sum_abc"].(skylark.Int)
 	if i, ok2 := sum.Int64(); !ok || !ok2 || i != 6 {
-		t.Error("Expected previously assigned global variables to be preserved after suspension/resumption")
+		t.Fatal("Expected previously assigned global variables to be preserved after suspension/resumption")
+	}
+	struct_abc, _ := result["struct_abc"].(skylark.String)
+	if struct_abc != skylark.String("abc") {
+		t.Fatal("Expected previously assigned global variables to be preserved after suspension/resumption")
 	}
 
 	// Test resuming directly without serialization/deserialization:
 
 	thread = &skylark.Thread{Load: load}
 	skylarktest.SetReporter(thread, t)
-	predeclared = skylark.StringDict{}
 	result, err = skylark.ExecFile(thread, filename, script, predeclared)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	result, err = skylark.Resume(thread, skylark.String("abc123"))
 	if err != nil {
-		t.Errorf("Error after resuming suspended thread: %v", err)
+		t.Fatalf("Error after resuming suspended thread: %v", err)
 	}
 	if result["response"] == nil || result["response"].(skylark.String) != skylark.String("abc123") {
-		t.Error("Expected injected return value to be returned from suspending function after resuming")
+		t.Fatalf("Expected injected return value to be returned from suspending function after resuming")
 	}
 }
 
