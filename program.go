@@ -154,14 +154,24 @@ func (thread *Thread) Suspendable() {
 // Resumable restores the suspended state of a thread as the current stack frame and
 // dissociates the suspended state.
 func (thread *Thread) Resumable() {
+	if thread.suspended == nil {
+		return
+	}
 	thread.frame = thread.suspended
 	thread.suspended = nil
 }
 
 // Suspended returns the suspended state of a thread. A nil value will be returned
 // if the thread is not currently suspended.
-func (thread *Thread) Suspended() *Frame {
+func (thread *Thread) SuspendedFrame() *Frame {
 	return thread.suspended
+}
+
+// Globals returns a frozen map of global variables for a thread's program.
+func (thread *Thread) Globals() StringDict {
+	bottom := thread.BottomFrame()
+	toplevelFn := bottom.Callable().(*Function)
+	return toplevelFn.Globals()
 }
 
 // SetFrame sets the top frame of a thread.
@@ -225,7 +235,7 @@ type Frame struct {
 	posn      syntax.Position // source position of PC, set during error
 	callpc    uint32          // PC of position of active call, set during call
 	pc        uint32          // PC of return position after active call, set during call
-	sp        uint32          // Stack-pointer offset of active call, set during call
+	sp        uint32          // stack-pointer offset of active call, set during call
 }
 
 // The Frames of a thread are structured as a spaghetti stack, not a

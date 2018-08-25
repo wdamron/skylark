@@ -304,7 +304,7 @@ loop:
 				fmt.Printf("Resuming %s @ %s\n", fc.Name, fc.Position(0))
 			}
 			stack[sp-1] = z
-			if _, ok := z.(SuspensionType); ok {
+			if thread.SuspendedFrame() != nil {
 				result = z
 				break loop
 			}
@@ -313,7 +313,7 @@ loop:
 			retval := stack[sp-1]
 			parent := fr.parent
 			returnToCaller := false
-			if parent == nil {
+			if parent == nil || thread.SuspendedFrame() != nil {
 				returnToCaller = true
 			} else if _, ok := parent.callable.(*Function); !ok {
 				returnToCaller = true
@@ -333,10 +333,11 @@ loop:
 			fc = fn.funcode
 			nlocals = len(fc.Locals)
 			if len(fr.stack) < nlocals+fc.MaxStack {
-				fr.stack = make([]Value, nlocals+fc.MaxStack)
+				stack = make([]Value, nlocals+fc.MaxStack)
+				copy(stack, fr.stack)
+				fr.stack = stack
 			}
-			code, stack, locals, iterstack = fc.Code, fr.stack[nlocals:], fr.stack[:nlocals:nlocals], fr.iterstack
-			savedpc, pc, sp = fr.callpc, fr.pc, int(fr.sp)
+			code, pc, sp, stack, locals, iterstack = fc.Code, fr.pc, int(fr.sp), fr.stack[nlocals:], fr.stack[:nlocals:nlocals], fr.iterstack
 			stack[sp-1] = retval
 			if vmdebug {
 				fmt.Printf("Resuming %s @ %s\n", fc.Name, fc.Position(0))

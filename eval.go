@@ -6,6 +6,7 @@ package skylark
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math"
 	"sort"
@@ -150,15 +151,39 @@ func Eval(thread *Thread, filename string, src interface{}, env StringDict) (Val
 	return fn.Call(thread, nil, nil)
 }
 
-// Resume resumes a suspended thread.
+// Resume resumes a suspended thread, passing the given value (or None if value is nil)
+// as the return value of the function which originally suspended the thread.
 //
-// The top frame will be popped before resumption if the thread
-// was suspended by a non-compiled (builtin) function.
-func Resume(thread *Thread) (Value, error) {
-	if _, isFunction := thread.TopFrame().Callable().(*Function); !isFunction {
-		thread.PopFrame()
+// A map of the thread's current global variables will be returned.
+//
+// The top frame will be popped before resumption, assuming the thread
+// was suspended by a non-resumable (builtin) function.
+func Resume(thread *Thread, retval Value) (StringDict, error) {
+	if thread.SuspendedFrame() != nil {
+		thread.Resumable()
 	}
-	return interpret(thread, nil, nil, true)
+	thread.PopFrame()
+	frame := thread.TopFrame()
+	if frame == nil {
+		return nil, errors.New("resumed thread contains no resumable functions in call-stack")
+	}
+	// Check for non-resumable (built-in) functions in the call-stack:
+	frame = frame.parent
+	for frame != nil {
+		if _, isFunction := frame.Callable().(*Function); !isFunction {
+			return nil, fmt.Errorf("resumed thread contains non-resumable function in call-stack: %s", frame.Callable().Name())
+		}
+		frame = frame.parent
+	}
+	if retval == nil {
+		retval = None
+	}
+	top := thread.TopFrame()
+	top.stack[top.sp-1] = retval
+	if _, err := interpret(thread, nil, nil, true); err != nil {
+		return nil, err
+	}
+	return thread.Globals(), nil
 }
 
 // Call calls the function fn with the specified positional and keyword arguments.

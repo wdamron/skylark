@@ -142,82 +142,100 @@ func TestExecFile(t *testing.T) {
 }
 
 func init() {
-	skylark.Universe["test_suspend"] = skylark.NewBuiltin("test_suspend",
+	skylark.Universe["long_running_builtin"] = skylark.NewBuiltin("long_running_builtin",
 		func(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 			thread.Suspendable()
-			return skylark.Suspended, nil
+			return skylark.None, nil
 		})
 }
 
-func TestSuspend(t *testing.T) {
-	afterIdent := "after"
-	afterVal := skylark.True
+func TestSuspendResume(t *testing.T) {
+	script := `
 
-	testdata := skylarktest.DataFile("skylark", ".")
+def long_running():
+	return long_running_builtin()
+
+a = 1
+b = 2
+c = 3
+sum_abc = a + b + c
+
+l = [a, b, c]
+d = {"a": a}
+
+response = long_running()
+`
 	thread := &skylark.Thread{Load: load}
 	skylarktest.SetReporter(thread, t)
-	file := "testdata/suspend.sky"
-	filename := filepath.Join(testdata, file)
-	for _, chunk := range chunkedfile.Read(filename, t) {
-		predeclared := skylark.StringDict{}
-		result, err := skylark.ExecFile(thread, filename, chunk.Source, predeclared)
-		switch err := err.(type) {
-		case *skylark.EvalError:
-			found := false
-			for _, fr := range err.Stack() {
-				posn := fr.Position()
-				if posn.Filename() == filename {
-					chunk.GotError(int(posn.Line), err.Error())
-					found = true
-					break
-				}
-			}
-			if !found {
-				t.Error(err.Backtrace())
-			}
-		case nil:
-			// success
-			after := result[afterIdent]
-			if after != nil {
-				t.Fatalf("Expected values defined after suspension to not be defined in result, found %v", after)
-			}
-		default:
-			t.Error(err)
-			return
+	filename := "suspend.sky"
+	predeclared := skylark.StringDict{}
+	result, err := skylark.ExecFile(thread, filename, script, predeclared)
+	switch err := err.(type) {
+	case *skylark.EvalError:
+		t.Error(err.Backtrace())
+	case nil:
+		// success
+		response := result["response"]
+		if response != nil {
+			t.Fatalf("Expected values defined after suspension to not be defined in result, found %v", response)
 		}
+	default:
+		t.Error(err)
+		return
+	}
 
-		suspended := thread.Suspended()
-		if suspended == nil || suspended.Callable() != skylark.Universe["test_suspend"] {
-			t.Errorf("Expected test_suspend() in top frame of suspended frame for thread, found %s", suspended.Callable().Name())
-		}
+	suspended := thread.SuspendedFrame()
+	if suspended == nil || suspended.Callable() != skylark.Universe["long_running_builtin"] {
+		t.Errorf("Expected long_running_builtin() in top frame of suspended frame for thread, found %s", suspended.Callable().Name())
+	}
 
-		thread.Resumable()
-		thread, err = skylark.NewDecoder(skylark.NewEncoder().EncodeState(thread)).DecodeState()
-		if err != nil {
-			t.Error(err)
-			return
-		}
+	snapshot, err := skylark.EncodeState(thread)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Logf("Encoded/compressed snapshot size: %dB", len(snapshot))
 
-		if thread.TopFrame().Callable() != skylark.Universe["test_suspend"] {
-			t.Errorf("Expected test_suspend() in top frame of decoded state, found %v", thread.TopFrame().Callable().Name())
-		}
+	thread, err = skylark.DecodeState(snapshot)
+	if err != nil {
+		t.Error(err)
+		return
+	}
 
-		if thread.Caller().Callable().Name() != "suspend" {
-			t.Errorf("Expected suspend() in caller frame of decoded state, found %v", thread.Caller().Callable().Name())
-		}
+	if thread.TopFrame().Callable() != skylark.Universe["long_running_builtin"] {
+		t.Errorf("Expected long_running_builtin() in top frame of decoded state, found %v", thread.TopFrame().Callable().Name())
+	}
 
-		bottom := thread.BottomFrame()
-		toplevelFn := bottom.Callable().(*skylark.Function)
-		_, err = skylark.Resume(thread)
-		if err != nil {
-			t.Errorf("Error after resuming suspended thread: %v", err)
-		}
-		globals := toplevelFn.Globals()
-		if globals[afterIdent] != afterVal {
-			t.Error("Expected globals after suspension point to be defined after resumption")
-		}
+	if thread.Caller().Callable().Name() != "long_running" {
+		t.Errorf("Expected long_running() in caller frame of decoded state, found %v", thread.Caller().Callable().Name())
+	}
 
-		chunk.Done()
+	result, err = skylark.Resume(thread, skylark.String("abc123"))
+	if err != nil {
+		t.Errorf("Error after resuming suspended thread: %v", err)
+	}
+	if result["response"] == nil || result["response"].(skylark.String) != skylark.String("abc123") {
+		t.Error("Expected injected return value to be returned from suspending function after resuming")
+	}
+	sum, ok := result["sum_abc"].(skylark.Int)
+	if i, ok2 := sum.Int64(); !ok || !ok2 || i != 6 {
+		t.Error("Expected previously assigned global variables to be preserved after suspension/resumption")
+	}
+
+	// Test resuming directly without serialization/deserialization:
+
+	thread = &skylark.Thread{Load: load}
+	skylarktest.SetReporter(thread, t)
+	predeclared = skylark.StringDict{}
+	result, err = skylark.ExecFile(thread, filename, script, predeclared)
+	if err != nil {
+		t.Error(err)
+	}
+	result, err = skylark.Resume(thread, skylark.String("abc123"))
+	if err != nil {
+		t.Errorf("Error after resuming suspended thread: %v", err)
+	}
+	if result["response"] == nil || result["response"].(skylark.String) != skylark.String("abc123") {
+		t.Error("Expected injected return value to be returned from suspending function after resuming")
 	}
 }
 
