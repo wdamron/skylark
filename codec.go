@@ -53,6 +53,8 @@ const (
 	T_CustomIterator = 30
 )
 
+const DefaultEncoderBufferSize = 1 << 12
+
 var (
 	ErrShortBuffer = errors.New("Codec: reached end of buffer while decoding")
 	ErrBadTag      = errors.New("Codec: invalid tag while decoding")
@@ -128,6 +130,24 @@ func (enc *Encoder) Bytes() []byte {
 	return enc.buf.Bytes()
 }
 
+func (enc *Encoder) BufferSize() int {
+	return enc.buf.Cap()
+}
+
+func (enc *Encoder) Reset(bufferSize int, leeway int) {
+	enc.strings, enc.dicts, enc.lists, enc.tuples, enc.funcs, enc.funcodes = nil, nil, nil, nil, nil, nil
+	if bufferSize <= 0 {
+		bufferSize = DefaultEncoderBufferSize
+	}
+	bcap, min, max := enc.buf.Cap(), bufferSize-leeway, bufferSize+leeway
+	if min <= bcap && bcap <= max {
+		enc.buf.Reset()
+		return
+	}
+	buf := bytes.NewBuffer(make([]byte, bufferSize))
+	enc.buf = *buf
+}
+
 func (dec *Decoder) Remaining() int {
 	return len(dec.Data)
 }
@@ -138,6 +158,10 @@ func (dec *Decoder) Program() *compile.Program {
 
 func (dec *Decoder) FnShared() (StringDict, []Value, []Value) {
 	return dec.predeclared, dec.globals, dec.constants
+}
+
+func (dec *Decoder) Reset(data []byte) {
+	dec.Data, dec.values, dec.funcodes, dec.prog, dec.predeclared, dec.globals, dec.constants = data, nil, nil, nil, nil, nil, nil
 }
 
 func (enc *Encoder) WriteTag(tag byte) {
