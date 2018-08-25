@@ -284,6 +284,7 @@ func init() {
 	stackEffect[SLASHSLASH] = -1
 	stackEffect[SLICE] = -3
 	stackEffect[STAR] = -1
+	stackEffect[TILDE] = 0
 	stackEffect[TRUE] = +1
 	stackEffect[UMINUS] = 0
 	stackEffect[UNIVERSAL] = +1
