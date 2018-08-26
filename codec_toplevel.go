@@ -105,7 +105,7 @@ func (dec *Decoder) DecodeState() (*Thread, error) {
 		}
 		r := flate.NewReader(bytes.NewReader(dec.Data))
 		// length+1 ensures the first read returns EOF for valid lengths:
-		decompressed := make([]byte, int(length+1))
+		decompressed := make([]byte, length+1)
 		var nr int
 		nr, err = r.Read(decompressed)
 		r.Close()
@@ -207,7 +207,7 @@ func (dec *Decoder) DecodeToplevel() error {
 	if err != nil {
 		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
-	dec.prog.Loads = make([]compile.Ident, int(count))
+	dec.prog.Loads = make([]compile.Ident, count)
 	for i := uint64(0); i < count; i++ {
 		dec.prog.Loads[i], err = dec.DecodeIdent()
 		if err != nil {
@@ -219,7 +219,7 @@ func (dec *Decoder) DecodeToplevel() error {
 	if err != nil {
 		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
-	dec.prog.Names = make([]string, int(count))
+	dec.prog.Names = make([]string, count)
 	for i := uint64(0); i < count; i++ {
 		var name String
 		name, err = dec.DecodeString()
@@ -233,7 +233,7 @@ func (dec *Decoder) DecodeToplevel() error {
 	if err != nil {
 		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
-	dec.prog.Constants = make([]interface{}, int(count))
+	dec.prog.Constants = make([]interface{}, count)
 	for i := uint64(0); i < count; i++ {
 		var c Value
 		c, err = dec.DecodeValue()
@@ -258,7 +258,7 @@ func (dec *Decoder) DecodeToplevel() error {
 	if err != nil {
 		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
-	dec.prog.Functions = make([]*compile.Funcode, int(count))
+	dec.prog.Functions = make([]*compile.Funcode, count)
 	for i := uint64(0); i < count; i++ {
 		dec.prog.Functions[i], err = dec.DecodeFuncode()
 		if err != nil {
@@ -270,7 +270,7 @@ func (dec *Decoder) DecodeToplevel() error {
 	if err != nil {
 		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
-	dec.prog.Globals = make([]compile.Ident, int(count))
+	dec.prog.Globals = make([]compile.Ident, count)
 	for i := uint64(0); i < count; i++ {
 		dec.prog.Globals[i], err = dec.DecodeIdent()
 		if err != nil {
@@ -337,7 +337,7 @@ func (dec *Decoder) DecodeFnShared() error {
 		return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 	}
 	if len(dec.predeclared) == 0 {
-		dec.predeclared = make(StringDict, int(size))
+		dec.predeclared = make(StringDict, size)
 	} else {
 		predeclared := make(StringDict, int(size)+len(dec.predeclared))
 		for k, v := range dec.predeclared {
@@ -362,7 +362,7 @@ func (dec *Decoder) DecodeFnShared() error {
 	if err != nil {
 		return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 	}
-	dec.globals = make([]Value, int(size))
+	dec.globals = make([]Value, size)
 	for i := uint64(0); i < size; i++ {
 		dec.globals[i], err = dec.DecodeValue()
 		if err != nil {
@@ -373,7 +373,7 @@ func (dec *Decoder) DecodeFnShared() error {
 	if err != nil {
 		return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 	}
-	dec.constants = make([]Value, int(size))
+	dec.constants = make([]Value, size)
 	for i := uint64(0); i < size; i++ {
 		dec.constants[i], err = dec.DecodeValue()
 		if err != nil {
@@ -416,6 +416,11 @@ func (enc *Encoder) EncodeFrame(frame *Frame) {
 			continue
 		}
 		enc.EncodeIterator(v)
+	}
+	enc.EncodeTuple(frame.args)
+	enc.WriteUvarint(uint64(len(frame.kwargs)))
+	for _, v := range frame.kwargs {
+		enc.EncodeTuple(v)
 	}
 	enc.WriteTag(T_Frame_End)
 }
@@ -471,26 +476,46 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 	if err != nil {
 		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 	}
+	frame.stack = make([]Value, x)
 	for i := uint64(0); i < x; i++ {
 		v, err = dec.DecodeValue()
 		if err != nil {
 			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 		}
-		frame.stack = append(frame.stack, v)
+		frame.stack[i] = v
 	}
 	// iterstack
 	x, err = dec.DecodeUvarint()
 	if err != nil {
 		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 	}
+	frame.iterstack = make([]Iterator, x)
 	for i := uint64(0); i < x; i++ {
-		var it Iterator
-		it, _ = dec.DecodeIterator()
+		it, err := dec.DecodeIterator()
 		if err != nil {
 			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 		}
-		frame.iterstack = append(frame.iterstack, it)
+		frame.iterstack[i] = it
 	}
+	// args
+	frame.args, err = dec.DecodeTuple()
+	if err != nil {
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
+	}
+	// kwargs
+	x, err = dec.DecodeUvarint()
+	if err != nil {
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
+	}
+	frame.kwargs = make([]Tuple, x)
+	for i := uint64(0); i < x; i++ {
+		t, err := dec.DecodeTuple()
+		if err != nil {
+			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
+		}
+		frame.kwargs[i] = t
+	}
+
 	if dec.Remaining() < 1 {
 		return frame, errors.New("Codec: missing end tag while decoding frame")
 	}

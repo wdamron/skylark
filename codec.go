@@ -360,10 +360,10 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 	if int(count) > dec.Remaining() {
 		return fc, ErrShortBuffer
 	}
-	code := make([]byte, int(count))
+	code := make([]byte, count)
 	copy(code, dec.Data)
 	fc.Code = code
-	dec.Data = dec.Data[int(count):]
+	dec.Data = dec.Data[count:]
 	count, err = dec.DecodeUvarint()
 	if err != nil {
 		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
@@ -554,7 +554,7 @@ func (dec *Decoder) DecodeInt() (Int, error) {
 	if int(size) > dec.Remaining() {
 		return Int{}, ErrShortBuffer
 	}
-	raw := make([]byte, int(size))
+	raw := make([]byte, size)
 	copy(raw, dec.Data)
 	dec.Data = dec.Data[size:]
 	return Int{bigint: big.NewInt(0).SetBytes(raw)}, nil
@@ -726,7 +726,7 @@ func (dec *Decoder) DecodeList() (*List, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Codec: unexpected error while decoding list: %v", err)
 	}
-	elems := make([]Value, int(size))
+	elems := make([]Value, size)
 	for i := uint64(0); i < size; i++ {
 		elems[i], err = dec.DecodeValue()
 		if err != nil {
@@ -917,14 +917,14 @@ func (dec *Decoder) DecodeTuple() (Tuple, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Codec: unexpected error while decoding tuple: %v", err)
 	}
-	t := make(Tuple, int(size))
+	t := make(Tuple, size)
 	for i := uint64(0); i < size; i++ {
 		var v Value
 		v, err = dec.DecodeValue()
 		if err != nil {
 			return nil, fmt.Errorf("Codec: unexpected error while decoding tuple: %v", err)
 		}
-		t = append(t, v)
+		t[i] = v
 	}
 	dec.values = append(dec.values, t)
 	return t, nil

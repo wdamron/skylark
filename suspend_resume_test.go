@@ -23,14 +23,15 @@ func TestSuspendResume(t *testing.T) {
 		}),
 		"long_running_builtin": skylark.NewBuiltin("long_running_builtin",
 			func(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-				thread.Suspendable()
+				thread.Suspendable(args, kwargs)
 				return skylark.None, nil
 			}),
 	}
 
 	script := `
+magic_index = 3
 def long_running(i):
-	if i == 3:
+	if i == magic_index:
 		return long_running_builtin()
 	else:
 		return i
@@ -41,11 +42,13 @@ c = 3
 sum_abc = a + b + c
 
 l = [a, b, c]
-struct_abc = struct_val.a + struct_val.b + struct_val.c # predeclared
-d = {"abc": struct_abc}
+d = {"abc": "abc"}
 
 responses = [long_running(i) for i in range(0, 10)]
-response = responses[3]
+response = responses[magic_index]
+
+struct_abc = struct_val.a + struct_val.b + struct_val.c
+
 `
 	thread := &skylark.Thread{Load: load}
 	skylarktest.SetReporter(thread, t)
@@ -98,18 +101,6 @@ response = responses[3]
 		t.Fatalf("Expected long_running() in caller frame of decoded state, found %v", thread.Caller().Callable().Name())
 	}
 
-	thread.Resumable()
-	predeclared = thread.ToplevelFn().Predeclared()
-	sval, ok := predeclared["struct_val"].(*skylarkstruct.Struct)
-	if sval == nil || !ok {
-		t.Fatalf("Missing predeclared struct value in decoded state, found %#+v", predeclared["struct_val"])
-	}
-	sdict := skylark.StringDict{}
-	sval.ToStringDict(sdict)
-	if sdict["a"] != skylark.String("a") || sdict["a"] != skylark.String("a") || sdict["a"] != skylark.String("a") {
-		t.Fatalf("Missing entries in decoded struct value, found a=%v b=%v c=%v", sdict["a"], sdict["b"], sdict["c"])
-	}
-
 	response := skylark.String("abc123")
 
 	result, err = skylark.Resume(thread, response)
@@ -117,16 +108,15 @@ response = responses[3]
 		t.Fatalf("Error after resuming suspended thread: %v", err)
 	}
 
-	if result["response"] == nil || string(result["response"].(skylark.String)) != string(response) {
+	if result["response"] == nil || result["response"].(skylark.String) != response {
 		t.Fatalf("Expected injected return value to be returned from suspending function after resuming, response=%v, responses=%#+v", result["response"], result["responses"])
 	}
 	sum, ok := result["sum_abc"].(skylark.Int)
 	if i, ok2 := sum.Int64(); !ok || !ok2 || i != 6 {
 		t.Fatal("Expected previously assigned global variables to be preserved after suspension/resumption")
 	}
-	struct_abc, _ := result["struct_abc"].(skylark.String)
-	if struct_abc != skylark.String("abc") {
-		t.Fatal("Expected previously assigned global variables to be preserved after suspension/resumption")
+	if struct_abc, ok := result["struct_abc"].(skylark.String); !ok || struct_abc != skylark.String("abc") {
+		t.Fatalf("Expected struct value to be preserved after suspension/resumption, struct_abc=%v", result["struct_abc"])
 	}
 
 	// Test resuming directly without serialization/deserialization:
