@@ -32,7 +32,7 @@ func TestSuspendResume(t *testing.T) {
 magic_index = 3
 def long_running(i):
 	if i == magic_index:
-		return long_running_builtin()
+		return long_running_builtin("the_argument", the_key="the_value")
 	else:
 		return i
 
@@ -93,8 +93,15 @@ struct_abc = struct_val.a + struct_val.b + struct_val.c
 		return
 	}
 
-	if thread.TopFrame().Callable() != predeclared["long_running_builtin"] {
-		t.Fatalf("Expected long_running_builtin() in top frame of decoded state, found %v", thread.TopFrame().Callable().Name())
+	top := thread.TopFrame()
+	if top.Callable() != predeclared["long_running_builtin"] {
+		t.Fatalf("Expected long_running_builtin() in top frame of decoded state, found %v", top.Callable().Name())
+	}
+	if len(top.Args()) != 1 || top.Args()[0] != skylark.String("the_argument") {
+		t.Fatalf("Expected arguments to be preserved after suspension/resumption, found args=%v", top.Args())
+	}
+	if len(top.Kwargs()) != 1 || top.Kwargs()[0][0] != skylark.String("the_key") || top.Kwargs()[0][1] != skylark.String("the_value") {
+		t.Fatalf("Expected keyword arguments to be preserved after suspension/resumption, found kwargs=%v", top.Kwargs())
 	}
 
 	if thread.Caller().Callable().Name() != "long_running" {

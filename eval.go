@@ -214,11 +214,19 @@ func (fr *Frame) Position() syntax.Position {
 
 var builtinFilename = "<builtin>"
 
-// Function returns the frame's function or built-in.
+// Callable returns the frame's function or built-in.
 func (fr *Frame) Callable() Callable { return fr.callable }
 
 // Parent returns the frame of the enclosing function call, if any.
 func (fr *Frame) Parent() *Frame { return fr.parent }
+
+// Args returns the positional arguments passed to the current frame.
+// An empty slice will be returned if the current frame was not directly suspended.
+func (fr *Frame) Args() Tuple { return fr.args }
+
+// Kwargs returns the keyword arguments passed to the current frame.
+// An empty slice will be returned if the current frame was not directly suspended.
+func (fr *Frame) Kwargs() []Tuple { return fr.kwargs }
 
 // An EvalError is a Skylark evaluation error and its associated call stack.
 type EvalError struct {
