@@ -7,31 +7,42 @@ package skylark
 import (
 	"bytes"
 	"compress/flate"
+	"encoding/binary"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/big"
 
 	"github.com/google/skylark/internal/compile"
 )
 
+// EncodeState encodes the re-entrant state of the given thread.
 func EncodeState(thread *Thread) ([]byte, error) {
 	return NewEncoder().EncodeState(thread)
 }
 
+// EncodeState decodes a re-entrant state into a resumable thread.
 func DecodeState(snapshot []byte) (*Thread, error) {
 	return NewDecoder(snapshot).DecodeState()
 }
 
-// EncodeState writes the re-entrant state of the given thread.
+// EncodeState encodes the re-entrant state of the given thread.
 func (enc *Encoder) EncodeState(thread *Thread) ([]byte, error) {
 	if thread.SuspendedFrame() != nil {
 		thread.Resumable()
 	}
 	err := enc.encodeState(thread.frame, 1, nil)
-	var buf bytes.Buffer
+	if err != nil {
+		return nil, err
+	}
+
+	var compressed bytes.Buffer
+	compressed.WriteByte(T_HuffmanCompressed)
+	var length [8]byte
+	sz := binary.PutUvarint(length[:8], uint64(enc.buf.Len()))
+	compressed.Write(length[:sz])
 	var wr *flate.Writer
-	if wr, err = flate.NewWriter(&buf, flate.HuffmanOnly); err != nil {
+	if wr, err = flate.NewWriter(&compressed, flate.HuffmanOnly); err != nil {
 		return nil, err
 	}
 	if _, err = wr.Write(enc.Bytes()); err != nil {
@@ -40,8 +51,7 @@ func (enc *Encoder) EncodeState(thread *Thread) ([]byte, error) {
 	if err = wr.Close(); err != nil {
 		return nil, err
 	}
-	enc.buf.Reset()
-	return buf.Bytes(), nil
+	return compressed.Bytes(), nil
 }
 
 func (enc *Encoder) encodeState(frame *Frame, count uint, anyFn *Function) error {
@@ -66,22 +76,45 @@ func (enc *Encoder) encodeState(frame *Frame, count uint, anyFn *Function) error
 	return nil
 }
 
+// EncodeState decodes a re-entrant state into a resumable thread.
 func (dec *Decoder) DecodeState() (*Thread, error) {
-	r := flate.NewReader(bytes.NewReader(dec.Data))
-	data, err := ioutil.ReadAll(r)
-	r.Close()
-	if err != nil {
+	if dec.Remaining() < 5 {
+		return nil, ErrShortBuffer
+	}
+	tag := dec.Data[0]
+	dec.Data = dec.Data[1:]
+
+	// Decompress the encoded state, when applicable:
+	if tag == T_HuffmanCompressed {
+		length, err := dec.DecodeUvarint()
+		if err != nil {
+			return nil, fmt.Errorf("Codec: error decoding length of compressed state: %v", err)
+		}
+		r := flate.NewReader(bytes.NewReader(dec.Data))
+		// length+1 ensures the first read returns EOF for valid lengths:
+		decompressed := make([]byte, int(length+1))
+		var nr int
+		nr, err = r.Read(decompressed)
+		r.Close()
+		if err != nil && err != io.EOF {
+			return nil, fmt.Errorf("Codec: error while decompressing state: %v", err)
+		}
+		if err != io.EOF || nr != int(length) {
+			return nil, errors.New("Codec: invalid length-prefix for compressed state")
+		}
+		dec.Data = decompressed[:int(length)]
+	} else if tag != T_Uncompressed {
+		return nil, fmt.Errorf("Codec: unrecognized compression tag (%v) in compressed state", tag)
+	}
+
+	if err := dec.DecodeToplevel(); err != nil {
 		return nil, err
 	}
-	dec.Data = data
-	if err = dec.DecodeToplevel(); err != nil {
-		return nil, err
-	}
-	if err = dec.DecodeFnShared(); err != nil {
+	if err := dec.DecodeFnShared(); err != nil {
 		return nil, err
 	}
 	var frameCount uint64
-	frameCount, err = dec.DecodeUvarint()
+	frameCount, err := dec.DecodeUvarint()
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +131,11 @@ func (dec *Decoder) DecodeState() (*Thread, error) {
 	for _, fc := range dec.funcodes {
 		fc.Prog = dec.prog
 	}
-	return &Thread{frame: frame}, nil
+	thread := &Thread{frame: frame}
+	if dec.Remaining() > 0 {
+		return thread, fmt.Errorf("Codec: %v bytes remaining after fully decoding state", dec.Remaining())
+	}
+	return thread, nil
 }
 
 func (enc *Encoder) EncodeToplevel(p *compile.Program) {
@@ -231,6 +268,9 @@ func (dec *Decoder) DecodeToplevel() error {
 		return fmt.Errorf("Codec: unexpected error while decoding top level: %v", err)
 	}
 
+	if dec.Remaining() < 1 {
+		return errors.New("Codec: missing end tag while decoding top level")
+	}
 	if dec.Data[0] != T_Toplevel_End {
 		return fmt.Errorf("Codec: unexpected end tag (%v) while decoding top level", dec.Data[0])
 	}
@@ -319,6 +359,9 @@ func (dec *Decoder) DecodeFnShared() error {
 		if err != nil {
 			return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 		}
+	}
+	if dec.Remaining() < 1 {
+		return errors.New("Codec: missing end tag while decoding shared sections")
 	}
 	if dec.Data[0] != T_FnShared_End {
 		return fmt.Errorf("Codec: unexpected end tag (%v) while decoding shared sections", dec.Data[0])
@@ -419,6 +462,9 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 		}
 		frame.iterstack = append(frame.iterstack, it)
+	}
+	if dec.Remaining() < 1 {
+		return frame, errors.New("Codec: missing end tag while decoding frame")
 	}
 	if dec.Data[0] != T_Frame_End {
 		return frame, fmt.Errorf("Codec: unexpected end tag (%v) while decoding frame", tag)

@@ -51,6 +51,9 @@ const (
 	T_Funcode        = 28
 	T_Custom         = 29
 	T_CustomIterator = 30
+
+	T_Uncompressed      = 60
+	T_HuffmanCompressed = 61
 )
 
 const DefaultEncoderBufferSize = 1 << 12
@@ -316,7 +319,7 @@ func (enc *Encoder) EncodeFuncode(fc *compile.Funcode) {
 }
 
 func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
-	if len(dec.Data) < 3 {
+	if dec.Remaining() < 3 {
 		return nil, ErrShortBuffer
 	}
 	if dec.Data[0] == T_Ref {
@@ -353,7 +356,7 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 	if err != nil {
 		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
-	if int(count) > len(dec.Data) {
+	if int(count) > dec.Remaining() {
 		return fc, ErrShortBuffer
 	}
 	code := make([]byte, int(count))
@@ -454,7 +457,7 @@ func (enc *Encoder) EncodeValue(v Value) {
 }
 
 func (dec *Decoder) DecodeValue() (Value, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return nil, ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -512,7 +515,7 @@ func (enc *Encoder) EncodeBool(b Bool) {
 }
 
 func (dec *Decoder) DecodeBool() (Bool, error) {
-	if len(dec.Data) == 0 {
+	if dec.Remaining() == 0 {
 		return False, ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -535,7 +538,7 @@ func (enc *Encoder) EncodeInt(i Int) {
 }
 
 func (dec *Decoder) DecodeInt() (Int, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return Int{}, ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -547,7 +550,7 @@ func (dec *Decoder) DecodeInt() (Int, error) {
 	if err != nil {
 		return Int{}, fmt.Errorf("Codec: unexpected error while decoding int: %v", err)
 	}
-	if int(size) > len(dec.Data) {
+	if int(size) > dec.Remaining() {
 		return Int{}, ErrShortBuffer
 	}
 	raw := make([]byte, int(size))
@@ -562,7 +565,7 @@ func (enc *Encoder) EncodeFloat(f Float) {
 }
 
 func (dec *Decoder) DecodeFloat() (Float, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return Float(0.0), ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -591,7 +594,7 @@ func (enc *Encoder) EncodeString(s String) {
 }
 
 func (dec *Decoder) DecodeString() (String, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return String(""), ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -614,7 +617,7 @@ func (dec *Decoder) DecodeString() (String, error) {
 	if err != nil {
 		return String(""), fmt.Errorf("Codec: unexpected error while decoding string: %v", err)
 	}
-	if len(dec.Data) < int(size) {
+	if dec.Remaining() < int(size) {
 		return String(""), ErrShortBuffer
 	}
 	s := String(string(dec.Data[:size]))
@@ -639,7 +642,7 @@ func (enc *Encoder) EncodeFunction(fn *Function) {
 }
 
 func (dec *Decoder) DecodeFunction() (*Function, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return nil, ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -694,7 +697,7 @@ func (enc *Encoder) EncodeList(l *List) {
 }
 
 func (dec *Decoder) DecodeList() (*List, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return nil, ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -757,7 +760,7 @@ func (enc *Encoder) EncodeDict(d *Dict) {
 }
 
 func (dec *Decoder) DecodeDict() (*Dict, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return nil, ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -826,7 +829,7 @@ func (enc *Encoder) EncodeSet(s *Set) {
 }
 
 func (dec *Decoder) DecodeSet() (*Set, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return nil, ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -890,7 +893,7 @@ func (enc *Encoder) EncodeTuple(t Tuple) {
 }
 
 func (dec *Decoder) DecodeTuple() (Tuple, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return nil, ErrShortBuffer
 	}
 	tag := dec.Data[0]
@@ -937,7 +940,7 @@ func (enc *Encoder) EncodeBuiltin(b *Builtin) {
 }
 
 func (dec *Decoder) DecodeBuiltin() (*Builtin, error) {
-	if len(dec.Data) < 2 {
+	if dec.Remaining() < 2 {
 		return nil, ErrShortBuffer
 	}
 	tag := dec.Data[0]
