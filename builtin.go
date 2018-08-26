@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package skylark provides a Skylark interpreter.
-//
-// Skylark values are represented by the Value interface.
 package skylark
 
 // A Builtin is a function implemented in Go.

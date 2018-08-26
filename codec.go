@@ -125,8 +125,8 @@ func NewEncoder() *Encoder {
 	return &Encoder{}
 }
 
-func NewDecoder(data []byte) *Decoder {
-	return &Decoder{Data: data}
+func NewDecoder(data []byte, predeclared StringDict) *Decoder {
+	return &Decoder{Data: data, predeclared: predeclared}
 }
 
 func (enc *Encoder) Bytes() []byte {

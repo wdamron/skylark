@@ -22,8 +22,8 @@ func EncodeState(thread *Thread) ([]byte, error) {
 }
 
 // EncodeState decodes a re-entrant state into a resumable thread.
-func DecodeState(snapshot []byte) (*Thread, error) {
-	return NewDecoder(snapshot).DecodeState()
+func DecodeState(snapshot []byte, predeclared StringDict) (*Thread, error) {
+	return NewDecoder(snapshot, predeclared).DecodeState()
 }
 
 // EncodeState encodes the re-entrant state of the given thread.
@@ -174,9 +174,6 @@ func (enc *Encoder) EncodeToplevel(p *compile.Program) {
 }
 
 func (dec *Decoder) DecodeToplevel() error {
-	if dec.prog != nil {
-		return errors.New("Codec: toplevel already decoded")
-	}
 	if dec.Remaining() < 2 {
 		return ErrShortBuffer
 	}
@@ -310,9 +307,6 @@ func (enc *Encoder) EncodeFnShared(fn *Function) {
 }
 
 func (dec *Decoder) DecodeFnShared() error {
-	if len(dec.predeclared) > 0 {
-		return errors.New("Codec: shared function data already decoded")
-	}
 	if dec.Remaining() < 2 {
 		return ErrShortBuffer
 	}
@@ -324,7 +318,15 @@ func (dec *Decoder) DecodeFnShared() error {
 	if err != nil {
 		return fmt.Errorf("Codec: unexpected error while decoding shared sections: %v", err)
 	}
-	dec.predeclared = make(StringDict, int(size))
+	if len(dec.predeclared) == 0 {
+		dec.predeclared = make(StringDict, int(size))
+	} else {
+		predeclared := make(StringDict, int(size)+len(dec.predeclared))
+		for k, v := range dec.predeclared {
+			predeclared[k] = v
+		}
+		dec.predeclared = predeclared
+	}
 	for i := uint64(0); i < size; i++ {
 		var k String
 		k, err = dec.DecodeString()
