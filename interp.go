@@ -352,8 +352,14 @@ loop:
 			returnToCaller := false
 			if parent == nil || thread.SuspendedFrame() != nil {
 				returnToCaller = true
-			} else if _, ok := parent.callable.(*Function); !ok {
-				returnToCaller = true
+			}
+			var parentFn *Function
+			if parent != nil {
+				var isFunction bool
+				parentFn, isFunction = parent.callable.(*Function)
+				if !isFunction {
+					returnToCaller = true
+				}
 			}
 			thread.frame = fr
 			// If the caller is not a compiled function, return to it directly:
@@ -366,7 +372,7 @@ loop:
 			}
 			// If the caller is a compiled function, jump to its frame's next instruction (PC):
 			fr = parent
-			fn = fr.callable.(*Function)
+			fn = parentFn
 			fc = fn.funcode
 			nlocals = len(fc.Locals)
 			if len(fr.stack) < nlocals+fc.MaxStack {
@@ -454,7 +460,15 @@ loop:
 			sp++
 
 		case compile.SETDICT, compile.SETDICTUNIQ:
-			dict := stack[sp-3].(*Dict)
+			dict, ok := stack[sp-3].(*Dict)
+			if !ok {
+				argType := "<nil>"
+				if stack[sp-3] != nil {
+					argType = stack[sp-3].Type()
+				}
+				err = fmt.Errorf("argument to SETDICT* must be a mapping, not %s", argType)
+				break loop
+			}
 			k := stack[sp-2]
 			v := stack[sp-1]
 			sp -= 3
@@ -470,7 +484,15 @@ loop:
 
 		case compile.APPEND:
 			elem := stack[sp-1]
-			list := stack[sp-2].(*List)
+			list, ok := stack[sp-2].(*List)
+			if !ok {
+				argType := "<nil>"
+				if stack[sp-2] != nil {
+					argType = stack[sp-2].Type()
+				}
+				err = fmt.Errorf("argument to APPEND must be a list, not %s", argType)
+				break loop
+			}
 			sp -= 2
 			list.elems = append(list.elems, elem)
 
@@ -542,8 +564,27 @@ loop:
 
 		case compile.MAKEFUNC:
 			funcode := fc.Prog.Functions[arg]
-			freevars := stack[sp-1].(Tuple)
-			defaults := stack[sp-2].(Tuple)
+			var ok bool
+			var freevars Tuple
+			freevars, ok = stack[sp-1].(Tuple)
+			if !ok {
+				argType := "<nil>"
+				if stack[sp-1] != nil {
+					argType = stack[sp-1].Type()
+				}
+				err = fmt.Errorf("freevars argument to MAKEFUNC must be a tuple, not %s", argType)
+				break loop
+			}
+			var defaults Tuple
+			defaults, ok = stack[sp-2].(Tuple)
+			if !ok {
+				argType := "<nil>"
+				if stack[sp-2] != nil {
+					argType = stack[sp-2].Type()
+				}
+				err = fmt.Errorf("defaults argument to MAKEFUNC must be a tuple, not %s", argType)
+				break loop
+			}
 			sp -= 2
 			stack[sp] = &Function{
 				funcode:     funcode,
@@ -557,7 +598,16 @@ loop:
 
 		case compile.LOAD:
 			n := int(arg)
-			module := string(stack[sp-1].(String))
+			moduleString, ok := stack[sp-1].(String)
+			if !ok {
+				argType := "<nil>"
+				if stack[sp-1] != nil {
+					argType = stack[sp-1].Type()
+				}
+				err = fmt.Errorf("argument to LOAD must be a string, not %s", argType)
+				break loop
+			}
+			module := string(moduleString)
 			sp--
 
 			if thread.Load == nil {
@@ -572,8 +622,18 @@ loop:
 			}
 
 			for i := 0; i < n; i++ {
-				from := string(stack[sp-1-i].(String))
-				v, ok := dict[from]
+				nameString, ok := stack[sp-1-i].(String)
+				if !ok {
+					argType := "<nil>"
+					if stack[sp-1] != nil {
+						argType = stack[sp-1-i].Type()
+					}
+					err = fmt.Errorf("load: value name in module %s must be a string, not %s", module, argType)
+					break loop
+				}
+				from := string(nameString)
+				var v Value
+				v, ok = dict[from]
 				if !ok {
 					err = fmt.Errorf("load: name %s not found in module %s", from, module)
 					break loop
