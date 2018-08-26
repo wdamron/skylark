@@ -71,12 +71,6 @@ func init() {
 
 type builtinMethod func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error)
 
-// type Builtin struct {
-// 	name string
-// 	fn   func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error)
-// 	recv Value // for bound methods (e.g. "".startswith)
-// }
-
 // methods of built-in types
 // https://github.com/google/skylark/blob/master/doc/spec.md#built-in-methods
 var (
@@ -144,17 +138,21 @@ var (
 )
 
 func builtinMethodOf(recv Value, name string) *Builtin {
+	var method builtinMethod
 	switch recv.(type) {
 	case String:
-		return &Builtin{name: name, fn: stringMethods[name], recv: recv}
+		method = stringMethods[name]
 	case *List:
-		return &Builtin{name: name, fn: listMethods[name], recv: recv}
+		method = listMethods[name]
 	case *Dict:
-		return &Builtin{name: name, fn: dictMethods[name], recv: recv}
+		method = dictMethods[name]
 	case *Set:
-		return &Builtin{name: name, fn: setMethods[name], recv: recv}
+		method = setMethods[name]
 	}
-	return nil
+	if method == nil {
+		return nil
+	}
+	return &Builtin{name: name, fn: method, recv: recv}
 }
 
 func builtinAttr(recv Value, name string, methods map[string]builtinMethod) (Value, error) {

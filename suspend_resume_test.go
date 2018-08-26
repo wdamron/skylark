@@ -41,7 +41,7 @@ l = [a, b, c]
 struct_abc = struct_val.a + struct_val.b + struct_val.c # predeclared
 d = {"abc": struct_abc}
 
-response = long_running()
+response = [long_running() for i in range(0, 1)][0]
 `
 	thread := &skylark.Thread{Load: load}
 	skylarktest.SetReporter(thread, t)
@@ -98,11 +98,13 @@ response = long_running()
 		t.Fatalf("Missing entries in decoded struct value, found a=%v b=%v c=%v", sdict["a"], sdict["b"], sdict["c"])
 	}
 
-	result, err = skylark.Resume(thread, skylark.String("abc123"))
+	response := skylark.String("abc123")
+
+	result, err = skylark.Resume(thread, response)
 	if err != nil {
 		t.Fatalf("Error after resuming suspended thread: %v", err)
 	}
-	if result["response"] == nil || result["response"].(skylark.String) != skylark.String("abc123") {
+	if result["response"] == nil || result["response"].(skylark.String) != response {
 		t.Fatal("Expected injected return value to be returned from suspending function after resuming")
 	}
 	sum, ok := result["sum_abc"].(skylark.Int)

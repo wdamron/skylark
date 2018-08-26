@@ -168,7 +168,6 @@ func Resume(thread *Thread, retval Value) (StringDict, error) {
 		return nil, errors.New("resumed thread contains no resumable functions in call-stack")
 	}
 	// Check for non-resumable (built-in) functions in the call-stack:
-	frame = frame.parent
 	for frame != nil {
 		if _, isFunction := frame.Callable().(*Function); !isFunction {
 			return nil, fmt.Errorf("resumed thread contains non-resumable function in call-stack: %s", frame.Callable().Name())
@@ -179,6 +178,12 @@ func Resume(thread *Thread, retval Value) (StringDict, error) {
 		retval = None
 	}
 	top := thread.TopFrame()
+	fc := top.Callable().(*Function).funcode
+	if len(top.stack) < len(fc.Locals)+fc.MaxStack {
+		stack := make([]Value, len(fc.Locals)+fc.MaxStack)
+		copy(stack, top.stack)
+		top.stack = stack
+	}
 	top.stack[top.sp-1] = retval
 	if _, err := interpret(thread, nil, nil, true); err != nil {
 		return nil, err

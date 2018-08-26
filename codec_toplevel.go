@@ -58,16 +58,21 @@ func (enc *Encoder) encodeState(frame *Frame, count uint, anyFn *Function) error
 	if anyFn == nil {
 		anyFn, _ = frame.callable.(*Function)
 	}
+	// The count parameter is greater than 1 for non-leaf functions within the current call-stack.
+	// The leaf function is assumed to have suspended the thread, and all other functions within
+	// the current call-stack must be resumable.
 	if count > 1 {
 		if _, isFunction := frame.callable.(*Function); !isFunction {
-			return fmt.Errorf("suspended thread has non-resumable function on call-stack: %s", frame.callable.Name())
+			return fmt.Errorf("Codec: suspended thread has non-resumable function on call-stack: %s", frame.callable.Name())
 		}
 	}
+	// Walk the call-stack until the bottom frame is reached, to determine the frame count:
 	if frame.parent != nil {
 		if err := enc.encodeState(frame.parent, count+1, anyFn); err != nil {
 			return err
 		}
 	} else {
+		// When the bottom frame is reached, encode the toplevel, followed by all frames from the bottom up:
 		enc.EncodeToplevel(anyFn.funcode.Prog)
 		enc.EncodeFnShared(anyFn)
 		enc.WriteUvarint(uint64(count))
