@@ -163,7 +163,7 @@ func Resume(thread *Thread, retval Value) (StringDict, error) {
 		thread.Resumable()
 	}
 	thread.PopFrame()
-	frame := thread.TopFrame()
+	frame := thread.frame
 	if frame == nil {
 		return nil, errors.New("resumed thread contains no resumable functions in call-stack")
 	}
@@ -177,14 +177,14 @@ func Resume(thread *Thread, retval Value) (StringDict, error) {
 	if retval == nil {
 		retval = None
 	}
-	top := thread.TopFrame()
-	fc := top.Callable().(*Function).funcode
-	if len(top.stack) < len(fc.Locals)+fc.MaxStack {
+	frame = thread.frame
+	fc := frame.Callable().(*Function).funcode
+	if len(frame.stack) < len(fc.Locals)+fc.MaxStack {
 		stack := make([]Value, len(fc.Locals)+fc.MaxStack)
-		copy(stack, top.stack)
-		top.stack = stack
+		copy(stack, frame.stack)
+		frame.stack = stack
 	}
-	top.stack[top.sp-1] = retval
+	frame.stack[len(fc.Locals)+int(frame.sp)-1] = retval
 	if _, err := interpret(thread, nil, nil, true); err != nil {
 		return nil, err
 	}

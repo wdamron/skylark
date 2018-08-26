@@ -31,9 +31,17 @@ func (enc *Encoder) EncodeState(thread *Thread) ([]byte, error) {
 	if thread.SuspendedFrame() != nil {
 		thread.Resumable()
 	}
+
+	useHuffman := enc.compression == T_HuffmanCompressed
+	if !useHuffman {
+		enc.WriteTag(T_Uncompressed)
+	}
 	err := enc.encodeState(thread.frame, 1, nil)
 	if err != nil {
 		return nil, err
+	}
+	if !useHuffman {
+		return enc.Bytes(), nil
 	}
 
 	var compressed bytes.Buffer
@@ -137,6 +145,11 @@ func (dec *Decoder) DecodeState() (*Thread, error) {
 		fc.Prog = dec.prog
 	}
 	thread := &Thread{frame: frame}
+	for _, v := range dec.values {
+		if fn, isFunction := v.(*Function); isFunction {
+			fn.predeclared, fn.globals, fn.constants = dec.predeclared, dec.globals, dec.constants
+		}
+	}
 	if dec.Remaining() > 0 {
 		return thread, fmt.Errorf("Codec: %v bytes remaining after fully decoding state", dec.Remaining())
 	}
@@ -384,8 +397,12 @@ func (enc *Encoder) EncodeFrame(frame *Frame) {
 	enc.WriteUvarint(uint64(frame.pc))
 	enc.EncodePosition(frame.Position())
 	enc.EncodeValue(frame.Callable().(Value))
-	stack := frame.stack[:frame.sp]
-	for _, v := range stack {
+	stackSize := int(frame.sp)
+	if fn, isFunction := frame.Callable().(*Function); isFunction {
+		stackSize += len(fn.funcode.Locals)
+	}
+	enc.WriteUvarint(uint64(stackSize))
+	for _, v := range frame.stack[:stackSize] {
 		if v == nil {
 			enc.WriteTag(T_None)
 			continue
@@ -450,7 +467,11 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 	}
 	frame.callable = c
 	// stack
-	for i := 0; i < int(frame.sp); i++ {
+	x, err = dec.DecodeUvarint()
+	if err != nil {
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
+	}
+	for i := uint64(0); i < x; i++ {
 		v, err = dec.DecodeValue()
 		if err != nil {
 			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)

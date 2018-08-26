@@ -56,8 +56,6 @@ const (
 	T_HuffmanCompressed = 61
 )
 
-const DefaultEncoderBufferSize = 1 << 12
-
 var (
 	ErrShortBuffer = errors.New("Codec: reached end of buffer while decoding")
 	ErrBadTag      = errors.New("Codec: invalid tag while decoding")
@@ -102,13 +100,14 @@ type taggedRef struct {
 }
 
 type Encoder struct {
-	strings  map[string]ref
-	dicts    map[*hashtable]taggedRef
-	lists    map[*List]ref
-	tuples   map[reflect.SliceHeader]ref
-	funcs    map[*Function]ref
-	funcodes map[*compile.Funcode]ref
-	buf      bytes.Buffer
+	strings     map[string]ref
+	dicts       map[*hashtable]taggedRef
+	lists       map[*List]ref
+	tuples      map[reflect.SliceHeader]ref
+	funcs       map[*Function]ref
+	funcodes    map[*compile.Funcode]ref
+	buf         bytes.Buffer
+	compression byte
 }
 
 type Decoder struct {
@@ -122,7 +121,7 @@ type Decoder struct {
 }
 
 func NewEncoder() *Encoder {
-	return &Encoder{}
+	return &Encoder{compression: T_HuffmanCompressed}
 }
 
 func NewDecoder(data []byte, predeclared StringDict) *Decoder {
@@ -137,18 +136,20 @@ func (enc *Encoder) BufferSize() int {
 	return enc.buf.Cap()
 }
 
-func (enc *Encoder) Reset(bufferSize int, leeway int) {
+func (enc *Encoder) EnableHuffmanCompression() *Encoder {
+	enc.compression = T_HuffmanCompressed
+	return enc
+}
+
+func (enc *Encoder) DisableCompression() *Encoder {
+	enc.compression = T_Uncompressed
+	return enc
+}
+
+func (enc *Encoder) Reset() *Encoder {
 	enc.strings, enc.dicts, enc.lists, enc.tuples, enc.funcs, enc.funcodes = nil, nil, nil, nil, nil, nil
-	if bufferSize <= 0 {
-		bufferSize = DefaultEncoderBufferSize
-	}
-	bcap, min, max := enc.buf.Cap(), bufferSize-leeway, bufferSize+leeway
-	if min <= bcap && bcap <= max {
-		enc.buf.Reset()
-		return
-	}
-	buf := bytes.NewBuffer(make([]byte, bufferSize))
-	enc.buf = *buf
+	enc.buf.Reset()
+	return enc
 }
 
 func (dec *Decoder) Remaining() int {
@@ -662,7 +663,7 @@ func (dec *Decoder) DecodeFunction() (*Function, error) {
 		return nil, fmt.Errorf("Codec: unexpected tag (%v) while decoding function", tag)
 	}
 	var err error
-	fn := &Function{predeclared: dec.predeclared, globals: dec.globals, constants: dec.constants}
+	fn := &Function{}
 	fn.defaults, err = dec.DecodeTuple()
 	if err != nil {
 		return fn, fmt.Errorf("Codec: unexpected error while decoding function: %v", err)

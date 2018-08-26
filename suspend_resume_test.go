@@ -29,8 +29,11 @@ func TestSuspendResume(t *testing.T) {
 	}
 
 	script := `
-def long_running():
-	return long_running_builtin()
+def long_running(i):
+	if i == 3:
+		return long_running_builtin()
+	else:
+		return i
 
 a = 1
 b = 2
@@ -41,7 +44,8 @@ l = [a, b, c]
 struct_abc = struct_val.a + struct_val.b + struct_val.c # predeclared
 d = {"abc": struct_abc}
 
-response = [long_running() for i in range(0, 1)][0]
+responses = [long_running(i) for i in range(0, 10)]
+response = responses[3]
 `
 	thread := &skylark.Thread{Load: load}
 	skylarktest.SetReporter(thread, t)
@@ -63,14 +67,22 @@ response = [long_running() for i in range(0, 1)][0]
 
 	suspended := thread.SuspendedFrame()
 	if suspended == nil || suspended.Callable() != predeclared["long_running_builtin"] {
-		t.Fatalf("Expected long_running_builtin() in top frame of suspended frame for thread, found %s", suspended.Callable().Name())
+		t.Fatalf("Expected long_running_builtin() in top frame of suspended thread, found %s", suspended.Callable().Name())
 	}
 
 	snapshot, err := skylark.EncodeState(thread)
 	if err != nil {
 		t.Fatal(err)
 	}
+	compressedSize := len(snapshot)
 	t.Logf("Encoded/compressed snapshot size: %dB", len(snapshot))
+
+	snapshot, err = skylark.NewEncoder().DisableCompression().EncodeState(thread)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("Encoded/uncompressed snapshot size: %dB", len(snapshot))
+	t.Logf("Compression ratio: %.3f", float64(compressedSize)/float64(len(snapshot)))
 
 	thread, err = skylark.DecodeState(snapshot, predeclared)
 	if err != nil {
@@ -104,8 +116,9 @@ response = [long_running() for i in range(0, 1)][0]
 	if err != nil {
 		t.Fatalf("Error after resuming suspended thread: %v", err)
 	}
-	if result["response"] == nil || result["response"].(skylark.String) != response {
-		t.Fatal("Expected injected return value to be returned from suspending function after resuming")
+
+	if result["response"] == nil || string(result["response"].(skylark.String)) != string(response) {
+		t.Fatalf("Expected injected return value to be returned from suspending function after resuming, response=%v, responses=%#+v", result["response"], result["responses"])
 	}
 	sum, ok := result["sum_abc"].(skylark.Int)
 	if i, ok2 := sum.Int64(); !ok || !ok2 || i != 6 {
