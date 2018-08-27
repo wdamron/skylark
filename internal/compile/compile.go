@@ -327,17 +327,13 @@ type Funcode struct {
 	Pos                   syntax.Position // position of def or lambda token
 	Name                  string          // name of this function
 	Code                  []byte          // the byte code
-	pclinetab             []uint16        // mapping from pc to linenum
+	Pclinetab             []uint16        // mapping from pc to linenum
 	Locals                []Ident         // for error messages and tracing
 	Freevars              []Ident         // for tracing
 	MaxStack              int
 	NumParams             int
 	HasVarargs, HasKwargs bool
 }
-
-func (f *Funcode) PCLineTable() []uint16 { return f.pclinetab }
-
-func (f *Funcode) SetPCLineTable(pcline []uint16) { f.pclinetab = pcline }
 
 // An Ident is the name and position of an identifier.
 type Ident struct {
@@ -412,7 +408,7 @@ func (fn *Funcode) Position(pc uint32) syntax.Position {
 	// largest PC value not greater than 'pc'.
 	var prevpc uint32
 	complete := true
-	for _, x := range fn.pclinetab {
+	for _, x := range fn.Pclinetab {
 		nextpc := prevpc + uint32(x>>8)
 		if complete && nextpc > pc {
 			return pos
@@ -660,7 +656,7 @@ func (insn *insn) stackeffect() int {
 // and builds the PC-to-line number table.
 func (fcomp *fcomp) generate(blocks []*block, codelen uint32) {
 	code := make([]byte, 0, codelen)
-	var pclinetab []uint16
+	var pcline []uint16
 	var prev struct {
 		pc   uint32
 		line int32
@@ -696,7 +692,7 @@ func (fcomp *fcomp) generate(blocks []*block, codelen uint32) {
 					prev.line += deltaline
 
 					entry := uint16(deltapc<<8) | uint16(uint8(deltaline<<1)) | incomplete
-					pclinetab = append(pclinetab, entry)
+					pcline = append(pcline, entry)
 					if incomplete == 0 {
 						break
 					}
@@ -736,7 +732,7 @@ func (fcomp *fcomp) generate(blocks []*block, codelen uint32) {
 		panic("internal error: wrong code length")
 	}
 
-	fcomp.fn.pclinetab = pclinetab
+	fcomp.fn.Pclinetab = pcline
 	fcomp.fn.Code = code
 }
 

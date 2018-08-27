@@ -296,7 +296,7 @@ func (enc *Encoder) EncodeFuncode(fc *compile.Funcode) {
 	enc.EncodeString(String(fc.Name))
 	enc.WriteUvarint(uint64(len(fc.Code)))
 	enc.buf.Write(fc.Code)
-	pcline := fc.PCLineTable()
+	pcline := fc.Pclinetab
 	enc.WriteUvarint(uint64(len(pcline)))
 	for _, x := range pcline {
 		enc.WriteUvarint(uint64(x))
@@ -377,7 +377,7 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 		}
 		pcline[i] = uint16(x)
 	}
-	fc.SetPCLineTable(pcline)
+	fc.Pclinetab = pcline
 	count, err = dec.DecodeUvarint()
 	if err != nil {
 		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
