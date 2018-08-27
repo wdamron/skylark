@@ -47,7 +47,7 @@ func (fn *Function) isRecursive(frame *Frame) bool {
 // frameStack contains values for a frame's stack, addressable by offsets from the stack-pointer (sp).
 type frameStack []Value
 
-func (stack frameStack) check(sp, pops, pushes int) error {
+func (stack frameStack) check(op compile.Opcode, sp, pops, pushes int) error {
 	if !checkstackops {
 		return nil
 	}
@@ -55,14 +55,14 @@ func (stack frameStack) check(sp, pops, pushes int) error {
 	if pops > 0 {
 		hi, lo := sp-1, sp-pops
 		if hi < 0 || hi > size-1 || lo < 0 || lo > size-1 {
-			return fmt.Errorf("cannot pop %v values from stack of size %v from position %v", pops, size, sp-1)
+			return fmt.Errorf("internal error: cannot pop %v values from stack of size %v from position %v for op %s", pops, size, sp-1, op.String())
 		}
 	}
 	sp -= pops
-	if pushes > 0 {
+	if pushes > pops {
 		hi, lo := sp+pushes-1, sp
 		if hi < 0 || hi > size-1 || lo < 0 || lo > size-1 {
-			return fmt.Errorf("cannot push %v values onto stack of size %v at position %v", pops, size, sp)
+			return fmt.Errorf("internal error: cannot push %v values onto stack of size %v at position %v for op %s", pops, size, sp, op.String())
 		}
 	}
 	return nil
@@ -122,6 +122,10 @@ loop:
 	for {
 		savedpc = pc
 
+		if pc < 0 || int(pc) >= len(code) {
+			err = fmt.Errorf("internal error: program counter %v is out of bounds for code of length %v", pc, len(code))
+			break loop
+		}
 		op := compile.Opcode(code[pc])
 		pc++
 		var arg uint32
@@ -129,6 +133,10 @@ loop:
 			// TODO(adonovan): opt: profile this.
 			// Perhaps compiling big endian would be less work to decode?
 			for s := uint(0); ; s += 7 {
+				if pc < 0 || int(pc) >= len(code) {
+					err = fmt.Errorf("internal error: program counter %v for op %s is out of bounds for code of length %v", pc, op.String(), len(code))
+					break loop
+				}
 				b := code[pc]
 				pc++
 				arg |= uint32(b&0x7f) << s
@@ -147,14 +155,14 @@ loop:
 			// nop
 
 		case compile.DUP:
-			if err = stack.check(sp, 1, 2); err != nil {
+			if err = stack.check(op, sp, 1, 2); err != nil {
 				break loop
 			}
 			stack[sp] = stack[sp-1]
 			sp++
 
 		case compile.DUP2:
-			if err = stack.check(sp, 2, 4); err != nil {
+			if err = stack.check(op, sp, 2, 4); err != nil {
 				break loop
 			}
 			stack[sp] = stack[sp-2]
@@ -162,19 +170,19 @@ loop:
 			sp += 2
 
 		case compile.POP:
-			if err = stack.check(sp, 1, 0); err != nil {
+			if err = stack.check(op, sp, 1, 0); err != nil {
 				break loop
 			}
 			sp--
 
 		case compile.EXCH:
-			if err = stack.check(sp, 2, 2); err != nil {
+			if err = stack.check(op, sp, 2, 2); err != nil {
 				break loop
 			}
 			stack[sp-2], stack[sp-1] = stack[sp-1], stack[sp-2]
 
 		case compile.EQL, compile.NEQ, compile.GT, compile.LT, compile.LE, compile.GE:
-			if err = stack.check(sp, 2, 1); err != nil {
+			if err = stack.check(op, sp, 2, 1); err != nil {
 				break loop
 			}
 			op := syntax.Token(op-compile.EQL) + syntax.EQL
@@ -201,7 +209,7 @@ loop:
 			compile.LTLT,
 			compile.GTGT,
 			compile.IN:
-			if err = stack.check(sp, 2, 1); err != nil {
+			if err = stack.check(op, sp, 2, 1); err != nil {
 				break loop
 			}
 			binop := syntax.Token(op-compile.PLUS) + syntax.PLUS
@@ -220,7 +228,7 @@ loop:
 			sp++
 
 		case compile.UPLUS, compile.UMINUS, compile.TILDE:
-			if err = stack.check(sp, 1, 1); err != nil {
+			if err = stack.check(op, sp, 1, 1); err != nil {
 				break loop
 			}
 			var unop syntax.Token
@@ -238,7 +246,7 @@ loop:
 			stack[sp-1] = y
 
 		case compile.INPLACE_ADD:
-			if err = stack.check(sp, 2, 1); err != nil {
+			if err = stack.check(op, sp, 2, 1); err != nil {
 				break loop
 			}
 			y := stack[sp-1]
@@ -269,21 +277,21 @@ loop:
 			sp++
 
 		case compile.NONE:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			stack[sp] = None
 			sp++
 
 		case compile.TRUE:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			stack[sp] = True
 			sp++
 
 		case compile.FALSE:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			stack[sp] = False
@@ -295,7 +303,7 @@ loop:
 		case compile.CALL, compile.CALL_VAR, compile.CALL_KW, compile.CALL_VAR_KW:
 			var fnkwargs Value
 			if op == compile.CALL_KW || op == compile.CALL_VAR_KW {
-				if err = stack.check(sp, 1, 0); err != nil {
+				if err = stack.check(op, sp, 1, 0); err != nil {
 					break loop
 				}
 				fnkwargs = stack[sp-1]
@@ -304,7 +312,7 @@ loop:
 
 			var fnargs Value
 			if op == compile.CALL_VAR || op == compile.CALL_VAR_KW {
-				if err = stack.check(sp, 1, 0); err != nil {
+				if err = stack.check(op, sp, 1, 0); err != nil {
 					break loop
 				}
 				fnargs = stack[sp-1]
@@ -314,7 +322,7 @@ loop:
 			// named args (pairs)
 			var kvpairs []Tuple
 			if nkvpairs := int(arg & 0xff); nkvpairs > 0 {
-				if err = stack.check(sp, 2*nkvpairs, 0); err != nil {
+				if err = stack.check(op, sp, 2*nkvpairs, 0); err != nil {
 					break loop
 				}
 				kvpairs = make([]Tuple, 0, nkvpairs)
@@ -352,7 +360,7 @@ loop:
 			// positional args
 			var positional Tuple
 			if npos := int(arg >> 8); npos > 0 {
-				if err = stack.check(sp, npos, 0); err != nil {
+				if err = stack.check(op, sp, npos, 0); err != nil {
 					break loop
 				}
 				positional = make(Tuple, npos)
@@ -373,7 +381,7 @@ loop:
 				iter.Done()
 			}
 
-			if err = stack.check(sp, 1, 1); err != nil {
+			if err = stack.check(op, sp, 1, 1); err != nil {
 				break loop
 			}
 
@@ -424,7 +432,7 @@ loop:
 			}
 
 		case compile.RETURN:
-			if err = stack.check(sp, 1, 0); err != nil {
+			if err = stack.check(op, sp, 1, 0); err != nil {
 				break loop
 			}
 			retval := stack[sp-1]
@@ -461,17 +469,16 @@ loop:
 				fr.stack = stack
 			}
 			code, pc, sp, stack, locals, iterstack = fc.Code, fr.pc, int(fr.sp), frameStack(fr.stack[nlocals:]), fr.stack[:nlocals:nlocals], fr.iterstack
-			if err = stack.check(sp, 1, 1); err != nil {
+			if err = stack.check(op, sp, 1, 1); err != nil {
 				break loop
 			}
 			stack[sp-1] = retval
 			if vmdebug {
 				fmt.Printf("Resuming %s @ %s\n", fc.Name, fc.Position(0))
 			}
-			continue loop
 
 		case compile.ITERPUSH:
-			if err = stack.check(sp, 1, 0); err != nil {
+			if err = stack.check(op, sp, 1, 0); err != nil {
 				break loop
 			}
 			x := stack[sp-1]
@@ -484,7 +491,7 @@ loop:
 			iterstack = append(iterstack, iter)
 
 		case compile.ITERJMP:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			if len(iterstack) == 0 {
@@ -508,13 +515,13 @@ loop:
 			iterstack = iterstack[:n]
 
 		case compile.NOT:
-			if err = stack.check(sp, 1, 1); err != nil {
+			if err = stack.check(op, sp, 1, 1); err != nil {
 				break loop
 			}
 			stack[sp-1] = !stack[sp-1].Truth()
 
 		case compile.SETINDEX:
-			if err = stack.check(sp, 3, 0); err != nil {
+			if err = stack.check(op, sp, 3, 0); err != nil {
 				break loop
 			}
 			z := stack[sp-1]
@@ -527,7 +534,7 @@ loop:
 			}
 
 		case compile.INDEX:
-			if err = stack.check(sp, 2, 1); err != nil {
+			if err = stack.check(op, sp, 2, 1); err != nil {
 				break loop
 			}
 			y := stack[sp-1]
@@ -542,10 +549,14 @@ loop:
 			sp++
 
 		case compile.ATTR:
-			if err = stack.check(sp, 1, 1); err != nil {
+			if err = stack.check(op, sp, 1, 1); err != nil {
 				break loop
 			}
 			x := stack[sp-1]
+			if arg < 0 || int(arg) > len(fc.Prog.Names) {
+				err = fmt.Errorf("internal error: argument offset %v is out of bounds of names with length %v for op %s", arg, len(fc.Prog.Names), op.String())
+				break loop
+			}
 			name := fc.Prog.Names[arg]
 			y, err2 := getAttr(fr, x, name)
 			if err2 != nil {
@@ -555,12 +566,16 @@ loop:
 			stack[sp-1] = y
 
 		case compile.SETFIELD:
-			if err = stack.check(sp, 2, 0); err != nil {
+			if err = stack.check(op, sp, 2, 0); err != nil {
 				break loop
 			}
 			y := stack[sp-1]
 			x := stack[sp-2]
 			sp -= 2
+			if arg < 0 || int(arg) > len(fc.Prog.Names) {
+				err = fmt.Errorf("internal error: argument offset %v is out of bounds of names with length %v for op %s", arg, len(fc.Prog.Names), op.String())
+				break loop
+			}
 			name := fc.Prog.Names[arg]
 			if err2 := setField(fr, x, name, y); err2 != nil {
 				err = err2
@@ -568,14 +583,14 @@ loop:
 			}
 
 		case compile.MAKEDICT:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			stack[sp] = new(Dict)
 			sp++
 
 		case compile.SETDICT, compile.SETDICTUNIQ:
-			if err = stack.check(sp, 3, 0); err != nil {
+			if err = stack.check(op, sp, 3, 0); err != nil {
 				break loop
 			}
 			dict, ok := stack[sp-3].(*Dict)
@@ -584,7 +599,7 @@ loop:
 				if stack[sp-3] != nil {
 					argType = stack[sp-3].Type()
 				}
-				err = fmt.Errorf("argument to SETDICT* must be a mapping, not %s", argType)
+				err = fmt.Errorf("argument to %s must be a dict, not %s", op.String(), argType)
 				break loop
 			}
 			k := stack[sp-2]
@@ -601,7 +616,7 @@ loop:
 			}
 
 		case compile.APPEND:
-			if err = stack.check(sp, 2, 0); err != nil {
+			if err = stack.check(op, sp, 2, 0); err != nil {
 				break loop
 			}
 			elem := stack[sp-1]
@@ -611,14 +626,14 @@ loop:
 				if stack[sp-2] != nil {
 					argType = stack[sp-2].Type()
 				}
-				err = fmt.Errorf("argument to APPEND must be a list, not %s", argType)
+				err = fmt.Errorf("argument to %s must be a list, not %s", op.String(), argType)
 				break loop
 			}
 			sp -= 2
 			list.elems = append(list.elems, elem)
 
 		case compile.SLICE:
-			if err = stack.check(sp, 4, 1); err != nil {
+			if err = stack.check(op, sp, 4, 1); err != nil {
 				break loop
 			}
 			x := stack[sp-4]
@@ -636,7 +651,7 @@ loop:
 
 		case compile.UNPACK:
 			n := int(arg)
-			if err = stack.check(sp, 1, n); err != nil {
+			if err = stack.check(op, sp, 1, n); err != nil {
 				break loop
 			}
 			iterable := stack[sp-1]
@@ -664,7 +679,7 @@ loop:
 			}
 
 		case compile.CJMP:
-			if err = stack.check(sp, 1, 0); err != nil {
+			if err = stack.check(op, sp, 1, 0); err != nil {
 				break loop
 			}
 			if stack[sp-1].Truth() {
@@ -673,7 +688,11 @@ loop:
 			sp--
 
 		case compile.CONSTANT:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
+				break loop
+			}
+			if arg < 0 || int(arg) > len(fn.constants) {
+				err = fmt.Errorf("internal error: constant offset %v is out of bounds of constants with length %v for op %s", arg, len(fn.constants), op.String())
 				break loop
 			}
 			stack[sp] = fn.constants[arg]
@@ -681,7 +700,7 @@ loop:
 
 		case compile.MAKETUPLE:
 			n := int(arg)
-			if err = stack.check(sp, n, 1); err != nil {
+			if err = stack.check(op, sp, n, 1); err != nil {
 				break loop
 			}
 			tuple := make(Tuple, n)
@@ -692,7 +711,7 @@ loop:
 
 		case compile.MAKELIST:
 			n := int(arg)
-			if err = stack.check(sp, n, 1); err != nil {
+			if err = stack.check(op, sp, n, 1); err != nil {
 				break loop
 			}
 			elems := make([]Value, n)
@@ -702,7 +721,11 @@ loop:
 			sp++
 
 		case compile.MAKEFUNC:
-			if err = stack.check(sp, 2, 1); err != nil {
+			if err = stack.check(op, sp, 2, 1); err != nil {
+				break loop
+			}
+			if arg < 0 || int(arg) > len(fc.Prog.Functions) {
+				err = fmt.Errorf("internal error: argument offset %v is out of bounds of functions with length %v for op %s", arg, len(fc.Prog.Functions), op.String())
 				break loop
 			}
 			funcode := fc.Prog.Functions[arg]
@@ -714,7 +737,7 @@ loop:
 				if stack[sp-1] != nil {
 					argType = stack[sp-1].Type()
 				}
-				err = fmt.Errorf("freevars argument to MAKEFUNC must be a tuple, not %s", argType)
+				err = fmt.Errorf("freevars argument to %s must be a tuple, not %s", op.String(), argType)
 				break loop
 			}
 			var defaults Tuple
@@ -724,7 +747,7 @@ loop:
 				if stack[sp-2] != nil {
 					argType = stack[sp-2].Type()
 				}
-				err = fmt.Errorf("defaults argument to MAKEFUNC must be a tuple, not %s", argType)
+				err = fmt.Errorf("defaults argument to %s must be a tuple, not %s", op.String(), argType)
 				break loop
 			}
 			sp -= 2
@@ -740,7 +763,7 @@ loop:
 
 		case compile.LOAD:
 			n := int(arg)
-			if err = stack.check(sp, 1+n, n); err != nil {
+			if err = stack.check(op, sp, 1+n, n); err != nil {
 				break loop
 			}
 			moduleString, ok := stack[sp-1].(String)
@@ -749,7 +772,7 @@ loop:
 				if stack[sp-1] != nil {
 					argType = stack[sp-1].Type()
 				}
-				err = fmt.Errorf("argument to LOAD must be a string, not %s", argType)
+				err = fmt.Errorf("argument to %s must be a string, not %s", op.String(), argType)
 				break loop
 			}
 			module := string(moduleString)
@@ -767,7 +790,7 @@ loop:
 			}
 
 			for i := 0; i < n; i++ {
-				nameString, ok := stack[sp-1-i].(String)
+				name, ok := stack[sp-1-i].(String)
 				if !ok {
 					argType := "<nil>"
 					if stack[sp-1] != nil {
@@ -776,7 +799,7 @@ loop:
 					err = fmt.Errorf("load: value name in module %s must be a string, not %s", module, argType)
 					break loop
 				}
-				from := string(nameString)
+				from := string(name)
 				var v Value
 				v, ok = dict[from]
 				if !ok {
@@ -787,7 +810,7 @@ loop:
 			}
 
 		case compile.SETLOCAL:
-			if err = stack.check(sp, 1, 0); err != nil {
+			if err = stack.check(op, sp, 1, 0); err != nil {
 				break loop
 			}
 			if int(arg) < 0 || int(arg) >= len(locals) {
@@ -798,7 +821,7 @@ loop:
 			sp--
 
 		case compile.SETGLOBAL:
-			if err = stack.check(sp, 1, 0); err != nil {
+			if err = stack.check(op, sp, 1, 0); err != nil {
 				break loop
 			}
 			if int(arg) < 0 || int(arg) >= len(fn.globals) {
@@ -809,7 +832,7 @@ loop:
 			sp--
 
 		case compile.LOCAL:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			if int(arg) < 0 || int(arg) >= len(locals) {
@@ -825,7 +848,7 @@ loop:
 			sp++
 
 		case compile.FREE:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			if int(arg) < 0 || int(arg) >= len(fn.freevars) {
@@ -836,7 +859,7 @@ loop:
 			sp++
 
 		case compile.GLOBAL:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			if int(arg) < 0 || int(arg) >= len(fn.globals) {
@@ -852,7 +875,7 @@ loop:
 			sp++
 
 		case compile.PREDECLARED:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			if int(arg) < 0 || int(arg) >= len(fc.Prog.Names) {
@@ -869,7 +892,7 @@ loop:
 			sp++
 
 		case compile.UNIVERSAL:
-			if err = stack.check(sp, 0, 1); err != nil {
+			if err = stack.check(op, sp, 0, 1); err != nil {
 				break loop
 			}
 			if int(arg) < 0 || int(arg) >= len(fc.Prog.Names) {
