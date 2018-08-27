@@ -111,6 +111,8 @@ func (p *parser) parseStmt(stmts []Stmt) []Stmt {
 		return append(stmts, p.parseIfStmt())
 	} else if p.tok == FOR {
 		return append(stmts, p.parseForStmt())
+	} else if p.tok == TRY {
+		return append(stmts, p.parseTryStmt())
 	}
 	return p.parseSimpleStmt(stmts)
 }
@@ -202,6 +204,27 @@ func (p *parser) parseForLoopVariables() Expr {
 		list = append(list, p.parsePrimaryWithSuffix())
 	}
 	return &TupleExpr{List: list}
+}
+
+func (p *parser) parseTryStmt() Stmt {
+	stmt := &TryStmt{Try: p.nextToken()}
+	p.consume(COLON)
+	stmt.Body = p.parseSuite()
+	p.consume(EXCEPT)
+	if p.tok != COLON {
+		stmt.ExceptionType = p.parseIdent()
+		// TODO(wdamron): don't hardcode Exception as the only exception type
+		if stmt.ExceptionType == nil || stmt.ExceptionType.Name != "Exception" {
+			p.in.errorf(p.in.pos, "exception type must be Exception")
+		}
+		p.consume(AS)
+		stmt.ExceptionName = p.parseIdent()
+		p.consume(COLON)
+	} else {
+		p.consume(COLON)
+	}
+	stmt.Fallback = p.parseSuite()
+	return stmt
 }
 
 // simple_stmt = small_stmt (SEMI small_stmt)* SEMI? NEWLINE

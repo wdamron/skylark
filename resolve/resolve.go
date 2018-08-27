@@ -95,6 +95,7 @@ var (
 	AllowSet            = false // allow the 'set' built-in
 	AllowGlobalReassign = false // allow reassignment to globals declared in same file (deprecated)
 	AllowBitwise        = false // allow bitwise operations (&, |, ^, ~, <<, and >>)
+	AllowTryExcept      = false // allow try/catch exception handling
 )
 
 // File resolves the specified file.
@@ -436,6 +437,22 @@ func (r *resolver) stmt(stmt syntax.Stmt) {
 		r.loops++
 		r.stmts(stmt.Body)
 		r.loops--
+
+	case *syntax.TryStmt:
+		if !AllowTryExcept {
+			r.errorf(stmt.Try, "try statements are not enabled")
+		}
+		if r.container().function == nil {
+			r.errorf(stmt.Try, "try statement is not within a function")
+		}
+		r.stmts(stmt.Body)
+		if stmt.ExceptionType != nil && stmt.ExceptionName != nil {
+			const allowRebind = false
+			if r.bind(stmt.ExceptionName, allowRebind) {
+				r.errorf(stmt.ExceptionName.NamePos, "exception name is already in use: %s", stmt.ExceptionName)
+			}
+		}
+		r.stmts(stmt.Fallback)
 
 	case *syntax.ReturnStmt:
 		if r.container().function == nil {

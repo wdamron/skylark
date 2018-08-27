@@ -177,14 +177,15 @@ func (d StringDict) Has(key string) bool { _, ok := d[key]; return ok }
 // A Frame records a call to a Skylark function (including module toplevel)
 // or a built-in function or method.
 type Frame struct {
-	stack     []Value         // function-local variables and stack values
-	iterstack []Iterator      // stack of active iterators
-	parent    *Frame          // caller's frame (or nil)
-	callable  Callable        // current function (or toplevel) or built-in
-	posn      syntax.Position // source position of PC, set during error
-	callpc    uint32          // PC of position of active call, set during call
-	pc        uint32          // PC of return position after active call, set during call
-	sp        uint32          // stack-pointer offset of active call, set during call
+	stack      []Value            // function-local variables and stack values
+	iterstack  []Iterator         // stack of active iterators
+	exhandlers []exceptionHandler // stack of active exception handlers
+	parent     *Frame             // caller's frame (or nil)
+	callable   Callable           // current function (or toplevel) or built-in
+	posn       syntax.Position    // source position of PC, set during error
+	callpc     uint32             // PC of position of active call, set during call
+	pc         uint32             // PC of return position after active call, set during call
+	sp         uint32             // stack-pointer offset of active call, set during call
 
 	// args and kwargs are non-nil when a builtin function (the current function) is suspended.
 	args   Tuple

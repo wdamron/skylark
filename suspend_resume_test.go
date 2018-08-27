@@ -8,9 +8,14 @@ import (
 	"testing"
 
 	. "github.com/google/skylark"
+	"github.com/google/skylark/resolve"
 	"github.com/google/skylark/skylarkstruct"
 	"github.com/google/skylark/skylarktest"
 )
+
+func init() {
+	resolve.AllowTryExcept = true
+}
 
 func TestSuspendResume(t *testing.T) {
 	filename := "suspend.sky"
@@ -32,8 +37,17 @@ func TestSuspendResume(t *testing.T) {
 magic_index = 3
 def long_running(i):
 	if i == magic_index:
-		return long_running_builtin("the_argument", the_key="the_value")
-	else:
+		try:
+			x = 1 / 0
+			return i
+		except:
+			try:
+				return long_running_builtin("the_argument", the_key="the_value")
+			except:
+				return i
+	try:
+		x = 1 / 0
+	except Exception as thing: # syntax not fully supported yet...
 		return i
 
 a = 1

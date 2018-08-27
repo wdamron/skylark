@@ -96,6 +96,11 @@ const (
 	PASS
 	RETURN
 
+	// Extended Keywords
+	TRY
+	EXCEPT
+	AS
+
 	maxToken
 )
 
@@ -177,6 +182,9 @@ var tokenNames = [...]string{
 	OR:            "or",
 	PASS:          "pass",
 	RETURN:        "return",
+	TRY:           "try",
+	EXCEPT:        "except",
+	AS:            "as",
 }
 
 // A Position describes the location of a rune of input.
@@ -998,12 +1006,15 @@ var keywordToken = map[string]Token{
 	"pass":     PASS,
 	"return":   RETURN,
 
+	// optionally enabled:
+	"try":    TRY,
+	"except": EXCEPT,
+	"as":     AS,
+
 	// reserved words:
-	"as": ILLEGAL,
 	// "assert":   ILLEGAL, // heavily used by our tests
 	"class":    ILLEGAL,
 	"del":      ILLEGAL,
-	"except":   ILLEGAL,
 	"finally":  ILLEGAL,
 	"from":     ILLEGAL,
 	"global":   ILLEGAL,
@@ -1011,7 +1022,6 @@ var keywordToken = map[string]Token{
 	"is":       ILLEGAL,
 	"nonlocal": ILLEGAL,
 	"raise":    ILLEGAL,
-	"try":      ILLEGAL,
 	"while":    ILLEGAL,
 	"with":     ILLEGAL,
 	"yield":    ILLEGAL,

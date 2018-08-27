@@ -417,6 +417,11 @@ func (enc *Encoder) EncodeFrame(frame *Frame) {
 		}
 		enc.EncodeIterator(v)
 	}
+	enc.WriteUvarint(uint64(len(frame.exhandlers)))
+	for _, h := range frame.exhandlers {
+		enc.WriteUvarint(uint64(h.pc))
+		enc.WriteUvarint(uint64(h.sp))
+	}
 	enc.EncodeTuple(frame.args)
 	enc.WriteUvarint(uint64(len(frame.kwargs)))
 	for _, v := range frame.kwargs {
@@ -496,6 +501,24 @@ func (dec *Decoder) DecodeFrame() (*Frame, error) {
 			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
 		}
 		frame.iterstack[i] = it
+	}
+	// exhandlers
+	x, err = dec.DecodeUvarint()
+	if err != nil {
+		return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
+	}
+	frame.exhandlers = make([]exceptionHandler, x)
+	for i := uint64(0); i < x; i++ {
+		x, err = dec.DecodeUvarint()
+		if err != nil {
+			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
+		}
+		frame.exhandlers[i].pc = uint32(x)
+		x, err = dec.DecodeUvarint()
+		if err != nil {
+			return frame, fmt.Errorf("Codec: unexpected error while decoding frame: %v", err)
+		}
+		frame.exhandlers[i].sp = uint32(x)
 	}
 	// args
 	frame.args, err = dec.DecodeTuple()

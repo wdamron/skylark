@@ -33,6 +33,7 @@ func init() {
 	flag.BoolVar(&resolve.AllowLambda, "lambda", resolve.AllowLambda, "allow lambda expressions")
 	flag.BoolVar(&resolve.AllowNestedDef, "nesteddef", resolve.AllowNestedDef, "allow nested def statements")
 	flag.BoolVar(&resolve.AllowBitwise, "bitwise", resolve.AllowBitwise, "allow bitwise operations (&, |, ^, ~, <<, and >>)")
+	flag.BoolVar(&resolve.AllowTryExcept, "tryexcept", resolve.AllowTryExcept, "allow try/except exception handling")
 }
 
 func main() {

@@ -102,6 +102,8 @@ const (
 	INPLACE_ADD //            x y INPLACE_ADD z      where z is x+y or x.extend(y)
 	MAKEDICT    //              - MAKEDICT dict
 
+	EXCEPTPOP // - EXCEPTPOP -        [pops the exception handler stack]
+
 	// --- opcodes with an argument must go below this line ---
 
 	// control flow
@@ -125,6 +127,8 @@ const (
 	ATTR        //                x ATTR<name>          y           y = x.name
 	SETFIELD    //              x y SETFIELD<name>      -           x.name = y
 	UNPACK      //         iterable UNPACK<n>           vn ... v1
+
+	EXCEPT // - EXCEPT<addr> -     [pushes the exception handler stack]
 
 	// n>>8 is #positional args and n&0xff is #named args (pairs).
 	CALL        // fn positional named                CALL<n>        result
@@ -197,6 +201,8 @@ var opcodeNames = [...]string{
 	STAR:        "star",
 	TILDE:       "tilde",
 	TRUE:        "true",
+	EXCEPT:      "except",
+	EXCEPTPOP:   "exceptpop",
 	UMINUS:      "uminus",
 	UNIVERSAL:   "universal",
 	UNPACK:      "unpack",
@@ -286,6 +292,8 @@ func init() {
 	stackEffect[STAR] = -1
 	stackEffect[TILDE] = 0
 	stackEffect[TRUE] = +1
+	stackEffect[EXCEPT] = 0
+	stackEffect[EXCEPTPOP] = 0
 	stackEffect[UMINUS] = 0
 	stackEffect[UNIVERSAL] = +1
 	stackEffect[UNPACK] = variableStackEffect
@@ -371,7 +379,7 @@ type block struct {
 	// If the last insn is a CJMP or ITERJMP,
 	//  cjmp and jmp are the "true" and "false" successors.
 	// Otherwise, jmp is the sole successor.
-	jmp, cjmp *block
+	jmp, cjmp, except *block
 
 	initialstack int // for stack depth computation
 
@@ -515,6 +523,7 @@ func (pcomp *pcomp) function(name string, pos syntax.Position, stmts []syntax.St
 			fmt.Fprintf(os.Stderr, "%s block %d: (stack = %d)\n", name, b.index, stack)
 		}
 		var cjmpAddr *uint32
+		var exceptAddr *uint32
 		var isiterjmp int
 		for i, insn := range b.insns {
 			pc++
@@ -527,6 +536,9 @@ func (pcomp *pcomp) function(name string, pos syntax.Position, stmts []syntax.St
 					fallthrough
 				case CJMP:
 					cjmpAddr = &b.insns[i].arg
+					pc += 4
+				case EXCEPT:
+					exceptAddr = &b.insns[i].arg
 					pc += 4
 				default:
 					pc += uint32(argLen(insn.arg))
@@ -556,6 +568,9 @@ func (pcomp *pcomp) function(name string, pos syntax.Position, stmts []syntax.St
 			}
 			if b.cjmp != nil {
 				fmt.Fprintf(os.Stderr, "cjmp to %d\n", b.cjmp.index)
+			}
+			if b.except != nil {
+				fmt.Fprintf(os.Stderr, "except to %d\n", b.except.index)
 			}
 		}
 
@@ -591,6 +606,22 @@ func (pcomp *pcomp) function(name string, pos syntax.Position, stmts []syntax.St
 			// Patch the CJMP/ITERJMP, if present.
 			if cjmpAddr != nil {
 				*cjmpAddr = b.cjmp.addr
+			}
+		}
+
+		// Then the exception handler block:
+		if b.except != nil {
+			// TODO(wdamron): maybe revisit this -- jump threading (empty cycles are impossible)
+			for b.except.insns == nil {
+				b.except = b.except.except
+			}
+
+			setinitialstack(b.except, stack)
+			visit(b.except)
+
+			// Patch the CJMP/ITERJMP, if present.
+			if exceptAddr != nil {
+				*exceptAddr = b.except.addr
 			}
 		}
 	}
@@ -709,7 +740,7 @@ func (fcomp *fcomp) generate(blocks []*block, codelen uint32) {
 			code = append(code, byte(insn.op))
 			pc++
 			if insn.op >= OpcodeArgMin {
-				if insn.op == CJMP || insn.op == ITERJMP {
+				if insn.op == CJMP || insn.op == EXCEPT || insn.op == ITERJMP {
 					code = addUint32(code, insn.arg, 4) // pad arg to 4 bytes
 				} else {
 					code = addUint32(code, insn.arg, 0)
@@ -729,7 +760,7 @@ func (fcomp *fcomp) generate(blocks []*block, codelen uint32) {
 		}
 	}
 	if len(code) != int(codelen) {
-		panic("internal error: wrong code length")
+		panic(fmt.Sprintf("internal error: wrong code length %v; expected %v", len(code), codelen))
 	}
 
 	fcomp.fn.Pclinetab = pcline
@@ -1081,6 +1112,28 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 
 		fcomp.block = tail
 		fcomp.emit(ITERPOP)
+
+	case *syntax.TryStmt:
+		fallback := fcomp.newBlock()
+		done := fcomp.newBlock()
+
+		if fcomp.block != nil && fcomp.block.except != nil {
+			body := fcomp.newBlock()
+			fcomp.jump(body)
+			fcomp.block = body
+		}
+		fcomp.block.except = fallback
+		fcomp.emit1(EXCEPT, 0)
+		fcomp.stmts(stmt.Body)
+		fcomp.emit(EXCEPTPOP)
+		fcomp.jump(done)
+
+		fcomp.block = fallback
+		fcomp.emit(EXCEPTPOP)
+		fcomp.stmts(stmt.Fallback)
+		fcomp.jump(done)
+
+		fcomp.block = done
 
 	case *syntax.ReturnStmt:
 		if stmt.Result != nil {

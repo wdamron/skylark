@@ -26,6 +26,7 @@ func init() {
 	resolve.AllowFloat = true
 	resolve.AllowSet = true
 	resolve.AllowBitwise = true
+	resolve.AllowTryExcept = true
 }
 
 func TestEvalExpr(t *testing.T) {

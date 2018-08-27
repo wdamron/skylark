@@ -96,6 +96,7 @@ func (*DefStmt) stmt()    {}
 func (*ExprStmt) stmt()   {}
 func (*ForStmt) stmt()    {}
 func (*IfStmt) stmt()     {}
+func (*TryStmt) stmt()    {}
 func (*LoadStmt) stmt()   {}
 func (*ReturnStmt) stmt() {}
 
@@ -177,6 +178,22 @@ func (x *IfStmt) Span() (start, end Position) {
 	}
 	_, end = body[len(body)-1].Span()
 	return x.If, end
+}
+
+// A TryStmt safely executes statements, or falls back to an exception handler.
+type TryStmt struct {
+	commentsRef
+	Try           Position
+	Body          []Stmt
+	Except        Position
+	ExceptionType *Ident
+	ExceptionName *Ident
+	Fallback      []Stmt
+}
+
+func (x *TryStmt) Span() (start, end Position) {
+	_, end = x.Fallback[len(x.Fallback)-1].Span()
+	return x.Try, end
 }
 
 // A LoadStmt loads another module and binds names from it:
