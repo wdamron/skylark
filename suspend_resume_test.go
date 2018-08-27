@@ -7,7 +7,7 @@ package skylark_test
 import (
 	"testing"
 
-	"github.com/google/skylark"
+	. "github.com/google/skylark"
 	"github.com/google/skylark/skylarkstruct"
 	"github.com/google/skylark/skylarktest"
 )
@@ -15,16 +15,16 @@ import (
 func TestSuspendResume(t *testing.T) {
 	filename := "suspend.sky"
 
-	predeclared := skylark.StringDict{
-		"struct_val": skylarkstruct.FromStringDict(skylarkstruct.Default, skylark.StringDict{
-			"a": skylark.String("a"),
-			"b": skylark.String("b"),
-			"c": skylark.String("c"),
+	predeclared := StringDict{
+		"struct_val": skylarkstruct.FromStringDict(skylarkstruct.Default, StringDict{
+			"a": String("a"),
+			"b": String("b"),
+			"c": String("c"),
 		}),
-		"long_running_builtin": skylark.NewBuiltin("long_running_builtin",
-			func(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+		"long_running_builtin": NewBuiltin("long_running_builtin",
+			func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 				thread.Suspendable(args, kwargs)
-				return skylark.None, nil
+				return None, nil
 			}),
 	}
 
@@ -50,12 +50,12 @@ response = responses[magic_index]
 struct_abc = struct_val.a + struct_val.b + struct_val.c
 
 `
-	thread := &skylark.Thread{Load: load}
+	thread := &Thread{Load: load}
 	skylarktest.SetReporter(thread, t)
 
-	result, err := skylark.ExecFile(thread, filename, script, predeclared)
+	result, err := ExecFile(thread, filename, script, predeclared)
 	switch err := err.(type) {
-	case *skylark.EvalError:
+	case *EvalError:
 		t.Fatal(err.Backtrace())
 	case nil:
 		// success
@@ -73,21 +73,21 @@ struct_abc = struct_val.a + struct_val.b + struct_val.c
 		t.Fatalf("Expected long_running_builtin() in top frame of suspended thread, found %s", suspended.Callable().Name())
 	}
 
-	snapshot, err := skylark.EncodeState(thread)
+	snapshot, err := EncodeState(thread)
 	if err != nil {
 		t.Fatal(err)
 	}
 	compressedSize := len(snapshot)
 	t.Logf("Encoded/compressed snapshot size: %dB", len(snapshot))
 
-	snapshot, err = skylark.NewEncoder().DisableCompression().EncodeState(thread)
+	snapshot, err = NewEncoder().DisableCompression().EncodeState(thread)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Logf("Encoded/uncompressed snapshot size: %dB", len(snapshot))
 	t.Logf("Compression ratio: %.3f", float64(compressedSize)/float64(len(snapshot)))
 
-	thread, err = skylark.DecodeState(snapshot, predeclared)
+	thread, err = DecodeState(snapshot, predeclared)
 	if err != nil {
 		t.Fatal(err)
 		return
@@ -97,10 +97,10 @@ struct_abc = struct_val.a + struct_val.b + struct_val.c
 	if top.Callable() != predeclared["long_running_builtin"] {
 		t.Fatalf("Expected long_running_builtin() in top frame of decoded state, found %v", top.Callable().Name())
 	}
-	if len(top.Args()) != 1 || top.Args()[0] != skylark.String("the_argument") {
+	if len(top.Args()) != 1 || top.Args()[0] != String("the_argument") {
 		t.Fatalf("Expected arguments to be preserved after suspension/resumption, found args=%v", top.Args())
 	}
-	if len(top.Kwargs()) != 1 || top.Kwargs()[0][0] != skylark.String("the_key") || top.Kwargs()[0][1] != skylark.String("the_value") {
+	if len(top.Kwargs()) != 1 || top.Kwargs()[0][0] != String("the_key") || top.Kwargs()[0][1] != String("the_value") {
 		t.Fatalf("Expected keyword arguments to be preserved after suspension/resumption, found kwargs=%v", top.Kwargs())
 	}
 
@@ -108,37 +108,37 @@ struct_abc = struct_val.a + struct_val.b + struct_val.c
 		t.Fatalf("Expected long_running() in caller frame of decoded state, found %v", thread.Caller().Callable().Name())
 	}
 
-	response := skylark.String("abc123")
+	response := String("abc123")
 
-	result, err = skylark.Resume(thread, response)
+	result, err = Resume(thread, response)
 	if err != nil {
 		t.Fatalf("Error after resuming suspended thread: %v", err)
 	}
 
-	if result["response"] == nil || result["response"].(skylark.String) != response {
+	if result["response"] == nil || result["response"].(String) != response {
 		t.Fatalf("Expected injected return value to be returned from suspending function after resuming, response=%v, responses=%#+v", result["response"], result["responses"])
 	}
-	sum, ok := result["sum_abc"].(skylark.Int)
+	sum, ok := result["sum_abc"].(Int)
 	if i, ok2 := sum.Int64(); !ok || !ok2 || i != 6 {
 		t.Fatal("Expected previously assigned global variables to be preserved after suspension/resumption")
 	}
-	if struct_abc, ok := result["struct_abc"].(skylark.String); !ok || struct_abc != skylark.String("abc") {
+	if struct_abc, ok := result["struct_abc"].(String); !ok || struct_abc != String("abc") {
 		t.Fatalf("Expected struct value to be preserved after suspension/resumption, struct_abc=%v", result["struct_abc"])
 	}
 
 	// Test resuming directly without serialization/deserialization:
 
-	thread = &skylark.Thread{Load: load}
+	thread = &Thread{Load: load}
 	skylarktest.SetReporter(thread, t)
-	result, err = skylark.ExecFile(thread, filename, script, predeclared)
+	result, err = ExecFile(thread, filename, script, predeclared)
 	if err != nil {
 		t.Fatal(err)
 	}
-	result, err = skylark.Resume(thread, skylark.String("abc123"))
+	result, err = Resume(thread, String("abc123"))
 	if err != nil {
 		t.Fatalf("Error after resuming suspended thread: %v", err)
 	}
-	if result["response"] == nil || result["response"].(skylark.String) != skylark.String("abc123") {
+	if result["response"] == nil || result["response"].(String) != String("abc123") {
 		t.Fatalf("Expected injected return value to be returned from suspending function after resuming")
 	}
 }
