@@ -104,6 +104,7 @@ func interpret(thread *Thread, args Tuple, kwargs []Tuple, resuming bool) (Value
 
 	var result Value
 	var err error
+	var savedErr error
 
 	if !resuming {
 		err = setArgs(locals, fn, args, kwargs)
@@ -132,6 +133,7 @@ loop:
 			}
 			handler := exhandlers[len(exhandlers)-1]
 			pc, sp = handler.pc, int(handler.sp)
+			savedErr = err
 			err = nil
 		}
 
@@ -164,6 +166,31 @@ loop:
 		}
 
 		switch op {
+
+		case compile.ERROR:
+			if stackErr := stack.check(op, sp, 0, 1); stackErr != nil {
+				err = stackErr
+				break loop
+			}
+			if savedErr != nil {
+				stack[sp] = String(savedErr.Error())
+				savedErr = nil
+			} else {
+				stack[sp] = None
+			}
+			sp++
+
+		case compile.EXCEPT:
+			exhandlers = append(exhandlers, exceptionHandler{pc: arg, sp: uint32(sp)})
+
+		case compile.EXCEPTPOP:
+			if len(exhandlers) > 0 {
+				exhandlers = exhandlers[:len(exhandlers)-1]
+			} else {
+				err = fmt.Errorf("internal error: empty exception handler stack during %s", op.String())
+				break loop
+			}
+
 		case compile.NOP:
 			// nop
 
@@ -312,17 +339,6 @@ loop:
 
 		case compile.JMP:
 			pc = arg
-
-		case compile.EXCEPT:
-			exhandlers = append(exhandlers, exceptionHandler{pc: arg, sp: uint32(sp)})
-
-		case compile.EXCEPTPOP:
-			if len(exhandlers) > 0 {
-				exhandlers = exhandlers[:len(exhandlers)-1]
-			} else {
-				err = fmt.Errorf("internal error: empty exception handler stack during %s", op.String())
-				break loop
-			}
 
 		case compile.CALL, compile.CALL_VAR, compile.CALL_KW, compile.CALL_VAR_KW:
 			var fnkwargs Value

@@ -446,13 +446,18 @@ func (r *resolver) stmt(stmt syntax.Stmt) {
 			r.errorf(stmt.Try, "try statement is not within a function")
 		}
 		r.stmts(stmt.Body)
-		if stmt.ExceptionType != nil && stmt.ExceptionName != nil {
-			const allowRebind = false
-			if r.bind(stmt.ExceptionName, allowRebind) {
-				r.errorf(stmt.ExceptionName.NamePos, "exception name is already in use: %s", stmt.ExceptionName)
-			}
+		if stmt.ExceptionType != nil {
+			r.use(stmt.ExceptionType)
 		}
-		r.stmts(stmt.Fallback)
+		if stmt.ExceptionName != nil {
+			const allowRebind = false
+			r.bind(stmt.ExceptionName, allowRebind)
+			r.stmts(stmt.Fallback)
+			r.env.resolveLocalUses()
+			delete(r.env.bindings, stmt.ExceptionName.Name)
+		} else {
+			r.stmts(stmt.Fallback)
+		}
 
 	case *syntax.ReturnStmt:
 		if r.container().function == nil {

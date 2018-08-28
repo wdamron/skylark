@@ -102,7 +102,8 @@ const (
 	INPLACE_ADD //            x y INPLACE_ADD z      where z is x+y or x.extend(y)
 	MAKEDICT    //              - MAKEDICT dict
 
-	EXCEPTPOP // - EXCEPTPOP -        [pops the exception handler stack]
+	EXCEPTPOP //     eh EXCEPTPOP -  [pops the exception handler stack]
+	ERROR     // - <err>ERROR err    [pushes the current error (handled exception) onto the value stack]
 
 	// --- opcodes with an argument must go below this line ---
 
@@ -155,6 +156,9 @@ var opcodeNames = [...]string{
 	DUP2:        "dup2",
 	DUP:         "dup",
 	EQL:         "eql",
+	ERROR:       "errorpush",
+	EXCEPT:      "except",
+	EXCEPTPOP:   "exceptpop",
 	EXCH:        "exch",
 	FALSE:       "false",
 	FREE:        "free",
@@ -201,8 +205,6 @@ var opcodeNames = [...]string{
 	STAR:        "star",
 	TILDE:       "tilde",
 	TRUE:        "true",
-	EXCEPT:      "except",
-	EXCEPTPOP:   "exceptpop",
 	UMINUS:      "uminus",
 	UNIVERSAL:   "universal",
 	UNPACK:      "unpack",
@@ -246,6 +248,9 @@ func init() {
 	stackEffect[DUP2] = +2
 	stackEffect[DUP] = +1
 	stackEffect[EQL] = -1
+	stackEffect[ERROR] = +1
+	stackEffect[EXCEPT] = 0
+	stackEffect[EXCEPTPOP] = 0
 	stackEffect[EXCH] = 0
 	stackEffect[FALSE] = +1
 	stackEffect[FREE] = +1
@@ -292,8 +297,6 @@ func init() {
 	stackEffect[STAR] = -1
 	stackEffect[TILDE] = 0
 	stackEffect[TRUE] = +1
-	stackEffect[EXCEPT] = 0
-	stackEffect[EXCEPTPOP] = 0
 	stackEffect[UMINUS] = 0
 	stackEffect[UNIVERSAL] = +1
 	stackEffect[UNPACK] = variableStackEffect
@@ -1128,10 +1131,21 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		fcomp.emit(EXCEPTPOP)
 		fcomp.jump(done)
 
-		fcomp.block = fallback
-		fcomp.emit(EXCEPTPOP)
-		fcomp.stmts(stmt.Fallback)
-		fcomp.jump(done)
+		if stmt.ExceptionType != nil && stmt.ExceptionName != nil {
+			fcomp.block = fallback
+			fcomp.emit(ERROR)
+			fcomp.emit(EXCEPTPOP)
+			fcomp.emit1(SETLOCAL, uint32(stmt.ExceptionName.Index))
+			fcomp.stmts(stmt.Fallback)
+			fcomp.emit(NONE)
+			fcomp.emit1(SETLOCAL, uint32(stmt.ExceptionName.Index))
+			fcomp.jump(done)
+		} else {
+			fcomp.block = fallback
+			fcomp.emit(EXCEPTPOP)
+			fcomp.stmts(stmt.Fallback)
+			fcomp.jump(done)
+		}
 
 		fcomp.block = done
 

@@ -31,6 +31,16 @@ func TestSuspendResume(t *testing.T) {
 				thread.Suspendable(args, kwargs)
 				return None, nil
 			}),
+		"Exception": String("Exception"),
+		"log_error": NewBuiltin("print",
+			func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+				if len(args) > 0 {
+					i, _ := args[0].(Int)
+					s, _ := args[1].(String)
+					t.Logf("i=%s err: %s", i.String(), string(s))
+				}
+				return None, nil
+			}),
 	}
 
 	script := `
@@ -38,7 +48,7 @@ magic_index = 3
 def long_running(i):
 	if i == magic_index:
 		try:
-			x = 1 / 0
+			x = 1 / (i - magic_index)
 			return i
 		except:
 			try:
@@ -46,8 +56,9 @@ def long_running(i):
 			except:
 				return i
 	try:
-		x = 1 / 0
-	except Exception as thing: # syntax not fully supported yet...
+		x = 1 / i
+	except Exception as e:
+		log_error(i, e)
 		return i
 
 a = 1
