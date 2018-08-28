@@ -336,6 +336,11 @@ func (r *resolver) bind(id *syntax.Ident, allowRebind bool) bool {
 	return ok
 }
 
+func (r *resolver) unbind(id *syntax.Ident) {
+	r.env.resolveLocalUses()
+	delete(r.env.bindings, id.Name)
+}
+
 func (r *resolver) use(id *syntax.Ident) {
 	b := r.container()
 	b.uses = append(b.uses, use{id, r.env})
@@ -446,15 +451,15 @@ func (r *resolver) stmt(stmt syntax.Stmt) {
 			r.errorf(stmt.Try, "try statement is not within a function")
 		}
 		r.stmts(stmt.Body)
-		if stmt.ExceptionType != nil {
-			r.use(stmt.ExceptionType)
-		}
-		if stmt.ExceptionName != nil {
+		if stmt.ExceptionType != nil || stmt.ExceptionName != nil {
+			if stmt.ExceptionType == nil || stmt.ExceptionName == nil {
+				r.errorf(stmt.Except, "except statement must have both a type and name if either is present")
+			}
+			r.expr(stmt.ExceptionType)
 			const allowRebind = false
 			r.bind(stmt.ExceptionName, allowRebind)
 			r.stmts(stmt.Fallback)
-			r.env.resolveLocalUses()
-			delete(r.env.bindings, stmt.ExceptionName.Name)
+			r.unbind(stmt.ExceptionName)
 		} else {
 			r.stmts(stmt.Fallback)
 		}

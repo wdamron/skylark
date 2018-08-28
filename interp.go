@@ -72,6 +72,14 @@ type exceptionHandler struct {
 	pc, sp uint32
 }
 
+func getExceptionType(err error) string {
+	// TODO(wdamron): add builtin error types
+	if err == nil {
+		return "None"
+	}
+	return "Exception"
+}
+
 // TODO(adonovan):
 // - optimize position table.
 // - opt: reduce allocations by preallocating a large stack, saving it
@@ -168,28 +176,47 @@ loop:
 		switch op {
 
 		case compile.ERROR:
-			if stackErr := stack.check(op, sp, 0, 1); stackErr != nil {
+			if stackErr := stack.check(op, sp, 1, 1); stackErr != nil {
 				err = stackErr
 				break loop
 			}
+			if len(exhandlers) <= 0 {
+				err = fmt.Errorf("internal error: empty exception handler stack during %s", op.String())
+				break loop
+			}
+			exhandlers = exhandlers[:len(exhandlers)-1]
+			x := stack[sp-1]
+			expectedExType, ok := x.(String)
+			if !ok {
+				xt := "<nil>"
+				if x != nil {
+					xt = x.Type()
+				}
+				err = fmt.Errorf("expected exception type must resolve to a string, found %s", xt)
+				savedErr = nil
+				continue loop
+			}
+			if getExceptionType(savedErr) != string(expectedExType) {
+				err = savedErr
+				savedErr = nil
+				continue loop
+			}
 			if savedErr != nil {
-				stack[sp] = String(savedErr.Error())
+				stack[sp-1] = String(savedErr.Error())
 				savedErr = nil
 			} else {
-				stack[sp] = None
+				stack[sp-1] = None
 			}
-			sp++
 
 		case compile.EXCEPT:
 			exhandlers = append(exhandlers, exceptionHandler{pc: arg, sp: uint32(sp)})
 
 		case compile.EXCEPTPOP:
-			if len(exhandlers) > 0 {
-				exhandlers = exhandlers[:len(exhandlers)-1]
-			} else {
+			if len(exhandlers) <= 0 {
 				err = fmt.Errorf("internal error: empty exception handler stack during %s", op.String())
 				break loop
 			}
+			exhandlers = exhandlers[:len(exhandlers)-1]
 
 		case compile.NOP:
 			// nop

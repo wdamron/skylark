@@ -102,8 +102,9 @@ const (
 	INPLACE_ADD //            x y INPLACE_ADD z      where z is x+y or x.extend(y)
 	MAKEDICT    //              - MAKEDICT dict
 
-	EXCEPTPOP //     eh EXCEPTPOP -  [pops the exception handler stack]
-	ERROR     // - <err>ERROR err    [pushes the current error (handled exception) onto the value stack]
+	EXCEPTPOP //          eh EXCEPTPOP -  [pops the exception handler stack]
+	ERROR     // extype <err>ERROR err    [pops the expected exception type;
+	//									   pushes the current error (handled exception) onto the value stack]
 
 	// --- opcodes with an argument must go below this line ---
 
@@ -156,7 +157,7 @@ var opcodeNames = [...]string{
 	DUP2:        "dup2",
 	DUP:         "dup",
 	EQL:         "eql",
-	ERROR:       "errorpush",
+	ERROR:       "error",
 	EXCEPT:      "except",
 	EXCEPTPOP:   "exceptpop",
 	EXCH:        "exch",
@@ -248,7 +249,7 @@ func init() {
 	stackEffect[DUP2] = +2
 	stackEffect[DUP] = +1
 	stackEffect[EQL] = -1
-	stackEffect[ERROR] = +1
+	stackEffect[ERROR] = 0
 	stackEffect[EXCEPT] = 0
 	stackEffect[EXCEPTPOP] = 0
 	stackEffect[EXCH] = 0
@@ -993,9 +994,8 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		case syntax.BREAK:
 			innerLoop := len(fcomp.loops) - 1
 			b := fcomp.loops[innerLoop].break_
-			if len(fcomp.exhandlers) > 0 {
-				handlerEnclosingLoop := fcomp.exhandlers[len(fcomp.exhandlers)-1]
-				if handlerEnclosingLoop == innerLoop {
+			for _, enclosingLoop := range fcomp.exhandlers {
+				if enclosingLoop >= innerLoop {
 					fcomp.emit(EXCEPTPOP)
 				}
 			}
@@ -1004,9 +1004,8 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		case syntax.CONTINUE:
 			innerLoop := len(fcomp.loops) - 1
 			b := fcomp.loops[innerLoop].continue_
-			if len(fcomp.exhandlers) > 0 {
-				handlerEnclosingLoop := fcomp.exhandlers[len(fcomp.exhandlers)-1]
-				if handlerEnclosingLoop == innerLoop {
+			for _, enclosingLoop := range fcomp.exhandlers {
+				if enclosingLoop >= innerLoop {
 					fcomp.emit(EXCEPTPOP)
 				}
 			}
@@ -1149,8 +1148,8 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 
 		if stmt.ExceptionType != nil && stmt.ExceptionName != nil {
 			fcomp.block = fallback
+			fcomp.lookup(stmt.ExceptionType)
 			fcomp.emit(ERROR)
-			fcomp.emit(EXCEPTPOP)
 			fcomp.exhandlers = fcomp.exhandlers[:len(fcomp.exhandlers)-1]
 			fcomp.emit1(SETLOCAL, uint32(stmt.ExceptionName.Index))
 			fcomp.stmts(stmt.Fallback)

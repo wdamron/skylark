@@ -31,7 +31,8 @@ func TestSuspendResume(t *testing.T) {
 				thread.Suspendable(args, kwargs)
 				return None, nil
 			}),
-		"Exception": String("Exception"),
+		"Exception":  String("Exception"),
+		"ValueError": String("ValueError"),
 		"log_error": NewBuiltin("print",
 			func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 				if len(args) > 0 {

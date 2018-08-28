@@ -213,10 +213,6 @@ func (p *parser) parseTryStmt() Stmt {
 	p.consume(EXCEPT)
 	if p.tok != COLON {
 		stmt.ExceptionType = p.parseIdent()
-		// TODO(wdamron): don't hardcode Exception as the only exception type
-		if stmt.ExceptionType == nil || stmt.ExceptionType.Name != "Exception" {
-			p.in.errorf(p.in.pos, "exception type must be Exception")
-		}
 		p.consume(AS)
 		stmt.ExceptionName = p.parseIdent()
 		p.consume(COLON)
