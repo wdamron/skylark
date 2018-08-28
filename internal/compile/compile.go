@@ -365,10 +365,11 @@ type pcomp struct {
 type fcomp struct {
 	fn *Funcode // what we're building
 
-	pcomp *pcomp
-	pos   syntax.Position // current position of generated code
-	loops []loop
-	block *block
+	pcomp      *pcomp
+	pos        syntax.Position // current position of generated code
+	loops      []loop
+	exhandlers []int // loop-stack index of enclosing loop for each active try/except statement
+	block      *block
 }
 
 type loop struct {
@@ -990,11 +991,25 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		case syntax.PASS:
 			// no-op
 		case syntax.BREAK:
-			b := fcomp.loops[len(fcomp.loops)-1].break_
+			innerLoop := len(fcomp.loops) - 1
+			b := fcomp.loops[innerLoop].break_
+			if len(fcomp.exhandlers) > 0 {
+				handlerEnclosingLoop := fcomp.exhandlers[len(fcomp.exhandlers)-1]
+				if handlerEnclosingLoop == innerLoop {
+					fcomp.emit(EXCEPTPOP)
+				}
+			}
 			fcomp.jump(b)
 			fcomp.block = fcomp.newBlock() // dead code
 		case syntax.CONTINUE:
-			b := fcomp.loops[len(fcomp.loops)-1].continue_
+			innerLoop := len(fcomp.loops) - 1
+			b := fcomp.loops[innerLoop].continue_
+			if len(fcomp.exhandlers) > 0 {
+				handlerEnclosingLoop := fcomp.exhandlers[len(fcomp.exhandlers)-1]
+				if handlerEnclosingLoop == innerLoop {
+					fcomp.emit(EXCEPTPOP)
+				}
+			}
 			fcomp.jump(b)
 			fcomp.block = fcomp.newBlock() // dead code
 		}
@@ -1125,6 +1140,7 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 			fcomp.jump(body)
 			fcomp.block = body
 		}
+		fcomp.exhandlers = append(fcomp.exhandlers, len(fcomp.loops)-1)
 		fcomp.block.except = fallback
 		fcomp.emit1(EXCEPT, 0)
 		fcomp.stmts(stmt.Body)
@@ -1135,6 +1151,7 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 			fcomp.block = fallback
 			fcomp.emit(ERROR)
 			fcomp.emit(EXCEPTPOP)
+			fcomp.exhandlers = fcomp.exhandlers[:len(fcomp.exhandlers)-1]
 			fcomp.emit1(SETLOCAL, uint32(stmt.ExceptionName.Index))
 			fcomp.stmts(stmt.Fallback)
 			fcomp.emit(NONE)
@@ -1143,6 +1160,7 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		} else {
 			fcomp.block = fallback
 			fcomp.emit(EXCEPTPOP)
+			fcomp.exhandlers = fcomp.exhandlers[:len(fcomp.exhandlers)-1]
 			fcomp.stmts(stmt.Fallback)
 			fcomp.jump(done)
 		}

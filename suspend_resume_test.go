@@ -61,6 +61,23 @@ def long_running(i):
 		log_error(i, e)
 		return i
 
+def looptry():
+	x = []
+	for i in range(0, 10):
+		try:
+			x.append(1)
+			if i == 5:
+				break
+		except:
+			continue
+	x[5] += 1
+	try:
+		i = 1 / (len(x) - 6)
+	except Exception as e:
+		log_error(len(x), e)
+
+looptry()
+
 a = 1
 b = 2
 c = 3
