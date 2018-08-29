@@ -445,7 +445,7 @@ func (r *resolver) stmt(stmt syntax.Stmt) {
 
 	case *syntax.TryStmt:
 		if !AllowTryExcept {
-			r.errorf(stmt.Try, "try statements are not enabled")
+			r.errorf(stmt.Try, doesnt+"support try/except")
 		}
 		if r.container().function == nil {
 			r.errorf(stmt.Try, "try statement is not within a function")

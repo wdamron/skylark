@@ -342,16 +342,19 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 	dec.Data = dec.Data[1:]
 	var err error
 	fc := &compile.Funcode{}
+	// Pos
 	fc.Pos, err = dec.DecodePosition()
 	if err != nil {
 		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
+	// Name
 	var name String
 	name, err = dec.DecodeString()
 	if err != nil {
 		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 	}
 	fc.Name = string(name)
+	// Code
 	var count uint64
 	count, err = dec.DecodeUvarint()
 	if err != nil {
@@ -364,6 +367,7 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 	copy(code, dec.Data)
 	fc.Code = code
 	dec.Data = dec.Data[count:]
+	// Pclinetab
 	count, err = dec.DecodeUvarint()
 	if err != nil {
 		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
@@ -378,6 +382,7 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 		pcline[i] = uint16(x)
 	}
 	fc.Pclinetab = pcline
+	// Locals
 	count, err = dec.DecodeUvarint()
 	if err != nil {
 		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
@@ -389,6 +394,7 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 			return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 		}
 	}
+	// Freevars
 	count, err = dec.DecodeUvarint()
 	if err != nil {
 		return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
@@ -400,6 +406,7 @@ func (dec *Decoder) DecodeFuncode() (*compile.Funcode, error) {
 			return fc, fmt.Errorf("Codec: unexpected error while decoding funcode: %v", err)
 		}
 	}
+	// MaxStack, NumParams, HasVarargs, HasKwargs
 	var maxstack, numparams uint64
 	maxstack, err = dec.DecodeUvarint()
 	if err != nil {
@@ -676,6 +683,7 @@ func (dec *Decoder) DecodeFunction() (*Function, error) {
 	if err != nil {
 		return fn, fmt.Errorf("Codec: unexpected error while decoding function: %v", err)
 	}
+
 	dec.values = append(dec.values, fn)
 	return fn, nil
 }

@@ -139,7 +139,6 @@ const (
 	CALL_VAR_KW // fn positional named *args **kwargs CALL_VAR_KW<n> result
 
 	OpcodeArgMin = JMP
-	OpcodeMin    = NOP
 	OpcodeMax    = CALL_VAR_KW
 )
 
@@ -234,13 +233,13 @@ const (
 
 // stackEffect records the effect on the size of the operand stack of
 // each kind of instruction. For some instructions this requires computation.
-var stackEffect [int(OpcodeMax-OpcodeMin) + 1]uint8
+var stackEffect [int(OpcodeMax) + 1]uint8
 
 func init() {
-	for op := OpcodeMin; op <= OpcodeMax; op++ {
+	for op := Opcode(0); op <= OpcodeMax; op++ {
 		if opcodeNames[op] == "" {
 			var prev, next string
-			if op > OpcodeMin {
+			if op > 0 {
 				prev = opcodeNames[op-1]
 			}
 			if op < OpcodeMax {
@@ -326,6 +325,45 @@ func init() {
 			log.Fatalf("Compile: missing opcode stack effect for %s", opcodeNames[Opcode(i)])
 		}
 	}
+}
+
+func DecodeOp(code []byte, pc uint32) (op Opcode, arg uint32, nextpc uint32, ok bool) {
+	op = Opcode(code[pc])
+	pc++
+	if op >= OpcodeArgMin {
+		// TODO(adonovan): opt: profile this.
+		// Perhaps compiling big endian would be less work to decode?
+		for s := uint(0); ; s += 7 {
+			if int(pc) >= len(code) {
+				return op, arg, pc, false
+			}
+			b := code[pc]
+			pc++
+			arg |= uint32(b&0x7f) << s
+			if b < 0x80 {
+				break
+			}
+		}
+	}
+	return op, arg, pc, true
+}
+
+func DecodeOpUnsafe(code []byte, pc uint32) (op Opcode, arg uint32, nextpc uint32) {
+	op = Opcode(code[pc])
+	pc++
+	if op >= OpcodeArgMin {
+		// TODO(adonovan): opt: profile this.
+		// Perhaps compiling big endian would be less work to decode?
+		for s := uint(0); ; s += 7 {
+			b := code[pc]
+			pc++
+			arg |= uint32(b&0x7f) << s
+			if b < 0x80 {
+				break
+			}
+		}
+	}
+	return op, arg, pc
 }
 
 func (op Opcode) String() string {
@@ -449,6 +487,100 @@ func (fn *Funcode) Position(pc uint32) syntax.Position {
 		complete = (x & 1) == 0
 	}
 	return pos
+}
+
+func (fc *Funcode) Validate(isPredeclared, isUniversal func(name string) bool) error {
+	if isPredeclared == nil {
+		isPredeclared = func(name string) bool { return true }
+	}
+	if isUniversal == nil {
+		isUniversal = func(name string) bool { return true }
+	}
+	code := fc.Code
+	pc := uint32(0)
+	for {
+		op, arg, nextpc, opInBounds := DecodeOp(code, pc)
+		if !opInBounds {
+			return fmt.Errorf("program counter %v for op %s is out of bounds for code of length %v", pc, op.String(), len(code))
+		}
+		if int(nextpc) > len(code) {
+			return fmt.Errorf("program counter %v after op %s is out of bounds for code of length %v", pc, op.String(), len(code))
+		}
+		if int(nextpc) == len(code) {
+			return nil
+		}
+		if op < OpcodeArgMin {
+			pc = nextpc
+			continue
+		}
+		if op > OpcodeMax {
+			return fmt.Errorf("illegal op (%d)", op)
+		}
+
+		// See resolve/resolve.go:
+		const doesnt = "this Skylark dialect does not "
+
+		switch op {
+		case ERROR, EXCEPTPUSH, EXCEPTPOP:
+			if !resolve.AllowTryExcept {
+				return fmt.Errorf(doesnt + "support try/except")
+			}
+		case AMP, PIPE, CIRCUMFLEX, TILDE, LTLT, GTGT:
+			if !resolve.AllowBitwise {
+				return fmt.Errorf(doesnt + "support bitwise operations")
+			}
+		}
+
+		switch op {
+		case LOCAL, SETLOCAL:
+			if int(arg) >= len(fc.Locals) {
+				return fmt.Errorf("argument %v to op %s is out of bounds for locals of length %v", arg, op.String(), len(fc.Locals))
+			}
+		case FREE:
+			if int(arg) >= len(fc.Freevars) {
+				return fmt.Errorf("argument %v to op %s is out of bounds for free vars of length %v", arg, op.String(), len(fc.Freevars))
+			}
+		case GLOBAL, SETGLOBAL:
+			if int(arg) >= len(fc.Prog.Globals) {
+				return fmt.Errorf("argument %v to op %s is out of bounds for globals of length %v", arg, op.String(), len(fc.Prog.Globals))
+			}
+		case ATTR, SETFIELD, PREDECLARED, UNIVERSAL:
+			if int(arg) >= len(fc.Prog.Names) {
+				return fmt.Errorf("argument %v to op %s is out of bounds for names of length %v", arg, op.String(), len(fc.Prog.Names))
+			}
+			switch op {
+			case PREDECLARED:
+				if !isPredeclared(fc.Prog.Names[arg]) {
+					return fmt.Errorf("non-predeclared argument %s to op %s", fc.Prog.Names[arg], op.String())
+				}
+			case UNIVERSAL:
+				if !isUniversal(fc.Prog.Names[arg]) {
+					return fmt.Errorf("non-universal argument %s to op %s", fc.Prog.Names[arg], op.String())
+				}
+			}
+		case CONSTANT:
+			if int(arg) >= len(fc.Prog.Constants) {
+				return fmt.Errorf("argument %v to op %s is out of bounds for constants of length %v", arg, op.String(), len(fc.Prog.Constants))
+			}
+		case MAKEFUNC:
+			if int(arg) >= len(fc.Prog.Functions) {
+				return fmt.Errorf("argument %v to op %s is out of bounds for functions of length %v", arg, op.String(), len(fc.Prog.Functions))
+			}
+		case JMP, CJMP, ITERJMP, EXCEPTPUSH:
+			if int(arg) >= len(code) {
+				return fmt.Errorf("program counter target %v for op %s is out of bounds for code of length %v", arg, op.String(), len(code))
+			}
+		case LOAD, MAKELIST, MAKETUPLE, UNPACK:
+			if op == LOAD {
+				arg++
+			}
+			if int(arg) > fc.MaxStack {
+				return fmt.Errorf("argument %v to op %s is out of bounds for max stack size of %v", arg, op.String(), fc.MaxStack)
+			}
+		}
+		pc = nextpc
+	}
+	return nil
 }
 
 // idents convert syntactic identifiers to compiled form.
@@ -642,7 +774,7 @@ func (pcomp *pcomp) function(name string, pos syntax.Position, stmts []syntax.St
 			setinitialstack(b.except, stack)
 			visit(b.except)
 
-			// Patch the CJMP/ITERJMP, if present.
+			// Patch the EXCEPTPUSH, if present.
 			if exceptAddr != nil {
 				*exceptAddr = b.except.addr
 			}
@@ -1041,7 +1173,7 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		f := fcomp.newBlock()
 		done := fcomp.newBlock()
 
-		fcomp.ifelpoppush(stmt.Cond, t, f)
+		fcomp.ifelse(stmt.Cond, t, f)
 
 		fcomp.block = t
 		fcomp.stmts(stmt.True)
@@ -1292,7 +1424,7 @@ func (fcomp *fcomp) expr(e syntax.Expr) {
 		f := fcomp.newBlock()
 		done := fcomp.newBlock()
 
-		fcomp.ifelpoppush(e.Cond, t, f)
+		fcomp.ifelse(e.Cond, t, f)
 
 		fcomp.block = t
 		fcomp.expr(e.True)
@@ -1723,7 +1855,7 @@ func (fcomp *fcomp) comprehension(comp *syntax.Comprehension, clauseIndex int) {
 	case *syntax.IfClause:
 		t := fcomp.newBlock()
 		done := fcomp.newBlock()
-		fcomp.ifelpoppush(clause.Cond, t, done)
+		fcomp.ifelse(clause.Cond, t, done)
 
 		fcomp.block = t
 		fcomp.comprehension(comp, clauseIndex+1)
@@ -1799,14 +1931,14 @@ func (fcomp *fcomp) function(pos syntax.Position, name string, f *syntax.Functio
 
 // ifelse emits a Boolean control flow decision.
 // On return, the current block is unset.
-func (fcomp *fcomp) ifelpoppush(cond syntax.Expr, t, f *block) {
+func (fcomp *fcomp) ifelse(cond syntax.Expr, t, f *block) {
 	switch cond := cond.(type) {
 	case *syntax.UnaryExpr:
 		if cond.Op == syntax.NOT {
 			// if not x then goto t else goto f
 			//    =>
 			// if x then goto f else goto t
-			fcomp.ifelpoppush(cond.X, f, t)
+			fcomp.ifelse(cond.X, f, t)
 			return
 		}
 
@@ -1815,25 +1947,25 @@ func (fcomp *fcomp) ifelpoppush(cond syntax.Expr, t, f *block) {
 		case syntax.AND:
 			// if x and y then goto t else goto f
 			//    =>
-			// if x then ifelpoppush(y, t, f) else goto f
+			// if x then ifelse(y, t, f) else goto f
 			fcomp.expr(cond.X)
 			y := fcomp.newBlock()
 			fcomp.condjump(CJMP, y, f)
 
 			fcomp.block = y
-			fcomp.ifelpoppush(cond.Y, t, f)
+			fcomp.ifelse(cond.Y, t, f)
 			return
 
 		case syntax.OR:
 			// if x or y then goto t else goto f
 			//    =>
-			// if x then goto t else ifelpoppush(y, t, f)
+			// if x then goto t else ifelse(y, t, f)
 			fcomp.expr(cond.X)
 			y := fcomp.newBlock()
 			fcomp.condjump(CJMP, t, y)
 
 			fcomp.block = y
-			fcomp.ifelpoppush(cond.Y, t, f)
+			fcomp.ifelse(cond.Y, t, f)
 			return
 		case syntax.NOT_IN:
 			// if x not in y then goto t else goto f

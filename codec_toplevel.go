@@ -147,7 +147,10 @@ func (dec *Decoder) DecodeState() (*Thread, error) {
 	thread := &Thread{frame: frame}
 	for _, v := range dec.values {
 		if fn, isFunction := v.(*Function); isFunction {
-			fn.predeclared, fn.globals, fn.constants = dec.predeclared, dec.globals, dec.constants
+			fn.predeclared, fn.globals, fn.constants, fn.funcode.Prog = dec.predeclared, dec.globals, dec.constants, dec.prog
+			if err = fn.funcode.Validate(fn.predeclared.Has, Universe.Has); err != nil {
+				return thread, fmt.Errorf("Codec: invalid code while decoding function %s: %v", fn.Name(), err)
+			}
 		}
 	}
 	if dec.Remaining() > 0 {

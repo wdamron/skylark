@@ -77,20 +77,11 @@ func disassemble(f *Funcode) string {
 	out := new(bytes.Buffer)
 	code := f.Code
 	for pc := 0; pc < len(code); {
-		op := Opcode(code[pc])
-		pc++
-		// TODO(adonovan): factor in common with interpreter.
-		var arg uint32
-		if op >= OpcodeArgMin {
-			for s := uint(0); ; s += 7 {
-				b := code[pc]
-				pc++
-				arg |= uint32(b&0x7f) << s
-				if b < 0x80 {
-					break
-				}
-			}
+		op, arg, nextpc, opInBounds := DecodeOp(code, pc)
+		if !opInBounds {
+			return out.String()
 		}
+		pc = nextpc
 
 		if out.Len() > 0 {
 			out.WriteString("; ")

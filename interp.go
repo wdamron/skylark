@@ -156,30 +156,9 @@ loop:
 			savedErr = err
 			err = nil
 		}
-
-		if pc < 0 || int(pc) >= len(code) {
-			err = fmt.Errorf("internal error: program counter %v is out of bounds for code of length %v", pc, len(code))
-			break loop
-		}
-		op := compile.Opcode(code[pc])
-		pc++
+		var op compile.Opcode
 		var arg uint32
-		if op >= compile.OpcodeArgMin {
-			// TODO(adonovan): opt: profile this.
-			// Perhaps compiling big endian would be less work to decode?
-			for s := uint(0); ; s += 7 {
-				if pc < 0 || int(pc) >= len(code) {
-					err = fmt.Errorf("internal error: program counter %v for op %s is out of bounds for code of length %v", pc, op.String(), len(code))
-					break loop
-				}
-				b := code[pc]
-				pc++
-				arg |= uint32(b&0x7f) << s
-				if b < 0x80 {
-					break
-				}
-			}
-		}
+		op, arg, pc = compile.DecodeOpUnsafe(code, pc)
 		if checkstackops && !compile.IsVariableStackEffect(op) {
 			stackPops, stackPushes := compile.StackEffect(op)
 			if stackErr := stack.check(op, guardsp(sp, exhandlers), stackPops, stackPushes); stackErr != nil {
@@ -187,7 +166,6 @@ loop:
 				break loop
 			}
 		}
-
 		if vmdebug {
 			fmt.Fprintln(os.Stderr, stack[:sp]) // very verbose!
 			compile.PrintOp(fc, savedpc, op, arg)
@@ -585,10 +563,6 @@ loop:
 
 		case compile.ATTR:
 			x := stack[sp-1]
-			if arg < 0 || int(arg) > len(fc.Prog.Names) {
-				err = fmt.Errorf("internal error: argument offset %v is out of bounds of names with length %v for op %s", arg, len(fc.Prog.Names), op.String())
-				continue loop
-			}
 			name := fc.Prog.Names[arg]
 			y, err2 := getAttr(fr, x, name)
 			if err2 != nil {
@@ -601,10 +575,6 @@ loop:
 			y := stack[sp-1]
 			x := stack[sp-2]
 			sp -= 2
-			if arg < 0 || int(arg) > len(fc.Prog.Names) {
-				err = fmt.Errorf("internal error: argument offset %v is out of bounds of names with length %v for op %s", arg, len(fc.Prog.Names), op.String())
-				continue loop
-			}
 			name := fc.Prog.Names[arg]
 			if err2 := setField(fr, x, name, y); err2 != nil {
 				err = err2
@@ -703,10 +673,6 @@ loop:
 			sp--
 
 		case compile.CONSTANT:
-			if arg < 0 || int(arg) > len(fn.constants) {
-				err = fmt.Errorf("internal error: constant offset %v is out of bounds of constants with length %v for op %s", arg, len(fn.constants), op.String())
-				continue loop
-			}
 			stack[sp] = fn.constants[arg]
 			sp++
 
@@ -735,10 +701,6 @@ loop:
 			sp++
 
 		case compile.MAKEFUNC:
-			if arg < 0 || int(arg) > len(fc.Prog.Functions) {
-				err = fmt.Errorf("internal error: argument offset %v is out of bounds of functions with length %v for op %s", arg, len(fc.Prog.Functions), op.String())
-				continue loop
-			}
 			funcode := fc.Prog.Functions[arg]
 			var ok bool
 			var freevars Tuple
@@ -773,7 +735,7 @@ loop:
 			sp++
 
 		case compile.LOAD:
-			// VARIABLE STACK EFFECT (but not marked as such)
+			// VARIABLE STACK EFFECT (for stack checking), but the net result is 1 pop
 			n := int(arg)
 			if err = stack.check(op, guardsp(sp, exhandlers), 1+n, n); err != nil {
 				continue loop
@@ -822,26 +784,14 @@ loop:
 			}
 
 		case compile.SETLOCAL:
-			if int(arg) < 0 || int(arg) >= len(locals) {
-				err = fmt.Errorf("internal error: local variable offset %v is out of range for %v locals", arg, len(locals))
-				continue loop
-			}
 			locals[arg] = stack[sp-1]
 			sp--
 
 		case compile.SETGLOBAL:
-			if int(arg) < 0 || int(arg) >= len(fn.globals) {
-				err = fmt.Errorf("internal error: global variable offset %v is out of range for %v locals", arg, len(fn.globals))
-				continue loop
-			}
 			fn.globals[arg] = stack[sp-1]
 			sp--
 
 		case compile.LOCAL:
-			if int(arg) < 0 || int(arg) >= len(locals) {
-				err = fmt.Errorf("internal error: local variable offset %v is out of range for %v locals", arg, len(locals))
-				continue loop
-			}
 			x := locals[arg]
 			if x == nil {
 				err = fmt.Errorf("local variable %s referenced before assignment", fc.Locals[arg].Name)
@@ -851,18 +801,10 @@ loop:
 			sp++
 
 		case compile.FREE:
-			if int(arg) < 0 || int(arg) >= len(fn.freevars) {
-				err = fmt.Errorf("internal error: free variable offset %v is out of range for %v locals", arg, len(fn.freevars))
-				continue loop
-			}
 			stack[sp] = fn.freevars[arg]
 			sp++
 
 		case compile.GLOBAL:
-			if int(arg) < 0 || int(arg) >= len(fn.globals) {
-				err = fmt.Errorf("internal error: global variable offset %v is out of range for %v locals", arg, len(fn.globals))
-				continue loop
-			}
 			x := fn.globals[arg]
 			if x == nil {
 				err = fmt.Errorf("global variable %s referenced before assignment", fc.Prog.Globals[arg].Name)
@@ -872,10 +814,6 @@ loop:
 			sp++
 
 		case compile.PREDECLARED:
-			if int(arg) < 0 || int(arg) >= len(fc.Prog.Names) {
-				err = fmt.Errorf("internal error: predeclared variable offset %v is out of range for %v locals", arg, len(fc.Prog.Names))
-				continue loop
-			}
 			name := fc.Prog.Names[arg]
 			x := fn.predeclared[name]
 			if x == nil {
@@ -886,10 +824,6 @@ loop:
 			sp++
 
 		case compile.UNIVERSAL:
-			if int(arg) < 0 || int(arg) >= len(fc.Prog.Names) {
-				err = fmt.Errorf("internal error: universal variable offset %v is out of range for %v locals", arg, len(fc.Prog.Names))
-				continue loop
-			}
 			stack[sp] = Universe[fc.Prog.Names[arg]]
 			sp++
 
