@@ -222,14 +222,14 @@ func IsVariableStackEffect(op Opcode) bool {
 	return stackEffect[op] == variableStackEffect
 }
 
-// seff packs a stack-effect pair into a uint8
-func seff(pops, pushes int) uint8 {
+// poppush packs a stack-effect pair into a uint8
+func poppush(pops, pushes int) uint8 {
 	return uint8(pops<<4) | (uint8(pushes) & 0xf)
 }
 
 const (
-	variableStackEffect = 0xEE // seff(14, 14)
-	invalidStackEffect  = 0xFF // seff(15, 15)
+	variableStackEffect = 0xEE // poppush(14, 14)
+	invalidStackEffect  = 0xFF // poppush(15, 15)
 )
 
 // stackEffect records the effect on the size of the operand stack of
@@ -254,72 +254,72 @@ func init() {
 		stackEffect[i] = invalidStackEffect
 	}
 
-	stackEffect[AMP] = seff(2, 1)
-	stackEffect[APPEND] = seff(2, 0)
-	stackEffect[ATTR] = seff(1, 1)
+	stackEffect[AMP] = poppush(2, 1)
+	stackEffect[APPEND] = poppush(2, 0)
+	stackEffect[ATTR] = poppush(1, 1)
 	stackEffect[CALL] = variableStackEffect
 	stackEffect[CALL_KW] = variableStackEffect
 	stackEffect[CALL_VAR] = variableStackEffect
 	stackEffect[CALL_VAR_KW] = variableStackEffect
-	stackEffect[CIRCUMFLEX] = seff(2, 1)
-	stackEffect[CJMP] = seff(1, 0)
-	stackEffect[CONSTANT] = seff(0, 1)
-	stackEffect[DUP2] = seff(2, 4)
-	stackEffect[DUP] = seff(1, 2)
-	stackEffect[EQL] = seff(2, 1)
-	stackEffect[ERROR] = seff(1, 1)
-	stackEffect[EXCEPTPOP] = se(0, 0)
-	stackEffect[EXCEPTPUSH] = seff(0, 0)
-	stackEffect[EXCH] = seff(2, 2)
-	stackEffect[FALSE] = seff(0, 1)
-	stackEffect[FREE] = seff(0, 1)
-	stackEffect[GE] = seff(1, 0)
-	stackEffect[GLOBAL] = seff(0, 1)
-	stackEffect[GT] = seff(2, 1)
-	stackEffect[GTGT] = seff(2, 1)
-	stackEffect[IN] = seff(2, 1)
-	stackEffect[INDEX] = seff(2, 1)
-	stackEffect[INPLACE_ADD] = seff(2, 1)
+	stackEffect[CIRCUMFLEX] = poppush(2, 1)
+	stackEffect[CJMP] = poppush(1, 0)
+	stackEffect[CONSTANT] = poppush(0, 1)
+	stackEffect[DUP2] = poppush(2, 4)
+	stackEffect[DUP] = poppush(1, 2)
+	stackEffect[EQL] = poppush(2, 1)
+	stackEffect[ERROR] = poppush(1, 1)
+	stackEffect[EXCEPTPOP] = poppush(0, 0)
+	stackEffect[EXCEPTPUSH] = poppush(0, 0)
+	stackEffect[EXCH] = poppush(2, 2)
+	stackEffect[FALSE] = poppush(0, 1)
+	stackEffect[FREE] = poppush(0, 1)
+	stackEffect[GE] = poppush(1, 0)
+	stackEffect[GLOBAL] = poppush(0, 1)
+	stackEffect[GT] = poppush(2, 1)
+	stackEffect[GTGT] = poppush(2, 1)
+	stackEffect[IN] = poppush(2, 1)
+	stackEffect[INDEX] = poppush(2, 1)
+	stackEffect[INPLACE_ADD] = poppush(2, 1)
 	stackEffect[ITERJMP] = variableStackEffect
-	stackEffect[ITERPOP] = seff(0, 0)
-	stackEffect[ITERPUSH] = seff(1, 0)
-	stackEffect[JMP] = seff(0, 0)
-	stackEffect[LE] = seff(2, 1)
+	stackEffect[ITERPOP] = poppush(0, 0)
+	stackEffect[ITERPUSH] = poppush(1, 0)
+	stackEffect[JMP] = poppush(0, 0)
+	stackEffect[LE] = poppush(2, 1)
 	stackEffect[LOAD] = variableStackEffect
-	stackEffect[LOCAL] = seff(0, 1)
-	stackEffect[LT] = seff(2, 1)
-	stackEffect[LTLT] = seff(2, 1)
-	stackEffect[MAKEDICT] = seff(0, 1)
-	stackEffect[MAKEFUNC] = seff(2, 1)
+	stackEffect[LOCAL] = poppush(0, 1)
+	stackEffect[LT] = poppush(2, 1)
+	stackEffect[LTLT] = poppush(2, 1)
+	stackEffect[MAKEDICT] = poppush(0, 1)
+	stackEffect[MAKEFUNC] = poppush(2, 1)
 	stackEffect[MAKELIST] = variableStackEffect
 	stackEffect[MAKETUPLE] = variableStackEffect
-	stackEffect[MINUS] = seff(2, 1)
-	stackEffect[NEQ] = seff(2, 1)
-	stackEffect[NONE] = seff(0, 1)
-	stackEffect[NOP] = seff(0, 0)
-	stackEffect[NOT] = seff(1, 1)
-	stackEffect[PERCENT] = seff(2, 1)
-	stackEffect[PIPE] = seff(2, 1)
-	stackEffect[PLUS] = seff(2, 1)
-	stackEffect[POP] = seff(1, 0)
-	stackEffect[PREDECLARED] = seff(0, 1)
-	stackEffect[RETURN] = seff(1, 0)
-	stackEffect[SETDICT] = seff(3, 0)
-	stackEffect[SETDICTUNIQ] = seff(3, 0)
-	stackEffect[SETFIELD] = seff(2, 0)
-	stackEffect[SETGLOBAL] = seff(1, 0)
-	stackEffect[SETINDEX] = seff(3, 0)
-	stackEffect[SETLOCAL] = seff(1, 0)
-	stackEffect[SLASH] = seff(2, 1)
-	stackEffect[SLASHSLASH] = seff(2, 1)
-	stackEffect[SLICE] = seff(4, 1)
-	stackEffect[STAR] = seff(2, 1)
-	stackEffect[TILDE] = seff(1, 1)
-	stackEffect[TRUE] = seff(0, 1)
-	stackEffect[UMINUS] = seff(1, 1)
-	stackEffect[UNIVERSAL] = seff(0, 1)
+	stackEffect[MINUS] = poppush(2, 1)
+	stackEffect[NEQ] = poppush(2, 1)
+	stackEffect[NONE] = poppush(0, 1)
+	stackEffect[NOP] = poppush(0, 0)
+	stackEffect[NOT] = poppush(1, 1)
+	stackEffect[PERCENT] = poppush(2, 1)
+	stackEffect[PIPE] = poppush(2, 1)
+	stackEffect[PLUS] = poppush(2, 1)
+	stackEffect[POP] = poppush(1, 0)
+	stackEffect[PREDECLARED] = poppush(0, 1)
+	stackEffect[RETURN] = poppush(1, 0)
+	stackEffect[SETDICT] = poppush(3, 0)
+	stackEffect[SETDICTUNIQ] = poppush(3, 0)
+	stackEffect[SETFIELD] = poppush(2, 0)
+	stackEffect[SETGLOBAL] = poppush(1, 0)
+	stackEffect[SETINDEX] = poppush(3, 0)
+	stackEffect[SETLOCAL] = poppush(1, 0)
+	stackEffect[SLASH] = poppush(2, 1)
+	stackEffect[SLASHSLASH] = poppush(2, 1)
+	stackEffect[SLICE] = poppush(4, 1)
+	stackEffect[STAR] = poppush(2, 1)
+	stackEffect[TILDE] = poppush(1, 1)
+	stackEffect[TRUE] = poppush(0, 1)
+	stackEffect[UMINUS] = poppush(1, 1)
+	stackEffect[UNIVERSAL] = poppush(0, 1)
 	stackEffect[UNPACK] = variableStackEffect
-	stackEffect[UPLUS] = seff(1, 1)
+	stackEffect[UPLUS] = poppush(1, 1)
 
 	for i, v := range stackEffect {
 		if v == invalidStackEffect {
@@ -1041,7 +1041,7 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		f := fcomp.newBlock()
 		done := fcomp.newBlock()
 
-		fcomp.ifelseff(stmt.Cond, t, f)
+		fcomp.ifelpoppush(stmt.Cond, t, f)
 
 		fcomp.block = t
 		fcomp.stmts(stmt.True)
@@ -1292,7 +1292,7 @@ func (fcomp *fcomp) expr(e syntax.Expr) {
 		f := fcomp.newBlock()
 		done := fcomp.newBlock()
 
-		fcomp.ifelseff(e.Cond, t, f)
+		fcomp.ifelpoppush(e.Cond, t, f)
 
 		fcomp.block = t
 		fcomp.expr(e.True)
@@ -1723,7 +1723,7 @@ func (fcomp *fcomp) comprehension(comp *syntax.Comprehension, clauseIndex int) {
 	case *syntax.IfClause:
 		t := fcomp.newBlock()
 		done := fcomp.newBlock()
-		fcomp.ifelseff(clause.Cond, t, done)
+		fcomp.ifelpoppush(clause.Cond, t, done)
 
 		fcomp.block = t
 		fcomp.comprehension(comp, clauseIndex+1)
@@ -1799,14 +1799,14 @@ func (fcomp *fcomp) function(pos syntax.Position, name string, f *syntax.Functio
 
 // ifelse emits a Boolean control flow decision.
 // On return, the current block is unset.
-func (fcomp *fcomp) ifelseff(cond syntax.Expr, t, f *block) {
+func (fcomp *fcomp) ifelpoppush(cond syntax.Expr, t, f *block) {
 	switch cond := cond.(type) {
 	case *syntax.UnaryExpr:
 		if cond.Op == syntax.NOT {
 			// if not x then goto t else goto f
 			//    =>
 			// if x then goto f else goto t
-			fcomp.ifelseff(cond.X, f, t)
+			fcomp.ifelpoppush(cond.X, f, t)
 			return
 		}
 
@@ -1815,25 +1815,25 @@ func (fcomp *fcomp) ifelseff(cond syntax.Expr, t, f *block) {
 		case syntax.AND:
 			// if x and y then goto t else goto f
 			//    =>
-			// if x then ifelseff(y, t, f) else goto f
+			// if x then ifelpoppush(y, t, f) else goto f
 			fcomp.expr(cond.X)
 			y := fcomp.newBlock()
 			fcomp.condjump(CJMP, y, f)
 
 			fcomp.block = y
-			fcomp.ifelseff(cond.Y, t, f)
+			fcomp.ifelpoppush(cond.Y, t, f)
 			return
 
 		case syntax.OR:
 			// if x or y then goto t else goto f
 			//    =>
-			// if x then goto t else ifelseff(y, t, f)
+			// if x then goto t else ifelpoppush(y, t, f)
 			fcomp.expr(cond.X)
 			y := fcomp.newBlock()
 			fcomp.condjump(CJMP, t, y)
 
 			fcomp.block = y
-			fcomp.ifelseff(cond.Y, t, f)
+			fcomp.ifelpoppush(cond.Y, t, f)
 			return
 		case syntax.NOT_IN:
 			// if x not in y then goto t else goto f

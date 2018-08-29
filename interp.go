@@ -80,6 +80,18 @@ func getExceptionType(err error) string {
 	return "Exception"
 }
 
+// guardsp returns sp as an offset from the saved sp of the inner-most enclosing
+// exception handler, or returns sp if no exception handlers are active.
+func guardsp(sp int, exhandlers []exceptionHandler) int {
+	if !checkstackops {
+		return 0
+	}
+	if len(exhandlers) > 0 {
+		return sp - int(exhandlers[len(exhandlers)-1].sp)
+	}
+	return sp
+}
+
 // TODO(adonovan):
 // - optimize position table.
 // - opt: reduce allocations by preallocating a large stack, saving it
@@ -168,9 +180,9 @@ loop:
 				}
 			}
 		}
-		if !compile.IsVariableStackEffect(op) {
+		if checkstackops && !compile.IsVariableStackEffect(op) {
 			stackPops, stackPushes := compile.StackEffect(op)
-			if stackErr := stack.check(op, sp, stackPops, stackPushes); stackErr != nil {
+			if stackErr := stack.check(op, guardsp(sp, exhandlers), stackPops, stackPushes); stackErr != nil {
 				err = stackErr
 				break loop
 			}
@@ -342,7 +354,7 @@ loop:
 			// VARIABLE STACK EFFECT
 			var fnkwargs Value
 			if op == compile.CALL_KW || op == compile.CALL_VAR_KW {
-				if err = stack.check(op, sp, 1, 0); err != nil {
+				if err = stack.check(op, guardsp(sp, exhandlers), 1, 0); err != nil {
 					continue loop
 				}
 				fnkwargs = stack[sp-1]
@@ -351,7 +363,7 @@ loop:
 
 			var fnargs Value
 			if op == compile.CALL_VAR || op == compile.CALL_VAR_KW {
-				if err = stack.check(op, sp, 1, 0); err != nil {
+				if err = stack.check(op, guardsp(sp, exhandlers), 1, 0); err != nil {
 					continue loop
 				}
 				fnargs = stack[sp-1]
@@ -361,7 +373,7 @@ loop:
 			// named args (pairs)
 			var kvpairs []Tuple
 			if nkvpairs := int(arg & 0xff); nkvpairs > 0 {
-				if err = stack.check(op, sp, 2*nkvpairs, 0); err != nil {
+				if err = stack.check(op, guardsp(sp, exhandlers), 2*nkvpairs, 0); err != nil {
 					continue loop
 				}
 				kvpairs = make([]Tuple, 0, nkvpairs)
@@ -399,7 +411,7 @@ loop:
 			// positional args
 			var positional Tuple
 			if npos := int(arg >> 8); npos > 0 {
-				if err = stack.check(op, sp, npos, 0); err != nil {
+				if err = stack.check(op, guardsp(sp, exhandlers), npos, 0); err != nil {
 					continue loop
 				}
 				positional = make(Tuple, npos)
@@ -420,7 +432,7 @@ loop:
 				iter.Done()
 			}
 
-			if err = stack.check(op, sp, 1, 1); err != nil {
+			if err = stack.check(op, guardsp(sp, exhandlers), 1, 1); err != nil {
 				continue loop
 			}
 
@@ -523,7 +535,7 @@ loop:
 
 		case compile.ITERJMP:
 			// VARIABLE STACK EFFECT
-			if err = stack.check(op, sp, 0, 1); err != nil {
+			if err = stack.check(op, guardsp(sp, exhandlers), 0, 1); err != nil {
 				continue loop
 			}
 			if len(iterstack) == 0 {
@@ -657,7 +669,7 @@ loop:
 		case compile.UNPACK:
 			// VARIABLE STACK EFFECT
 			n := int(arg)
-			if err = stack.check(op, sp, 1, n); err != nil {
+			if err = stack.check(op, guardsp(sp, exhandlers), 1, n); err != nil {
 				continue loop
 			}
 			iterable := stack[sp-1]
@@ -701,7 +713,7 @@ loop:
 		case compile.MAKETUPLE:
 			// VARIABLE STACK EFFECT
 			n := int(arg)
-			if err = stack.check(op, sp, n, 1); err != nil {
+			if err = stack.check(op, guardsp(sp, exhandlers), n, 1); err != nil {
 				continue loop
 			}
 			tuple := make(Tuple, n)
@@ -713,7 +725,7 @@ loop:
 		case compile.MAKELIST:
 			// VARIABLE STACK EFFECT
 			n := int(arg)
-			if err = stack.check(op, sp, n, 1); err != nil {
+			if err = stack.check(op, guardsp(sp, exhandlers), n, 1); err != nil {
 				continue loop
 			}
 			elems := make([]Value, n)
@@ -763,7 +775,7 @@ loop:
 		case compile.LOAD:
 			// VARIABLE STACK EFFECT (but not marked as such)
 			n := int(arg)
-			if err = stack.check(op, sp, 1+n, n); err != nil {
+			if err = stack.check(op, guardsp(sp, exhandlers), 1+n, n); err != nil {
 				continue loop
 			}
 			moduleString, ok := stack[sp-1].(String)
