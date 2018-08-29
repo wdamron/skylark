@@ -130,7 +130,7 @@ const (
 	SETFIELD    //              x y SETFIELD<name>      -           x.name = y
 	UNPACK      //         iterable UNPACK<n>           vn ... v1
 
-	EXCEPT // - EXCEPT<addr> -     [pushes the exception handler stack]
+	EXCEPTPUSH // - EXCEPTPUSH<addr> -     [pushes the exception handler stack]
 
 	// n>>8 is #positional args and n&0xff is #named args (pairs).
 	CALL        // fn positional named                CALL<n>        result
@@ -158,8 +158,8 @@ var opcodeNames = [...]string{
 	DUP:         "dup",
 	EQL:         "eql",
 	ERROR:       "error",
-	EXCEPT:      "except",
 	EXCEPTPOP:   "exceptpop",
+	EXCEPTPUSH:  "exceptpush",
 	EXCH:        "exch",
 	FALSE:       "false",
 	FREE:        "free",
@@ -212,11 +212,29 @@ var opcodeNames = [...]string{
 	UPLUS:       "uplus",
 }
 
-const variableStackEffect = 0x7f
+// StackEffect returns the number of stack pops and pushes executed during op.
+func StackEffect(op Opcode) (pops, pushes int) {
+	se := stackEffect[op]
+	return int(se >> 4), int(se & 0xf)
+}
+
+func IsVariableStackEffect(op Opcode) bool {
+	return stackEffect[op] == variableStackEffect
+}
+
+// seff packs a stack-effect pair into a uint8
+func seff(pops, pushes int) uint8 {
+	return uint8(pops<<4) | (uint8(pushes) & 0xf)
+}
+
+const (
+	variableStackEffect = 0xEE // seff(14, 14)
+	invalidStackEffect  = 0xFF // seff(15, 15)
+)
 
 // stackEffect records the effect on the size of the operand stack of
 // each kind of instruction. For some instructions this requires computation.
-var stackEffect [int(OpcodeMax-OpcodeMin) + 1]int8
+var stackEffect [int(OpcodeMax-OpcodeMin) + 1]uint8
 
 func init() {
 	for op := OpcodeMin; op <= OpcodeMax; op++ {
@@ -233,78 +251,78 @@ func init() {
 	}
 
 	for i, _ := range stackEffect {
-		stackEffect[i] = -128
+		stackEffect[i] = invalidStackEffect
 	}
 
-	stackEffect[AMP] = -1
-	stackEffect[APPEND] = -2
-	stackEffect[ATTR] = 0
+	stackEffect[AMP] = seff(2, 1)
+	stackEffect[APPEND] = seff(2, 0)
+	stackEffect[ATTR] = seff(1, 1)
 	stackEffect[CALL] = variableStackEffect
 	stackEffect[CALL_KW] = variableStackEffect
 	stackEffect[CALL_VAR] = variableStackEffect
 	stackEffect[CALL_VAR_KW] = variableStackEffect
-	stackEffect[CIRCUMFLEX] = -1
-	stackEffect[CJMP] = -1
-	stackEffect[CONSTANT] = +1
-	stackEffect[DUP2] = +2
-	stackEffect[DUP] = +1
-	stackEffect[EQL] = -1
-	stackEffect[ERROR] = 0
-	stackEffect[EXCEPT] = 0
-	stackEffect[EXCEPTPOP] = 0
-	stackEffect[EXCH] = 0
-	stackEffect[FALSE] = +1
-	stackEffect[FREE] = +1
-	stackEffect[GE] = -1
-	stackEffect[GLOBAL] = +1
-	stackEffect[GT] = -1
-	stackEffect[GTGT] = -1
-	stackEffect[IN] = -1
-	stackEffect[INDEX] = -1
-	stackEffect[INPLACE_ADD] = -1
+	stackEffect[CIRCUMFLEX] = seff(2, 1)
+	stackEffect[CJMP] = seff(1, 0)
+	stackEffect[CONSTANT] = seff(0, 1)
+	stackEffect[DUP2] = seff(2, 4)
+	stackEffect[DUP] = seff(1, 2)
+	stackEffect[EQL] = seff(2, 1)
+	stackEffect[ERROR] = seff(1, 1)
+	stackEffect[EXCEPTPOP] = se(0, 0)
+	stackEffect[EXCEPTPUSH] = seff(0, 0)
+	stackEffect[EXCH] = seff(2, 2)
+	stackEffect[FALSE] = seff(0, 1)
+	stackEffect[FREE] = seff(0, 1)
+	stackEffect[GE] = seff(1, 0)
+	stackEffect[GLOBAL] = seff(0, 1)
+	stackEffect[GT] = seff(2, 1)
+	stackEffect[GTGT] = seff(2, 1)
+	stackEffect[IN] = seff(2, 1)
+	stackEffect[INDEX] = seff(2, 1)
+	stackEffect[INPLACE_ADD] = seff(2, 1)
 	stackEffect[ITERJMP] = variableStackEffect
-	stackEffect[ITERPOP] = 0
-	stackEffect[ITERPUSH] = -1
-	stackEffect[JMP] = 0
-	stackEffect[LE] = -1
-	stackEffect[LOAD] = -1
-	stackEffect[LOCAL] = +1
-	stackEffect[LT] = -1
-	stackEffect[LTLT] = -1
-	stackEffect[MAKEDICT] = +1
-	stackEffect[MAKEFUNC] = -1
+	stackEffect[ITERPOP] = seff(0, 0)
+	stackEffect[ITERPUSH] = seff(1, 0)
+	stackEffect[JMP] = seff(0, 0)
+	stackEffect[LE] = seff(2, 1)
+	stackEffect[LOAD] = variableStackEffect
+	stackEffect[LOCAL] = seff(0, 1)
+	stackEffect[LT] = seff(2, 1)
+	stackEffect[LTLT] = seff(2, 1)
+	stackEffect[MAKEDICT] = seff(0, 1)
+	stackEffect[MAKEFUNC] = seff(2, 1)
 	stackEffect[MAKELIST] = variableStackEffect
 	stackEffect[MAKETUPLE] = variableStackEffect
-	stackEffect[MINUS] = -1
-	stackEffect[NEQ] = -1
-	stackEffect[NONE] = +1
-	stackEffect[NOP] = 0
-	stackEffect[NOT] = 0
-	stackEffect[PERCENT] = -1
-	stackEffect[PIPE] = -1
-	stackEffect[PLUS] = -1
-	stackEffect[POP] = -1
-	stackEffect[PREDECLARED] = +1
-	stackEffect[RETURN] = -1
-	stackEffect[SETDICT] = -3
-	stackEffect[SETDICTUNIQ] = -3
-	stackEffect[SETFIELD] = -2
-	stackEffect[SETGLOBAL] = -1
-	stackEffect[SETINDEX] = -3
-	stackEffect[SETLOCAL] = -1
-	stackEffect[SLASH] = -1
-	stackEffect[SLASHSLASH] = -1
-	stackEffect[SLICE] = -3
-	stackEffect[STAR] = -1
-	stackEffect[TILDE] = 0
-	stackEffect[TRUE] = +1
-	stackEffect[UMINUS] = 0
-	stackEffect[UNIVERSAL] = +1
+	stackEffect[MINUS] = seff(2, 1)
+	stackEffect[NEQ] = seff(2, 1)
+	stackEffect[NONE] = seff(0, 1)
+	stackEffect[NOP] = seff(0, 0)
+	stackEffect[NOT] = seff(1, 1)
+	stackEffect[PERCENT] = seff(2, 1)
+	stackEffect[PIPE] = seff(2, 1)
+	stackEffect[PLUS] = seff(2, 1)
+	stackEffect[POP] = seff(1, 0)
+	stackEffect[PREDECLARED] = seff(0, 1)
+	stackEffect[RETURN] = seff(1, 0)
+	stackEffect[SETDICT] = seff(3, 0)
+	stackEffect[SETDICTUNIQ] = seff(3, 0)
+	stackEffect[SETFIELD] = seff(2, 0)
+	stackEffect[SETGLOBAL] = seff(1, 0)
+	stackEffect[SETINDEX] = seff(3, 0)
+	stackEffect[SETLOCAL] = seff(1, 0)
+	stackEffect[SLASH] = seff(2, 1)
+	stackEffect[SLASHSLASH] = seff(2, 1)
+	stackEffect[SLICE] = seff(4, 1)
+	stackEffect[STAR] = seff(2, 1)
+	stackEffect[TILDE] = seff(1, 1)
+	stackEffect[TRUE] = seff(0, 1)
+	stackEffect[UMINUS] = seff(1, 1)
+	stackEffect[UNIVERSAL] = seff(0, 1)
 	stackEffect[UNPACK] = variableStackEffect
-	stackEffect[UPLUS] = 0
+	stackEffect[UPLUS] = seff(1, 1)
 
 	for i, v := range stackEffect {
-		if v == -128 {
+		if v == invalidStackEffect {
 			log.Fatalf("Compile: missing opcode stack effect for %s", opcodeNames[Opcode(i)])
 		}
 	}
@@ -542,7 +560,7 @@ func (pcomp *pcomp) function(name string, pos syntax.Position, stmts []syntax.St
 				case CJMP:
 					cjmpAddr = &b.insns[i].arg
 					pc += 4
-				case EXCEPT:
+				case EXCEPTPUSH:
 					exceptAddr = &b.insns[i].arg
 					pc += 4
 				default:
@@ -659,33 +677,37 @@ func (pcomp *pcomp) function(name string, pos syntax.Position, stmts []syntax.St
 }
 
 func (insn *insn) stackeffect() int {
-	se := int(stackEffect[insn.op])
-	if se == variableStackEffect {
-		arg := int(insn.arg)
-		switch insn.op {
-		case CALL, CALL_KW, CALL_VAR, CALL_VAR_KW:
-			se = -int(2*(insn.arg&0xff) + insn.arg>>8)
-			if insn.op != CALL {
-				se--
-			}
-			if insn.op == CALL_VAR_KW {
-				se--
-			}
-		case ITERJMP:
-			// Stack effect differs by successor:
-			// +1 for jmp/false/ok
-			//  0 for cjmp/true/exhausted
-			// Handled specially in caller.
-			se = 0
-		case MAKELIST, MAKETUPLE:
-			se = 1 - arg
-		case UNPACK:
-			se = arg - 1
-		default:
-			panic(insn.op)
-		}
+	pops, pushes := StackEffect(insn.op)
+	effect := pushes - pops
+	if pushes != 14 && pops != 14 {
+		return effect
 	}
-	return se
+	arg := int(insn.arg)
+	switch insn.op {
+	case LOAD:
+		return -1
+	case CALL, CALL_KW, CALL_VAR, CALL_VAR_KW:
+		effect = -int(2*(insn.arg&0xff) + insn.arg>>8)
+		if insn.op != CALL {
+			effect--
+		}
+		if insn.op == CALL_VAR_KW {
+			effect--
+		}
+		return effect
+	case ITERJMP:
+		// Stack effect differs by successor:
+		// +1 for jmp/false/ok
+		//  0 for cjmp/true/exhausted
+		// Handled specially in caller.
+		return 0
+	case MAKELIST, MAKETUPLE:
+		return 1 - arg
+	case UNPACK:
+		return arg - 1
+	default:
+		panic(insn.op)
+	}
 }
 
 // generate emits the linear instruction stream from the CFG,
@@ -745,7 +767,7 @@ func (fcomp *fcomp) generate(blocks []*block, codelen uint32) {
 			code = append(code, byte(insn.op))
 			pc++
 			if insn.op >= OpcodeArgMin {
-				if insn.op == CJMP || insn.op == EXCEPT || insn.op == ITERJMP {
+				if insn.op == CJMP || insn.op == EXCEPTPUSH || insn.op == ITERJMP {
 					code = addUint32(code, insn.arg, 4) // pad arg to 4 bytes
 				} else {
 					code = addUint32(code, insn.arg, 0)
@@ -1019,7 +1041,7 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		f := fcomp.newBlock()
 		done := fcomp.newBlock()
 
-		fcomp.ifelse(stmt.Cond, t, f)
+		fcomp.ifelseff(stmt.Cond, t, f)
 
 		fcomp.block = t
 		fcomp.stmts(stmt.True)
@@ -1141,7 +1163,7 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		}
 		fcomp.exhandlers = append(fcomp.exhandlers, len(fcomp.loops)-1)
 		fcomp.block.except = fallback
-		fcomp.emit1(EXCEPT, 0)
+		fcomp.emit1(EXCEPTPUSH, 0)
 		fcomp.stmts(stmt.Body)
 		fcomp.emit(EXCEPTPOP)
 		fcomp.jump(done)
@@ -1270,7 +1292,7 @@ func (fcomp *fcomp) expr(e syntax.Expr) {
 		f := fcomp.newBlock()
 		done := fcomp.newBlock()
 
-		fcomp.ifelse(e.Cond, t, f)
+		fcomp.ifelseff(e.Cond, t, f)
 
 		fcomp.block = t
 		fcomp.expr(e.True)
@@ -1701,7 +1723,7 @@ func (fcomp *fcomp) comprehension(comp *syntax.Comprehension, clauseIndex int) {
 	case *syntax.IfClause:
 		t := fcomp.newBlock()
 		done := fcomp.newBlock()
-		fcomp.ifelse(clause.Cond, t, done)
+		fcomp.ifelseff(clause.Cond, t, done)
 
 		fcomp.block = t
 		fcomp.comprehension(comp, clauseIndex+1)
@@ -1777,14 +1799,14 @@ func (fcomp *fcomp) function(pos syntax.Position, name string, f *syntax.Functio
 
 // ifelse emits a Boolean control flow decision.
 // On return, the current block is unset.
-func (fcomp *fcomp) ifelse(cond syntax.Expr, t, f *block) {
+func (fcomp *fcomp) ifelseff(cond syntax.Expr, t, f *block) {
 	switch cond := cond.(type) {
 	case *syntax.UnaryExpr:
 		if cond.Op == syntax.NOT {
 			// if not x then goto t else goto f
 			//    =>
 			// if x then goto f else goto t
-			fcomp.ifelse(cond.X, f, t)
+			fcomp.ifelseff(cond.X, f, t)
 			return
 		}
 
@@ -1793,25 +1815,25 @@ func (fcomp *fcomp) ifelse(cond syntax.Expr, t, f *block) {
 		case syntax.AND:
 			// if x and y then goto t else goto f
 			//    =>
-			// if x then ifelse(y, t, f) else goto f
+			// if x then ifelseff(y, t, f) else goto f
 			fcomp.expr(cond.X)
 			y := fcomp.newBlock()
 			fcomp.condjump(CJMP, y, f)
 
 			fcomp.block = y
-			fcomp.ifelse(cond.Y, t, f)
+			fcomp.ifelseff(cond.Y, t, f)
 			return
 
 		case syntax.OR:
 			// if x or y then goto t else goto f
 			//    =>
-			// if x then goto t else ifelse(y, t, f)
+			// if x then goto t else ifelseff(y, t, f)
 			fcomp.expr(cond.X)
 			y := fcomp.newBlock()
 			fcomp.condjump(CJMP, t, y)
 
 			fcomp.block = y
-			fcomp.ifelse(cond.Y, t, f)
+			fcomp.ifelseff(cond.Y, t, f)
 			return
 		case syntax.NOT_IN:
 			// if x not in y then goto t else goto f
