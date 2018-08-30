@@ -1295,7 +1295,7 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 		}
 		fcomp.exhandlers = append(fcomp.exhandlers, len(fcomp.loops)-1)
 		fcomp.block.except = fallback
-		fcomp.emit1(EXCEPTPUSH, 0)
+		fcomp.emit1(EXCEPTPUSH, 0) // the exception-handler address is filled in later
 		fcomp.stmts(stmt.Body)
 		fcomp.emit(EXCEPTPOP)
 		fcomp.jump(done)
@@ -1305,10 +1305,10 @@ func (fcomp *fcomp) stmt(stmt syntax.Stmt) {
 			fcomp.lookup(stmt.ExceptionType)
 			fcomp.emit(ERROR)
 			fcomp.exhandlers = fcomp.exhandlers[:len(fcomp.exhandlers)-1]
-			fcomp.emit1(SETLOCAL, uint32(stmt.ExceptionName.Index))
+			fcomp.assign(stmt.ExceptionName.NamePos, stmt.ExceptionName)
 			fcomp.stmts(stmt.Fallback)
 			fcomp.emit(NONE)
-			fcomp.emit1(SETLOCAL, uint32(stmt.ExceptionName.Index))
+			fcomp.assign(stmt.ExceptionName.NamePos, stmt.ExceptionName)
 			fcomp.jump(done)
 		} else {
 			fcomp.block = fallback

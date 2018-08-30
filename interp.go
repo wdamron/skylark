@@ -72,14 +72,6 @@ type exceptionHandler struct {
 	pc, sp uint32
 }
 
-func getExceptionType(err error) string {
-	// TODO(wdamron): add builtin error types
-	if err == nil {
-		return "None"
-	}
-	return "Exception"
-}
-
 // guardsp returns sp as an offset from the saved sp of the inner-most enclosing
 // exception handler, or returns sp if no exception handlers are active.
 func guardsp(sp int, exhandlers []exceptionHandler) int {
@@ -124,7 +116,7 @@ func interpret(thread *Thread, args Tuple, kwargs []Tuple, resuming bool) (Value
 
 	var result Value
 	var err error
-	var savedErr error
+	var exception Exception
 
 	if !resuming {
 		err = setArgs(locals, fn, args, kwargs)
@@ -153,8 +145,13 @@ loop:
 			}
 			handler := exhandlers[len(exhandlers)-1]
 			pc, sp = handler.pc, int(handler.sp)
-			savedErr = err
-			err = nil
+			var isException bool
+			exception, isException = err.(Exception)
+			if isException && exception != nil {
+				err = nil
+			} else {
+				break loop
+			}
 		}
 		var op compile.Opcode
 		var arg uint32
@@ -179,26 +176,11 @@ loop:
 				break loop
 			}
 			exhandlers = exhandlers[:len(exhandlers)-1]
-			x := stack[sp-1]
-			expectedExType, ok := x.(String)
-			if !ok {
-				xt := "<nil>"
-				if x != nil {
-					xt = x.Type()
-				}
-				err = fmt.Errorf("expected exception type must resolve to a string, found %s", xt)
-				savedErr = nil
-				continue loop
-			}
-			if getExceptionType(savedErr) != string(expectedExType) {
-				err = savedErr
-				savedErr = nil
-				continue loop
-			}
-			if savedErr != nil {
-				stack[sp-1] = String(savedErr.Error())
-				savedErr = nil
+			if expected, ok := stack[sp-1].(Exception); ok && expected != nil && expected.Type() == exception.Type() {
+				stack[sp-1] = exception
+				exception = nil
 			} else {
+				err = exception
 				stack[sp-1] = None
 			}
 
@@ -211,6 +193,7 @@ loop:
 				break loop
 			}
 			exhandlers = exhandlers[:len(exhandlers)-1]
+			exception = nil
 
 		case compile.NOP:
 			// nop

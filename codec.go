@@ -51,6 +51,9 @@ const (
 	T_Funcode        = 28
 	T_Custom         = 29
 	T_CustomIterator = 30
+	T_TypeError      = 31
+	T_ValueError     = 32
+	T_IOError        = 33
 
 	T_Uncompressed      = 60
 	T_HuffmanCompressed = 61
@@ -70,6 +73,10 @@ type CustomIteratorDecoder func(dec *Decoder) (Iterator, error)
 
 var CustomIteratorDecoders = map[string]CustomIteratorDecoder{}
 
+type CustomExceptionDecoder func(dec *Decoder) (Exception, error)
+
+var CustomExceptionDecoders = map[string]CustomExceptionDecoder{}
+
 type Codable interface {
 	Type() string
 	Encode(*Encoder)
@@ -88,6 +95,14 @@ func RegisterIteratorDecoder(typeName string, dec CustomIteratorDecoder) error {
 		return fmt.Errorf("Codec: iterator decoder for type %s is already registered", typeName)
 	}
 	CustomIteratorDecoders[typeName] = dec
+	return nil
+}
+
+func RegisterExceptionDecoder(typeName string, dec CustomExceptionDecoder) error {
+	if CustomExceptionDecoders[typeName] != nil {
+		return fmt.Errorf("Codec: exception decoder for type %s is already registered", typeName)
+	}
+	CustomExceptionDecoders[typeName] = dec
 	return nil
 }
 
@@ -455,6 +470,15 @@ func (enc *Encoder) EncodeValue(v Value) {
 		enc.EncodeBuiltin(t)
 	case rangeValue:
 		enc.EncodeRange(t)
+	case TypeError:
+		enc.WriteTag(T_TypeError)
+		enc.EncodeString(String(t.Error()))
+	case ValueError:
+		enc.WriteTag(T_ValueError)
+		enc.EncodeString(String(t.Error()))
+	case IOError:
+		enc.WriteTag(T_IOError)
+		enc.EncodeString(String(t.Error()))
 	case Codable:
 		enc.WriteTag(T_Custom)
 		enc.EncodeString(String(t.Type()))
@@ -497,6 +521,27 @@ func (dec *Decoder) DecodeValue() (Value, error) {
 		return dec.DecodeTuple()
 	case T_Range:
 		return dec.DecodeRange()
+	case T_TypeError:
+		dec.Data = dec.Data[1:]
+		msg, err := dec.DecodeString()
+		if err != nil {
+			return None, fmt.Errorf("Codec: error while decoding type-error: %s", err.Error())
+		}
+		return NewTypeError(errors.New(string(msg))), nil
+	case T_ValueError:
+		dec.Data = dec.Data[1:]
+		msg, err := dec.DecodeString()
+		if err != nil {
+			return None, fmt.Errorf("Codec: error while decoding value-error: %s", err.Error())
+		}
+		return NewValueError(errors.New(string(msg))), nil
+	case T_IOError:
+		dec.Data = dec.Data[1:]
+		msg, err := dec.DecodeString()
+		if err != nil {
+			return None, fmt.Errorf("Codec: error while decoding IO-error: %s", err.Error())
+		}
+		return NewIOError(errors.New(string(msg))), nil
 	case T_Ref:
 		return dec.GetRef(dec.Data[1])
 	case T_Custom:

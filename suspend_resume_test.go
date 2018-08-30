@@ -5,6 +5,7 @@
 package skylark_test
 
 import (
+	"fmt"
 	"testing"
 
 	. "github.com/google/skylark"
@@ -31,36 +32,41 @@ func TestSuspendResume(t *testing.T) {
 				thread.Suspendable(args, kwargs)
 				return None, nil
 			}),
-		"Exception":  String("Exception"),
-		"ValueError": String("ValueError"),
-		"log_error": NewBuiltin("print",
+		"TypeError":  NewTypeError(fmt.Errorf("some type error")),
+		"ValueError": NewValueError(fmt.Errorf("some value error")),
+		"log_error": NewBuiltin("log_error",
 			func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
-				if len(args) > 0 {
-					i, _ := args[0].(Int)
-					s, _ := args[1].(String)
-					t.Logf("i=%s err: %s", i.String(), string(s))
+				if len(args) == 2 {
+					t.Logf("i=%s err: %s", args[0].String(), args[1].String())
 				}
 				return None, nil
+			}),
+		"raise_value_error": NewBuiltin("raise_value_error",
+			func(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
+				var arg Value = String("")
+				if len(args) > 0 {
+					arg = args[0]
+				}
+				t.Logf("raising value error...%v", arg)
+				return None, NewValueError(fmt.Errorf("wrong value"))
 			}),
 	}
 
 	script := `
 magic_index = 3
 def long_running(i):
-	if i == magic_index:
-		try:
-			x = 1 / (i - magic_index)
-			return i
-		except:
-			try:
-				return long_running_builtin("the_argument", the_key="the_value")
-			except:
-				return i
 	try:
-		x = 1 / i
-	except Exception as e:
-		log_error(i, e)
-		return i
+		if i == magic_index:
+			raise_value_error(42)
+	except ValueError as e:
+		return long_running_builtin("the_argument", the_key="the_value")
+	try:
+		try:
+			raise_value_error(i)
+		except ValueError as e:
+			raise_value_error(-i)
+	except ValueError as e:
+		log_error(-i, str(e))
 
 def looptry():
 	x = []
@@ -71,11 +77,8 @@ def looptry():
 				break
 		except:
 			continue
-	x[5] += 1
-	try:
-		i = 1 / (len(x) - 6)
-	except Exception as e:
-		log_error(len(x), e)
+	if len(x) != 6:
+		raise_value_error()
 
 looptry()
 
