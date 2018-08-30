@@ -288,6 +288,16 @@ type HasSetField interface {
 	SetField(name string, val Value) error
 }
 
+// An Exception value may be assigned within an exception handling block if try/except
+// statements are enabled.
+type Exception interface {
+	Value
+	// Error returns a Go string representation of the exception.
+	Error() string
+	// Exception returns a skylark String representation of the exception.
+	Exception() String
+}
+
 // NoneType is the type of None.  Its only legal value is None.
 // (We represent it as a number, not struct{}, so that None may be constant.)
 type NoneType byte
@@ -906,6 +916,78 @@ func (s *Set) Union(iter Iterator) (Value, error) {
 		}
 	}
 	return set, nil
+}
+
+var (
+	_ Exception = TypeError{}
+	_ error     = TypeError{}
+	_ Exception = ValueError{}
+	_ error     = ValueError{}
+	_ Exception = IOError{}
+	_ error     = IOError{}
+)
+
+// TypeError is the type of a Skylark type-error exception.
+type TypeError struct {
+	err error
+}
+
+func NewTypeError(err error) TypeError    { return TypeError{err} }
+func (e TypeError) Error() string         { return e.err.Error() }
+func (e TypeError) Exception() String     { return String("TypeError: " + e.Error()) }
+func (e TypeError) String() string        { return string(e.Exception()) }
+func (e TypeError) Type() string          { return "TypeError" }
+func (e TypeError) Freeze()               {} // immutable
+func (e TypeError) Truth() Bool           { return true }
+func (e TypeError) Hash() (uint32, error) { return e.Exception().Hash() }
+func (e TypeError) CompareSameType(op syntax.Token, y Value, depth int) (bool, error) {
+	ye, _ := y.(TypeError)
+	if ye.err == nil {
+		return (op == syntax.EQL && e.err == nil) || (op == syntax.NEQ && e.err != nil), nil
+	}
+	return (op == syntax.EQL && e.err.Error() == ye.err.Error()) || (op == syntax.NEQ && e.err.Error() != ye.err.Error()), nil
+}
+
+// ValueError is the type of a Skylark value-error exception.
+type ValueError struct {
+	err error
+}
+
+func NewValueError(err error) ValueError   { return ValueError{err} }
+func (e ValueError) Error() string         { return e.err.Error() }
+func (e ValueError) Exception() String     { return String("ValueError: " + e.Error()) }
+func (e ValueError) String() string        { return string(e.Exception()) }
+func (e ValueError) Type() string          { return "ValueError" }
+func (e ValueError) Freeze()               {} // immutable
+func (e ValueError) Truth() Bool           { return true }
+func (e ValueError) Hash() (uint32, error) { return e.Exception().Hash() }
+func (e ValueError) CompareSameType(op syntax.Token, y Value, depth int) (bool, error) {
+	ye, _ := y.(ValueError)
+	if ye.err == nil {
+		return (op == syntax.EQL && e.err == nil) || (op == syntax.NEQ && e.err != nil), nil
+	}
+	return (op == syntax.EQL && e.err.Error() == ye.err.Error()) || (op == syntax.NEQ && e.err.Error() != ye.err.Error()), nil
+}
+
+// IOError is the type of a Skylark IO-error exception.
+type IOError struct {
+	err error
+}
+
+func NewIOError(err error) IOError      { return IOError{err} }
+func (e IOError) Error() string         { return e.err.Error() }
+func (e IOError) Exception() String     { return String("IOError: " + e.Error()) }
+func (e IOError) String() string        { return string(e.Exception()) }
+func (e IOError) Type() string          { return "IOError" }
+func (e IOError) Freeze()               {} // immutable
+func (e IOError) Truth() Bool           { return true }
+func (e IOError) Hash() (uint32, error) { return e.Exception().Hash() }
+func (e IOError) CompareSameType(op syntax.Token, y Value, depth int) (bool, error) {
+	ye, _ := y.(IOError)
+	if ye.err == nil {
+		return (op == syntax.EQL && e.err == nil) || (op == syntax.NEQ && e.err != nil), nil
+	}
+	return (op == syntax.EQL && e.err.Error() == ye.err.Error()) || (op == syntax.NEQ && e.err.Error() != ye.err.Error()), nil
 }
 
 // toString returns the string form of value v.
