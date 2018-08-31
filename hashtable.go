@@ -52,10 +52,10 @@ func (ht *hashtable) freeze() {
 
 func (ht *hashtable) insert(k, v Value) error {
 	if ht.frozen {
-		return fmt.Errorf("cannot insert into frozen hash table")
+		return ValueErrorf("cannot insert into frozen hash table")
 	}
 	if ht.itercount > 0 {
-		return fmt.Errorf("cannot insert into hash table during iteration")
+		return ValueErrorf("cannot insert into hash table during iteration")
 	}
 	if ht.table == nil {
 		ht.table = ht.bucket0[:1]
@@ -213,10 +213,10 @@ func (ht *hashtable) keys() []Value {
 
 func (ht *hashtable) delete(k Value) (v Value, found bool, err error) {
 	if ht.frozen {
-		return nil, false, fmt.Errorf("cannot delete from frozen hash table")
+		return nil, false, ValueErrorf("cannot delete from frozen hash table")
 	}
 	if ht.itercount > 0 {
-		return nil, false, fmt.Errorf("cannot delete from hash table during iteration")
+		return nil, false, ValueErrorf("cannot delete from hash table during iteration")
 	}
 	if ht.table == nil {
 		return None, false, nil // empty
@@ -261,10 +261,10 @@ func (ht *hashtable) delete(k Value) (v Value, found bool, err error) {
 
 func (ht *hashtable) clear() error {
 	if ht.frozen {
-		return fmt.Errorf("cannot clear frozen hash table")
+		return ValueErrorf("cannot clear frozen hash table")
 	}
 	if ht.itercount > 0 {
-		return fmt.Errorf("cannot clear hash table during iteration")
+		return ValueErrorf("cannot clear hash table during iteration")
 	}
 	if ht.table != nil {
 		for i := range ht.table {

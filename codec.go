@@ -51,9 +51,10 @@ const (
 	T_Funcode        = 28
 	T_Custom         = 29
 	T_CustomIterator = 30
-	T_TypeError      = 31
-	T_ValueError     = 32
-	T_IOError        = 33
+	T_BaseException  = 31
+	T_TypeError      = 32
+	T_ValueError     = 33
+	T_IOError        = 34
 
 	T_Uncompressed      = 60
 	T_HuffmanCompressed = 61
@@ -470,6 +471,8 @@ func (enc *Encoder) EncodeValue(v Value) {
 		enc.EncodeBuiltin(t)
 	case rangeValue:
 		enc.EncodeRange(t)
+	case ExceptionKind:
+		enc.WriteTag(T_BaseException)
 	case TypeError:
 		enc.WriteTag(T_TypeError)
 		enc.EncodeString(String(t.Error()))
@@ -521,6 +524,9 @@ func (dec *Decoder) DecodeValue() (Value, error) {
 		return dec.DecodeTuple()
 	case T_Range:
 		return dec.DecodeRange()
+	case T_BaseException:
+		dec.Data = dec.Data[1:]
+		return BaseException, nil
 	case T_TypeError:
 		dec.Data = dec.Data[1:]
 		msg, err := dec.DecodeString()

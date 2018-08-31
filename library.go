@@ -197,13 +197,16 @@ func UnpackArgs(fnname string, args Tuple, kwargs []Tuple, pairs ...interface{})
 
 	// positional arguments
 	if len(args) > nparams {
-		return fmt.Errorf("%s: got %d arguments, want at most %d",
+		return TypeErrorf("%s: got %d arguments, want at most %d",
 			fnname, len(args), nparams)
 	}
 	for i, arg := range args {
 		defined.set(i)
 		if err := unpackOneArg(arg, pairs[2*i+1]); err != nil {
-			return fmt.Errorf("%s: for parameter %d: %s", fnname, i+1, err)
+			if exception, ok := err.(Exception); ok {
+				return exception
+			}
+			return ValueErrorf("%s: for parameter %d: %s", fnname, i+1, err.Error())
 		}
 	}
 
@@ -219,17 +222,20 @@ kwloop:
 			if paramName == string(name) {
 				// found it
 				if defined.set(i) {
-					return fmt.Errorf("%s: got multiple values for keyword argument %s",
+					return TypeErrorf("%s: got multiple values for keyword argument %s",
 						fnname, name)
 				}
 				ptr := pairs[2*i+1]
 				if err := unpackOneArg(arg, ptr); err != nil {
-					return fmt.Errorf("%s: for parameter %s: %s", fnname, name, err)
+					if exception, ok := err.(Exception); ok {
+						return exception
+					}
+					return ValueErrorf("%s: for parameter %s: %s", fnname, name, err.Error())
 				}
 				continue kwloop
 			}
 		}
-		return fmt.Errorf("%s: unexpected keyword argument %s", fnname, name)
+		return TypeErrorf("%s: unexpected keyword argument %s", fnname, name)
 	}
 
 	// Check that all non-optional parameters are defined.
@@ -240,7 +246,7 @@ kwloop:
 			break // optional
 		}
 		if !defined.get(i) {
-			return fmt.Errorf("%s: missing argument for %s", fnname, name)
+			return TypeErrorf("%s: missing argument for %s", fnname, name)
 		}
 	}
 
@@ -256,7 +262,7 @@ kwloop:
 // any conversion fails.
 func UnpackPositionalArgs(fnname string, args Tuple, kwargs []Tuple, min int, vars ...interface{}) error {
 	if len(kwargs) > 0 {
-		return fmt.Errorf("%s: unexpected keyword arguments", fnname)
+		return TypeErrorf("%s: unexpected keyword arguments", fnname)
 	}
 	max := len(vars)
 	if len(args) < min {
@@ -264,18 +270,21 @@ func UnpackPositionalArgs(fnname string, args Tuple, kwargs []Tuple, min int, va
 		if min < max {
 			atleast = "at least "
 		}
-		return fmt.Errorf("%s: got %d arguments, want %s%d", fnname, len(args), atleast, min)
+		return TypeErrorf("%s: got %d arguments, want %s%d", fnname, len(args), atleast, min)
 	}
 	if len(args) > max {
 		var atmost string
 		if max > min {
 			atmost = "at most "
 		}
-		return fmt.Errorf("%s: got %d arguments, want %s%d", fnname, len(args), atmost, max)
+		return TypeErrorf("%s: got %d arguments, want %s%d", fnname, len(args), atmost, max)
 	}
 	for i, arg := range args {
 		if err := unpackOneArg(arg, vars[i]); err != nil {
-			return fmt.Errorf("%s: for parameter %d: %s", fnname, i+1, err)
+			if exception, ok := err.(Exception); ok {
+				return exception
+			}
+			return ValueErrorf("%s: for parameter %d: %s", fnname, i+1, err.Error())
 		}
 	}
 	return nil
@@ -387,20 +396,20 @@ func bool_(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error
 // https://github.com/google/skylark/blob/master/doc/spec.md#chr
 func chr(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(kwargs) > 0 {
-		return nil, fmt.Errorf("chr does not accept keyword arguments")
+		return nil, TypeErrorf("chr does not accept keyword arguments")
 	}
 	if len(args) != 1 {
-		return nil, fmt.Errorf("chr: got %d arguments, want 1", len(args))
+		return nil, TypeErrorf("chr: got %d arguments, want 1", len(args))
 	}
 	i, err := AsInt32(args[0])
 	if err != nil {
-		return nil, fmt.Errorf("chr: got %s, want int", args[0].Type())
+		return nil, TypeErrorf("chr: got %s, want int", args[0].Type())
 	}
 	if i < 0 {
-		return nil, fmt.Errorf("chr: Unicode code point %d out of range (<0)", i)
+		return nil, ValueErrorf("chr: Unicode code point %d out of range (<0)", i)
 	}
 	if i > unicode.MaxRune {
-		return nil, fmt.Errorf("chr: Unicode code point U+%X out of range (>0x10FFFF)", i)
+		return nil, ValueErrorf("chr: Unicode code point U+%X out of range (>0x10FFFF)", i)
 	}
 	return String(string(i)), nil
 }
@@ -408,11 +417,11 @@ func chr(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict
 func dict(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(args) > 1 {
-		return nil, fmt.Errorf("dict: got %d arguments, want at most 1", len(args))
+		return nil, TypeErrorf("dict: got %d arguments, want at most 1", len(args))
 	}
 	dict := new(Dict)
 	if err := updateDict(dict, args, kwargs); err != nil {
-		return nil, fmt.Errorf("dict: %v", err)
+		return nil, ValueErrorf("dict: %v", err.Error())
 	}
 	return dict, nil
 }
@@ -420,10 +429,10 @@ func dict(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error)
 // https://github.com/google/skylark/blob/master/doc/spec.md#dir
 func dir(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(kwargs) > 0 {
-		return nil, fmt.Errorf("dir does not accept keyword arguments")
+		return nil, TypeErrorf("dir does not accept keyword arguments")
 	}
 	if len(args) != 1 {
-		return nil, fmt.Errorf("dir: got %d arguments, want 1", len(args))
+		return nil, TypeErrorf("dir: got %d arguments, want 1", len(args))
 	}
 
 	var names []string
@@ -447,7 +456,7 @@ func enumerate(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, e
 
 	iter := iterable.Iterate()
 	if iter == nil {
-		return nil, fmt.Errorf("enumerate: got %s, want iterable", iterable.Type())
+		return nil, TypeErrorf("enumerate: got %s, want iterable", iterable.Type())
 	}
 	defer iter.Done()
 
@@ -478,13 +487,13 @@ func enumerate(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, e
 
 func float(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(kwargs) > 0 {
-		return nil, fmt.Errorf("float does not accept keyword arguments")
+		return nil, TypeErrorf("float does not accept keyword arguments")
 	}
 	if len(args) == 0 {
 		return Float(0.0), nil
 	}
 	if len(args) != 1 {
-		return nil, fmt.Errorf("float got %d arguments, wants 1", len(args))
+		return nil, TypeErrorf("float got %d arguments, wants 1", len(args))
 	}
 	switch x := args[0].(type) {
 	case Bool:
@@ -504,7 +513,7 @@ func float(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error
 		}
 		return Float(f), nil
 	default:
-		return nil, fmt.Errorf("float got %s, want number or string", x.Type())
+		return nil, TypeErrorf("float got %s, want number or string", x.Type())
 	}
 }
 
@@ -533,7 +542,7 @@ func getattr(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, err
 	if dflt != nil {
 		return dflt, nil
 	}
-	return nil, fmt.Errorf("%s has no .%s field or method", object.Type(), name)
+	return nil, TypeErrorf("%s has no .%s field or method", object.Type(), name)
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#hasattr
@@ -587,7 +596,7 @@ func int_(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error)
 			var err error
 			b, err = AsInt32(base)
 			if err != nil || b != 0 && (b < 2 || b > 36) {
-				return nil, fmt.Errorf("int: base must be an integer >= 2 && <= 36")
+				return nil, ValueErrorf("int: base must be an integer >= 2 && <= 36")
 			}
 		}
 
@@ -650,11 +659,11 @@ func int_(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error)
 		}
 
 	invalid:
-		return nil, fmt.Errorf("int: invalid literal with base %d: %s", b, orig)
+		return nil, ValueErrorf("int: invalid literal with base %d: %s", b, orig)
 	}
 
 	if base != nil {
-		return nil, fmt.Errorf("int: can't convert non-string with explicit base")
+		return nil, ValueErrorf("int: can't convert non-string with explicit base")
 	}
 
 	if b, ok := x.(Bool); ok {
@@ -667,7 +676,7 @@ func int_(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error)
 
 	i, err := NumberToInt(x)
 	if err != nil {
-		return nil, fmt.Errorf("int: %s", err)
+		return nil, ValueErrorf("int: %s", err.Error())
 	}
 	return i, nil
 }
@@ -680,7 +689,7 @@ func len_(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error)
 	}
 	len := Len(x)
 	if len < 0 {
-		return nil, fmt.Errorf("value of type %s has no len", x.Type())
+		return nil, TypeErrorf("value of type %s has no len", x.Type())
 	}
 	return MakeInt(len), nil
 }
@@ -709,7 +718,7 @@ func list(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error)
 // https://github.com/google/skylark/blob/master/doc/spec.md#min
 func minmax(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(args) == 0 {
-		return nil, fmt.Errorf("%s requires at least one positional argument", fn.Name())
+		return nil, TypeErrorf("%s requires at least one positional argument", fn.Name())
 	}
 	var keyFunc Callable
 	if err := UnpackArgs(fn.Name(), nil, kwargs, "key?", &keyFunc); err != nil {
@@ -729,12 +738,12 @@ func minmax(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, err
 	}
 	iter := Iterate(iterable)
 	if iter == nil {
-		return nil, fmt.Errorf("%s: %s value is not iterable", fn.Name(), iterable.Type())
+		return nil, TypeErrorf("%s: %s value is not iterable", fn.Name(), iterable.Type())
 	}
 	defer iter.Done()
 	var extremum Value
 	if !iter.Next(&extremum) {
-		return nil, fmt.Errorf("%s: argument is an empty sequence", fn.Name())
+		return nil, ValueErrorf("%s: argument is an empty sequence", fn.Name())
 	}
 
 	var extremeKey Value
@@ -765,7 +774,10 @@ func minmax(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, err
 		}
 
 		if ok, err := Compare(op, key, extremeKey); err != nil {
-			return nil, err
+			if exception, ok := err.(Exception); ok {
+				return nil, exception
+			}
+			return nil, NewValueError(err)
 		} else if ok {
 			extremum = x
 			extremeKey = key
@@ -777,19 +789,19 @@ func minmax(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, err
 // https://github.com/google/skylark/blob/master/doc/spec.md#ord
 func ord(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(kwargs) > 0 {
-		return nil, fmt.Errorf("ord does not accept keyword arguments")
+		return nil, TypeErrorf("ord does not accept keyword arguments")
 	}
 	if len(args) != 1 {
-		return nil, fmt.Errorf("ord: got %d arguments, want 1", len(args))
+		return nil, TypeErrorf("ord: got %d arguments, want 1", len(args))
 	}
 	s, ok := AsString(args[0])
 	if !ok {
-		return nil, fmt.Errorf("ord: got %s, want string", args[0].Type())
+		return nil, TypeErrorf("ord: got %s, want string", args[0].Type())
 	}
 	r, sz := utf8.DecodeRuneInString(s)
 	if sz == 0 || sz != len(s) {
 		n := utf8.RuneCountInString(s)
-		return nil, fmt.Errorf("ord: string encodes %d Unicode code points, want 1", n)
+		return nil, ValueErrorf("ord: string encodes %d Unicode code points, want 1", n)
 	}
 	return MakeInt(int(r)), nil
 }
@@ -861,7 +873,7 @@ func range_(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, err
 				n = (start-1-stop)/-step + 1
 			}
 		default:
-			return nil, fmt.Errorf("range: step argument must not be zero")
+			return nil, ValueErrorf("range: step argument must not be zero")
 		}
 	}
 
@@ -914,7 +926,7 @@ func (r rangeValue) String() string {
 }
 func (r rangeValue) Type() string          { return "range" }
 func (r rangeValue) Truth() Bool           { return r.len > 0 }
-func (r rangeValue) Hash() (uint32, error) { return 0, fmt.Errorf("unhashable: range") }
+func (r rangeValue) Hash() (uint32, error) { return 0, TypeErrorf("unhashable: range") }
 
 func (x rangeValue) CompareSameType(op syntax.Token, y_ Value, depth int) (bool, error) {
 	y := y_.(rangeValue)
@@ -924,7 +936,7 @@ func (x rangeValue) CompareSameType(op syntax.Token, y_ Value, depth int) (bool,
 	case syntax.NEQ:
 		return !rangeEqual(x, y), nil
 	default:
-		return false, fmt.Errorf("%s %s %s not implemented", x.Type(), op, y.Type())
+		return false, TypeErrorf("%s %s %s not implemented", x.Type(), op, y.Type())
 	}
 }
 
@@ -1004,7 +1016,10 @@ func set(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error)
 		var x Value
 		for iter.Next(&x) {
 			if err := set.Insert(x); err != nil {
-				return nil, err
+				if exception, ok := err.(Exception); ok {
+					return nil, exception
+				}
+				return nil, NewValueError(err)
 			}
 		}
 	}
@@ -1042,7 +1057,11 @@ func sorted(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, erro
 		for i, v := range values {
 			k, err := Call(thread, key, Tuple{v}, nil)
 			if err != nil {
-				return nil, err // to preserve backtrace, don't modify error
+				if exception, ok := err.(Exception); ok {
+					return nil, exception
+				}
+				return nil, NewValueError(err)
+				//return nil, err // to preserve backtrace, don't modify error
 			}
 			keys[i] = k
 		}
@@ -1054,7 +1073,14 @@ func sorted(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, erro
 	} else {
 		sort.Stable(slice)
 	}
-	return NewList(slice.values), slice.err
+	if slice.err != nil {
+		if exception, ok := slice.err.(Exception); ok {
+			return NewList(slice.values), exception
+		} else {
+			return NewList(slice.values), NewValueError(slice.err)
+		}
+	}
+	return NewList(slice.values), nil
 }
 
 type sortSlice struct {
@@ -1085,10 +1111,10 @@ func (s *sortSlice) Swap(i, j int) {
 // https://github.com/google/skylark/blob/master/doc/spec.md#str
 func str(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(kwargs) > 0 {
-		return nil, fmt.Errorf("str does not accept keyword arguments")
+		return nil, TypeErrorf("str does not accept keyword arguments")
 	}
 	if len(args) != 1 {
-		return nil, fmt.Errorf("str: got %d arguments, want exactly 1", len(args))
+		return nil, TypeErrorf("str: got %d arguments, want exactly 1", len(args))
 	}
 	x := args[0]
 	if _, ok := AsString(x); !ok {
@@ -1122,10 +1148,10 @@ func tuple(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error
 // https://github.com/google/skylark/blob/master/doc/spec.md#type
 func type_(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(kwargs) > 0 {
-		return nil, fmt.Errorf("type does not accept keyword arguments")
+		return nil, TypeErrorf("type does not accept keyword arguments")
 	}
 	if len(args) != 1 {
-		return nil, fmt.Errorf("type: got %d arguments, want exactly 1", len(args))
+		return nil, TypeErrorf("type: got %d arguments, want exactly 1", len(args))
 	}
 	return String(args[0].Type()), nil
 }
@@ -1133,7 +1159,7 @@ func type_(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error
 // https://github.com/google/skylark/blob/master/doc/spec.md#zip
 func zip(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(kwargs) > 0 {
-		return nil, fmt.Errorf("zip does not accept keyword arguments")
+		return nil, TypeErrorf("zip does not accept keyword arguments")
 	}
 	rows, cols := 0, len(args)
 	iters := make([]Iterator, cols)
@@ -1147,7 +1173,7 @@ func zip(thread *Thread, _ *Builtin, args Tuple, kwargs []Tuple) (Value, error) 
 	for i, seq := range args {
 		it := Iterate(seq)
 		if it == nil {
-			return nil, fmt.Errorf("zip: argument #%d is not iterable: %s", i+1, seq.Type())
+			return nil, TypeErrorf("zip: argument #%d is not iterable: %s", i+1, seq.Type())
 		}
 		iters[i] = it
 		n := Len(seq)
@@ -1245,7 +1271,7 @@ func dict_pop(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, e
 	} else if d != nil {
 		return d, nil
 	}
-	return nil, fmt.Errorf("pop: missing key")
+	return nil, ValueErrorf("pop: missing key")
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·popitem
@@ -1256,7 +1282,7 @@ func dict_popitem(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Valu
 	recv := fn.recv.(*Dict)
 	k, ok := recv.ht.first()
 	if !ok {
-		return nil, fmt.Errorf("popitem: empty dict")
+		return nil, ValueErrorf("popitem: empty dict")
 	}
 	v, _, err := recv.Delete(k)
 	if err != nil {
@@ -1284,10 +1310,10 @@ func dict_setdefault(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (V
 // https://github.com/google/skylark/blob/master/doc/spec.md#dict·update
 func dict_update(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, error) {
 	if len(args) > 1 {
-		return nil, fmt.Errorf("update: got %d arguments, want at most 1", len(args))
+		return nil, TypeErrorf("update: got %d arguments, want at most 1", len(args))
 	}
 	if err := updateDict(fn.recv.(*Dict), args, kwargs); err != nil {
-		return nil, fmt.Errorf("update: %v", err)
+		return nil, ValueErrorf("update: %v", err.Error())
 	}
 	return None, nil
 }
@@ -1313,7 +1339,10 @@ func list_append(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value
 		return nil, err
 	}
 	if err := recv.checkMutable("append to", true); err != nil {
-		return nil, err
+		if exception, ok := err.(Exception); ok {
+			return nil, exception
+		}
+		return nil, NewValueError(err)
 	}
 	recv.elems = append(recv.elems, object)
 	return None, nil
@@ -1335,7 +1364,10 @@ func list_extend(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value
 		return nil, err
 	}
 	if err := recv.checkMutable("extend", true); err != nil {
-		return nil, err
+		if exception, ok := err.(Exception); ok {
+			return nil, exception
+		}
+		return nil, NewValueError(err)
 	}
 	listExtend(recv, iterable)
 	return None, nil
@@ -1351,17 +1383,17 @@ func list_index(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value,
 
 	start, end, err := indices(start_, end_, recv.Len())
 	if err != nil {
-		return nil, fmt.Errorf("%s: %s", fn.name, err)
+		return nil, ValueErrorf("%s: %s", fn.name, err.Error())
 	}
 
 	for i := start; i < end; i++ {
 		if eq, err := Equal(recv.elems[i], value); err != nil {
-			return nil, fmt.Errorf("index: %s", err)
+			return nil, ValueErrorf("index: %s", err.Error())
 		} else if eq {
 			return MakeInt(i), nil
 		}
 	}
-	return nil, fmt.Errorf("index: value not in list")
+	return nil, ValueErrorf("index: value not in list")
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#list·insert
@@ -1373,7 +1405,10 @@ func list_insert(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value
 		return nil, err
 	}
 	if err := recv.checkMutable("insert into", true); err != nil {
-		return nil, err
+		if exception, ok := err.(Exception); ok {
+			return nil, exception
+		}
+		return nil, NewValueError(err)
 	}
 
 	if index < 0 {
@@ -1402,17 +1437,20 @@ func list_remove(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value
 		return nil, err
 	}
 	if err := recv.checkMutable("remove from", true); err != nil {
-		return nil, err
+		if exception, ok := err.(Exception); ok {
+			return nil, exception
+		}
+		return nil, NewValueError(err)
 	}
 	for i, elem := range recv.elems {
 		if eq, err := Equal(elem, value); err != nil {
-			return nil, fmt.Errorf("remove: %v", err)
+			return nil, ValueErrorf("remove: %v", err.Error())
 		} else if eq {
 			recv.elems = append(recv.elems[:i], recv.elems[i+1:]...)
 			return None, nil
 		}
 	}
-	return nil, fmt.Errorf("remove: element not found")
+	return nil, ValueErrorf("remove: element not found")
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#list·pop
@@ -1423,10 +1461,13 @@ func list_pop(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, e
 		return nil, err
 	}
 	if index < 0 || index >= list.Len() {
-		return nil, fmt.Errorf("pop: index %d is out of range [0:%d]", index, list.Len())
+		return nil, ValueErrorf("pop: index %d is out of range [0:%d]", index, list.Len())
 	}
 	if err := list.checkMutable("pop from", true); err != nil {
-		return nil, err
+		if exception, ok := err.(Exception); ok {
+			return nil, exception
+		}
+		return nil, NewValueError(err)
 	}
 	res := list.elems[index]
 	list.elems = append(list.elems[:index], list.elems[index+1:]...)
@@ -1469,7 +1510,7 @@ func string_count(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Valu
 
 	start, end, err := indices(start_, end_, len(recv))
 	if err != nil {
-		return nil, fmt.Errorf("%s: %s", fn.name, err)
+		return nil, ValueErrorf("%s: %s", fn.name, err.Error())
 	}
 
 	var slice string
@@ -1621,7 +1662,7 @@ func string_format(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Val
 				break
 			}
 			if len(literal) == j+1 || literal[j+1] != '}' {
-				return nil, fmt.Errorf("single '}' in format")
+				return nil, ValueErrorf("single '}' in format")
 			}
 			buf.WriteString(literal[:j+1])
 			literal = literal[j+2:]
@@ -1641,7 +1682,7 @@ func string_format(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Val
 		format = format[i+1:]
 		i = strings.IndexByte(format, '}')
 		if i < 0 {
-			return nil, fmt.Errorf("unmatched '{' in format")
+			return nil, ValueErrorf("unmatched '{' in format")
 		}
 
 		var arg Value
@@ -1676,22 +1717,22 @@ func string_format(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Val
 		if name == "" {
 			// "{}": automatic indexing
 			if manual {
-				return nil, fmt.Errorf("cannot switch from manual field specification to automatic field numbering")
+				return nil, ValueErrorf("cannot switch from manual field specification to automatic field numbering")
 			}
 			auto = true
 			if index >= len(args) {
-				return nil, fmt.Errorf("tuple index out of range")
+				return nil, ValueErrorf("tuple index out of range")
 			}
 			arg = args[index]
 			index++
 		} else if num, err := strconv.Atoi(name); err == nil && !strings.HasPrefix(name, "-") {
 			// positional argument
 			if auto {
-				return nil, fmt.Errorf("cannot switch from automatic field numbering to manual field specification")
+				return nil, ValueErrorf("cannot switch from automatic field numbering to manual field specification")
 			}
 			manual = true
 			if num >= len(args) {
-				return nil, fmt.Errorf("tuple index out of range")
+				return nil, ValueErrorf("tuple index out of range")
 			} else {
 				arg = args[num]
 			}
@@ -1707,21 +1748,21 @@ func string_format(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Val
 				// Skylark does not support Python's x.y or a[i] syntaxes,
 				// or nested use of {...}.
 				if strings.Contains(name, ".") {
-					return nil, fmt.Errorf("attribute syntax x.y is not supported in replacement fields: %s", name)
+					return nil, ValueErrorf("attribute syntax x.y is not supported in replacement fields: %s", name)
 				}
 				if strings.Contains(name, "[") {
-					return nil, fmt.Errorf("element syntax a[i] is not supported in replacement fields: %s", name)
+					return nil, ValueErrorf("element syntax a[i] is not supported in replacement fields: %s", name)
 				}
 				if strings.Contains(name, "{") {
-					return nil, fmt.Errorf("nested replacement fields not supported")
+					return nil, ValueErrorf("nested replacement fields not supported")
 				}
-				return nil, fmt.Errorf("keyword %s not found", name)
+				return nil, ValueErrorf("keyword %s not found", name)
 			}
 		}
 
 		if spec != "" {
 			// Skylark does not support Python's format_spec features.
-			return nil, fmt.Errorf("format spec features not supported in replacement fields: %s", spec)
+			return nil, ValueErrorf("format spec features not supported in replacement fields: %s", spec)
 		}
 
 		switch conv {
@@ -1734,7 +1775,7 @@ func string_format(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Val
 		case "r":
 			writeValue(&buf, arg, path)
 		default:
-			return nil, fmt.Errorf("unknown conversion %q", conv)
+			return nil, ValueErrorf("unknown conversion %q", conv)
 		}
 	}
 	return String(buf.String()), nil
@@ -1762,7 +1803,7 @@ func string_join(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value
 		}
 		s, ok := AsString(x)
 		if !ok {
-			return nil, fmt.Errorf("in list, want string, got %s", x.Type())
+			return nil, TypeErrorf("in list, want string, got %s", x.Type())
 		}
 		buf.WriteString(s)
 	}
@@ -1793,7 +1834,7 @@ func string_partition(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (
 		return nil, err
 	}
 	if sep == "" {
-		return nil, fmt.Errorf("%s: empty separator", fn.name)
+		return nil, ValueErrorf("%s: empty separator", fn.name)
 	}
 	var i int
 	if fn.name[0] == 'p' {
@@ -1855,7 +1896,10 @@ func string_startswith(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) 
 	// compute effective substring.
 	s := string(fn.recv.(String))
 	if start, end, err := indices(start, end, len(s)); err != nil {
-		return nil, err
+		if exception, ok := err.(Exception); ok {
+			return nil, exception
+		}
+		return nil, NewValueError(err)
 	} else {
 		if end < start {
 			end = start // => empty result
@@ -1873,7 +1917,7 @@ func string_startswith(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) 
 		for i, x := range x {
 			prefix, ok := AsString(x)
 			if !ok {
-				return nil, fmt.Errorf("%s: want string, got %s, for element %d",
+				return nil, TypeErrorf("%s: want string, got %s, for element %d",
 					fn.name, x.Type(), i)
 			}
 			if f(s, prefix) {
@@ -1884,7 +1928,7 @@ func string_startswith(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) 
 	case String:
 		return Bool(f(s, string(x))), nil
 	}
-	return nil, fmt.Errorf("%s: got %s, want string or tuple of string", fn.name, x.Type())
+	return nil, TypeErrorf("%s: got %s, want string or tuple of string", fn.name, x.Type())
 }
 
 // https://github.com/google/skylark/blob/master/doc/spec.md#string·strip
@@ -1960,7 +2004,7 @@ func string_split(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Valu
 
 	} else if sep, ok := AsString(sep_); ok {
 		if sep == "" {
-			return nil, fmt.Errorf("split: empty separator")
+			return nil, ValueErrorf("split: empty separator")
 		}
 		// usual case: split on non-empty separator
 		if maxsplit < 0 {
@@ -1976,7 +2020,7 @@ func string_split(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Valu
 		}
 
 	} else {
-		return nil, fmt.Errorf("split: got %s for separator, want string", sep_.Type())
+		return nil, TypeErrorf("split: got %s for separator, want string", sep_.Type())
 	}
 
 	list := make([]Value, len(res))
@@ -2074,7 +2118,7 @@ func set_union(thread *Thread, fn *Builtin, args Tuple, kwargs []Tuple) (Value, 
 	defer iter.Done()
 	union, err := fn.recv.(*Set).Union(iter)
 	if err != nil {
-		return nil, fmt.Errorf("union: %v", err)
+		return nil, ValueErrorf("union: %v", err.Error())
 	}
 	return union, nil
 }
@@ -2089,7 +2133,7 @@ func string_find_impl(fnname string, s string, args Tuple, kwargs []Tuple, allow
 
 	start, end, err := indices(start_, end_, len(s))
 	if err != nil {
-		return nil, fmt.Errorf("%s: %s", fnname, err)
+		return nil, ValueErrorf("%s: %s", fnname, err.Error())
 	}
 	var slice string
 	if start < end {
@@ -2104,7 +2148,7 @@ func string_find_impl(fnname string, s string, args Tuple, kwargs []Tuple, allow
 	}
 	if i < 0 {
 		if !allowError {
-			return nil, fmt.Errorf("substring not found")
+			return nil, ValueErrorf("substring not found")
 		}
 		return MakeInt(-1), nil
 	}
@@ -2129,22 +2173,22 @@ func updateDict(dict *Dict, updates Tuple, kwargs []Tuple) error {
 			// all other sequences
 			iter := Iterate(updates)
 			if iter == nil {
-				return fmt.Errorf("got %s, want iterable", updates.Type())
+				return TypeErrorf("got %s, want iterable", updates.Type())
 			}
 			defer iter.Done()
 			var pair Value
 			for i := 0; iter.Next(&pair); i++ {
 				iter2 := Iterate(pair)
 				if iter2 == nil {
-					return fmt.Errorf("dictionary update sequence element #%d is not iterable (%s)", i, pair.Type())
+					return TypeErrorf("dictionary update sequence element #%d is not iterable (%s)", i, pair.Type())
 
 				}
 				defer iter2.Done()
 				len := Len(pair)
 				if len < 0 {
-					return fmt.Errorf("dictionary update sequence element #%d has unknown length (%s)", i, pair.Type())
+					return ValueErrorf("dictionary update sequence element #%d has unknown length (%s)", i, pair.Type())
 				} else if len != 2 {
-					return fmt.Errorf("dictionary update sequence element #%d has length %d, want 2", i, len)
+					return ValueErrorf("dictionary update sequence element #%d has length %d, want 2", i, len)
 				}
 				var k, v Value
 				iter2.Next(&k)

@@ -21,7 +21,7 @@ func (fn *Function) Call(thread *Thread, args Tuple, kwargs []Tuple) (Value, err
 	}
 
 	if fn.isRecursive(thread.frame) {
-		return nil, fmt.Errorf("function %s called recursively", fn.Name())
+		return nil, TypeErrorf("function %s called recursively", fn.Name())
 	}
 	// push a new stack frame and jump to the function's entry-point
 	thread.frame = &Frame{parent: thread.frame, callable: fn}
@@ -143,13 +143,15 @@ loop:
 			if len(exhandlers) == 0 {
 				break loop
 			}
-			handler := exhandlers[len(exhandlers)-1]
-			pc, sp = handler.pc, int(handler.sp)
 			var isException bool
 			exception, isException = err.(Exception)
 			if isException && exception != nil {
+				// jump to the exception-handler block:
+				handler := exhandlers[len(exhandlers)-1]
+				pc, sp = handler.pc, int(handler.sp)
 				err = nil
 			} else {
+				// unrecoverable:
 				break loop
 			}
 		}
@@ -176,10 +178,26 @@ loop:
 				break loop
 			}
 			exhandlers = exhandlers[:len(exhandlers)-1]
-			if expected, ok := stack[sp-1].(Exception); ok && expected != nil && expected.Type() == exception.Type() {
+			// Match against the expected exception type:
+			if _, isCatchall := stack[sp-1].(ExceptionKind); isCatchall {
+				// Push the exception; the next instruction will assign it to its identifier:
+				stack[sp-1] = exception
+				exception = nil
+				continue loop
+			} else if expected, ok := stack[sp-1].(Exception); !ok || expected == nil {
+				etype := "<nil>"
+				if stack[sp-1] != nil {
+					etype = stack[sp-1].Type()
+				}
+				// Set the top-level error; the next iteration will trigger an outer exception-handler if one is present:
+				err = TypeErrorf("expected exception type, found %s", etype)
+				stack[sp-1] = None
+			} else if expected.Type() == exception.Type() {
+				// Push the exception; the next instruction will assign it to its identifier:
 				stack[sp-1] = exception
 				exception = nil
 			} else {
+				// Restore the top-level error; the next iteration will trigger an outer exception-handler if one is present:
 				err = exception
 				stack[sp-1] = None
 			}
@@ -352,13 +370,13 @@ loop:
 				// Add key/value items from **kwargs dictionary.
 				dict, ok := fnkwargs.(*Dict)
 				if !ok {
-					err = fmt.Errorf("argument after ** must be a mapping, not %s", fnkwargs.Type())
+					err = TypeErrorf("argument after ** must be a mapping, not %s", fnkwargs.Type())
 					continue loop
 				}
 				items := dict.Items()
 				for _, item := range items {
 					if _, ok := item[0].(String); !ok {
-						err = fmt.Errorf("keywords must be strings, not %s", item[0].Type())
+						err = TypeErrorf("keywords must be strings, not %s", item[0].Type())
 						continue loop
 					}
 				}
@@ -383,7 +401,7 @@ loop:
 				// Add elements from *args sequence.
 				iter := Iterate(fnargs)
 				if iter == nil {
-					err = fmt.Errorf("argument after * must be iterable, not %s", fnargs.Type())
+					err = TypeErrorf("argument after * must be iterable, not %s", fnargs.Type())
 					continue loop
 				}
 				var elem Value
@@ -409,7 +427,7 @@ loop:
 			// If the callable is a compiled function, jump directly to its entry-point:
 			if function, ok := callable.(*Function); ok {
 				if function.isRecursive(fr) {
-					err = fmt.Errorf("function %s called recursively", function.Name())
+					err = TypeErrorf("function %s called recursively", function.Name())
 					continue loop
 				}
 				fr = &Frame{parent: fr, callable: function}
@@ -489,7 +507,7 @@ loop:
 			sp--
 			iter := Iterate(x)
 			if iter == nil {
-				err = fmt.Errorf("%s value is not iterable", x.Type())
+				err = fmt.Errorf("internal error: %s value is not iterable", x.Type())
 				continue loop
 			}
 			iterstack = append(iterstack, iter)
@@ -500,7 +518,7 @@ loop:
 				continue loop
 			}
 			if len(iterstack) == 0 {
-				err = fmt.Errorf("iterator stack is empty")
+				err = fmt.Errorf("internal error: iterator stack is empty")
 				continue loop
 			}
 			iter := iterstack[len(iterstack)-1]
@@ -513,7 +531,7 @@ loop:
 		case compile.ITERPOP:
 			n := len(iterstack) - 1
 			if n < 0 {
-				err = fmt.Errorf("iterator stack is empty")
+				err = fmt.Errorf("internal error: iterator stack is empty")
 				continue loop
 			}
 			iterstack[n].Done()
@@ -575,7 +593,7 @@ loop:
 				if stack[sp-3] != nil {
 					argType = stack[sp-3].Type()
 				}
-				err = fmt.Errorf("argument to %s must be a dict, not %s", op.String(), argType)
+				err = TypeErrorf("argument to %s must be a dict, not %s", op.String(), argType)
 				continue loop
 			}
 			k := stack[sp-2]
@@ -587,7 +605,7 @@ loop:
 				continue loop
 			}
 			if op == compile.SETDICTUNIQ && dict.Len() == oldlen {
-				err = fmt.Errorf("duplicate key: %v", k)
+				err = ValueErrorf("duplicate key: %v", k)
 				continue loop
 			}
 
@@ -599,7 +617,7 @@ loop:
 				if stack[sp-2] != nil {
 					argType = stack[sp-2].Type()
 				}
-				err = fmt.Errorf("argument to %s must be a list, not %s", op.String(), argType)
+				err = TypeErrorf("argument to %s must be a list, not %s", op.String(), argType)
 				continue loop
 			}
 			sp -= 2
@@ -629,7 +647,7 @@ loop:
 			sp--
 			iter := Iterate(iterable)
 			if iter == nil {
-				err = fmt.Errorf("got %s in sequence assignment", iterable.Type())
+				err = fmt.Errorf("internal error: got %s in sequence assignment", iterable.Type())
 				continue loop
 			}
 			i := 0
@@ -640,12 +658,12 @@ loop:
 			var dummy Value
 			if iter.Next(&dummy) {
 				// NB: Len may return -1 here in obscure cases.
-				err = fmt.Errorf("too many values to unpack (got %d, want %d)", Len(iterable), n)
+				err = fmt.Errorf("internal error: too many values to unpack (got %d, want %d)", Len(iterable), n)
 				continue loop
 			}
 			iter.Done()
 			if i < n {
-				err = fmt.Errorf("too few values to unpack (got %d, want %d)", i, n)
+				err = fmt.Errorf("internal error: too few values to unpack (got %d, want %d)", i, n)
 				continue loop
 			}
 
@@ -693,7 +711,7 @@ loop:
 				if stack[sp-1] != nil {
 					argType = stack[sp-1].Type()
 				}
-				err = fmt.Errorf("freevars argument to %s must be a tuple, not %s", op.String(), argType)
+				err = fmt.Errorf("internal error: freevars argument to %s must be a tuple, not %s", op.String(), argType)
 				continue loop
 			}
 			var defaults Tuple
@@ -703,7 +721,7 @@ loop:
 				if stack[sp-2] != nil {
 					argType = stack[sp-2].Type()
 				}
-				err = fmt.Errorf("defaults argument to %s must be a tuple, not %s", op.String(), argType)
+				err = fmt.Errorf("internal error: defaults argument to %s must be a tuple, not %s", op.String(), argType)
 				continue loop
 			}
 			sp -= 2
@@ -729,7 +747,7 @@ loop:
 				if stack[sp-1] != nil {
 					argType = stack[sp-1].Type()
 				}
-				err = fmt.Errorf("argument to %s must be a string, not %s", op.String(), argType)
+				err = fmt.Errorf("internal error: argument to %s must be a string, not %s", op.String(), argType)
 				continue loop
 			}
 			module := string(moduleString)
@@ -811,7 +829,7 @@ loop:
 			sp++
 
 		default:
-			err = fmt.Errorf("unimplemented: %s", op)
+			err = fmt.Errorf("internal error: unimplemented: %s", op)
 			continue loop
 		}
 	}

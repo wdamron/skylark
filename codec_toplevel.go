@@ -16,21 +16,26 @@ import (
 	"github.com/google/skylark/internal/compile"
 )
 
-// EncodeState encodes the re-entrant state of the given thread.
+// CodecMagic is a magic prefix at the start of the encoded state of a Skylark thread.
+const CodecMagic = "sky@"
+
+// EncodeState encodes the re-entrant state of the given Skylark thread.
 func EncodeState(thread *Thread) ([]byte, error) {
 	return NewEncoder().EncodeState(thread)
 }
 
-// EncodeState decodes a re-entrant state into a resumable thread.
+// EncodeState decodes a re-entrant state into a resumable Skylark thread.
 func DecodeState(snapshot []byte, predeclared StringDict) (*Thread, error) {
 	return NewDecoder(snapshot, predeclared).DecodeState()
 }
 
-// EncodeState encodes the re-entrant state of the given thread.
+// EncodeState encodes the re-entrant state of the given Skylark thread.
 func (enc *Encoder) EncodeState(thread *Thread) ([]byte, error) {
 	if thread.SuspendedFrame() != nil {
 		thread.Resumable()
 	}
+
+	enc.buf.WriteString(CodecMagic)
 
 	useHuffman := enc.compression == T_HuffmanCompressed
 	if !useHuffman {
@@ -91,11 +96,16 @@ func (enc *Encoder) encodeState(frame *Frame, count uint, anyFn *Function) error
 
 // EncodeState decodes a re-entrant state into a resumable thread.
 func (dec *Decoder) DecodeState() (*Thread, error) {
-	if dec.Remaining() < 5 {
+	if dec.Remaining() < 6 {
 		return nil, ErrShortBuffer
 	}
-	tag := dec.Data[0]
-	dec.Data = dec.Data[1:]
+
+	if string(dec.Data[:4]) != CodecMagic {
+		return nil, fmt.Errorf("Codec: invalid format identifier at start of bytecode")
+	}
+
+	tag := dec.Data[4]
+	dec.Data = dec.Data[5:]
 
 	// Decompress the encoded state, when applicable:
 	if tag == T_HuffmanCompressed {

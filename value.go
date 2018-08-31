@@ -294,8 +294,6 @@ type Exception interface {
 	Value
 	// Error returns a Go string representation of the exception.
 	Error() string
-	// Exception returns a skylark String representation of the exception.
-	Exception() String
 }
 
 // NoneType is the type of None.  Its only legal value is None.
@@ -469,7 +467,7 @@ func (si stringIterable) Type() string {
 }
 func (si stringIterable) Freeze()               {} // immutable
 func (si stringIterable) Truth() Bool           { return True }
-func (si stringIterable) Hash() (uint32, error) { return 0, fmt.Errorf("unhashable: %s", si.Type()) }
+func (si stringIterable) Hash() (uint32, error) { return 0, TypeErrorf("unhashable: %s", si.Type()) }
 func (si stringIterable) Iterate() Iterator     { return &stringIterator{si, 0} }
 
 type stringIterator struct {
@@ -616,7 +614,7 @@ func (d *Dict) String() string                                  { return toStrin
 func (d *Dict) Type() string                                    { return "dict" }
 func (d *Dict) Freeze()                                         { d.ht.freeze() }
 func (d *Dict) Truth() Bool                                     { return d.Len() > 0 }
-func (d *Dict) Hash() (uint32, error)                           { return 0, fmt.Errorf("unhashable type: dict") }
+func (d *Dict) Hash() (uint32, error)                           { return 0, TypeErrorf("unhashable type: dict") }
 
 func (d *Dict) Attr(name string) (Value, error) { return builtinAttr(d, name, dictMethods) }
 func (d *Dict) AttrNames() []string             { return builtinAttrNames(dictMethods) }
@@ -631,7 +629,7 @@ func (x *Dict) CompareSameType(op syntax.Token, y_ Value, depth int) (bool, erro
 		ok, err := dictsEqual(x, y, depth)
 		return !ok, err
 	default:
-		return false, fmt.Errorf("%s %s %s not implemented", x.Type(), op, y.Type())
+		return false, TypeErrorf("%s %s %s not implemented", x.Type(), op, y.Type())
 	}
 }
 
@@ -678,17 +676,17 @@ func (l *List) Freeze() {
 // Structural mutations are not permitted during iteration.
 func (l *List) checkMutable(verb string, structural bool) error {
 	if l.frozen {
-		return fmt.Errorf("cannot %s frozen list", verb)
+		return ValueErrorf("cannot %s frozen list", verb)
 	}
 	if structural && l.itercount > 0 {
-		return fmt.Errorf("cannot %s list during iteration", verb)
+		return ValueErrorf("cannot %s list during iteration", verb)
 	}
 	return nil
 }
 
 func (l *List) String() string        { return toString(l) }
 func (l *List) Type() string          { return "list" }
-func (l *List) Hash() (uint32, error) { return 0, fmt.Errorf("unhashable type: list") }
+func (l *List) Hash() (uint32, error) { return 0, TypeErrorf("unhashable type: list") }
 func (l *List) Truth() Bool           { return l.Len() > 0 }
 func (l *List) Len() int              { return len(l.elems) }
 func (l *List) Index(i int) Value     { return l.elems[i] }
@@ -872,7 +870,7 @@ func (s *Set) String() string                         { return toString(s) }
 func (s *Set) Type() string                           { return "set" }
 func (s *Set) elems() []Value                         { return s.ht.keys() }
 func (s *Set) Freeze()                                { s.ht.freeze() }
-func (s *Set) Hash() (uint32, error)                  { return 0, fmt.Errorf("unhashable type: set") }
+func (s *Set) Hash() (uint32, error)                  { return 0, TypeErrorf("unhashable type: set") }
 func (s *Set) Truth() Bool                            { return s.Len() > 0 }
 
 func (s *Set) Attr(name string) (Value, error) { return builtinAttr(s, name, setMethods) }
@@ -888,7 +886,7 @@ func (x *Set) CompareSameType(op syntax.Token, y_ Value, depth int) (bool, error
 		ok, err := setsEqual(x, y, depth)
 		return !ok, err
 	default:
-		return false, fmt.Errorf("%s %s %s not implemented", x.Type(), op, y.Type())
+		return false, TypeErrorf("%s %s %s not implemented", x.Type(), op, y.Type())
 	}
 }
 
@@ -919,75 +917,89 @@ func (s *Set) Union(iter Iterator) (Value, error) {
 }
 
 var (
-	_ Exception = TypeError{}
-	_ error     = TypeError{}
-	_ Exception = ValueError{}
-	_ error     = ValueError{}
-	_ Exception = IOError{}
-	_ error     = IOError{}
+	BaseException Exception = ExceptionKind{}
+	_             Exception = TypeError{}
+	_             Exception = ValueError{}
+	_             Exception = IOError{}
 )
+
+// ExceptionKind is the type of the catch-all Skylark exception, predeclared as Exception if try/except is enabled.
+type ExceptionKind struct{}
+
+func (e ExceptionKind) Error() string         { return "unknown reason" }
+func (e ExceptionKind) String() string        { return e.Type() + ": " + e.Error() }
+func (e ExceptionKind) Type() string          { return "Exception" }
+func (e ExceptionKind) Freeze()               {} // immutable
+func (e ExceptionKind) Hash() (uint32, error) { return 0, TypeErrorf("unhashable: %s", e.Type()) }
+func (e ExceptionKind) Truth() Bool           { return true }
+func (e ExceptionKind) CompareSameType(op syntax.Token, y Value, depth int) (bool, error) {
+	return op == syntax.EQL, nil
+}
 
 // TypeError is the type of a Skylark type-error exception.
 type TypeError struct {
-	err error
+	error
 }
 
-func NewTypeError(err error) TypeError    { return TypeError{err} }
-func (e TypeError) Error() string         { return e.err.Error() }
-func (e TypeError) Exception() String     { return String("TypeError: " + e.Error()) }
-func (e TypeError) String() string        { return string(e.Exception()) }
+func NewTypeError(err error) TypeError { return TypeError{err} }
+func TypeErrorf(format string, args ...interface{}) TypeError {
+	return NewTypeError(fmt.Errorf(format, args...))
+}
+func (e TypeError) String() string        { return e.Type() + ": " + e.Error() }
 func (e TypeError) Type() string          { return "TypeError" }
 func (e TypeError) Freeze()               {} // immutable
 func (e TypeError) Truth() Bool           { return true }
-func (e TypeError) Hash() (uint32, error) { return e.Exception().Hash() }
+func (e TypeError) Hash() (uint32, error) { return String(e.String()).Hash() }
 func (e TypeError) CompareSameType(op syntax.Token, y Value, depth int) (bool, error) {
 	ye, _ := y.(TypeError)
-	if ye.err == nil {
-		return (op == syntax.EQL && e.err == nil) || (op == syntax.NEQ && e.err != nil), nil
+	if ye.error == nil {
+		return (op == syntax.EQL && e.error == nil) || (op == syntax.NEQ && e.error != nil), nil
 	}
-	return (op == syntax.EQL && e.err.Error() == ye.err.Error()) || (op == syntax.NEQ && e.err.Error() != ye.err.Error()), nil
+	return (op == syntax.EQL && e.Error() == ye.Error()) || (op == syntax.NEQ && e.Error() != ye.Error()), nil
 }
 
 // ValueError is the type of a Skylark value-error exception.
 type ValueError struct {
-	err error
+	error
 }
 
-func NewValueError(err error) ValueError   { return ValueError{err} }
-func (e ValueError) Error() string         { return e.err.Error() }
-func (e ValueError) Exception() String     { return String("ValueError: " + e.Error()) }
-func (e ValueError) String() string        { return string(e.Exception()) }
+func NewValueError(err error) ValueError { return ValueError{err} }
+func ValueErrorf(format string, args ...interface{}) ValueError {
+	return NewValueError(fmt.Errorf(format, args...))
+}
+func (e ValueError) String() string        { return e.Type() + ": " + e.Error() }
 func (e ValueError) Type() string          { return "ValueError" }
 func (e ValueError) Freeze()               {} // immutable
 func (e ValueError) Truth() Bool           { return true }
-func (e ValueError) Hash() (uint32, error) { return e.Exception().Hash() }
+func (e ValueError) Hash() (uint32, error) { return String(e.String()).Hash() }
 func (e ValueError) CompareSameType(op syntax.Token, y Value, depth int) (bool, error) {
 	ye, _ := y.(ValueError)
-	if ye.err == nil {
-		return (op == syntax.EQL && e.err == nil) || (op == syntax.NEQ && e.err != nil), nil
+	if ye.error == nil {
+		return (op == syntax.EQL && e.error == nil) || (op == syntax.NEQ && e.error != nil), nil
 	}
-	return (op == syntax.EQL && e.err.Error() == ye.err.Error()) || (op == syntax.NEQ && e.err.Error() != ye.err.Error()), nil
+	return (op == syntax.EQL && e.Error() == ye.Error()) || (op == syntax.NEQ && e.Error() != ye.Error()), nil
 }
 
 // IOError is the type of a Skylark IO-error exception.
 type IOError struct {
-	err error
+	error
 }
 
-func NewIOError(err error) IOError      { return IOError{err} }
-func (e IOError) Error() string         { return e.err.Error() }
-func (e IOError) Exception() String     { return String("IOError: " + e.Error()) }
-func (e IOError) String() string        { return string(e.Exception()) }
+func NewIOError(err error) IOError { return IOError{err} }
+func IOErrorf(format string, args ...interface{}) IOError {
+	return NewIOError(fmt.Errorf(format, args...))
+}
+func (e IOError) String() string        { return e.Type() + ": " + e.Error() }
 func (e IOError) Type() string          { return "IOError" }
 func (e IOError) Freeze()               {} // immutable
 func (e IOError) Truth() Bool           { return true }
-func (e IOError) Hash() (uint32, error) { return e.Exception().Hash() }
+func (e IOError) Hash() (uint32, error) { return String(e.String()).Hash() }
 func (e IOError) CompareSameType(op syntax.Token, y Value, depth int) (bool, error) {
 	ye, _ := y.(IOError)
-	if ye.err == nil {
-		return (op == syntax.EQL && e.err == nil) || (op == syntax.NEQ && e.err != nil), nil
+	if ye.error == nil {
+		return (op == syntax.EQL && e.error == nil) || (op == syntax.NEQ && e.error != nil), nil
 	}
-	return (op == syntax.EQL && e.err.Error() == ye.err.Error()) || (op == syntax.NEQ && e.err.Error() != ye.err.Error()), nil
+	return (op == syntax.EQL && e.Error() == ye.Error()) || (op == syntax.NEQ && e.Error() != ye.Error()), nil
 }
 
 // toString returns the string form of value v.
@@ -1138,7 +1150,7 @@ func Compare(op syntax.Token, x, y Value) (bool, error) {
 // in cyclic data structures.
 func CompareDepth(op syntax.Token, x, y Value, depth int) (bool, error) {
 	if depth < 1 {
-		return false, fmt.Errorf("comparison exceeded maximum recursion depth")
+		return false, ValueErrorf("comparison exceeded maximum recursion depth")
 	}
 	if sameType(x, y) {
 		if xcomp, ok := x.(Comparable); ok {
@@ -1152,7 +1164,7 @@ func CompareDepth(op syntax.Token, x, y Value, depth int) (bool, error) {
 		case syntax.NEQ:
 			return x != y, nil
 		}
-		return false, fmt.Errorf("%s %s %s not implemented", x.Type(), op, y.Type())
+		return false, TypeErrorf("%s %s %s not implemented", x.Type(), op, y.Type())
 	}
 
 	// different types
@@ -1198,7 +1210,7 @@ func CompareDepth(op syntax.Token, x, y Value, depth int) (bool, error) {
 	case syntax.NEQ:
 		return true, nil
 	}
-	return false, fmt.Errorf("%s %s %s not implemented", x.Type(), op, y.Type())
+	return false, TypeErrorf("%s %s %s not implemented", x.Type(), op, y.Type())
 }
 
 func sameType(x, y Value) bool {

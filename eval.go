@@ -493,7 +493,7 @@ func getAttr(fr *Frame, x Value, name string) (Value, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("%s has no .%s field or method", x.Type(), name)
+	return nil, TypeErrorf("%s has no .%s field or method", x.Type(), name)
 }
 
 // setField implements x.name = y.
@@ -502,7 +502,7 @@ func setField(fr *Frame, x Value, name string, y Value) error {
 		err := x.SetField(name, y)
 		return err
 	}
-	return fmt.Errorf("can't assign to .%s field of %s", name, x.Type())
+	return TypeErrorf("can't assign to .%s field of %s", name, x.Type())
 }
 
 // getIndex implements x[y].
@@ -514,7 +514,7 @@ func getIndex(fr *Frame, x, y Value) (Value, error) {
 			return nil, err
 		}
 		if !found {
-			return nil, fmt.Errorf("key %v not in %s", y, x.Type())
+			return nil, ValueErrorf("key %v not in %s", y, x.Type())
 		}
 		return z, nil
 
@@ -522,18 +522,18 @@ func getIndex(fr *Frame, x, y Value) (Value, error) {
 		n := x.Len()
 		i, err := AsInt32(y)
 		if err != nil {
-			return nil, fmt.Errorf("%s index: %s", x.Type(), err)
+			return nil, ValueErrorf("%s index: %s", x.Type(), err.Error())
 		}
 		if i < 0 {
 			i += n
 		}
 		if i < 0 || i >= n {
-			return nil, fmt.Errorf("%s index %d out of range [0:%d]",
+			return nil, ValueErrorf("%s index %d out of range [0:%d]",
 				x.Type(), i, n)
 		}
 		return x.Index(i), nil
 	}
-	return nil, fmt.Errorf("unhandled index operation %s[%s]", x.Type(), y.Type())
+	return nil, TypeErrorf("unhandled index operation %s[%s]", x.Type(), y.Type())
 }
 
 // setIndex implements x[y] = z.
@@ -553,12 +553,12 @@ func setIndex(fr *Frame, x, y, z Value) error {
 			i += x.Len()
 		}
 		if i < 0 || i >= x.Len() {
-			return fmt.Errorf("%s index %d out of range [0:%d]", x.Type(), i, x.Len())
+			return ValueErrorf("%s index %d out of range [0:%d]", x.Type(), i, x.Len())
 		}
 		return x.SetIndex(i, z)
 
 	default:
-		return fmt.Errorf("%s value does not support item assignment", x.Type())
+		return TypeErrorf("%s value does not support item assignment", x.Type())
 	}
 	return nil
 }
@@ -585,7 +585,7 @@ func Unary(op syntax.Token, x Value) (Value, error) {
 	case syntax.NOT:
 		return !x.Truth(), nil
 	}
-	return nil, fmt.Errorf("unknown unary op: %s %s", op, x.Type())
+	return nil, TypeErrorf("unknown unary op: %s %s", op, x.Type())
 }
 
 // Binary applies a strict binary operator (not AND or OR) to its operands.
@@ -723,12 +723,12 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 			case Int:
 				yf := y.Float()
 				if yf == 0.0 {
-					return nil, fmt.Errorf("real division by zero")
+					return nil, ValueErrorf("real division by zero")
 				}
 				return x.Float() / yf, nil
 			case Float:
 				if y == 0.0 {
-					return nil, fmt.Errorf("real division by zero")
+					return nil, ValueErrorf("real division by zero")
 				}
 				return x.Float() / y, nil
 			}
@@ -736,13 +736,13 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 			switch y := y.(type) {
 			case Float:
 				if y == 0.0 {
-					return nil, fmt.Errorf("real division by zero")
+					return nil, ValueErrorf("real division by zero")
 				}
 				return x / y, nil
 			case Int:
 				yf := y.Float()
 				if yf == 0.0 {
-					return nil, fmt.Errorf("real division by zero")
+					return nil, ValueErrorf("real division by zero")
 				}
 				return x / yf, nil
 			}
@@ -754,12 +754,12 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 			switch y := y.(type) {
 			case Int:
 				if y.Sign() == 0 {
-					return nil, fmt.Errorf("floored division by zero")
+					return nil, ValueErrorf("floored division by zero")
 				}
 				return x.Div(y), nil
 			case Float:
 				if y == 0.0 {
-					return nil, fmt.Errorf("floored division by zero")
+					return nil, ValueErrorf("floored division by zero")
 				}
 				return floor((x.Float() / y)), nil
 			}
@@ -767,13 +767,13 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 			switch y := y.(type) {
 			case Float:
 				if y == 0.0 {
-					return nil, fmt.Errorf("floored division by zero")
+					return nil, ValueErrorf("floored division by zero")
 				}
 				return floor(x / y), nil
 			case Int:
 				yf := y.Float()
 				if yf == 0.0 {
-					return nil, fmt.Errorf("floored division by zero")
+					return nil, ValueErrorf("floored division by zero")
 				}
 				return floor(x / yf), nil
 			}
@@ -785,12 +785,12 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 			switch y := y.(type) {
 			case Int:
 				if y.Sign() == 0 {
-					return nil, fmt.Errorf("integer modulo by zero")
+					return nil, ValueErrorf("integer modulo by zero")
 				}
 				return x.Mod(y), nil
 			case Float:
 				if y == 0 {
-					return nil, fmt.Errorf("float modulo by zero")
+					return nil, ValueErrorf("float modulo by zero")
 				}
 				return x.Float().Mod(y), nil
 			}
@@ -798,12 +798,12 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 			switch y := y.(type) {
 			case Float:
 				if y == 0.0 {
-					return nil, fmt.Errorf("float modulo by zero")
+					return nil, ValueErrorf("float modulo by zero")
 				}
 				return Float(math.Mod(float64(x), float64(y))), nil
 			case Int:
 				if y.Sign() == 0 {
-					return nil, fmt.Errorf("float modulo by zero")
+					return nil, ValueErrorf("float modulo by zero")
 				}
 				return x.Mod(y.Float()), nil
 			}
@@ -849,13 +849,13 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 		case String:
 			needle, ok := x.(String)
 			if !ok {
-				return nil, fmt.Errorf("'in <string>' requires string as left operand, not %s", x.Type())
+				return nil, TypeErrorf("'in <string>' requires string as left operand, not %s", x.Type())
 			}
 			return Bool(strings.Contains(string(y), string(needle))), nil
 		case rangeValue:
 			i, err := NumberToInt(x)
 			if err != nil {
-				return nil, fmt.Errorf("'in <range>' requires integer as left operand, not %s", x.Type())
+				return nil, TypeErrorf("'in <range>' requires integer as left operand, not %s", x.Type())
 			}
 			return Bool(y.contains(i)), nil
 		}
@@ -926,11 +926,11 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 				return nil, err
 			}
 			if y < 0 {
-				return nil, fmt.Errorf("negative shift count: %v", y)
+				return nil, ValueErrorf("negative shift count: %v", y)
 			}
 			if op == syntax.LTLT {
 				if y >= 512 {
-					return nil, fmt.Errorf("shift count too large: %v", y)
+					return nil, ValueErrorf("shift count too large: %v", y)
 				}
 				return x.Lsh(uint(y)), nil
 			} else {
@@ -959,7 +959,7 @@ func Binary(op syntax.Token, x, y Value) (Value, error) {
 
 	// unsupported operand types
 unknown:
-	return nil, fmt.Errorf("unknown binary op: %s %s %s", x.Type(), op, y.Type())
+	return nil, TypeErrorf("unknown binary op: %s %s %s", x.Type(), op, y.Type())
 }
 
 func repeat(elems []Value, n int) (res []Value) {
@@ -976,7 +976,7 @@ func repeat(elems []Value, n int) (res []Value) {
 func Call(thread *Thread, fn Value, args Tuple, kwargs []Tuple) (Value, error) {
 	c, ok := fn.(Callable)
 	if !ok {
-		return nil, fmt.Errorf("invalid call of non-function (%s)", fn.Type())
+		return nil, TypeErrorf("invalid call of non-function (%s)", fn.Type())
 	}
 	res, err := c.Call(thread, args, kwargs)
 	// Sanity check: nil is not a valid Skylark value.
@@ -989,7 +989,7 @@ func Call(thread *Thread, fn Value, args Tuple, kwargs []Tuple) (Value, error) {
 func slice(x, lo, hi, step_ Value) (Value, error) {
 	sliceable, ok := x.(Sliceable)
 	if !ok {
-		return nil, fmt.Errorf("invalid slice operand %s", x.Type())
+		return nil, TypeErrorf("invalid slice operand %s", x.Type())
 	}
 
 	n := sliceable.Len()
@@ -998,10 +998,10 @@ func slice(x, lo, hi, step_ Value) (Value, error) {
 		var err error
 		step, err = AsInt32(step_)
 		if err != nil {
-			return nil, fmt.Errorf("got %s for slice step, want int", step_.Type())
+			return nil, TypeErrorf("got %s for slice step, want int", step_.Type())
 		}
 		if step == 0 {
-			return nil, fmt.Errorf("zero is not a valid slice step")
+			return nil, ValueErrorf("zero is not a valid slice step")
 		}
 	}
 
@@ -1014,7 +1014,10 @@ func slice(x, lo, hi, step_ Value) (Value, error) {
 		var err error
 		start, end, err = indices(lo, hi, n)
 		if err != nil {
-			return nil, err
+			if exception, isException := err.(Exception); isException {
+				return nil, exception
+			}
+			return nil, NewValueError(err)
 		}
 
 		if end < start {
@@ -1027,7 +1030,7 @@ func slice(x, lo, hi, step_ Value) (Value, error) {
 		// [n-1:-1-n:-1] because of the treatment of -ve values.
 		start = n - 1
 		if err := asIndex(lo, n, &start); err != nil {
-			return nil, fmt.Errorf("invalid start index: %s", err)
+			return nil, ValueErrorf("invalid start index: %s", err.Error())
 		}
 		if start >= n {
 			start = n - 1
@@ -1035,7 +1038,7 @@ func slice(x, lo, hi, step_ Value) (Value, error) {
 
 		end = -1
 		if err := asIndex(hi, n, &end); err != nil {
-			return nil, fmt.Errorf("invalid end index: %s", err)
+			return nil, ValueErrorf("invalid end index: %s", err.Error())
 		}
 		if end < -1 {
 			end = -1
@@ -1061,7 +1064,7 @@ func signum(x int) int { return int(uint64(int64(x)>>63) | (uint64(-x) >> 63)) }
 func indices(start_, end_ Value, len int) (start, end int, err error) {
 	start = 0
 	if err := asIndex(start_, len, &start); err != nil {
-		return 0, 0, fmt.Errorf("invalid start index: %s", err)
+		return 0, 0, ValueErrorf("invalid start index: %s", err.Error())
 	}
 	// Clamp to [0:len].
 	if start < 0 {
@@ -1072,7 +1075,7 @@ func indices(start_, end_ Value, len int) (start, end int, err error) {
 
 	end = len
 	if err := asIndex(end_, len, &end); err != nil {
-		return 0, 0, fmt.Errorf("invalid end index: %s", err)
+		return 0, 0, ValueErrorf("invalid end index: %s", err.Error())
 	}
 	// Clamp to [0:len].
 	if end < 0 {
@@ -1091,7 +1094,7 @@ func asIndex(v Value, len int, result *int) error {
 		var err error
 		*result, err = AsInt32(v)
 		if err != nil {
-			return fmt.Errorf("got %s, want int", v.Type())
+			return TypeErrorf("got %s, want int", v.Type())
 		}
 		if *result < 0 {
 			*result += len
@@ -1131,7 +1134,7 @@ func setArgs(locals []Value, fn *Function, args Tuple, kwargs []Tuple) error {
 		// too many args?
 		if len(args) > nparams {
 			if !fn.HasVarargs() {
-				return fmt.Errorf("function %s takes %s %d argument%s (%d given)",
+				return TypeErrorf("function %s takes %s %d argument%s (%d given)",
 					fn.Name(),
 					cond(len(fn.defaults) > 0, "at most", "exactly"),
 					nparams,
@@ -1166,13 +1169,13 @@ func setArgs(locals []Value, fn *Function, args Tuple, kwargs []Tuple) error {
 			k, v := pair[0].(String), pair[1]
 			if i := findParam(paramIdents, string(k)); i >= 0 {
 				if defined.set(i) {
-					return fmt.Errorf("function %s got multiple values for keyword argument %s", fn.Name(), k)
+					return TypeErrorf("function %s got multiple values for keyword argument %s", fn.Name(), k)
 				}
 				locals[i] = v
 				continue
 			}
 			if kwdict == nil {
-				return fmt.Errorf("function %s got an unexpected keyword argument %s", fn.Name(), k)
+				return TypeErrorf("function %s got an unexpected keyword argument %s", fn.Name(), k)
 			}
 			kwdict.Set(k, v)
 		}
@@ -1185,7 +1188,7 @@ func setArgs(locals []Value, fn *Function, args Tuple, kwargs []Tuple) error {
 			i := len(args)
 			for ; i < m; i++ {
 				if !defined.get(i) {
-					return fmt.Errorf("function %s takes %s %d argument%s (%d given)",
+					return TypeErrorf("function %s takes %s %d argument%s (%d given)",
 						fn.Name(),
 						cond(fn.HasVarargs() || len(fn.defaults) > 0, "at least", "exactly"),
 						m,
@@ -1202,7 +1205,7 @@ func setArgs(locals []Value, fn *Function, args Tuple, kwargs []Tuple) error {
 			}
 		}
 	} else if nactual := len(args) + len(kwargs); nactual > 0 {
-		return fmt.Errorf("function %s takes no arguments (%d given)", fn.Name(), nactual)
+		return TypeErrorf("function %s takes no arguments (%d given)", fn.Name(), nactual)
 	}
 	return nil
 }
@@ -1285,26 +1288,26 @@ func interpolate(format string, x Value) (Value, error) {
 			format = format[1:]
 			j := strings.IndexByte(format, ')')
 			if j < 0 {
-				return nil, fmt.Errorf("incomplete format key")
+				return nil, ValueErrorf("incomplete format key")
 			}
 			key := format[:j]
 			if dict, ok := x.(Mapping); !ok {
-				return nil, fmt.Errorf("format requires a mapping")
+				return nil, TypeErrorf("format requires a mapping")
 			} else if v, found, _ := dict.Get(String(key)); found {
 				arg = v
 			} else {
-				return nil, fmt.Errorf("key not found: %s", key)
+				return nil, ValueErrorf("key not found: %s", key)
 			}
 			format = format[j+1:]
 		} else {
 			// positional argument: %s.
 			if tuple, ok := x.(Tuple); ok {
 				if index >= len(tuple) {
-					return nil, fmt.Errorf("not enough arguments for format string")
+					return nil, ValueErrorf("not enough arguments for format string")
 				}
 				arg = tuple[index]
 			} else if index > 0 {
-				return nil, fmt.Errorf("not enough arguments for format string")
+				return nil, ValueErrorf("not enough arguments for format string")
 			} else {
 				arg = x
 			}
@@ -1318,7 +1321,7 @@ func interpolate(format string, x Value) (Value, error) {
 
 		// conversion type
 		if format == "" {
-			return nil, fmt.Errorf("incomplete format")
+			return nil, ValueErrorf("incomplete format")
 		}
 		switch c := format[0]; c {
 		case 's', 'r':
@@ -1330,7 +1333,7 @@ func interpolate(format string, x Value) (Value, error) {
 		case 'd', 'i', 'o', 'x', 'X':
 			i, err := NumberToInt(arg)
 			if err != nil {
-				return nil, fmt.Errorf("%%%c format requires integer: %v", c, err)
+				return nil, TypeErrorf("%%%c format requires integer: %v", c, err.Error())
 			}
 			switch c {
 			case 'd', 'i':
@@ -1345,7 +1348,7 @@ func interpolate(format string, x Value) (Value, error) {
 		case 'e', 'f', 'g', 'E', 'F', 'G':
 			f, ok := AsFloat(arg)
 			if !ok {
-				return nil, fmt.Errorf("%%%c format requires float, not %s", c, arg.Type())
+				return nil, TypeErrorf("%%%c format requires float, not %s", c, arg.Type())
 			}
 			switch c {
 			case 'e':
@@ -1367,29 +1370,29 @@ func interpolate(format string, x Value) (Value, error) {
 				// chr(int)
 				r, err := AsInt32(arg)
 				if err != nil || r < 0 || r > unicode.MaxRune {
-					return nil, fmt.Errorf("%%c format requires a valid Unicode code point, got %s", arg)
+					return nil, TypeErrorf("%%c format requires a valid Unicode code point, got %s", arg)
 				}
 				buf.WriteRune(rune(r))
 			case String:
 				r, size := utf8.DecodeRuneInString(string(arg))
 				if size != len(arg) {
-					return nil, fmt.Errorf("%%c format requires a single-character string")
+					return nil, TypeErrorf("%%c format requires a single-character string")
 				}
 				buf.WriteRune(r)
 			default:
-				return nil, fmt.Errorf("%%c format requires int or single-character string, not %s", arg.Type())
+				return nil, TypeErrorf("%%c format requires int or single-character string, not %s", arg.Type())
 			}
 		case '%':
 			buf.WriteByte('%')
 		default:
-			return nil, fmt.Errorf("unknown conversion %%%c", c)
+			return nil, TypeErrorf("unknown conversion %%%c", c)
 		}
 		format = format[1:]
 		index++
 	}
 
 	if tuple, ok := x.(Tuple); ok && index < len(tuple) {
-		return nil, fmt.Errorf("too many arguments for format string")
+		return nil, TypeErrorf("too many arguments for format string")
 	}
 
 	return String(buf.String()), nil

@@ -766,9 +766,9 @@ func (pcomp *pcomp) function(name string, pos syntax.Position, stmts []syntax.St
 
 		// Then the exception handler block:
 		if b.except != nil {
-			// TODO(wdamron): maybe revisit this -- jump threading (empty cycles are impossible)
+			// jump threading (empty cycles are impossible)
 			for b.except.insns == nil {
-				b.except = b.except.except
+				b.except = b.except.jmp
 			}
 
 			setinitialstack(b.except, stack)
@@ -809,17 +809,16 @@ func (pcomp *pcomp) function(name string, pos syntax.Position, stmts []syntax.St
 }
 
 func (insn *insn) stackeffect() int {
-	pops, pushes := StackEffect(insn.op)
-	effect := pushes - pops
-	if pushes != 14 && pops != 14 {
-		return effect
+	if !IsVariableStackEffect(insn.op) {
+		pops, pushes := StackEffect(insn.op)
+		return pushes - pops
 	}
 	arg := int(insn.arg)
 	switch insn.op {
 	case LOAD:
 		return -1
 	case CALL, CALL_KW, CALL_VAR, CALL_VAR_KW:
-		effect = -int(2*(insn.arg&0xff) + insn.arg>>8)
+		effect := -int(2*(insn.arg&0xff) + insn.arg>>8)
 		if insn.op != CALL {
 			effect--
 		}

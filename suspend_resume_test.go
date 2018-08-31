@@ -32,6 +32,7 @@ func TestSuspendResume(t *testing.T) {
 				thread.Suspendable(args, kwargs)
 				return None, nil
 			}),
+		"Exception":  BaseException,
 		"TypeError":  NewTypeError(fmt.Errorf("some type error")),
 		"ValueError": NewValueError(fmt.Errorf("some value error")),
 		"log_error": NewBuiltin("log_error",
@@ -65,7 +66,7 @@ def long_running(i):
 			raise_value_error(i)
 		except ValueError as e:
 			raise_value_error(-i)
-	except ValueError as e:
+	except Exception as e:
 		log_error(-i, str(e))
 
 def looptry():

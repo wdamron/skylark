@@ -457,9 +457,15 @@ func (r *resolver) stmt(stmt syntax.Stmt) {
 			}
 			r.expr(stmt.ExceptionType)
 			const allowRebind = false
+			// Shadow the variable previously bound by the exception name, if necessary:
+			prev, inuse := r.env.bindings[stmt.ExceptionName.Name]
 			r.bind(stmt.ExceptionName, allowRebind)
 			r.stmts(stmt.Fallback)
 			r.unbind(stmt.ExceptionName)
+			if inuse {
+				r.env.bindings[stmt.ExceptionName.Name] = prev
+			}
+
 		} else {
 			r.stmts(stmt.Fallback)
 		}
