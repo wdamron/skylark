@@ -879,10 +879,9 @@ func (p *parser) parseDict() Expr {
 		return &DictExpr{Lbrace: lbrace, Rbrace: rbrace}
 	}
 
-	x := p.parseDictEntry()
-
+	x := p.parseTestOrDictEntry()
 	if p.tok == FOR {
-		// dict comprehension
+		// dict/set comprehension
 		return p.parseComprehensionSuffix(lbrace, x, RBRACE)
 	}
 
@@ -897,6 +896,16 @@ func (p *parser) parseDict() Expr {
 
 	rbrace := p.consume(RBRACE)
 	return &DictExpr{Lbrace: lbrace, List: entries, Rbrace: rbrace}
+}
+
+func (p *parser) parseTestOrDictEntry() Expr {
+	k := p.parseTest()
+	if p.tok != COLON {
+		return k
+	}
+	colon := p.consume(COLON)
+	v := p.parseTest()
+	return &DictEntry{Key: k, Colon: colon, Value: v}
 }
 
 // dict_entry = test ':' test

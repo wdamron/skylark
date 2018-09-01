@@ -339,7 +339,7 @@ func (x *DotExpr) Span() (start, end Position) {
 	return
 }
 
-// A Comprehension represents a list or dict comprehension:
+// A Comprehension represents a list, set, or dict comprehension:
 // [Body for ... if ...] or {Body for ... if ...}
 type Comprehension struct {
 	commentsRef

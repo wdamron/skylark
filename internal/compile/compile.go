@@ -101,6 +101,7 @@ const (
 	SLICE       //   x lo hi step SLICE slice
 	INPLACE_ADD //            x y INPLACE_ADD z      where z is x+y or x.extend(y)
 	MAKEDICT    //              - MAKEDICT dict
+	MAKESET     //              - MAKESET set    (if sets are enabled)
 
 	EXCEPTPOP //          eh EXCEPTPOP -  [pops the exception handler stack]
 	ERROR     // extype <err>ERROR err    [pops the expected exception type;
@@ -181,6 +182,7 @@ var opcodeNames = [...]string{
 	MAKEDICT:    "makedict",
 	MAKEFUNC:    "makefunc",
 	MAKELIST:    "makelist",
+	MAKESET:     "makeset",
 	MAKETUPLE:   "maketuple",
 	MINUS:       "minus",
 	NEQ:         "neq",
@@ -292,6 +294,7 @@ func init() {
 	stackEffect[MAKEFUNC] = poppush(2, 1)
 	stackEffect[MAKELIST] = variableStackEffect
 	stackEffect[MAKETUPLE] = variableStackEffect
+	stackEffect[MAKESET] = poppush(0, 1)
 	stackEffect[MINUS] = poppush(2, 1)
 	stackEffect[NEQ] = poppush(2, 1)
 	stackEffect[NONE] = poppush(0, 1)
@@ -509,10 +512,6 @@ func (fc *Funcode) Validate(isPredeclared, isUniversal func(name string) bool) e
 		if int(nextpc) == len(code) {
 			return nil
 		}
-		if op < OpcodeArgMin {
-			pc = nextpc
-			continue
-		}
 		if op > OpcodeMax {
 			return fmt.Errorf("illegal op (%d)", op)
 		}
@@ -529,6 +528,15 @@ func (fc *Funcode) Validate(isPredeclared, isUniversal func(name string) bool) e
 			if !resolve.AllowBitwise {
 				return fmt.Errorf(doesnt + "support bitwise operations")
 			}
+		case MAKESET:
+			if !resolve.AllowSet {
+				return fmt.Errorf(doesnt + "support sets")
+			}
+		}
+
+		if op < OpcodeArgMin {
+			pc = nextpc
+			continue
 		}
 
 		switch op {
@@ -1463,7 +1471,11 @@ func (fcomp *fcomp) expr(e syntax.Expr) {
 
 	case *syntax.Comprehension:
 		if e.Curly {
-			fcomp.emit(MAKEDICT)
+			if _, isDictEntry := e.Body.(*syntax.DictEntry); isDictEntry {
+				fcomp.emit(MAKEDICT)
+			} else {
+				fcomp.emit(MAKESET)
+			}
 		} else {
 			fcomp.emit1(MAKELIST, 0)
 		}
@@ -1835,12 +1847,17 @@ func (fcomp *fcomp) comprehension(comp *syntax.Comprehension, clauseIndex int) {
 			// dict: {k:v for ...}
 			// Parser ensures that body is of form k:v.
 			// Python-style set comprehensions {body for vars in x}
-			// are not supported.
-			entry := comp.Body.(*syntax.DictEntry)
-			fcomp.expr(entry.Key)
-			fcomp.expr(entry.Value)
-			fcomp.setPos(entry.Colon)
-			fcomp.emit(SETDICT)
+			// are optionally supported.
+			entry, ok := comp.Body.(*syntax.DictEntry)
+			if !ok {
+				fcomp.expr(comp.Body)
+				fcomp.emit(APPEND)
+			} else {
+				fcomp.expr(entry.Key)
+				fcomp.expr(entry.Value)
+				fcomp.setPos(entry.Colon)
+				fcomp.emit(SETDICT)
+			}
 		} else {
 			// list: [body for vars in x]
 			fcomp.expr(comp.Body)

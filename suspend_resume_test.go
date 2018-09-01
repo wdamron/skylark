@@ -81,6 +81,12 @@ def looptry():
 	if len(x) != 6:
 		raise_value_error()
 
+	my_set = {x for x in range(0,3)}
+	if type(my_set) != "set":
+		raise_value_error(type(my_set))
+	if len(my_set) != 3:
+		raise_value_error(len(my_set))
+
 looptry()
 
 a = 1

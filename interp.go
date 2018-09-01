@@ -586,6 +586,10 @@ loop:
 			stack[sp] = new(Dict)
 			sp++
 
+		case compile.MAKESET:
+			stack[sp] = new(Set)
+			sp++
+
 		case compile.SETDICT, compile.SETDICTUNIQ:
 			dict, ok := stack[sp-3].(*Dict)
 			if !ok {
@@ -611,17 +615,20 @@ loop:
 
 		case compile.APPEND:
 			elem := stack[sp-1]
-			list, ok := stack[sp-2].(*List)
-			if !ok {
+			if list, isList := stack[sp-2].(*List); isList {
+				list.elems = append(list.elems, elem)
+			} else if s, isSet := stack[sp-2].(*Set); isSet {
+				err = s.Insert(elem)
+			} else {
 				argType := "<nil>"
 				if stack[sp-2] != nil {
 					argType = stack[sp-2].Type()
 				}
+				sp -= 2
 				err = TypeErrorf("argument to %s must be a list, not %s", op.String(), argType)
 				continue loop
 			}
 			sp -= 2
-			list.elems = append(list.elems, elem)
 
 		case compile.SLICE:
 			x := stack[sp-4]
