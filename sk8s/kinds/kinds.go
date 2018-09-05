@@ -43,7 +43,7 @@ func ToSky(v interface{}) (skylark.Value, error) {
 		}
 		rt = rt.Elem()
 	}
-	if prim, ok := primitiveToSkylarkValue(rv); ok {
+	if prim, ok := primitiveToSkylarkValue(rv, rt); ok {
 		return prim, nil
 	} else if cast, ok := g2s[rt]; ok {
 		return cast(v), nil
@@ -62,32 +62,32 @@ func compareSameType(x interface{}, op syntax.Token, y interface{}, t string, de
 	}
 }
 
-func getAttr(v reflect.Value, name string, fields, inline map[string]util.FieldSpec) (skylark.Value, error) {
+func getAttr(container reflect.Value, name string, fields, inline map[string]util.FieldSpec) (skylark.Value, error) {
 	spec, ok := fields[name]
 	if !ok {
 		return skylark.None, nil // no such attr
 	}
 	var err error
-	v, ok, err = ensureStruct(v)
+	container, ok, err = derefStruct(container)
 	if err != nil || !ok {
 		return skylark.None, err
 	}
 	if !spec.Inline {
-		return fieldValue(v, spec, name)
+		return fieldValue(container, spec, name)
 	}
 	// nested field lookup:
 	spec, ok = inline[name]
 	if !ok {
 		return skylark.None, nil // no such attr
 	}
-	v, ok, err = ensureStruct(v.FieldByIndex([]int{int(spec.FieldIndex)}))
+	container, ok, err = derefStruct(container.FieldByIndex([]int{int(spec.FieldIndex)}))
 	if err != nil || !ok {
 		return skylark.None, err
 	}
-	return fieldValue(v, spec, name)
+	return fieldValue(container, spec, name)
 }
 
-func ensureStruct(v reflect.Value) (reflect.Value, bool, error) {
+func derefStruct(v reflect.Value) (reflect.Value, bool, error) {
 	t := v.Type()
 	k := t.Kind()
 	if k == reflect.Ptr {
@@ -104,17 +104,24 @@ func ensureStruct(v reflect.Value) (reflect.Value, bool, error) {
 	return v, true, nil
 }
 
-func fieldValue(v reflect.Value, spec util.FieldSpec, name string) (skylark.Value, error) {
-	field := v.FieldByIndex([]int{int(spec.FieldIndex)})
+func fieldValue(container reflect.Value, spec util.FieldSpec, name string) (skylark.Value, error) {
+	field := container.FieldByIndex([]int{int(spec.FieldIndex)})
 	if debugfieldtypes && field.Type() != spec.FieldType {
 		return skylark.None, skylark.TypeErrorf("unexpected field type for embedded attribute %s", name)
 	}
 	if spec.Primitive {
-		prim, ok := primitiveToSkylarkValue(field)
+		prim, ok := primitiveToSkylarkValue(field, spec.FieldType)
 		if debugfieldtypes && !ok {
 			return prim, skylark.TypeErrorf("unhandled primitive type %s for attribute %s", spec.FieldType.Name(), name)
 		}
 		return prim, nil
+	}
+	if spec.Slice {
+		slice, ok := sliceToSkylarkValue(field, spec.FieldType)
+		if debugfieldtypes && !ok {
+			return slice, skylark.TypeErrorf("unhandled slice type %s for attribute %s", spec.FieldType.Name(), name)
+		}
+		return slice, nil
 	}
 	if cast, ok := g2s[spec.FieldType]; ok && cast != nil {
 		return cast(field.Interface()), nil
@@ -122,162 +129,131 @@ func fieldValue(v reflect.Value, spec util.FieldSpec, name string) (skylark.Valu
 	return skylark.None, skylark.TypeErrorf("missing cast from type %s for attribute %s", spec.FieldType.Name(), name)
 }
 
+var commonTypes = map[reflect.Type]bool{
+	reflect.TypeOf(([]string)(nil)):                              true,
+	reflect.TypeOf((map[string]string)(nil)):                     true,
+	reflect.TypeOf((map[string][]byte)(nil)):                     true,
+	reflect.TypeOf((map[v1.ResourceName]resource.Quantity)(nil)): true,
+	reflect.TypeOf((metav1.Verbs)(nil)):                          true,
+	reflect.TypeOf(metav1.Time{}):                                true,
+	reflect.TypeOf(metav1.MicroTime{}):                           true,
+	reflect.TypeOf(intstr.IntOrString{}):                         true,
+	reflect.TypeOf(resource.Quantity{}):                          true,
+}
+
 func isPrimitive(t reflect.Type) bool {
-	switch reflect.New(t).Elem().Interface().(type) {
-	case bool, *bool, int32, *int32, int64, *int64, float32, *float32, float64, *float64, string, *string, []string, *[]string,
-		map[string]string, map[string][]byte, map[v1.ResourceName]resource.Quantity, metav1.Verbs, metav1.Time, *metav1.Time,
-		metav1.MicroTime, *metav1.MicroTime, intstr.IntOrString, *intstr.IntOrString, resource.Quantity, *resource.Quantity:
-		return true
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
 	}
 	switch t.Kind() {
-	case reflect.String:
+	case reflect.Bool, reflect.Int32, reflect.Int64, reflect.Float32, reflect.Float64, reflect.String:
 		return true
-	case reflect.Ptr:
-		if t.Elem().Kind() == reflect.String {
-			return true
-		}
+	}
+	if _, ok := commonTypes[t]; ok {
+		return true
 	}
 	return false
 }
 
-func primitiveToSkylarkValue(v reflect.Value) (skylark.Value, bool) {
-	switch t := v.Interface().(type) {
+func sliceToSkylarkValue(slice reflect.Value, t reflect.Type) (skylark.Value, bool) {
+	if t.Kind() == reflect.Ptr {
+		if slice.IsNil() {
+			return skylark.None, true
+		}
+		slice = slice.Elem()
+		t = t.Elem()
+	}
+	if t.Kind() != reflect.Slice {
+		return skylark.None, false
+	}
+	t = t.Elem()
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	cast, ok := g2s[t]
+	if !ok {
+		return skylark.None, false
+	}
+	n := slice.Len()
+	elems := make([]skylark.Value, n)
+	for i := 0; i < n; i++ {
+		elems[i] = cast(slice.Index(i))
+	}
+	return skylark.NewList(elems), true
+}
+
+func primitiveToSkylarkValue(r reflect.Value, t reflect.Type) (skylark.Value, bool) {
+	if t.Kind() == reflect.Ptr {
+		if r.IsNil() {
+			return skylark.None, true
+		}
+		r = r.Elem()
+		t = t.Elem()
+	}
+	switch v := r.Interface().(type) {
 	case bool:
-		return skylark.Bool(t), true
-	case *bool:
-		if t == nil {
-			return skylark.None, true
-		}
-		return skylark.Bool(*t), true
+		return skylark.Bool(v), true
 	case int32:
-		return skylark.MakeInt64(int64(t)), true
-	case *int32:
-		if t == nil {
-			return skylark.None, true
-		}
-		return skylark.MakeInt64(int64(*t)), true
+		return skylark.MakeInt64(int64(v)), true
 	case int64:
-		return skylark.MakeInt64(t), true
-	case *int64:
-		if t == nil {
-			return skylark.None, true
-		}
-		return skylark.MakeInt64(*t), true
+		return skylark.MakeInt64(v), true
 	case float32:
-		return skylark.Float(float64(t)), true
-	case *float32:
-		if t == nil {
-			return skylark.None, true
-		}
-		return skylark.Float(float64(*t)), true
+		return skylark.Float(float64(v)), true
 	case float64:
-		return skylark.Float(t), true
-	case *float64:
-		if t == nil {
-			return skylark.None, true
-		}
-		return skylark.Float(*t), true
+		return skylark.Float(v), true
 	case string:
-		return skylark.String(t), true
-	case *string:
-		if t == nil {
-			return skylark.None, true
-		}
-		return skylark.String(*t), true
+		return skylark.String(v), true
 	case []string:
-		return toStringList(t), true
-	case *[]string:
-		if t == nil {
-			return skylark.None, true
-		}
-		return toStringList(*t), true
+		return toStringList(v), true
 	case map[string]string:
-		if t == nil {
+		if v == nil {
 			return skylark.None, true
 		}
 		d := new(skylark.Dict)
-		for k, v := range t {
-			d.Set(skylark.String(k), skylark.String(v))
+		for key, val := range v {
+			d.Set(skylark.String(key), skylark.String(val))
 		}
 		return d, true
 	case map[string][]byte:
-		if t == nil {
+		if v == nil {
 			return skylark.None, true
 		}
 		d := new(skylark.Dict)
-		for k, v := range t {
-			d.Set(skylark.String(k), skylark.String(base64.StdEncoding.EncodeToString(v)))
+		for key, val := range v {
+			d.Set(skylark.String(key), skylark.String(base64.StdEncoding.EncodeToString(val)))
 		}
 		return d, true
 	case map[v1.ResourceName]resource.Quantity:
-		if t == nil {
+		if v == nil {
 			return skylark.None, true
 		}
 		d := new(skylark.Dict)
-		for k, v := range t {
-			d.Set(skylark.String(string(k)), skylark.String(v.String()))
+		for key, val := range v {
+			d.Set(skylark.String(string(key)), skylark.String(val.String()))
 		}
 		return d, true
 	case metav1.Verbs:
-		return toStringList([]string(t)), true
+		return toStringList([]string(v)), true
 	case metav1.Time:
-		return skylark.MakeInt64(t.UnixNano()), true
-	case *metav1.Time:
-		if t == nil {
-			return skylark.None, true
-		}
-		return skylark.MakeInt64((*t).UnixNano()), true
+		return skylark.MakeInt64(v.UnixNano()), true
 	case metav1.MicroTime:
-		return skylark.MakeInt64(t.UnixNano()), true
-	case *metav1.MicroTime:
-		if t == nil {
-			return skylark.None, true
-		}
-		return skylark.MakeInt64((*t).UnixNano()), true
+		return skylark.MakeInt64(v.UnixNano()), true
 	case intstr.IntOrString:
-		switch t.Type {
+		switch v.Type {
 		case intstr.Int:
-			return skylark.MakeInt(t.IntValue()), true
+			return skylark.MakeInt(v.IntValue()), true
 		case intstr.String:
-			return skylark.String(t.String()), true
-		default:
-			return skylark.None, true
-		}
-	case *intstr.IntOrString:
-		if t == nil {
-			return skylark.None, true
-		}
-		switch t.Type {
-		case intstr.Int:
-			return skylark.MakeInt(t.IntValue()), true
-		case intstr.String:
-			return skylark.String(t.String()), true
+			return skylark.String(v.String()), true
 		default:
 			return skylark.None, true
 		}
 	case resource.Quantity:
-		return skylark.String(t.String()), true
-	case *resource.Quantity:
-		if t == nil {
-			return skylark.None, true
-		}
-		return skylark.String(t.String()), true
+		return skylark.String(v.String()), true
 	case nil:
 		return skylark.None, true
-	}
-
-	rt := v.Type()
-	kind := rt.Kind()
-	switch kind {
-	case reflect.String:
-		return skylark.String(v.Interface().(string)), true
-	case reflect.Ptr:
-		if rt.Elem().Kind() == reflect.String {
-			if v.IsNil() {
-				return skylark.None, true
-			}
-			p := v.Interface().(*string)
-			return skylark.String(*p), true
+	default:
+		if t.Kind() == reflect.String {
+			return skylark.String(v.(string)), true
 		}
 	}
 
