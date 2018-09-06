@@ -28,7 +28,9 @@ var (
 	g2s     = map[reflect.Type]func(interface{}) skylark.Value{}
 )
 
-type iface interface {
+// This interface is also defined in the parent directory, but is included here for type assertions
+// within the generated code, and to avoid a circular dependency.
+type boxed interface {
 	skylark.HasAttrs
 	UnderlyingKind() interface{}
 }

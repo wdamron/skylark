@@ -22,7 +22,7 @@ type AWSElasticBlockStoreVolumeSource struct {
 }
 
 var (
-	_ iface = (*AWSElasticBlockStoreVolumeSource)(nil)
+	_ boxed = (*AWSElasticBlockStoreVolumeSource)(nil)
 
 	AWSElasticBlockStoreVolumeSource_fields = map[string]util.FieldSpec{}
 	AWSElasticBlockStoreVolumeSource_inline = map[string]util.FieldSpec{}
@@ -76,7 +76,7 @@ type Affinity struct {
 }
 
 var (
-	_ iface = (*Affinity)(nil)
+	_ boxed = (*Affinity)(nil)
 
 	Affinity_fields = map[string]util.FieldSpec{}
 	Affinity_inline = map[string]util.FieldSpec{}
@@ -126,7 +126,7 @@ type AttachedVolume struct {
 }
 
 var (
-	_ iface = (*AttachedVolume)(nil)
+	_ boxed = (*AttachedVolume)(nil)
 
 	AttachedVolume_fields = map[string]util.FieldSpec{}
 	AttachedVolume_inline = map[string]util.FieldSpec{}
@@ -176,7 +176,7 @@ type AvoidPods struct {
 }
 
 var (
-	_ iface = (*AvoidPods)(nil)
+	_ boxed = (*AvoidPods)(nil)
 
 	AvoidPods_fields = map[string]util.FieldSpec{}
 	AvoidPods_inline = map[string]util.FieldSpec{}
@@ -226,7 +226,7 @@ type AzureDiskVolumeSource struct {
 }
 
 var (
-	_ iface = (*AzureDiskVolumeSource)(nil)
+	_ boxed = (*AzureDiskVolumeSource)(nil)
 
 	AzureDiskVolumeSource_fields = map[string]util.FieldSpec{}
 	AzureDiskVolumeSource_inline = map[string]util.FieldSpec{}
@@ -276,7 +276,7 @@ type AzureFilePersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*AzureFilePersistentVolumeSource)(nil)
+	_ boxed = (*AzureFilePersistentVolumeSource)(nil)
 
 	AzureFilePersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	AzureFilePersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -330,7 +330,7 @@ type AzureFileVolumeSource struct {
 }
 
 var (
-	_ iface = (*AzureFileVolumeSource)(nil)
+	_ boxed = (*AzureFileVolumeSource)(nil)
 
 	AzureFileVolumeSource_fields = map[string]util.FieldSpec{}
 	AzureFileVolumeSource_inline = map[string]util.FieldSpec{}
@@ -380,7 +380,7 @@ type Binding struct {
 }
 
 var (
-	_ iface = (*Binding)(nil)
+	_ boxed = (*Binding)(nil)
 
 	Binding_fields = map[string]util.FieldSpec{}
 	Binding_inline = map[string]util.FieldSpec{}
@@ -430,7 +430,7 @@ type CSIPersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*CSIPersistentVolumeSource)(nil)
+	_ boxed = (*CSIPersistentVolumeSource)(nil)
 
 	CSIPersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	CSIPersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -480,7 +480,7 @@ type Capabilities struct {
 }
 
 var (
-	_ iface = (*Capabilities)(nil)
+	_ boxed = (*Capabilities)(nil)
 
 	Capabilities_fields = map[string]util.FieldSpec{}
 	Capabilities_inline = map[string]util.FieldSpec{}
@@ -530,7 +530,7 @@ type CephFSPersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*CephFSPersistentVolumeSource)(nil)
+	_ boxed = (*CephFSPersistentVolumeSource)(nil)
 
 	CephFSPersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	CephFSPersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -580,7 +580,7 @@ type CephFSVolumeSource struct {
 }
 
 var (
-	_ iface = (*CephFSVolumeSource)(nil)
+	_ boxed = (*CephFSVolumeSource)(nil)
 
 	CephFSVolumeSource_fields = map[string]util.FieldSpec{}
 	CephFSVolumeSource_inline = map[string]util.FieldSpec{}
@@ -630,7 +630,7 @@ type CinderPersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*CinderPersistentVolumeSource)(nil)
+	_ boxed = (*CinderPersistentVolumeSource)(nil)
 
 	CinderPersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	CinderPersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -680,7 +680,7 @@ type CinderVolumeSource struct {
 }
 
 var (
-	_ iface = (*CinderVolumeSource)(nil)
+	_ boxed = (*CinderVolumeSource)(nil)
 
 	CinderVolumeSource_fields = map[string]util.FieldSpec{}
 	CinderVolumeSource_inline = map[string]util.FieldSpec{}
@@ -730,7 +730,7 @@ type ClientIPConfig struct {
 }
 
 var (
-	_ iface = (*ClientIPConfig)(nil)
+	_ boxed = (*ClientIPConfig)(nil)
 
 	ClientIPConfig_fields = map[string]util.FieldSpec{}
 	ClientIPConfig_inline = map[string]util.FieldSpec{}
@@ -780,7 +780,7 @@ type ComponentCondition struct {
 }
 
 var (
-	_ iface = (*ComponentCondition)(nil)
+	_ boxed = (*ComponentCondition)(nil)
 
 	ComponentCondition_fields = map[string]util.FieldSpec{}
 	ComponentCondition_inline = map[string]util.FieldSpec{}
@@ -830,7 +830,7 @@ type ComponentStatus struct {
 }
 
 var (
-	_ iface = (*ComponentStatus)(nil)
+	_ boxed = (*ComponentStatus)(nil)
 
 	ComponentStatus_fields = map[string]util.FieldSpec{}
 	ComponentStatus_inline = map[string]util.FieldSpec{}
@@ -880,7 +880,7 @@ type ComponentStatusList struct {
 }
 
 var (
-	_ iface = (*ComponentStatusList)(nil)
+	_ boxed = (*ComponentStatusList)(nil)
 
 	ComponentStatusList_fields = map[string]util.FieldSpec{}
 	ComponentStatusList_inline = map[string]util.FieldSpec{}
@@ -930,7 +930,7 @@ type ConfigMap struct {
 }
 
 var (
-	_ iface = (*ConfigMap)(nil)
+	_ boxed = (*ConfigMap)(nil)
 
 	ConfigMap_fields = map[string]util.FieldSpec{}
 	ConfigMap_inline = map[string]util.FieldSpec{}
@@ -980,7 +980,7 @@ type ConfigMapEnvSource struct {
 }
 
 var (
-	_ iface = (*ConfigMapEnvSource)(nil)
+	_ boxed = (*ConfigMapEnvSource)(nil)
 
 	ConfigMapEnvSource_fields = map[string]util.FieldSpec{}
 	ConfigMapEnvSource_inline = map[string]util.FieldSpec{}
@@ -1030,7 +1030,7 @@ type ConfigMapKeySelector struct {
 }
 
 var (
-	_ iface = (*ConfigMapKeySelector)(nil)
+	_ boxed = (*ConfigMapKeySelector)(nil)
 
 	ConfigMapKeySelector_fields = map[string]util.FieldSpec{}
 	ConfigMapKeySelector_inline = map[string]util.FieldSpec{}
@@ -1080,7 +1080,7 @@ type ConfigMapList struct {
 }
 
 var (
-	_ iface = (*ConfigMapList)(nil)
+	_ boxed = (*ConfigMapList)(nil)
 
 	ConfigMapList_fields = map[string]util.FieldSpec{}
 	ConfigMapList_inline = map[string]util.FieldSpec{}
@@ -1130,7 +1130,7 @@ type ConfigMapNodeConfigSource struct {
 }
 
 var (
-	_ iface = (*ConfigMapNodeConfigSource)(nil)
+	_ boxed = (*ConfigMapNodeConfigSource)(nil)
 
 	ConfigMapNodeConfigSource_fields = map[string]util.FieldSpec{}
 	ConfigMapNodeConfigSource_inline = map[string]util.FieldSpec{}
@@ -1180,7 +1180,7 @@ type ConfigMapProjection struct {
 }
 
 var (
-	_ iface = (*ConfigMapProjection)(nil)
+	_ boxed = (*ConfigMapProjection)(nil)
 
 	ConfigMapProjection_fields = map[string]util.FieldSpec{}
 	ConfigMapProjection_inline = map[string]util.FieldSpec{}
@@ -1230,7 +1230,7 @@ type ConfigMapVolumeSource struct {
 }
 
 var (
-	_ iface = (*ConfigMapVolumeSource)(nil)
+	_ boxed = (*ConfigMapVolumeSource)(nil)
 
 	ConfigMapVolumeSource_fields = map[string]util.FieldSpec{}
 	ConfigMapVolumeSource_inline = map[string]util.FieldSpec{}
@@ -1280,7 +1280,7 @@ type Container struct {
 }
 
 var (
-	_ iface = (*Container)(nil)
+	_ boxed = (*Container)(nil)
 
 	Container_fields = map[string]util.FieldSpec{}
 	Container_inline = map[string]util.FieldSpec{}
@@ -1330,7 +1330,7 @@ type ContainerImage struct {
 }
 
 var (
-	_ iface = (*ContainerImage)(nil)
+	_ boxed = (*ContainerImage)(nil)
 
 	ContainerImage_fields = map[string]util.FieldSpec{}
 	ContainerImage_inline = map[string]util.FieldSpec{}
@@ -1380,7 +1380,7 @@ type ContainerPort struct {
 }
 
 var (
-	_ iface = (*ContainerPort)(nil)
+	_ boxed = (*ContainerPort)(nil)
 
 	ContainerPort_fields = map[string]util.FieldSpec{}
 	ContainerPort_inline = map[string]util.FieldSpec{}
@@ -1430,7 +1430,7 @@ type ContainerState struct {
 }
 
 var (
-	_ iface = (*ContainerState)(nil)
+	_ boxed = (*ContainerState)(nil)
 
 	ContainerState_fields = map[string]util.FieldSpec{}
 	ContainerState_inline = map[string]util.FieldSpec{}
@@ -1480,7 +1480,7 @@ type ContainerStateRunning struct {
 }
 
 var (
-	_ iface = (*ContainerStateRunning)(nil)
+	_ boxed = (*ContainerStateRunning)(nil)
 
 	ContainerStateRunning_fields = map[string]util.FieldSpec{}
 	ContainerStateRunning_inline = map[string]util.FieldSpec{}
@@ -1530,7 +1530,7 @@ type ContainerStateTerminated struct {
 }
 
 var (
-	_ iface = (*ContainerStateTerminated)(nil)
+	_ boxed = (*ContainerStateTerminated)(nil)
 
 	ContainerStateTerminated_fields = map[string]util.FieldSpec{}
 	ContainerStateTerminated_inline = map[string]util.FieldSpec{}
@@ -1580,7 +1580,7 @@ type ContainerStateWaiting struct {
 }
 
 var (
-	_ iface = (*ContainerStateWaiting)(nil)
+	_ boxed = (*ContainerStateWaiting)(nil)
 
 	ContainerStateWaiting_fields = map[string]util.FieldSpec{}
 	ContainerStateWaiting_inline = map[string]util.FieldSpec{}
@@ -1630,7 +1630,7 @@ type ContainerStatus struct {
 }
 
 var (
-	_ iface = (*ContainerStatus)(nil)
+	_ boxed = (*ContainerStatus)(nil)
 
 	ContainerStatus_fields = map[string]util.FieldSpec{}
 	ContainerStatus_inline = map[string]util.FieldSpec{}
@@ -1680,7 +1680,7 @@ type DaemonEndpoint struct {
 }
 
 var (
-	_ iface = (*DaemonEndpoint)(nil)
+	_ boxed = (*DaemonEndpoint)(nil)
 
 	DaemonEndpoint_fields = map[string]util.FieldSpec{}
 	DaemonEndpoint_inline = map[string]util.FieldSpec{}
@@ -1730,7 +1730,7 @@ type DownwardAPIProjection struct {
 }
 
 var (
-	_ iface = (*DownwardAPIProjection)(nil)
+	_ boxed = (*DownwardAPIProjection)(nil)
 
 	DownwardAPIProjection_fields = map[string]util.FieldSpec{}
 	DownwardAPIProjection_inline = map[string]util.FieldSpec{}
@@ -1780,7 +1780,7 @@ type DownwardAPIVolumeFile struct {
 }
 
 var (
-	_ iface = (*DownwardAPIVolumeFile)(nil)
+	_ boxed = (*DownwardAPIVolumeFile)(nil)
 
 	DownwardAPIVolumeFile_fields = map[string]util.FieldSpec{}
 	DownwardAPIVolumeFile_inline = map[string]util.FieldSpec{}
@@ -1830,7 +1830,7 @@ type DownwardAPIVolumeSource struct {
 }
 
 var (
-	_ iface = (*DownwardAPIVolumeSource)(nil)
+	_ boxed = (*DownwardAPIVolumeSource)(nil)
 
 	DownwardAPIVolumeSource_fields = map[string]util.FieldSpec{}
 	DownwardAPIVolumeSource_inline = map[string]util.FieldSpec{}
@@ -1880,7 +1880,7 @@ type EmptyDirVolumeSource struct {
 }
 
 var (
-	_ iface = (*EmptyDirVolumeSource)(nil)
+	_ boxed = (*EmptyDirVolumeSource)(nil)
 
 	EmptyDirVolumeSource_fields = map[string]util.FieldSpec{}
 	EmptyDirVolumeSource_inline = map[string]util.FieldSpec{}
@@ -1930,7 +1930,7 @@ type EndpointAddress struct {
 }
 
 var (
-	_ iface = (*EndpointAddress)(nil)
+	_ boxed = (*EndpointAddress)(nil)
 
 	EndpointAddress_fields = map[string]util.FieldSpec{}
 	EndpointAddress_inline = map[string]util.FieldSpec{}
@@ -1980,7 +1980,7 @@ type EndpointPort struct {
 }
 
 var (
-	_ iface = (*EndpointPort)(nil)
+	_ boxed = (*EndpointPort)(nil)
 
 	EndpointPort_fields = map[string]util.FieldSpec{}
 	EndpointPort_inline = map[string]util.FieldSpec{}
@@ -2030,7 +2030,7 @@ type EndpointSubset struct {
 }
 
 var (
-	_ iface = (*EndpointSubset)(nil)
+	_ boxed = (*EndpointSubset)(nil)
 
 	EndpointSubset_fields = map[string]util.FieldSpec{}
 	EndpointSubset_inline = map[string]util.FieldSpec{}
@@ -2080,7 +2080,7 @@ type Endpoints struct {
 }
 
 var (
-	_ iface = (*Endpoints)(nil)
+	_ boxed = (*Endpoints)(nil)
 
 	Endpoints_fields = map[string]util.FieldSpec{}
 	Endpoints_inline = map[string]util.FieldSpec{}
@@ -2130,7 +2130,7 @@ type EndpointsList struct {
 }
 
 var (
-	_ iface = (*EndpointsList)(nil)
+	_ boxed = (*EndpointsList)(nil)
 
 	EndpointsList_fields = map[string]util.FieldSpec{}
 	EndpointsList_inline = map[string]util.FieldSpec{}
@@ -2180,7 +2180,7 @@ type EnvFromSource struct {
 }
 
 var (
-	_ iface = (*EnvFromSource)(nil)
+	_ boxed = (*EnvFromSource)(nil)
 
 	EnvFromSource_fields = map[string]util.FieldSpec{}
 	EnvFromSource_inline = map[string]util.FieldSpec{}
@@ -2230,7 +2230,7 @@ type EnvVar struct {
 }
 
 var (
-	_ iface = (*EnvVar)(nil)
+	_ boxed = (*EnvVar)(nil)
 
 	EnvVar_fields = map[string]util.FieldSpec{}
 	EnvVar_inline = map[string]util.FieldSpec{}
@@ -2280,7 +2280,7 @@ type EnvVarSource struct {
 }
 
 var (
-	_ iface = (*EnvVarSource)(nil)
+	_ boxed = (*EnvVarSource)(nil)
 
 	EnvVarSource_fields = map[string]util.FieldSpec{}
 	EnvVarSource_inline = map[string]util.FieldSpec{}
@@ -2330,7 +2330,7 @@ type Event struct {
 }
 
 var (
-	_ iface = (*Event)(nil)
+	_ boxed = (*Event)(nil)
 
 	Event_fields = map[string]util.FieldSpec{}
 	Event_inline = map[string]util.FieldSpec{}
@@ -2380,7 +2380,7 @@ type EventList struct {
 }
 
 var (
-	_ iface = (*EventList)(nil)
+	_ boxed = (*EventList)(nil)
 
 	EventList_fields = map[string]util.FieldSpec{}
 	EventList_inline = map[string]util.FieldSpec{}
@@ -2430,7 +2430,7 @@ type EventSeries struct {
 }
 
 var (
-	_ iface = (*EventSeries)(nil)
+	_ boxed = (*EventSeries)(nil)
 
 	EventSeries_fields = map[string]util.FieldSpec{}
 	EventSeries_inline = map[string]util.FieldSpec{}
@@ -2480,7 +2480,7 @@ type EventSource struct {
 }
 
 var (
-	_ iface = (*EventSource)(nil)
+	_ boxed = (*EventSource)(nil)
 
 	EventSource_fields = map[string]util.FieldSpec{}
 	EventSource_inline = map[string]util.FieldSpec{}
@@ -2530,7 +2530,7 @@ type ExecAction struct {
 }
 
 var (
-	_ iface = (*ExecAction)(nil)
+	_ boxed = (*ExecAction)(nil)
 
 	ExecAction_fields = map[string]util.FieldSpec{}
 	ExecAction_inline = map[string]util.FieldSpec{}
@@ -2580,7 +2580,7 @@ type FCVolumeSource struct {
 }
 
 var (
-	_ iface = (*FCVolumeSource)(nil)
+	_ boxed = (*FCVolumeSource)(nil)
 
 	FCVolumeSource_fields = map[string]util.FieldSpec{}
 	FCVolumeSource_inline = map[string]util.FieldSpec{}
@@ -2630,7 +2630,7 @@ type FlexPersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*FlexPersistentVolumeSource)(nil)
+	_ boxed = (*FlexPersistentVolumeSource)(nil)
 
 	FlexPersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	FlexPersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -2680,7 +2680,7 @@ type FlexVolumeSource struct {
 }
 
 var (
-	_ iface = (*FlexVolumeSource)(nil)
+	_ boxed = (*FlexVolumeSource)(nil)
 
 	FlexVolumeSource_fields = map[string]util.FieldSpec{}
 	FlexVolumeSource_inline = map[string]util.FieldSpec{}
@@ -2730,7 +2730,7 @@ type FlockerVolumeSource struct {
 }
 
 var (
-	_ iface = (*FlockerVolumeSource)(nil)
+	_ boxed = (*FlockerVolumeSource)(nil)
 
 	FlockerVolumeSource_fields = map[string]util.FieldSpec{}
 	FlockerVolumeSource_inline = map[string]util.FieldSpec{}
@@ -2780,7 +2780,7 @@ type GCEPersistentDiskVolumeSource struct {
 }
 
 var (
-	_ iface = (*GCEPersistentDiskVolumeSource)(nil)
+	_ boxed = (*GCEPersistentDiskVolumeSource)(nil)
 
 	GCEPersistentDiskVolumeSource_fields = map[string]util.FieldSpec{}
 	GCEPersistentDiskVolumeSource_inline = map[string]util.FieldSpec{}
@@ -2832,7 +2832,7 @@ type GitRepoVolumeSource struct {
 }
 
 var (
-	_ iface = (*GitRepoVolumeSource)(nil)
+	_ boxed = (*GitRepoVolumeSource)(nil)
 
 	GitRepoVolumeSource_fields = map[string]util.FieldSpec{}
 	GitRepoVolumeSource_inline = map[string]util.FieldSpec{}
@@ -2882,7 +2882,7 @@ type GlusterfsVolumeSource struct {
 }
 
 var (
-	_ iface = (*GlusterfsVolumeSource)(nil)
+	_ boxed = (*GlusterfsVolumeSource)(nil)
 
 	GlusterfsVolumeSource_fields = map[string]util.FieldSpec{}
 	GlusterfsVolumeSource_inline = map[string]util.FieldSpec{}
@@ -2932,7 +2932,7 @@ type HTTPGetAction struct {
 }
 
 var (
-	_ iface = (*HTTPGetAction)(nil)
+	_ boxed = (*HTTPGetAction)(nil)
 
 	HTTPGetAction_fields = map[string]util.FieldSpec{}
 	HTTPGetAction_inline = map[string]util.FieldSpec{}
@@ -2982,7 +2982,7 @@ type HTTPHeader struct {
 }
 
 var (
-	_ iface = (*HTTPHeader)(nil)
+	_ boxed = (*HTTPHeader)(nil)
 
 	HTTPHeader_fields = map[string]util.FieldSpec{}
 	HTTPHeader_inline = map[string]util.FieldSpec{}
@@ -3032,7 +3032,7 @@ type Handler struct {
 }
 
 var (
-	_ iface = (*Handler)(nil)
+	_ boxed = (*Handler)(nil)
 
 	Handler_fields = map[string]util.FieldSpec{}
 	Handler_inline = map[string]util.FieldSpec{}
@@ -3082,7 +3082,7 @@ type HostAlias struct {
 }
 
 var (
-	_ iface = (*HostAlias)(nil)
+	_ boxed = (*HostAlias)(nil)
 
 	HostAlias_fields = map[string]util.FieldSpec{}
 	HostAlias_inline = map[string]util.FieldSpec{}
@@ -3132,7 +3132,7 @@ type HostPathVolumeSource struct {
 }
 
 var (
-	_ iface = (*HostPathVolumeSource)(nil)
+	_ boxed = (*HostPathVolumeSource)(nil)
 
 	HostPathVolumeSource_fields = map[string]util.FieldSpec{}
 	HostPathVolumeSource_inline = map[string]util.FieldSpec{}
@@ -3182,7 +3182,7 @@ type ISCSIPersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*ISCSIPersistentVolumeSource)(nil)
+	_ boxed = (*ISCSIPersistentVolumeSource)(nil)
 
 	ISCSIPersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	ISCSIPersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -3232,7 +3232,7 @@ type ISCSIVolumeSource struct {
 }
 
 var (
-	_ iface = (*ISCSIVolumeSource)(nil)
+	_ boxed = (*ISCSIVolumeSource)(nil)
 
 	ISCSIVolumeSource_fields = map[string]util.FieldSpec{}
 	ISCSIVolumeSource_inline = map[string]util.FieldSpec{}
@@ -3282,7 +3282,7 @@ type KeyToPath struct {
 }
 
 var (
-	_ iface = (*KeyToPath)(nil)
+	_ boxed = (*KeyToPath)(nil)
 
 	KeyToPath_fields = map[string]util.FieldSpec{}
 	KeyToPath_inline = map[string]util.FieldSpec{}
@@ -3332,7 +3332,7 @@ type Lifecycle struct {
 }
 
 var (
-	_ iface = (*Lifecycle)(nil)
+	_ boxed = (*Lifecycle)(nil)
 
 	Lifecycle_fields = map[string]util.FieldSpec{}
 	Lifecycle_inline = map[string]util.FieldSpec{}
@@ -3382,7 +3382,7 @@ type LimitRange struct {
 }
 
 var (
-	_ iface = (*LimitRange)(nil)
+	_ boxed = (*LimitRange)(nil)
 
 	LimitRange_fields = map[string]util.FieldSpec{}
 	LimitRange_inline = map[string]util.FieldSpec{}
@@ -3432,7 +3432,7 @@ type LimitRangeItem struct {
 }
 
 var (
-	_ iface = (*LimitRangeItem)(nil)
+	_ boxed = (*LimitRangeItem)(nil)
 
 	LimitRangeItem_fields = map[string]util.FieldSpec{}
 	LimitRangeItem_inline = map[string]util.FieldSpec{}
@@ -3482,7 +3482,7 @@ type LimitRangeList struct {
 }
 
 var (
-	_ iface = (*LimitRangeList)(nil)
+	_ boxed = (*LimitRangeList)(nil)
 
 	LimitRangeList_fields = map[string]util.FieldSpec{}
 	LimitRangeList_inline = map[string]util.FieldSpec{}
@@ -3532,7 +3532,7 @@ type LimitRangeSpec struct {
 }
 
 var (
-	_ iface = (*LimitRangeSpec)(nil)
+	_ boxed = (*LimitRangeSpec)(nil)
 
 	LimitRangeSpec_fields = map[string]util.FieldSpec{}
 	LimitRangeSpec_inline = map[string]util.FieldSpec{}
@@ -3582,7 +3582,7 @@ type List struct {
 }
 
 var (
-	_ iface = (*List)(nil)
+	_ boxed = (*List)(nil)
 
 	List_fields = map[string]util.FieldSpec{}
 	List_inline = map[string]util.FieldSpec{}
@@ -3632,7 +3632,7 @@ type LoadBalancerIngress struct {
 }
 
 var (
-	_ iface = (*LoadBalancerIngress)(nil)
+	_ boxed = (*LoadBalancerIngress)(nil)
 
 	LoadBalancerIngress_fields = map[string]util.FieldSpec{}
 	LoadBalancerIngress_inline = map[string]util.FieldSpec{}
@@ -3682,7 +3682,7 @@ type LoadBalancerStatus struct {
 }
 
 var (
-	_ iface = (*LoadBalancerStatus)(nil)
+	_ boxed = (*LoadBalancerStatus)(nil)
 
 	LoadBalancerStatus_fields = map[string]util.FieldSpec{}
 	LoadBalancerStatus_inline = map[string]util.FieldSpec{}
@@ -3732,7 +3732,7 @@ type LocalObjectReference struct {
 }
 
 var (
-	_ iface = (*LocalObjectReference)(nil)
+	_ boxed = (*LocalObjectReference)(nil)
 
 	LocalObjectReference_fields = map[string]util.FieldSpec{}
 	LocalObjectReference_inline = map[string]util.FieldSpec{}
@@ -3782,7 +3782,7 @@ type LocalVolumeSource struct {
 }
 
 var (
-	_ iface = (*LocalVolumeSource)(nil)
+	_ boxed = (*LocalVolumeSource)(nil)
 
 	LocalVolumeSource_fields = map[string]util.FieldSpec{}
 	LocalVolumeSource_inline = map[string]util.FieldSpec{}
@@ -3832,7 +3832,7 @@ type NFSVolumeSource struct {
 }
 
 var (
-	_ iface = (*NFSVolumeSource)(nil)
+	_ boxed = (*NFSVolumeSource)(nil)
 
 	NFSVolumeSource_fields = map[string]util.FieldSpec{}
 	NFSVolumeSource_inline = map[string]util.FieldSpec{}
@@ -3882,7 +3882,7 @@ type Namespace struct {
 }
 
 var (
-	_ iface = (*Namespace)(nil)
+	_ boxed = (*Namespace)(nil)
 
 	Namespace_fields = map[string]util.FieldSpec{}
 	Namespace_inline = map[string]util.FieldSpec{}
@@ -3932,7 +3932,7 @@ type NamespaceList struct {
 }
 
 var (
-	_ iface = (*NamespaceList)(nil)
+	_ boxed = (*NamespaceList)(nil)
 
 	NamespaceList_fields = map[string]util.FieldSpec{}
 	NamespaceList_inline = map[string]util.FieldSpec{}
@@ -3982,7 +3982,7 @@ type NamespaceSpec struct {
 }
 
 var (
-	_ iface = (*NamespaceSpec)(nil)
+	_ boxed = (*NamespaceSpec)(nil)
 
 	NamespaceSpec_fields = map[string]util.FieldSpec{}
 	NamespaceSpec_inline = map[string]util.FieldSpec{}
@@ -4032,7 +4032,7 @@ type NamespaceStatus struct {
 }
 
 var (
-	_ iface = (*NamespaceStatus)(nil)
+	_ boxed = (*NamespaceStatus)(nil)
 
 	NamespaceStatus_fields = map[string]util.FieldSpec{}
 	NamespaceStatus_inline = map[string]util.FieldSpec{}
@@ -4082,7 +4082,7 @@ type Node struct {
 }
 
 var (
-	_ iface = (*Node)(nil)
+	_ boxed = (*Node)(nil)
 
 	Node_fields = map[string]util.FieldSpec{}
 	Node_inline = map[string]util.FieldSpec{}
@@ -4132,7 +4132,7 @@ type NodeAddress struct {
 }
 
 var (
-	_ iface = (*NodeAddress)(nil)
+	_ boxed = (*NodeAddress)(nil)
 
 	NodeAddress_fields = map[string]util.FieldSpec{}
 	NodeAddress_inline = map[string]util.FieldSpec{}
@@ -4182,7 +4182,7 @@ type NodeAffinity struct {
 }
 
 var (
-	_ iface = (*NodeAffinity)(nil)
+	_ boxed = (*NodeAffinity)(nil)
 
 	NodeAffinity_fields = map[string]util.FieldSpec{}
 	NodeAffinity_inline = map[string]util.FieldSpec{}
@@ -4232,7 +4232,7 @@ type NodeCondition struct {
 }
 
 var (
-	_ iface = (*NodeCondition)(nil)
+	_ boxed = (*NodeCondition)(nil)
 
 	NodeCondition_fields = map[string]util.FieldSpec{}
 	NodeCondition_inline = map[string]util.FieldSpec{}
@@ -4282,7 +4282,7 @@ type NodeConfigSource struct {
 }
 
 var (
-	_ iface = (*NodeConfigSource)(nil)
+	_ boxed = (*NodeConfigSource)(nil)
 
 	NodeConfigSource_fields = map[string]util.FieldSpec{}
 	NodeConfigSource_inline = map[string]util.FieldSpec{}
@@ -4332,7 +4332,7 @@ type NodeConfigStatus struct {
 }
 
 var (
-	_ iface = (*NodeConfigStatus)(nil)
+	_ boxed = (*NodeConfigStatus)(nil)
 
 	NodeConfigStatus_fields = map[string]util.FieldSpec{}
 	NodeConfigStatus_inline = map[string]util.FieldSpec{}
@@ -4382,7 +4382,7 @@ type NodeDaemonEndpoints struct {
 }
 
 var (
-	_ iface = (*NodeDaemonEndpoints)(nil)
+	_ boxed = (*NodeDaemonEndpoints)(nil)
 
 	NodeDaemonEndpoints_fields = map[string]util.FieldSpec{}
 	NodeDaemonEndpoints_inline = map[string]util.FieldSpec{}
@@ -4432,7 +4432,7 @@ type NodeList struct {
 }
 
 var (
-	_ iface = (*NodeList)(nil)
+	_ boxed = (*NodeList)(nil)
 
 	NodeList_fields = map[string]util.FieldSpec{}
 	NodeList_inline = map[string]util.FieldSpec{}
@@ -4482,7 +4482,7 @@ type NodeProxyOptions struct {
 }
 
 var (
-	_ iface = (*NodeProxyOptions)(nil)
+	_ boxed = (*NodeProxyOptions)(nil)
 
 	NodeProxyOptions_fields = map[string]util.FieldSpec{}
 	NodeProxyOptions_inline = map[string]util.FieldSpec{}
@@ -4532,7 +4532,7 @@ type NodeResources struct {
 }
 
 var (
-	_ iface = (*NodeResources)(nil)
+	_ boxed = (*NodeResources)(nil)
 
 	NodeResources_fields = map[string]util.FieldSpec{}
 	NodeResources_inline = map[string]util.FieldSpec{}
@@ -4582,7 +4582,7 @@ type NodeSelector struct {
 }
 
 var (
-	_ iface = (*NodeSelector)(nil)
+	_ boxed = (*NodeSelector)(nil)
 
 	NodeSelector_fields = map[string]util.FieldSpec{}
 	NodeSelector_inline = map[string]util.FieldSpec{}
@@ -4632,7 +4632,7 @@ type NodeSelectorRequirement struct {
 }
 
 var (
-	_ iface = (*NodeSelectorRequirement)(nil)
+	_ boxed = (*NodeSelectorRequirement)(nil)
 
 	NodeSelectorRequirement_fields = map[string]util.FieldSpec{}
 	NodeSelectorRequirement_inline = map[string]util.FieldSpec{}
@@ -4682,7 +4682,7 @@ type NodeSelectorTerm struct {
 }
 
 var (
-	_ iface = (*NodeSelectorTerm)(nil)
+	_ boxed = (*NodeSelectorTerm)(nil)
 
 	NodeSelectorTerm_fields = map[string]util.FieldSpec{}
 	NodeSelectorTerm_inline = map[string]util.FieldSpec{}
@@ -4732,7 +4732,7 @@ type NodeSpec struct {
 }
 
 var (
-	_ iface = (*NodeSpec)(nil)
+	_ boxed = (*NodeSpec)(nil)
 
 	NodeSpec_fields = map[string]util.FieldSpec{}
 	NodeSpec_inline = map[string]util.FieldSpec{}
@@ -4782,7 +4782,7 @@ type NodeStatus struct {
 }
 
 var (
-	_ iface = (*NodeStatus)(nil)
+	_ boxed = (*NodeStatus)(nil)
 
 	NodeStatus_fields = map[string]util.FieldSpec{}
 	NodeStatus_inline = map[string]util.FieldSpec{}
@@ -4832,7 +4832,7 @@ type NodeSystemInfo struct {
 }
 
 var (
-	_ iface = (*NodeSystemInfo)(nil)
+	_ boxed = (*NodeSystemInfo)(nil)
 
 	NodeSystemInfo_fields = map[string]util.FieldSpec{}
 	NodeSystemInfo_inline = map[string]util.FieldSpec{}
@@ -4882,7 +4882,7 @@ type ObjectFieldSelector struct {
 }
 
 var (
-	_ iface = (*ObjectFieldSelector)(nil)
+	_ boxed = (*ObjectFieldSelector)(nil)
 
 	ObjectFieldSelector_fields = map[string]util.FieldSpec{}
 	ObjectFieldSelector_inline = map[string]util.FieldSpec{}
@@ -4932,7 +4932,7 @@ type ObjectReference struct {
 }
 
 var (
-	_ iface = (*ObjectReference)(nil)
+	_ boxed = (*ObjectReference)(nil)
 
 	ObjectReference_fields = map[string]util.FieldSpec{}
 	ObjectReference_inline = map[string]util.FieldSpec{}
@@ -4982,7 +4982,7 @@ type PersistentVolume struct {
 }
 
 var (
-	_ iface = (*PersistentVolume)(nil)
+	_ boxed = (*PersistentVolume)(nil)
 
 	PersistentVolume_fields = map[string]util.FieldSpec{}
 	PersistentVolume_inline = map[string]util.FieldSpec{}
@@ -5032,7 +5032,7 @@ type PersistentVolumeClaim struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeClaim)(nil)
+	_ boxed = (*PersistentVolumeClaim)(nil)
 
 	PersistentVolumeClaim_fields = map[string]util.FieldSpec{}
 	PersistentVolumeClaim_inline = map[string]util.FieldSpec{}
@@ -5082,7 +5082,7 @@ type PersistentVolumeClaimCondition struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeClaimCondition)(nil)
+	_ boxed = (*PersistentVolumeClaimCondition)(nil)
 
 	PersistentVolumeClaimCondition_fields = map[string]util.FieldSpec{}
 	PersistentVolumeClaimCondition_inline = map[string]util.FieldSpec{}
@@ -5134,7 +5134,7 @@ type PersistentVolumeClaimList struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeClaimList)(nil)
+	_ boxed = (*PersistentVolumeClaimList)(nil)
 
 	PersistentVolumeClaimList_fields = map[string]util.FieldSpec{}
 	PersistentVolumeClaimList_inline = map[string]util.FieldSpec{}
@@ -5184,7 +5184,7 @@ type PersistentVolumeClaimSpec struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeClaimSpec)(nil)
+	_ boxed = (*PersistentVolumeClaimSpec)(nil)
 
 	PersistentVolumeClaimSpec_fields = map[string]util.FieldSpec{}
 	PersistentVolumeClaimSpec_inline = map[string]util.FieldSpec{}
@@ -5234,7 +5234,7 @@ type PersistentVolumeClaimStatus struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeClaimStatus)(nil)
+	_ boxed = (*PersistentVolumeClaimStatus)(nil)
 
 	PersistentVolumeClaimStatus_fields = map[string]util.FieldSpec{}
 	PersistentVolumeClaimStatus_inline = map[string]util.FieldSpec{}
@@ -5284,7 +5284,7 @@ type PersistentVolumeClaimVolumeSource struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeClaimVolumeSource)(nil)
+	_ boxed = (*PersistentVolumeClaimVolumeSource)(nil)
 
 	PersistentVolumeClaimVolumeSource_fields = map[string]util.FieldSpec{}
 	PersistentVolumeClaimVolumeSource_inline = map[string]util.FieldSpec{}
@@ -5338,7 +5338,7 @@ type PersistentVolumeList struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeList)(nil)
+	_ boxed = (*PersistentVolumeList)(nil)
 
 	PersistentVolumeList_fields = map[string]util.FieldSpec{}
 	PersistentVolumeList_inline = map[string]util.FieldSpec{}
@@ -5388,7 +5388,7 @@ type PersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeSource)(nil)
+	_ boxed = (*PersistentVolumeSource)(nil)
 
 	PersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	PersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -5438,7 +5438,7 @@ type PersistentVolumeSpec struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeSpec)(nil)
+	_ boxed = (*PersistentVolumeSpec)(nil)
 
 	PersistentVolumeSpec_fields = map[string]util.FieldSpec{}
 	PersistentVolumeSpec_inline = map[string]util.FieldSpec{}
@@ -5488,7 +5488,7 @@ type PersistentVolumeStatus struct {
 }
 
 var (
-	_ iface = (*PersistentVolumeStatus)(nil)
+	_ boxed = (*PersistentVolumeStatus)(nil)
 
 	PersistentVolumeStatus_fields = map[string]util.FieldSpec{}
 	PersistentVolumeStatus_inline = map[string]util.FieldSpec{}
@@ -5538,7 +5538,7 @@ type PhotonPersistentDiskVolumeSource struct {
 }
 
 var (
-	_ iface = (*PhotonPersistentDiskVolumeSource)(nil)
+	_ boxed = (*PhotonPersistentDiskVolumeSource)(nil)
 
 	PhotonPersistentDiskVolumeSource_fields = map[string]util.FieldSpec{}
 	PhotonPersistentDiskVolumeSource_inline = map[string]util.FieldSpec{}
@@ -5592,7 +5592,7 @@ type Pod struct {
 }
 
 var (
-	_ iface = (*Pod)(nil)
+	_ boxed = (*Pod)(nil)
 
 	Pod_fields = map[string]util.FieldSpec{}
 	Pod_inline = map[string]util.FieldSpec{}
@@ -5642,7 +5642,7 @@ type PodAffinity struct {
 }
 
 var (
-	_ iface = (*PodAffinity)(nil)
+	_ boxed = (*PodAffinity)(nil)
 
 	PodAffinity_fields = map[string]util.FieldSpec{}
 	PodAffinity_inline = map[string]util.FieldSpec{}
@@ -5692,7 +5692,7 @@ type PodAffinityTerm struct {
 }
 
 var (
-	_ iface = (*PodAffinityTerm)(nil)
+	_ boxed = (*PodAffinityTerm)(nil)
 
 	PodAffinityTerm_fields = map[string]util.FieldSpec{}
 	PodAffinityTerm_inline = map[string]util.FieldSpec{}
@@ -5742,7 +5742,7 @@ type PodAntiAffinity struct {
 }
 
 var (
-	_ iface = (*PodAntiAffinity)(nil)
+	_ boxed = (*PodAntiAffinity)(nil)
 
 	PodAntiAffinity_fields = map[string]util.FieldSpec{}
 	PodAntiAffinity_inline = map[string]util.FieldSpec{}
@@ -5792,7 +5792,7 @@ type PodAttachOptions struct {
 }
 
 var (
-	_ iface = (*PodAttachOptions)(nil)
+	_ boxed = (*PodAttachOptions)(nil)
 
 	PodAttachOptions_fields = map[string]util.FieldSpec{}
 	PodAttachOptions_inline = map[string]util.FieldSpec{}
@@ -5842,7 +5842,7 @@ type PodCondition struct {
 }
 
 var (
-	_ iface = (*PodCondition)(nil)
+	_ boxed = (*PodCondition)(nil)
 
 	PodCondition_fields = map[string]util.FieldSpec{}
 	PodCondition_inline = map[string]util.FieldSpec{}
@@ -5892,7 +5892,7 @@ type PodDNSConfig struct {
 }
 
 var (
-	_ iface = (*PodDNSConfig)(nil)
+	_ boxed = (*PodDNSConfig)(nil)
 
 	PodDNSConfig_fields = map[string]util.FieldSpec{}
 	PodDNSConfig_inline = map[string]util.FieldSpec{}
@@ -5942,7 +5942,7 @@ type PodDNSConfigOption struct {
 }
 
 var (
-	_ iface = (*PodDNSConfigOption)(nil)
+	_ boxed = (*PodDNSConfigOption)(nil)
 
 	PodDNSConfigOption_fields = map[string]util.FieldSpec{}
 	PodDNSConfigOption_inline = map[string]util.FieldSpec{}
@@ -5992,7 +5992,7 @@ type PodExecOptions struct {
 }
 
 var (
-	_ iface = (*PodExecOptions)(nil)
+	_ boxed = (*PodExecOptions)(nil)
 
 	PodExecOptions_fields = map[string]util.FieldSpec{}
 	PodExecOptions_inline = map[string]util.FieldSpec{}
@@ -6042,7 +6042,7 @@ type PodList struct {
 }
 
 var (
-	_ iface = (*PodList)(nil)
+	_ boxed = (*PodList)(nil)
 
 	PodList_fields = map[string]util.FieldSpec{}
 	PodList_inline = map[string]util.FieldSpec{}
@@ -6092,7 +6092,7 @@ type PodLogOptions struct {
 }
 
 var (
-	_ iface = (*PodLogOptions)(nil)
+	_ boxed = (*PodLogOptions)(nil)
 
 	PodLogOptions_fields = map[string]util.FieldSpec{}
 	PodLogOptions_inline = map[string]util.FieldSpec{}
@@ -6142,7 +6142,7 @@ type PodPortForwardOptions struct {
 }
 
 var (
-	_ iface = (*PodPortForwardOptions)(nil)
+	_ boxed = (*PodPortForwardOptions)(nil)
 
 	PodPortForwardOptions_fields = map[string]util.FieldSpec{}
 	PodPortForwardOptions_inline = map[string]util.FieldSpec{}
@@ -6192,7 +6192,7 @@ type PodProxyOptions struct {
 }
 
 var (
-	_ iface = (*PodProxyOptions)(nil)
+	_ boxed = (*PodProxyOptions)(nil)
 
 	PodProxyOptions_fields = map[string]util.FieldSpec{}
 	PodProxyOptions_inline = map[string]util.FieldSpec{}
@@ -6242,7 +6242,7 @@ type PodReadinessGate struct {
 }
 
 var (
-	_ iface = (*PodReadinessGate)(nil)
+	_ boxed = (*PodReadinessGate)(nil)
 
 	PodReadinessGate_fields = map[string]util.FieldSpec{}
 	PodReadinessGate_inline = map[string]util.FieldSpec{}
@@ -6292,7 +6292,7 @@ type PodSecurityContext struct {
 }
 
 var (
-	_ iface = (*PodSecurityContext)(nil)
+	_ boxed = (*PodSecurityContext)(nil)
 
 	PodSecurityContext_fields = map[string]util.FieldSpec{}
 	PodSecurityContext_inline = map[string]util.FieldSpec{}
@@ -6342,7 +6342,7 @@ type PodSignature struct {
 }
 
 var (
-	_ iface = (*PodSignature)(nil)
+	_ boxed = (*PodSignature)(nil)
 
 	PodSignature_fields = map[string]util.FieldSpec{}
 	PodSignature_inline = map[string]util.FieldSpec{}
@@ -6392,7 +6392,7 @@ type PodSpec struct {
 }
 
 var (
-	_ iface = (*PodSpec)(nil)
+	_ boxed = (*PodSpec)(nil)
 
 	PodSpec_fields = map[string]util.FieldSpec{}
 	PodSpec_inline = map[string]util.FieldSpec{}
@@ -6442,7 +6442,7 @@ type PodStatus struct {
 }
 
 var (
-	_ iface = (*PodStatus)(nil)
+	_ boxed = (*PodStatus)(nil)
 
 	PodStatus_fields = map[string]util.FieldSpec{}
 	PodStatus_inline = map[string]util.FieldSpec{}
@@ -6492,7 +6492,7 @@ type PodStatusResult struct {
 }
 
 var (
-	_ iface = (*PodStatusResult)(nil)
+	_ boxed = (*PodStatusResult)(nil)
 
 	PodStatusResult_fields = map[string]util.FieldSpec{}
 	PodStatusResult_inline = map[string]util.FieldSpec{}
@@ -6542,7 +6542,7 @@ type PodTemplate struct {
 }
 
 var (
-	_ iface = (*PodTemplate)(nil)
+	_ boxed = (*PodTemplate)(nil)
 
 	PodTemplate_fields = map[string]util.FieldSpec{}
 	PodTemplate_inline = map[string]util.FieldSpec{}
@@ -6592,7 +6592,7 @@ type PodTemplateList struct {
 }
 
 var (
-	_ iface = (*PodTemplateList)(nil)
+	_ boxed = (*PodTemplateList)(nil)
 
 	PodTemplateList_fields = map[string]util.FieldSpec{}
 	PodTemplateList_inline = map[string]util.FieldSpec{}
@@ -6642,7 +6642,7 @@ type PodTemplateSpec struct {
 }
 
 var (
-	_ iface = (*PodTemplateSpec)(nil)
+	_ boxed = (*PodTemplateSpec)(nil)
 
 	PodTemplateSpec_fields = map[string]util.FieldSpec{}
 	PodTemplateSpec_inline = map[string]util.FieldSpec{}
@@ -6692,7 +6692,7 @@ type PortworxVolumeSource struct {
 }
 
 var (
-	_ iface = (*PortworxVolumeSource)(nil)
+	_ boxed = (*PortworxVolumeSource)(nil)
 
 	PortworxVolumeSource_fields = map[string]util.FieldSpec{}
 	PortworxVolumeSource_inline = map[string]util.FieldSpec{}
@@ -6742,7 +6742,7 @@ type Preconditions struct {
 }
 
 var (
-	_ iface = (*Preconditions)(nil)
+	_ boxed = (*Preconditions)(nil)
 
 	Preconditions_fields = map[string]util.FieldSpec{}
 	Preconditions_inline = map[string]util.FieldSpec{}
@@ -6792,7 +6792,7 @@ type PreferAvoidPodsEntry struct {
 }
 
 var (
-	_ iface = (*PreferAvoidPodsEntry)(nil)
+	_ boxed = (*PreferAvoidPodsEntry)(nil)
 
 	PreferAvoidPodsEntry_fields = map[string]util.FieldSpec{}
 	PreferAvoidPodsEntry_inline = map[string]util.FieldSpec{}
@@ -6842,7 +6842,7 @@ type PreferredSchedulingTerm struct {
 }
 
 var (
-	_ iface = (*PreferredSchedulingTerm)(nil)
+	_ boxed = (*PreferredSchedulingTerm)(nil)
 
 	PreferredSchedulingTerm_fields = map[string]util.FieldSpec{}
 	PreferredSchedulingTerm_inline = map[string]util.FieldSpec{}
@@ -6892,7 +6892,7 @@ type Probe struct {
 }
 
 var (
-	_ iface = (*Probe)(nil)
+	_ boxed = (*Probe)(nil)
 
 	Probe_fields = map[string]util.FieldSpec{}
 	Probe_inline = map[string]util.FieldSpec{}
@@ -6942,7 +6942,7 @@ type ProjectedVolumeSource struct {
 }
 
 var (
-	_ iface = (*ProjectedVolumeSource)(nil)
+	_ boxed = (*ProjectedVolumeSource)(nil)
 
 	ProjectedVolumeSource_fields = map[string]util.FieldSpec{}
 	ProjectedVolumeSource_inline = map[string]util.FieldSpec{}
@@ -6992,7 +6992,7 @@ type QuobyteVolumeSource struct {
 }
 
 var (
-	_ iface = (*QuobyteVolumeSource)(nil)
+	_ boxed = (*QuobyteVolumeSource)(nil)
 
 	QuobyteVolumeSource_fields = map[string]util.FieldSpec{}
 	QuobyteVolumeSource_inline = map[string]util.FieldSpec{}
@@ -7042,7 +7042,7 @@ type RBDPersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*RBDPersistentVolumeSource)(nil)
+	_ boxed = (*RBDPersistentVolumeSource)(nil)
 
 	RBDPersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	RBDPersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -7092,7 +7092,7 @@ type RBDVolumeSource struct {
 }
 
 var (
-	_ iface = (*RBDVolumeSource)(nil)
+	_ boxed = (*RBDVolumeSource)(nil)
 
 	RBDVolumeSource_fields = map[string]util.FieldSpec{}
 	RBDVolumeSource_inline = map[string]util.FieldSpec{}
@@ -7142,7 +7142,7 @@ type RangeAllocation struct {
 }
 
 var (
-	_ iface = (*RangeAllocation)(nil)
+	_ boxed = (*RangeAllocation)(nil)
 
 	RangeAllocation_fields = map[string]util.FieldSpec{}
 	RangeAllocation_inline = map[string]util.FieldSpec{}
@@ -7192,7 +7192,7 @@ type ReplicationController struct {
 }
 
 var (
-	_ iface = (*ReplicationController)(nil)
+	_ boxed = (*ReplicationController)(nil)
 
 	ReplicationController_fields = map[string]util.FieldSpec{}
 	ReplicationController_inline = map[string]util.FieldSpec{}
@@ -7242,7 +7242,7 @@ type ReplicationControllerCondition struct {
 }
 
 var (
-	_ iface = (*ReplicationControllerCondition)(nil)
+	_ boxed = (*ReplicationControllerCondition)(nil)
 
 	ReplicationControllerCondition_fields = map[string]util.FieldSpec{}
 	ReplicationControllerCondition_inline = map[string]util.FieldSpec{}
@@ -7294,7 +7294,7 @@ type ReplicationControllerList struct {
 }
 
 var (
-	_ iface = (*ReplicationControllerList)(nil)
+	_ boxed = (*ReplicationControllerList)(nil)
 
 	ReplicationControllerList_fields = map[string]util.FieldSpec{}
 	ReplicationControllerList_inline = map[string]util.FieldSpec{}
@@ -7344,7 +7344,7 @@ type ReplicationControllerSpec struct {
 }
 
 var (
-	_ iface = (*ReplicationControllerSpec)(nil)
+	_ boxed = (*ReplicationControllerSpec)(nil)
 
 	ReplicationControllerSpec_fields = map[string]util.FieldSpec{}
 	ReplicationControllerSpec_inline = map[string]util.FieldSpec{}
@@ -7394,7 +7394,7 @@ type ReplicationControllerStatus struct {
 }
 
 var (
-	_ iface = (*ReplicationControllerStatus)(nil)
+	_ boxed = (*ReplicationControllerStatus)(nil)
 
 	ReplicationControllerStatus_fields = map[string]util.FieldSpec{}
 	ReplicationControllerStatus_inline = map[string]util.FieldSpec{}
@@ -7444,7 +7444,7 @@ type ResourceFieldSelector struct {
 }
 
 var (
-	_ iface = (*ResourceFieldSelector)(nil)
+	_ boxed = (*ResourceFieldSelector)(nil)
 
 	ResourceFieldSelector_fields = map[string]util.FieldSpec{}
 	ResourceFieldSelector_inline = map[string]util.FieldSpec{}
@@ -7494,7 +7494,7 @@ type ResourceQuota struct {
 }
 
 var (
-	_ iface = (*ResourceQuota)(nil)
+	_ boxed = (*ResourceQuota)(nil)
 
 	ResourceQuota_fields = map[string]util.FieldSpec{}
 	ResourceQuota_inline = map[string]util.FieldSpec{}
@@ -7544,7 +7544,7 @@ type ResourceQuotaList struct {
 }
 
 var (
-	_ iface = (*ResourceQuotaList)(nil)
+	_ boxed = (*ResourceQuotaList)(nil)
 
 	ResourceQuotaList_fields = map[string]util.FieldSpec{}
 	ResourceQuotaList_inline = map[string]util.FieldSpec{}
@@ -7594,7 +7594,7 @@ type ResourceQuotaSpec struct {
 }
 
 var (
-	_ iface = (*ResourceQuotaSpec)(nil)
+	_ boxed = (*ResourceQuotaSpec)(nil)
 
 	ResourceQuotaSpec_fields = map[string]util.FieldSpec{}
 	ResourceQuotaSpec_inline = map[string]util.FieldSpec{}
@@ -7644,7 +7644,7 @@ type ResourceQuotaStatus struct {
 }
 
 var (
-	_ iface = (*ResourceQuotaStatus)(nil)
+	_ boxed = (*ResourceQuotaStatus)(nil)
 
 	ResourceQuotaStatus_fields = map[string]util.FieldSpec{}
 	ResourceQuotaStatus_inline = map[string]util.FieldSpec{}
@@ -7694,7 +7694,7 @@ type ResourceRequirements struct {
 }
 
 var (
-	_ iface = (*ResourceRequirements)(nil)
+	_ boxed = (*ResourceRequirements)(nil)
 
 	ResourceRequirements_fields = map[string]util.FieldSpec{}
 	ResourceRequirements_inline = map[string]util.FieldSpec{}
@@ -7744,7 +7744,7 @@ type SELinuxOptions struct {
 }
 
 var (
-	_ iface = (*SELinuxOptions)(nil)
+	_ boxed = (*SELinuxOptions)(nil)
 
 	SELinuxOptions_fields = map[string]util.FieldSpec{}
 	SELinuxOptions_inline = map[string]util.FieldSpec{}
@@ -7794,7 +7794,7 @@ type ScaleIOPersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*ScaleIOPersistentVolumeSource)(nil)
+	_ boxed = (*ScaleIOPersistentVolumeSource)(nil)
 
 	ScaleIOPersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	ScaleIOPersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -7846,7 +7846,7 @@ type ScaleIOVolumeSource struct {
 }
 
 var (
-	_ iface = (*ScaleIOVolumeSource)(nil)
+	_ boxed = (*ScaleIOVolumeSource)(nil)
 
 	ScaleIOVolumeSource_fields = map[string]util.FieldSpec{}
 	ScaleIOVolumeSource_inline = map[string]util.FieldSpec{}
@@ -7896,7 +7896,7 @@ type ScopeSelector struct {
 }
 
 var (
-	_ iface = (*ScopeSelector)(nil)
+	_ boxed = (*ScopeSelector)(nil)
 
 	ScopeSelector_fields = map[string]util.FieldSpec{}
 	ScopeSelector_inline = map[string]util.FieldSpec{}
@@ -7946,7 +7946,7 @@ type ScopedResourceSelectorRequirement struct {
 }
 
 var (
-	_ iface = (*ScopedResourceSelectorRequirement)(nil)
+	_ boxed = (*ScopedResourceSelectorRequirement)(nil)
 
 	ScopedResourceSelectorRequirement_fields = map[string]util.FieldSpec{}
 	ScopedResourceSelectorRequirement_inline = map[string]util.FieldSpec{}
@@ -8000,7 +8000,7 @@ type Secret struct {
 }
 
 var (
-	_ iface = (*Secret)(nil)
+	_ boxed = (*Secret)(nil)
 
 	Secret_fields = map[string]util.FieldSpec{}
 	Secret_inline = map[string]util.FieldSpec{}
@@ -8050,7 +8050,7 @@ type SecretEnvSource struct {
 }
 
 var (
-	_ iface = (*SecretEnvSource)(nil)
+	_ boxed = (*SecretEnvSource)(nil)
 
 	SecretEnvSource_fields = map[string]util.FieldSpec{}
 	SecretEnvSource_inline = map[string]util.FieldSpec{}
@@ -8100,7 +8100,7 @@ type SecretKeySelector struct {
 }
 
 var (
-	_ iface = (*SecretKeySelector)(nil)
+	_ boxed = (*SecretKeySelector)(nil)
 
 	SecretKeySelector_fields = map[string]util.FieldSpec{}
 	SecretKeySelector_inline = map[string]util.FieldSpec{}
@@ -8150,7 +8150,7 @@ type SecretList struct {
 }
 
 var (
-	_ iface = (*SecretList)(nil)
+	_ boxed = (*SecretList)(nil)
 
 	SecretList_fields = map[string]util.FieldSpec{}
 	SecretList_inline = map[string]util.FieldSpec{}
@@ -8200,7 +8200,7 @@ type SecretProjection struct {
 }
 
 var (
-	_ iface = (*SecretProjection)(nil)
+	_ boxed = (*SecretProjection)(nil)
 
 	SecretProjection_fields = map[string]util.FieldSpec{}
 	SecretProjection_inline = map[string]util.FieldSpec{}
@@ -8250,7 +8250,7 @@ type SecretReference struct {
 }
 
 var (
-	_ iface = (*SecretReference)(nil)
+	_ boxed = (*SecretReference)(nil)
 
 	SecretReference_fields = map[string]util.FieldSpec{}
 	SecretReference_inline = map[string]util.FieldSpec{}
@@ -8300,7 +8300,7 @@ type SecretVolumeSource struct {
 }
 
 var (
-	_ iface = (*SecretVolumeSource)(nil)
+	_ boxed = (*SecretVolumeSource)(nil)
 
 	SecretVolumeSource_fields = map[string]util.FieldSpec{}
 	SecretVolumeSource_inline = map[string]util.FieldSpec{}
@@ -8350,7 +8350,7 @@ type SecurityContext struct {
 }
 
 var (
-	_ iface = (*SecurityContext)(nil)
+	_ boxed = (*SecurityContext)(nil)
 
 	SecurityContext_fields = map[string]util.FieldSpec{}
 	SecurityContext_inline = map[string]util.FieldSpec{}
@@ -8400,7 +8400,7 @@ type SerializedReference struct {
 }
 
 var (
-	_ iface = (*SerializedReference)(nil)
+	_ boxed = (*SerializedReference)(nil)
 
 	SerializedReference_fields = map[string]util.FieldSpec{}
 	SerializedReference_inline = map[string]util.FieldSpec{}
@@ -8450,7 +8450,7 @@ type Service struct {
 }
 
 var (
-	_ iface = (*Service)(nil)
+	_ boxed = (*Service)(nil)
 
 	Service_fields = map[string]util.FieldSpec{}
 	Service_inline = map[string]util.FieldSpec{}
@@ -8500,7 +8500,7 @@ type ServiceAccount struct {
 }
 
 var (
-	_ iface = (*ServiceAccount)(nil)
+	_ boxed = (*ServiceAccount)(nil)
 
 	ServiceAccount_fields = map[string]util.FieldSpec{}
 	ServiceAccount_inline = map[string]util.FieldSpec{}
@@ -8550,7 +8550,7 @@ type ServiceAccountList struct {
 }
 
 var (
-	_ iface = (*ServiceAccountList)(nil)
+	_ boxed = (*ServiceAccountList)(nil)
 
 	ServiceAccountList_fields = map[string]util.FieldSpec{}
 	ServiceAccountList_inline = map[string]util.FieldSpec{}
@@ -8600,7 +8600,7 @@ type ServiceAccountTokenProjection struct {
 }
 
 var (
-	_ iface = (*ServiceAccountTokenProjection)(nil)
+	_ boxed = (*ServiceAccountTokenProjection)(nil)
 
 	ServiceAccountTokenProjection_fields = map[string]util.FieldSpec{}
 	ServiceAccountTokenProjection_inline = map[string]util.FieldSpec{}
@@ -8652,7 +8652,7 @@ type ServiceList struct {
 }
 
 var (
-	_ iface = (*ServiceList)(nil)
+	_ boxed = (*ServiceList)(nil)
 
 	ServiceList_fields = map[string]util.FieldSpec{}
 	ServiceList_inline = map[string]util.FieldSpec{}
@@ -8702,7 +8702,7 @@ type ServicePort struct {
 }
 
 var (
-	_ iface = (*ServicePort)(nil)
+	_ boxed = (*ServicePort)(nil)
 
 	ServicePort_fields = map[string]util.FieldSpec{}
 	ServicePort_inline = map[string]util.FieldSpec{}
@@ -8752,7 +8752,7 @@ type ServiceProxyOptions struct {
 }
 
 var (
-	_ iface = (*ServiceProxyOptions)(nil)
+	_ boxed = (*ServiceProxyOptions)(nil)
 
 	ServiceProxyOptions_fields = map[string]util.FieldSpec{}
 	ServiceProxyOptions_inline = map[string]util.FieldSpec{}
@@ -8802,7 +8802,7 @@ type ServiceSpec struct {
 }
 
 var (
-	_ iface = (*ServiceSpec)(nil)
+	_ boxed = (*ServiceSpec)(nil)
 
 	ServiceSpec_fields = map[string]util.FieldSpec{}
 	ServiceSpec_inline = map[string]util.FieldSpec{}
@@ -8852,7 +8852,7 @@ type ServiceStatus struct {
 }
 
 var (
-	_ iface = (*ServiceStatus)(nil)
+	_ boxed = (*ServiceStatus)(nil)
 
 	ServiceStatus_fields = map[string]util.FieldSpec{}
 	ServiceStatus_inline = map[string]util.FieldSpec{}
@@ -8902,7 +8902,7 @@ type SessionAffinityConfig struct {
 }
 
 var (
-	_ iface = (*SessionAffinityConfig)(nil)
+	_ boxed = (*SessionAffinityConfig)(nil)
 
 	SessionAffinityConfig_fields = map[string]util.FieldSpec{}
 	SessionAffinityConfig_inline = map[string]util.FieldSpec{}
@@ -8952,7 +8952,7 @@ type StorageOSPersistentVolumeSource struct {
 }
 
 var (
-	_ iface = (*StorageOSPersistentVolumeSource)(nil)
+	_ boxed = (*StorageOSPersistentVolumeSource)(nil)
 
 	StorageOSPersistentVolumeSource_fields = map[string]util.FieldSpec{}
 	StorageOSPersistentVolumeSource_inline = map[string]util.FieldSpec{}
@@ -9006,7 +9006,7 @@ type StorageOSVolumeSource struct {
 }
 
 var (
-	_ iface = (*StorageOSVolumeSource)(nil)
+	_ boxed = (*StorageOSVolumeSource)(nil)
 
 	StorageOSVolumeSource_fields = map[string]util.FieldSpec{}
 	StorageOSVolumeSource_inline = map[string]util.FieldSpec{}
@@ -9056,7 +9056,7 @@ type Sysctl struct {
 }
 
 var (
-	_ iface = (*Sysctl)(nil)
+	_ boxed = (*Sysctl)(nil)
 
 	Sysctl_fields = map[string]util.FieldSpec{}
 	Sysctl_inline = map[string]util.FieldSpec{}
@@ -9106,7 +9106,7 @@ type TCPSocketAction struct {
 }
 
 var (
-	_ iface = (*TCPSocketAction)(nil)
+	_ boxed = (*TCPSocketAction)(nil)
 
 	TCPSocketAction_fields = map[string]util.FieldSpec{}
 	TCPSocketAction_inline = map[string]util.FieldSpec{}
@@ -9156,7 +9156,7 @@ type Taint struct {
 }
 
 var (
-	_ iface = (*Taint)(nil)
+	_ boxed = (*Taint)(nil)
 
 	Taint_fields = map[string]util.FieldSpec{}
 	Taint_inline = map[string]util.FieldSpec{}
@@ -9206,7 +9206,7 @@ type Toleration struct {
 }
 
 var (
-	_ iface = (*Toleration)(nil)
+	_ boxed = (*Toleration)(nil)
 
 	Toleration_fields = map[string]util.FieldSpec{}
 	Toleration_inline = map[string]util.FieldSpec{}
@@ -9256,7 +9256,7 @@ type TopologySelectorLabelRequirement struct {
 }
 
 var (
-	_ iface = (*TopologySelectorLabelRequirement)(nil)
+	_ boxed = (*TopologySelectorLabelRequirement)(nil)
 
 	TopologySelectorLabelRequirement_fields = map[string]util.FieldSpec{}
 	TopologySelectorLabelRequirement_inline = map[string]util.FieldSpec{}
@@ -9310,7 +9310,7 @@ type TopologySelectorTerm struct {
 }
 
 var (
-	_ iface = (*TopologySelectorTerm)(nil)
+	_ boxed = (*TopologySelectorTerm)(nil)
 
 	TopologySelectorTerm_fields = map[string]util.FieldSpec{}
 	TopologySelectorTerm_inline = map[string]util.FieldSpec{}
@@ -9360,7 +9360,7 @@ type Volume struct {
 }
 
 var (
-	_ iface = (*Volume)(nil)
+	_ boxed = (*Volume)(nil)
 
 	Volume_fields = map[string]util.FieldSpec{}
 	Volume_inline = map[string]util.FieldSpec{}
@@ -9410,7 +9410,7 @@ type VolumeDevice struct {
 }
 
 var (
-	_ iface = (*VolumeDevice)(nil)
+	_ boxed = (*VolumeDevice)(nil)
 
 	VolumeDevice_fields = map[string]util.FieldSpec{}
 	VolumeDevice_inline = map[string]util.FieldSpec{}
@@ -9460,7 +9460,7 @@ type VolumeMount struct {
 }
 
 var (
-	_ iface = (*VolumeMount)(nil)
+	_ boxed = (*VolumeMount)(nil)
 
 	VolumeMount_fields = map[string]util.FieldSpec{}
 	VolumeMount_inline = map[string]util.FieldSpec{}
@@ -9510,7 +9510,7 @@ type VolumeNodeAffinity struct {
 }
 
 var (
-	_ iface = (*VolumeNodeAffinity)(nil)
+	_ boxed = (*VolumeNodeAffinity)(nil)
 
 	VolumeNodeAffinity_fields = map[string]util.FieldSpec{}
 	VolumeNodeAffinity_inline = map[string]util.FieldSpec{}
@@ -9560,7 +9560,7 @@ type VolumeProjection struct {
 }
 
 var (
-	_ iface = (*VolumeProjection)(nil)
+	_ boxed = (*VolumeProjection)(nil)
 
 	VolumeProjection_fields = map[string]util.FieldSpec{}
 	VolumeProjection_inline = map[string]util.FieldSpec{}
@@ -9610,7 +9610,7 @@ type VolumeSource struct {
 }
 
 var (
-	_ iface = (*VolumeSource)(nil)
+	_ boxed = (*VolumeSource)(nil)
 
 	VolumeSource_fields = map[string]util.FieldSpec{}
 	VolumeSource_inline = map[string]util.FieldSpec{}
@@ -9660,7 +9660,7 @@ type VsphereVirtualDiskVolumeSource struct {
 }
 
 var (
-	_ iface = (*VsphereVirtualDiskVolumeSource)(nil)
+	_ boxed = (*VsphereVirtualDiskVolumeSource)(nil)
 
 	VsphereVirtualDiskVolumeSource_fields = map[string]util.FieldSpec{}
 	VsphereVirtualDiskVolumeSource_inline = map[string]util.FieldSpec{}
@@ -9712,7 +9712,7 @@ type WeightedPodAffinityTerm struct {
 }
 
 var (
-	_ iface = (*WeightedPodAffinityTerm)(nil)
+	_ boxed = (*WeightedPodAffinityTerm)(nil)
 
 	WeightedPodAffinityTerm_fields = map[string]util.FieldSpec{}
 	WeightedPodAffinityTerm_inline = map[string]util.FieldSpec{}
@@ -9762,7 +9762,7 @@ type APIGroup struct {
 }
 
 var (
-	_ iface = (*APIGroup)(nil)
+	_ boxed = (*APIGroup)(nil)
 
 	APIGroup_fields = map[string]util.FieldSpec{}
 	APIGroup_inline = map[string]util.FieldSpec{}
@@ -9812,7 +9812,7 @@ type APIGroupList struct {
 }
 
 var (
-	_ iface = (*APIGroupList)(nil)
+	_ boxed = (*APIGroupList)(nil)
 
 	APIGroupList_fields = map[string]util.FieldSpec{}
 	APIGroupList_inline = map[string]util.FieldSpec{}
@@ -9862,7 +9862,7 @@ type APIResource struct {
 }
 
 var (
-	_ iface = (*APIResource)(nil)
+	_ boxed = (*APIResource)(nil)
 
 	APIResource_fields = map[string]util.FieldSpec{}
 	APIResource_inline = map[string]util.FieldSpec{}
@@ -9912,7 +9912,7 @@ type APIResourceList struct {
 }
 
 var (
-	_ iface = (*APIResourceList)(nil)
+	_ boxed = (*APIResourceList)(nil)
 
 	APIResourceList_fields = map[string]util.FieldSpec{}
 	APIResourceList_inline = map[string]util.FieldSpec{}
@@ -9962,7 +9962,7 @@ type APIVersions struct {
 }
 
 var (
-	_ iface = (*APIVersions)(nil)
+	_ boxed = (*APIVersions)(nil)
 
 	APIVersions_fields = map[string]util.FieldSpec{}
 	APIVersions_inline = map[string]util.FieldSpec{}
@@ -10012,7 +10012,7 @@ type CreateOptions struct {
 }
 
 var (
-	_ iface = (*CreateOptions)(nil)
+	_ boxed = (*CreateOptions)(nil)
 
 	CreateOptions_fields = map[string]util.FieldSpec{}
 	CreateOptions_inline = map[string]util.FieldSpec{}
@@ -10062,7 +10062,7 @@ type DeleteOptions struct {
 }
 
 var (
-	_ iface = (*DeleteOptions)(nil)
+	_ boxed = (*DeleteOptions)(nil)
 
 	DeleteOptions_fields = map[string]util.FieldSpec{}
 	DeleteOptions_inline = map[string]util.FieldSpec{}
@@ -10112,7 +10112,7 @@ type Duration struct {
 }
 
 var (
-	_ iface = (*Duration)(nil)
+	_ boxed = (*Duration)(nil)
 
 	Duration_fields = map[string]util.FieldSpec{}
 	Duration_inline = map[string]util.FieldSpec{}
@@ -10162,7 +10162,7 @@ type ExportOptions struct {
 }
 
 var (
-	_ iface = (*ExportOptions)(nil)
+	_ boxed = (*ExportOptions)(nil)
 
 	ExportOptions_fields = map[string]util.FieldSpec{}
 	ExportOptions_inline = map[string]util.FieldSpec{}
@@ -10212,7 +10212,7 @@ type GetOptions struct {
 }
 
 var (
-	_ iface = (*GetOptions)(nil)
+	_ boxed = (*GetOptions)(nil)
 
 	GetOptions_fields = map[string]util.FieldSpec{}
 	GetOptions_inline = map[string]util.FieldSpec{}
@@ -10262,7 +10262,7 @@ type GroupKind struct {
 }
 
 var (
-	_ iface = (*GroupKind)(nil)
+	_ boxed = (*GroupKind)(nil)
 
 	GroupKind_fields = map[string]util.FieldSpec{}
 	GroupKind_inline = map[string]util.FieldSpec{}
@@ -10312,7 +10312,7 @@ type GroupResource struct {
 }
 
 var (
-	_ iface = (*GroupResource)(nil)
+	_ boxed = (*GroupResource)(nil)
 
 	GroupResource_fields = map[string]util.FieldSpec{}
 	GroupResource_inline = map[string]util.FieldSpec{}
@@ -10362,7 +10362,7 @@ type GroupVersion struct {
 }
 
 var (
-	_ iface = (*GroupVersion)(nil)
+	_ boxed = (*GroupVersion)(nil)
 
 	GroupVersion_fields = map[string]util.FieldSpec{}
 	GroupVersion_inline = map[string]util.FieldSpec{}
@@ -10412,7 +10412,7 @@ type GroupVersionForDiscovery struct {
 }
 
 var (
-	_ iface = (*GroupVersionForDiscovery)(nil)
+	_ boxed = (*GroupVersionForDiscovery)(nil)
 
 	GroupVersionForDiscovery_fields = map[string]util.FieldSpec{}
 	GroupVersionForDiscovery_inline = map[string]util.FieldSpec{}
@@ -10462,7 +10462,7 @@ type GroupVersionKind struct {
 }
 
 var (
-	_ iface = (*GroupVersionKind)(nil)
+	_ boxed = (*GroupVersionKind)(nil)
 
 	GroupVersionKind_fields = map[string]util.FieldSpec{}
 	GroupVersionKind_inline = map[string]util.FieldSpec{}
@@ -10512,7 +10512,7 @@ type GroupVersionResource struct {
 }
 
 var (
-	_ iface = (*GroupVersionResource)(nil)
+	_ boxed = (*GroupVersionResource)(nil)
 
 	GroupVersionResource_fields = map[string]util.FieldSpec{}
 	GroupVersionResource_inline = map[string]util.FieldSpec{}
@@ -10562,7 +10562,7 @@ type Initializer struct {
 }
 
 var (
-	_ iface = (*Initializer)(nil)
+	_ boxed = (*Initializer)(nil)
 
 	Initializer_fields = map[string]util.FieldSpec{}
 	Initializer_inline = map[string]util.FieldSpec{}
@@ -10612,7 +10612,7 @@ type Initializers struct {
 }
 
 var (
-	_ iface = (*Initializers)(nil)
+	_ boxed = (*Initializers)(nil)
 
 	Initializers_fields = map[string]util.FieldSpec{}
 	Initializers_inline = map[string]util.FieldSpec{}
@@ -10662,7 +10662,7 @@ type InternalEvent struct {
 }
 
 var (
-	_ iface = (*InternalEvent)(nil)
+	_ boxed = (*InternalEvent)(nil)
 
 	InternalEvent_fields = map[string]util.FieldSpec{}
 	InternalEvent_inline = map[string]util.FieldSpec{}
@@ -10712,7 +10712,7 @@ type LabelSelector struct {
 }
 
 var (
-	_ iface = (*LabelSelector)(nil)
+	_ boxed = (*LabelSelector)(nil)
 
 	LabelSelector_fields = map[string]util.FieldSpec{}
 	LabelSelector_inline = map[string]util.FieldSpec{}
@@ -10762,7 +10762,7 @@ type LabelSelectorRequirement struct {
 }
 
 var (
-	_ iface = (*LabelSelectorRequirement)(nil)
+	_ boxed = (*LabelSelectorRequirement)(nil)
 
 	LabelSelectorRequirement_fields = map[string]util.FieldSpec{}
 	LabelSelectorRequirement_inline = map[string]util.FieldSpec{}
@@ -10812,7 +10812,7 @@ type ListMeta struct {
 }
 
 var (
-	_ iface = (*ListMeta)(nil)
+	_ boxed = (*ListMeta)(nil)
 
 	ListMeta_fields = map[string]util.FieldSpec{}
 	ListMeta_inline = map[string]util.FieldSpec{}
@@ -10862,7 +10862,7 @@ type ListOptions struct {
 }
 
 var (
-	_ iface = (*ListOptions)(nil)
+	_ boxed = (*ListOptions)(nil)
 
 	ListOptions_fields = map[string]util.FieldSpec{}
 	ListOptions_inline = map[string]util.FieldSpec{}
@@ -10912,7 +10912,7 @@ type ObjectMeta struct {
 }
 
 var (
-	_ iface = (*ObjectMeta)(nil)
+	_ boxed = (*ObjectMeta)(nil)
 
 	ObjectMeta_fields = map[string]util.FieldSpec{}
 	ObjectMeta_inline = map[string]util.FieldSpec{}
@@ -10962,7 +10962,7 @@ type OwnerReference struct {
 }
 
 var (
-	_ iface = (*OwnerReference)(nil)
+	_ boxed = (*OwnerReference)(nil)
 
 	OwnerReference_fields = map[string]util.FieldSpec{}
 	OwnerReference_inline = map[string]util.FieldSpec{}
@@ -11012,7 +11012,7 @@ type Patch struct {
 }
 
 var (
-	_ iface = (*Patch)(nil)
+	_ boxed = (*Patch)(nil)
 
 	Patch_fields = map[string]util.FieldSpec{}
 	Patch_inline = map[string]util.FieldSpec{}
@@ -11062,7 +11062,7 @@ type RootPaths struct {
 }
 
 var (
-	_ iface = (*RootPaths)(nil)
+	_ boxed = (*RootPaths)(nil)
 
 	RootPaths_fields = map[string]util.FieldSpec{}
 	RootPaths_inline = map[string]util.FieldSpec{}
@@ -11112,7 +11112,7 @@ type ServerAddressByClientCIDR struct {
 }
 
 var (
-	_ iface = (*ServerAddressByClientCIDR)(nil)
+	_ boxed = (*ServerAddressByClientCIDR)(nil)
 
 	ServerAddressByClientCIDR_fields = map[string]util.FieldSpec{}
 	ServerAddressByClientCIDR_inline = map[string]util.FieldSpec{}
@@ -11162,7 +11162,7 @@ type Status struct {
 }
 
 var (
-	_ iface = (*Status)(nil)
+	_ boxed = (*Status)(nil)
 
 	Status_fields = map[string]util.FieldSpec{}
 	Status_inline = map[string]util.FieldSpec{}
@@ -11212,7 +11212,7 @@ type StatusCause struct {
 }
 
 var (
-	_ iface = (*StatusCause)(nil)
+	_ boxed = (*StatusCause)(nil)
 
 	StatusCause_fields = map[string]util.FieldSpec{}
 	StatusCause_inline = map[string]util.FieldSpec{}
@@ -11262,7 +11262,7 @@ type StatusDetails struct {
 }
 
 var (
-	_ iface = (*StatusDetails)(nil)
+	_ boxed = (*StatusDetails)(nil)
 
 	StatusDetails_fields = map[string]util.FieldSpec{}
 	StatusDetails_inline = map[string]util.FieldSpec{}
@@ -11312,7 +11312,7 @@ type TypeMeta struct {
 }
 
 var (
-	_ iface = (*TypeMeta)(nil)
+	_ boxed = (*TypeMeta)(nil)
 
 	TypeMeta_fields = map[string]util.FieldSpec{}
 	TypeMeta_inline = map[string]util.FieldSpec{}
@@ -11362,7 +11362,7 @@ type UpdateOptions struct {
 }
 
 var (
-	_ iface = (*UpdateOptions)(nil)
+	_ boxed = (*UpdateOptions)(nil)
 
 	UpdateOptions_fields = map[string]util.FieldSpec{}
 	UpdateOptions_inline = map[string]util.FieldSpec{}
@@ -11412,7 +11412,7 @@ type WatchEvent struct {
 }
 
 var (
-	_ iface = (*WatchEvent)(nil)
+	_ boxed = (*WatchEvent)(nil)
 
 	WatchEvent_fields = map[string]util.FieldSpec{}
 	WatchEvent_inline = map[string]util.FieldSpec{}

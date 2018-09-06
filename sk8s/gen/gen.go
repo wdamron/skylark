@@ -158,7 +158,7 @@ type {{ $name }} struct {
 }
 
 var (
-	_ iface = (*{{ $name }})(nil)
+	_ boxed = (*{{ $name }})(nil)
 
 	{{ $name }}_fields = map[string]util.FieldSpec{}
 	{{ $name }}_inline = map[string]util.FieldSpec{}
