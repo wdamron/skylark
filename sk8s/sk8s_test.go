@@ -14,30 +14,26 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func Test(t *testing.T) {
-	for k, _ := range sk8s.Library() {
-		t.Log(k)
+func TestBasicInlineAttr(t *testing.T) {
+	if len(kinds.Pod_attrs) == 0 {
+		t.Fatalf("Expected Pod_attrs to contain attr names")
 	}
-	t.Log("Pod Fields:")
-	for _, name := range kinds.Pod_attrs {
-		t.Logf("%s: t=%v spec=%#+v\n", name, kinds.Pod_fields[name].FieldType.Name(), kinds.Pod_fields[name])
+	if len(kinds.Pod_fields) == 0 {
+		t.Fatalf("Expected Pod_fields to contain field specs")
 	}
-	t.Log("Pod Inline Fields:")
-	for _, name := range kinds.Pod_attrs {
-		spec := kinds.Pod_fields[name]
-		if !spec.Inline {
-			continue
-		}
-		spec = kinds.Pod_inline[name]
-		t.Logf("%s: t=%v spec=%#+v\n", name, kinds.Pod_inline[name].FieldType.Name(), kinds.Pod_inline[name])
+	if len(kinds.Pod_inline) == 0 {
+		t.Fatalf("Expected Pod_inline to contain inline-field specs")
 	}
 
-	v1pod := &v1.Pod{TypeMeta: metav1.TypeMeta{Kind: "Pod"}}
+	v1pod := &v1.Pod{
+		TypeMeta:   metav1.TypeMeta{Kind: "Pod"},
+		ObjectMeta: metav1.ObjectMeta{Name: "my-pod"},
+	}
 
 	for _, inner := range []interface{}{v1pod, *v1pod} {
-		conv, converr := sk8s.ToSky(inner)
-		if converr != nil {
-			t.Fatal(converr)
+		conv, err := sk8s.ToSky(inner)
+		if err != nil {
+			t.Fatal(err)
 		}
 		pod := conv.(kinds.Pod)
 		kind, err := pod.Attr("kind")
@@ -47,7 +43,43 @@ func Test(t *testing.T) {
 		if kind.(skylark.String) != skylark.String("Pod") {
 			t.Fatalf("Expected kind = Pod\n")
 		}
+		meta, err := pod.Attr("metadata")
+		if err != nil {
+			t.Fatal(err)
+		}
+		name, err := meta.(skylark.HasAttrs).Attr("name")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if name.(skylark.String) != skylark.String("my-pod") {
+			t.Fatalf("Expected name = my-pod\n")
+		}
 
 		t.Logf("Pod: %s\n", pod.String())
+	}
+}
+
+func TestResourceSliceAttr(t *testing.T) {
+	v1caps := &v1.Capabilities{
+		Add: []v1.Capability{"my-capability"},
+	}
+
+	conv, err := sk8s.ToSky(v1caps)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	caps := conv.(kinds.Capabilities)
+	add, err := caps.Attr("add")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	list := add.(*skylark.List)
+	if list.Len() == 0 {
+		t.Fatalf("Expected a non-empty list of capabilities")
+	}
+	if list.Index(0).(skylark.String) != skylark.String("my-capability") {
+		t.Fatalf("Expected a list containing my-capability, found %#+v", list.Index(0))
 	}
 }

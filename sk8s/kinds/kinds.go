@@ -97,8 +97,8 @@ func derefStruct(v reflect.Value) (reflect.Value, bool, error) {
 		v = v.Elem()
 		t = v.Type()
 		k = t.Kind()
-		if k != reflect.Struct {
-			return v, false, skylark.TypeErrorf("expected struct type or pointer to struct type")
+		if debugfieldtypes && k != reflect.Struct {
+			return v, false, skylark.TypeErrorf("expected struct type or pointer to struct type, found %s", t.Name())
 		}
 	}
 	return v, true, nil
@@ -149,10 +149,16 @@ func isPrimitive(t reflect.Type) bool {
 	case reflect.Bool, reflect.Int32, reflect.Int64, reflect.Float32, reflect.Float64, reflect.String:
 		return true
 	}
-	if _, ok := commonTypes[t]; ok {
+	if commonTypes[t] {
 		return true
 	}
 	return false
+}
+
+var stringType = reflect.TypeOf("")
+
+func toSkylarkString(v interface{}) skylark.Value {
+	return skylark.String(string(reflect.ValueOf(v).Convert(stringType).Interface().(string)))
 }
 
 func sliceToSkylarkValue(slice reflect.Value, t reflect.Type) (skylark.Value, bool) {
@@ -172,12 +178,17 @@ func sliceToSkylarkValue(slice reflect.Value, t reflect.Type) (skylark.Value, bo
 	}
 	cast, ok := g2s[t]
 	if !ok {
-		return skylark.None, false
+		if t.Kind() != reflect.String {
+			return skylark.None, false
+		}
+		// Some types embed a slice of a named type with string as its underlying kind;
+		// []string is handled as a primitive elsewhere:
+		cast = toSkylarkString
 	}
 	n := slice.Len()
 	elems := make([]skylark.Value, n)
 	for i := 0; i < n; i++ {
-		elems[i] = cast(slice.Index(i))
+		elems[i] = cast(slice.Index(i).Interface())
 	}
 	return skylark.NewList(elems), true
 }
@@ -253,15 +264,11 @@ func primitiveToSkylarkValue(r reflect.Value, t reflect.Type) (skylark.Value, bo
 		return skylark.None, true
 	default:
 		if t.Kind() == reflect.String {
-			return skylark.String(v.(string)), true
+			return toSkylarkString(v), true
 		}
 	}
 
 	return skylark.None, false
-}
-
-func genericStringMethod(v interface{}) string {
-	return fmt.Sprintf("%#+v", v)
 }
 
 func toStringList(ss []string) *skylark.List {
@@ -270,28 +277,6 @@ func toStringList(ss []string) *skylark.List {
 		elems[i] = skylark.String(s)
 	}
 	return skylark.NewList(elems)
-}
-
-// called by generated code:
-
-func unhashable(kind string) error {
-	return skylark.TypeErrorf("unhashable type: " + kind)
-}
-
-func uninitialized(kind, attr string) error {
-	return skylark.ValueErrorf("can not set attribute \"%s\" in uninitialized %s", attr, kind)
-}
-func isfrozen(kind, attr string) error {
-	return skylark.ValueErrorf("can not set attribute \"%s\" in frozen %s", attr, kind)
-}
-func cantset(kind, attr string) error {
-	return skylark.ValueErrorf("can not set attribute \"%s\" in %s", attr, kind)
-}
-func missingattr(kind, attr string) error {
-	return skylark.ValueErrorf("missing attribute \"%s\" in %s", attr, kind)
-}
-func cantseterr(kind, attr string, err error) error {
-	return skylark.ValueErrorf("can not set attribute \"%s\" in %s: %s", attr, kind, err.Error())
 }
 
 // returns a list of attribute names
@@ -385,4 +370,30 @@ func setFieldTypes(t reflect.Type, fields, inlineFields map[string]util.FieldSpe
 	}
 	sort.Strings(attrs)
 	return attrs
+}
+
+// called by generated code:
+
+func genericStringMethod(v interface{}) string {
+	return fmt.Sprintf("%#+v", v)
+}
+
+func unhashable(kind string) error {
+	return skylark.TypeErrorf("unhashable type: " + kind)
+}
+
+func uninitialized(kind, attr string) error {
+	return skylark.ValueErrorf("can not set attribute \"%s\" in uninitialized %s", attr, kind)
+}
+func isfrozen(kind, attr string) error {
+	return skylark.ValueErrorf("can not set attribute \"%s\" in frozen %s", attr, kind)
+}
+func cantset(kind, attr string) error {
+	return skylark.ValueErrorf("can not set attribute \"%s\" in %s", attr, kind)
+}
+func missingattr(kind, attr string) error {
+	return skylark.ValueErrorf("missing attribute \"%s\" in %s", attr, kind)
+}
+func cantseterr(kind, attr string, err error) error {
+	return skylark.ValueErrorf("can not set attribute \"%s\" in %s: %s", attr, kind, err.Error())
 }
