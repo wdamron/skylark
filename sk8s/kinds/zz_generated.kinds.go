@@ -48,8 +48,8 @@ func init() {
 func createAWSElasticBlockStoreVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for AWSElasticBlockStoreVolumeSource
 }
-func (t AWSElasticBlockStoreVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t AWSElasticBlockStoreVolumeSource) Package() util.Package       { return util.V1 }
+func (t AWSElasticBlockStoreVolumeSource) Underlying() interface{} { return t.V }
+func (t AWSElasticBlockStoreVolumeSource) Package() util.Package   { return util.V1 }
 func (t AWSElasticBlockStoreVolumeSource) Type() string {
 	return "k8s_v1_AWSElasticBlockStoreVolumeSource"
 }
@@ -69,6 +69,9 @@ func (t AWSElasticBlockStoreVolumeSource) Attr(name string) (skylark.Value, erro
 		return getAttr(reflect.ValueOf(u), name, AWSElasticBlockStoreVolumeSource_fields, AWSElasticBlockStoreVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t AWSElasticBlockStoreVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, AWSElasticBlockStoreVolumeSource_fields, AWSElasticBlockStoreVolumeSource_inline)
 }
 
 type Affinity struct {
@@ -102,13 +105,13 @@ func init() {
 func createAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Affinity
 }
-func (t Affinity) UnderlyingKind() interface{} { return t.V }
-func (t Affinity) Package() util.Package       { return util.V1 }
-func (t Affinity) Type() string                { return "k8s_v1_Affinity" }
-func (t Affinity) String() string              { return t.V.String() }
-func (t Affinity) Freeze()                     {} // TODO
-func (t Affinity) Truth() skylark.Bool         { return skylark.True }
-func (t Affinity) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Affinity) Underlying() interface{} { return t.V }
+func (t Affinity) Package() util.Package   { return util.V1 }
+func (t Affinity) Type() string            { return "k8s_v1_Affinity" }
+func (t Affinity) String() string          { return t.V.String() }
+func (t Affinity) Freeze()                 {} // TODO
+func (t Affinity) Truth() skylark.Bool     { return skylark.True }
+func (t Affinity) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Affinity) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Affinity)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -119,6 +122,9 @@ func (t Affinity) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Affinity_fields, Affinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Affinity) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Affinity_fields, Affinity_inline)
 }
 
 type AttachedVolume struct {
@@ -152,13 +158,13 @@ func init() {
 func createAttachedVolume(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for AttachedVolume
 }
-func (t AttachedVolume) UnderlyingKind() interface{} { return t.V }
-func (t AttachedVolume) Package() util.Package       { return util.V1 }
-func (t AttachedVolume) Type() string                { return "k8s_v1_AttachedVolume" }
-func (t AttachedVolume) String() string              { return t.V.String() }
-func (t AttachedVolume) Freeze()                     {} // TODO
-func (t AttachedVolume) Truth() skylark.Bool         { return skylark.True }
-func (t AttachedVolume) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t AttachedVolume) Underlying() interface{} { return t.V }
+func (t AttachedVolume) Package() util.Package   { return util.V1 }
+func (t AttachedVolume) Type() string            { return "k8s_v1_AttachedVolume" }
+func (t AttachedVolume) String() string          { return t.V.String() }
+func (t AttachedVolume) Freeze()                 {} // TODO
+func (t AttachedVolume) Truth() skylark.Bool     { return skylark.True }
+func (t AttachedVolume) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t AttachedVolume) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*AttachedVolume)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -169,6 +175,9 @@ func (t AttachedVolume) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, AttachedVolume_fields, AttachedVolume_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t AttachedVolume) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, AttachedVolume_fields, AttachedVolume_inline)
 }
 
 type AvoidPods struct {
@@ -202,13 +211,13 @@ func init() {
 func createAvoidPods(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for AvoidPods
 }
-func (t AvoidPods) UnderlyingKind() interface{} { return t.V }
-func (t AvoidPods) Package() util.Package       { return util.V1 }
-func (t AvoidPods) Type() string                { return "k8s_v1_AvoidPods" }
-func (t AvoidPods) String() string              { return t.V.String() }
-func (t AvoidPods) Freeze()                     {} // TODO
-func (t AvoidPods) Truth() skylark.Bool         { return skylark.True }
-func (t AvoidPods) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t AvoidPods) Underlying() interface{} { return t.V }
+func (t AvoidPods) Package() util.Package   { return util.V1 }
+func (t AvoidPods) Type() string            { return "k8s_v1_AvoidPods" }
+func (t AvoidPods) String() string          { return t.V.String() }
+func (t AvoidPods) Freeze()                 {} // TODO
+func (t AvoidPods) Truth() skylark.Bool     { return skylark.True }
+func (t AvoidPods) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t AvoidPods) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*AvoidPods)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -219,6 +228,9 @@ func (t AvoidPods) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, AvoidPods_fields, AvoidPods_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t AvoidPods) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, AvoidPods_fields, AvoidPods_inline)
 }
 
 type AzureDiskVolumeSource struct {
@@ -252,13 +264,13 @@ func init() {
 func createAzureDiskVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for AzureDiskVolumeSource
 }
-func (t AzureDiskVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t AzureDiskVolumeSource) Package() util.Package       { return util.V1 }
-func (t AzureDiskVolumeSource) Type() string                { return "k8s_v1_AzureDiskVolumeSource" }
-func (t AzureDiskVolumeSource) String() string              { return t.V.String() }
-func (t AzureDiskVolumeSource) Freeze()                     {} // TODO
-func (t AzureDiskVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t AzureDiskVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t AzureDiskVolumeSource) Underlying() interface{} { return t.V }
+func (t AzureDiskVolumeSource) Package() util.Package   { return util.V1 }
+func (t AzureDiskVolumeSource) Type() string            { return "k8s_v1_AzureDiskVolumeSource" }
+func (t AzureDiskVolumeSource) String() string          { return t.V.String() }
+func (t AzureDiskVolumeSource) Freeze()                 {} // TODO
+func (t AzureDiskVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t AzureDiskVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t AzureDiskVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*AzureDiskVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -269,6 +281,9 @@ func (t AzureDiskVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, AzureDiskVolumeSource_fields, AzureDiskVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t AzureDiskVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, AzureDiskVolumeSource_fields, AzureDiskVolumeSource_inline)
 }
 
 type AzureFilePersistentVolumeSource struct {
@@ -302,8 +317,8 @@ func init() {
 func createAzureFilePersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for AzureFilePersistentVolumeSource
 }
-func (t AzureFilePersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t AzureFilePersistentVolumeSource) Package() util.Package       { return util.V1 }
+func (t AzureFilePersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t AzureFilePersistentVolumeSource) Package() util.Package   { return util.V1 }
 func (t AzureFilePersistentVolumeSource) Type() string {
 	return "k8s_v1_AzureFilePersistentVolumeSource"
 }
@@ -323,6 +338,9 @@ func (t AzureFilePersistentVolumeSource) Attr(name string) (skylark.Value, error
 		return getAttr(reflect.ValueOf(u), name, AzureFilePersistentVolumeSource_fields, AzureFilePersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t AzureFilePersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, AzureFilePersistentVolumeSource_fields, AzureFilePersistentVolumeSource_inline)
 }
 
 type AzureFileVolumeSource struct {
@@ -356,13 +374,13 @@ func init() {
 func createAzureFileVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for AzureFileVolumeSource
 }
-func (t AzureFileVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t AzureFileVolumeSource) Package() util.Package       { return util.V1 }
-func (t AzureFileVolumeSource) Type() string                { return "k8s_v1_AzureFileVolumeSource" }
-func (t AzureFileVolumeSource) String() string              { return t.V.String() }
-func (t AzureFileVolumeSource) Freeze()                     {} // TODO
-func (t AzureFileVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t AzureFileVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t AzureFileVolumeSource) Underlying() interface{} { return t.V }
+func (t AzureFileVolumeSource) Package() util.Package   { return util.V1 }
+func (t AzureFileVolumeSource) Type() string            { return "k8s_v1_AzureFileVolumeSource" }
+func (t AzureFileVolumeSource) String() string          { return t.V.String() }
+func (t AzureFileVolumeSource) Freeze()                 {} // TODO
+func (t AzureFileVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t AzureFileVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t AzureFileVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*AzureFileVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -373,6 +391,9 @@ func (t AzureFileVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, AzureFileVolumeSource_fields, AzureFileVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t AzureFileVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, AzureFileVolumeSource_fields, AzureFileVolumeSource_inline)
 }
 
 type Binding struct {
@@ -406,13 +427,13 @@ func init() {
 func createBinding(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Binding
 }
-func (t Binding) UnderlyingKind() interface{} { return t.V }
-func (t Binding) Package() util.Package       { return util.V1 }
-func (t Binding) Type() string                { return "k8s_v1_Binding" }
-func (t Binding) String() string              { return t.V.String() }
-func (t Binding) Freeze()                     {} // TODO
-func (t Binding) Truth() skylark.Bool         { return skylark.True }
-func (t Binding) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Binding) Underlying() interface{} { return t.V }
+func (t Binding) Package() util.Package   { return util.V1 }
+func (t Binding) Type() string            { return "k8s_v1_Binding" }
+func (t Binding) String() string          { return t.V.String() }
+func (t Binding) Freeze()                 {} // TODO
+func (t Binding) Truth() skylark.Bool     { return skylark.True }
+func (t Binding) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Binding) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Binding)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -423,6 +444,9 @@ func (t Binding) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Binding_fields, Binding_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Binding) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Binding_fields, Binding_inline)
 }
 
 type CSIPersistentVolumeSource struct {
@@ -456,13 +480,13 @@ func init() {
 func createCSIPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for CSIPersistentVolumeSource
 }
-func (t CSIPersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t CSIPersistentVolumeSource) Package() util.Package       { return util.V1 }
-func (t CSIPersistentVolumeSource) Type() string                { return "k8s_v1_CSIPersistentVolumeSource" }
-func (t CSIPersistentVolumeSource) String() string              { return t.V.String() }
-func (t CSIPersistentVolumeSource) Freeze()                     {} // TODO
-func (t CSIPersistentVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t CSIPersistentVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t CSIPersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t CSIPersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t CSIPersistentVolumeSource) Type() string            { return "k8s_v1_CSIPersistentVolumeSource" }
+func (t CSIPersistentVolumeSource) String() string          { return t.V.String() }
+func (t CSIPersistentVolumeSource) Freeze()                 {} // TODO
+func (t CSIPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t CSIPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t CSIPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*CSIPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -473,6 +497,9 @@ func (t CSIPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, CSIPersistentVolumeSource_fields, CSIPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t CSIPersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, CSIPersistentVolumeSource_fields, CSIPersistentVolumeSource_inline)
 }
 
 type Capabilities struct {
@@ -506,13 +533,13 @@ func init() {
 func createCapabilities(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Capabilities
 }
-func (t Capabilities) UnderlyingKind() interface{} { return t.V }
-func (t Capabilities) Package() util.Package       { return util.V1 }
-func (t Capabilities) Type() string                { return "k8s_v1_Capabilities" }
-func (t Capabilities) String() string              { return t.V.String() }
-func (t Capabilities) Freeze()                     {} // TODO
-func (t Capabilities) Truth() skylark.Bool         { return skylark.True }
-func (t Capabilities) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Capabilities) Underlying() interface{} { return t.V }
+func (t Capabilities) Package() util.Package   { return util.V1 }
+func (t Capabilities) Type() string            { return "k8s_v1_Capabilities" }
+func (t Capabilities) String() string          { return t.V.String() }
+func (t Capabilities) Freeze()                 {} // TODO
+func (t Capabilities) Truth() skylark.Bool     { return skylark.True }
+func (t Capabilities) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Capabilities) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Capabilities)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -523,6 +550,9 @@ func (t Capabilities) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Capabilities_fields, Capabilities_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Capabilities) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Capabilities_fields, Capabilities_inline)
 }
 
 type CephFSPersistentVolumeSource struct {
@@ -556,13 +586,13 @@ func init() {
 func createCephFSPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for CephFSPersistentVolumeSource
 }
-func (t CephFSPersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t CephFSPersistentVolumeSource) Package() util.Package       { return util.V1 }
-func (t CephFSPersistentVolumeSource) Type() string                { return "k8s_v1_CephFSPersistentVolumeSource" }
-func (t CephFSPersistentVolumeSource) String() string              { return t.V.String() }
-func (t CephFSPersistentVolumeSource) Freeze()                     {} // TODO
-func (t CephFSPersistentVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t CephFSPersistentVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t CephFSPersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t CephFSPersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t CephFSPersistentVolumeSource) Type() string            { return "k8s_v1_CephFSPersistentVolumeSource" }
+func (t CephFSPersistentVolumeSource) String() string          { return t.V.String() }
+func (t CephFSPersistentVolumeSource) Freeze()                 {} // TODO
+func (t CephFSPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t CephFSPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t CephFSPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*CephFSPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -573,6 +603,9 @@ func (t CephFSPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, CephFSPersistentVolumeSource_fields, CephFSPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t CephFSPersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, CephFSPersistentVolumeSource_fields, CephFSPersistentVolumeSource_inline)
 }
 
 type CephFSVolumeSource struct {
@@ -606,13 +639,13 @@ func init() {
 func createCephFSVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for CephFSVolumeSource
 }
-func (t CephFSVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t CephFSVolumeSource) Package() util.Package       { return util.V1 }
-func (t CephFSVolumeSource) Type() string                { return "k8s_v1_CephFSVolumeSource" }
-func (t CephFSVolumeSource) String() string              { return t.V.String() }
-func (t CephFSVolumeSource) Freeze()                     {} // TODO
-func (t CephFSVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t CephFSVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t CephFSVolumeSource) Underlying() interface{} { return t.V }
+func (t CephFSVolumeSource) Package() util.Package   { return util.V1 }
+func (t CephFSVolumeSource) Type() string            { return "k8s_v1_CephFSVolumeSource" }
+func (t CephFSVolumeSource) String() string          { return t.V.String() }
+func (t CephFSVolumeSource) Freeze()                 {} // TODO
+func (t CephFSVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t CephFSVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t CephFSVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*CephFSVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -623,6 +656,9 @@ func (t CephFSVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, CephFSVolumeSource_fields, CephFSVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t CephFSVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, CephFSVolumeSource_fields, CephFSVolumeSource_inline)
 }
 
 type CinderPersistentVolumeSource struct {
@@ -656,13 +692,13 @@ func init() {
 func createCinderPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for CinderPersistentVolumeSource
 }
-func (t CinderPersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t CinderPersistentVolumeSource) Package() util.Package       { return util.V1 }
-func (t CinderPersistentVolumeSource) Type() string                { return "k8s_v1_CinderPersistentVolumeSource" }
-func (t CinderPersistentVolumeSource) String() string              { return t.V.String() }
-func (t CinderPersistentVolumeSource) Freeze()                     {} // TODO
-func (t CinderPersistentVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t CinderPersistentVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t CinderPersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t CinderPersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t CinderPersistentVolumeSource) Type() string            { return "k8s_v1_CinderPersistentVolumeSource" }
+func (t CinderPersistentVolumeSource) String() string          { return t.V.String() }
+func (t CinderPersistentVolumeSource) Freeze()                 {} // TODO
+func (t CinderPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t CinderPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t CinderPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*CinderPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -673,6 +709,9 @@ func (t CinderPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, CinderPersistentVolumeSource_fields, CinderPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t CinderPersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, CinderPersistentVolumeSource_fields, CinderPersistentVolumeSource_inline)
 }
 
 type CinderVolumeSource struct {
@@ -706,13 +745,13 @@ func init() {
 func createCinderVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for CinderVolumeSource
 }
-func (t CinderVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t CinderVolumeSource) Package() util.Package       { return util.V1 }
-func (t CinderVolumeSource) Type() string                { return "k8s_v1_CinderVolumeSource" }
-func (t CinderVolumeSource) String() string              { return t.V.String() }
-func (t CinderVolumeSource) Freeze()                     {} // TODO
-func (t CinderVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t CinderVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t CinderVolumeSource) Underlying() interface{} { return t.V }
+func (t CinderVolumeSource) Package() util.Package   { return util.V1 }
+func (t CinderVolumeSource) Type() string            { return "k8s_v1_CinderVolumeSource" }
+func (t CinderVolumeSource) String() string          { return t.V.String() }
+func (t CinderVolumeSource) Freeze()                 {} // TODO
+func (t CinderVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t CinderVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t CinderVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*CinderVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -723,6 +762,9 @@ func (t CinderVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, CinderVolumeSource_fields, CinderVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t CinderVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, CinderVolumeSource_fields, CinderVolumeSource_inline)
 }
 
 type ClientIPConfig struct {
@@ -756,13 +798,13 @@ func init() {
 func createClientIPConfig(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ClientIPConfig
 }
-func (t ClientIPConfig) UnderlyingKind() interface{} { return t.V }
-func (t ClientIPConfig) Package() util.Package       { return util.V1 }
-func (t ClientIPConfig) Type() string                { return "k8s_v1_ClientIPConfig" }
-func (t ClientIPConfig) String() string              { return t.V.String() }
-func (t ClientIPConfig) Freeze()                     {} // TODO
-func (t ClientIPConfig) Truth() skylark.Bool         { return skylark.True }
-func (t ClientIPConfig) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ClientIPConfig) Underlying() interface{} { return t.V }
+func (t ClientIPConfig) Package() util.Package   { return util.V1 }
+func (t ClientIPConfig) Type() string            { return "k8s_v1_ClientIPConfig" }
+func (t ClientIPConfig) String() string          { return t.V.String() }
+func (t ClientIPConfig) Freeze()                 {} // TODO
+func (t ClientIPConfig) Truth() skylark.Bool     { return skylark.True }
+func (t ClientIPConfig) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ClientIPConfig) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ClientIPConfig)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -773,6 +815,9 @@ func (t ClientIPConfig) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ClientIPConfig_fields, ClientIPConfig_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ClientIPConfig) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ClientIPConfig_fields, ClientIPConfig_inline)
 }
 
 type ComponentCondition struct {
@@ -806,13 +851,13 @@ func init() {
 func createComponentCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ComponentCondition
 }
-func (t ComponentCondition) UnderlyingKind() interface{} { return t.V }
-func (t ComponentCondition) Package() util.Package       { return util.V1 }
-func (t ComponentCondition) Type() string                { return "k8s_v1_ComponentCondition" }
-func (t ComponentCondition) String() string              { return t.V.String() }
-func (t ComponentCondition) Freeze()                     {} // TODO
-func (t ComponentCondition) Truth() skylark.Bool         { return skylark.True }
-func (t ComponentCondition) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ComponentCondition) Underlying() interface{} { return t.V }
+func (t ComponentCondition) Package() util.Package   { return util.V1 }
+func (t ComponentCondition) Type() string            { return "k8s_v1_ComponentCondition" }
+func (t ComponentCondition) String() string          { return t.V.String() }
+func (t ComponentCondition) Freeze()                 {} // TODO
+func (t ComponentCondition) Truth() skylark.Bool     { return skylark.True }
+func (t ComponentCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ComponentCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ComponentCondition)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -823,6 +868,9 @@ func (t ComponentCondition) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ComponentCondition_fields, ComponentCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ComponentCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ComponentCondition_fields, ComponentCondition_inline)
 }
 
 type ComponentStatus struct {
@@ -856,13 +904,13 @@ func init() {
 func createComponentStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ComponentStatus
 }
-func (t ComponentStatus) UnderlyingKind() interface{} { return t.V }
-func (t ComponentStatus) Package() util.Package       { return util.V1 }
-func (t ComponentStatus) Type() string                { return "k8s_v1_ComponentStatus" }
-func (t ComponentStatus) String() string              { return t.V.String() }
-func (t ComponentStatus) Freeze()                     {} // TODO
-func (t ComponentStatus) Truth() skylark.Bool         { return skylark.True }
-func (t ComponentStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ComponentStatus) Underlying() interface{} { return t.V }
+func (t ComponentStatus) Package() util.Package   { return util.V1 }
+func (t ComponentStatus) Type() string            { return "k8s_v1_ComponentStatus" }
+func (t ComponentStatus) String() string          { return t.V.String() }
+func (t ComponentStatus) Freeze()                 {} // TODO
+func (t ComponentStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ComponentStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ComponentStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ComponentStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -873,6 +921,9 @@ func (t ComponentStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ComponentStatus_fields, ComponentStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ComponentStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ComponentStatus_fields, ComponentStatus_inline)
 }
 
 type ComponentStatusList struct {
@@ -906,13 +957,13 @@ func init() {
 func createComponentStatusList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ComponentStatusList
 }
-func (t ComponentStatusList) UnderlyingKind() interface{} { return t.V }
-func (t ComponentStatusList) Package() util.Package       { return util.V1 }
-func (t ComponentStatusList) Type() string                { return "k8s_v1_ComponentStatusList" }
-func (t ComponentStatusList) String() string              { return t.V.String() }
-func (t ComponentStatusList) Freeze()                     {} // TODO
-func (t ComponentStatusList) Truth() skylark.Bool         { return skylark.True }
-func (t ComponentStatusList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ComponentStatusList) Underlying() interface{} { return t.V }
+func (t ComponentStatusList) Package() util.Package   { return util.V1 }
+func (t ComponentStatusList) Type() string            { return "k8s_v1_ComponentStatusList" }
+func (t ComponentStatusList) String() string          { return t.V.String() }
+func (t ComponentStatusList) Freeze()                 {} // TODO
+func (t ComponentStatusList) Truth() skylark.Bool     { return skylark.True }
+func (t ComponentStatusList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ComponentStatusList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ComponentStatusList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -923,6 +974,9 @@ func (t ComponentStatusList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ComponentStatusList_fields, ComponentStatusList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ComponentStatusList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ComponentStatusList_fields, ComponentStatusList_inline)
 }
 
 type ConfigMap struct {
@@ -956,13 +1010,13 @@ func init() {
 func createConfigMap(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ConfigMap
 }
-func (t ConfigMap) UnderlyingKind() interface{} { return t.V }
-func (t ConfigMap) Package() util.Package       { return util.V1 }
-func (t ConfigMap) Type() string                { return "k8s_v1_ConfigMap" }
-func (t ConfigMap) String() string              { return t.V.String() }
-func (t ConfigMap) Freeze()                     {} // TODO
-func (t ConfigMap) Truth() skylark.Bool         { return skylark.True }
-func (t ConfigMap) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ConfigMap) Underlying() interface{} { return t.V }
+func (t ConfigMap) Package() util.Package   { return util.V1 }
+func (t ConfigMap) Type() string            { return "k8s_v1_ConfigMap" }
+func (t ConfigMap) String() string          { return t.V.String() }
+func (t ConfigMap) Freeze()                 {} // TODO
+func (t ConfigMap) Truth() skylark.Bool     { return skylark.True }
+func (t ConfigMap) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ConfigMap) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ConfigMap)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -973,6 +1027,9 @@ func (t ConfigMap) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ConfigMap_fields, ConfigMap_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ConfigMap) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ConfigMap_fields, ConfigMap_inline)
 }
 
 type ConfigMapEnvSource struct {
@@ -1006,13 +1063,13 @@ func init() {
 func createConfigMapEnvSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ConfigMapEnvSource
 }
-func (t ConfigMapEnvSource) UnderlyingKind() interface{} { return t.V }
-func (t ConfigMapEnvSource) Package() util.Package       { return util.V1 }
-func (t ConfigMapEnvSource) Type() string                { return "k8s_v1_ConfigMapEnvSource" }
-func (t ConfigMapEnvSource) String() string              { return t.V.String() }
-func (t ConfigMapEnvSource) Freeze()                     {} // TODO
-func (t ConfigMapEnvSource) Truth() skylark.Bool         { return skylark.True }
-func (t ConfigMapEnvSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ConfigMapEnvSource) Underlying() interface{} { return t.V }
+func (t ConfigMapEnvSource) Package() util.Package   { return util.V1 }
+func (t ConfigMapEnvSource) Type() string            { return "k8s_v1_ConfigMapEnvSource" }
+func (t ConfigMapEnvSource) String() string          { return t.V.String() }
+func (t ConfigMapEnvSource) Freeze()                 {} // TODO
+func (t ConfigMapEnvSource) Truth() skylark.Bool     { return skylark.True }
+func (t ConfigMapEnvSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ConfigMapEnvSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ConfigMapEnvSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1023,6 +1080,9 @@ func (t ConfigMapEnvSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ConfigMapEnvSource_fields, ConfigMapEnvSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ConfigMapEnvSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ConfigMapEnvSource_fields, ConfigMapEnvSource_inline)
 }
 
 type ConfigMapKeySelector struct {
@@ -1056,13 +1116,13 @@ func init() {
 func createConfigMapKeySelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ConfigMapKeySelector
 }
-func (t ConfigMapKeySelector) UnderlyingKind() interface{} { return t.V }
-func (t ConfigMapKeySelector) Package() util.Package       { return util.V1 }
-func (t ConfigMapKeySelector) Type() string                { return "k8s_v1_ConfigMapKeySelector" }
-func (t ConfigMapKeySelector) String() string              { return t.V.String() }
-func (t ConfigMapKeySelector) Freeze()                     {} // TODO
-func (t ConfigMapKeySelector) Truth() skylark.Bool         { return skylark.True }
-func (t ConfigMapKeySelector) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ConfigMapKeySelector) Underlying() interface{} { return t.V }
+func (t ConfigMapKeySelector) Package() util.Package   { return util.V1 }
+func (t ConfigMapKeySelector) Type() string            { return "k8s_v1_ConfigMapKeySelector" }
+func (t ConfigMapKeySelector) String() string          { return t.V.String() }
+func (t ConfigMapKeySelector) Freeze()                 {} // TODO
+func (t ConfigMapKeySelector) Truth() skylark.Bool     { return skylark.True }
+func (t ConfigMapKeySelector) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ConfigMapKeySelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ConfigMapKeySelector)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1073,6 +1133,9 @@ func (t ConfigMapKeySelector) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ConfigMapKeySelector_fields, ConfigMapKeySelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ConfigMapKeySelector) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ConfigMapKeySelector_fields, ConfigMapKeySelector_inline)
 }
 
 type ConfigMapList struct {
@@ -1106,13 +1169,13 @@ func init() {
 func createConfigMapList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ConfigMapList
 }
-func (t ConfigMapList) UnderlyingKind() interface{} { return t.V }
-func (t ConfigMapList) Package() util.Package       { return util.V1 }
-func (t ConfigMapList) Type() string                { return "k8s_v1_ConfigMapList" }
-func (t ConfigMapList) String() string              { return t.V.String() }
-func (t ConfigMapList) Freeze()                     {} // TODO
-func (t ConfigMapList) Truth() skylark.Bool         { return skylark.True }
-func (t ConfigMapList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ConfigMapList) Underlying() interface{} { return t.V }
+func (t ConfigMapList) Package() util.Package   { return util.V1 }
+func (t ConfigMapList) Type() string            { return "k8s_v1_ConfigMapList" }
+func (t ConfigMapList) String() string          { return t.V.String() }
+func (t ConfigMapList) Freeze()                 {} // TODO
+func (t ConfigMapList) Truth() skylark.Bool     { return skylark.True }
+func (t ConfigMapList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ConfigMapList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ConfigMapList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1123,6 +1186,9 @@ func (t ConfigMapList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ConfigMapList_fields, ConfigMapList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ConfigMapList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ConfigMapList_fields, ConfigMapList_inline)
 }
 
 type ConfigMapNodeConfigSource struct {
@@ -1156,13 +1222,13 @@ func init() {
 func createConfigMapNodeConfigSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ConfigMapNodeConfigSource
 }
-func (t ConfigMapNodeConfigSource) UnderlyingKind() interface{} { return t.V }
-func (t ConfigMapNodeConfigSource) Package() util.Package       { return util.V1 }
-func (t ConfigMapNodeConfigSource) Type() string                { return "k8s_v1_ConfigMapNodeConfigSource" }
-func (t ConfigMapNodeConfigSource) String() string              { return t.V.String() }
-func (t ConfigMapNodeConfigSource) Freeze()                     {} // TODO
-func (t ConfigMapNodeConfigSource) Truth() skylark.Bool         { return skylark.True }
-func (t ConfigMapNodeConfigSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ConfigMapNodeConfigSource) Underlying() interface{} { return t.V }
+func (t ConfigMapNodeConfigSource) Package() util.Package   { return util.V1 }
+func (t ConfigMapNodeConfigSource) Type() string            { return "k8s_v1_ConfigMapNodeConfigSource" }
+func (t ConfigMapNodeConfigSource) String() string          { return t.V.String() }
+func (t ConfigMapNodeConfigSource) Freeze()                 {} // TODO
+func (t ConfigMapNodeConfigSource) Truth() skylark.Bool     { return skylark.True }
+func (t ConfigMapNodeConfigSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ConfigMapNodeConfigSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ConfigMapNodeConfigSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1173,6 +1239,9 @@ func (t ConfigMapNodeConfigSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ConfigMapNodeConfigSource_fields, ConfigMapNodeConfigSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ConfigMapNodeConfigSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ConfigMapNodeConfigSource_fields, ConfigMapNodeConfigSource_inline)
 }
 
 type ConfigMapProjection struct {
@@ -1206,13 +1275,13 @@ func init() {
 func createConfigMapProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ConfigMapProjection
 }
-func (t ConfigMapProjection) UnderlyingKind() interface{} { return t.V }
-func (t ConfigMapProjection) Package() util.Package       { return util.V1 }
-func (t ConfigMapProjection) Type() string                { return "k8s_v1_ConfigMapProjection" }
-func (t ConfigMapProjection) String() string              { return t.V.String() }
-func (t ConfigMapProjection) Freeze()                     {} // TODO
-func (t ConfigMapProjection) Truth() skylark.Bool         { return skylark.True }
-func (t ConfigMapProjection) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ConfigMapProjection) Underlying() interface{} { return t.V }
+func (t ConfigMapProjection) Package() util.Package   { return util.V1 }
+func (t ConfigMapProjection) Type() string            { return "k8s_v1_ConfigMapProjection" }
+func (t ConfigMapProjection) String() string          { return t.V.String() }
+func (t ConfigMapProjection) Freeze()                 {} // TODO
+func (t ConfigMapProjection) Truth() skylark.Bool     { return skylark.True }
+func (t ConfigMapProjection) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ConfigMapProjection) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ConfigMapProjection)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1223,6 +1292,9 @@ func (t ConfigMapProjection) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ConfigMapProjection_fields, ConfigMapProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ConfigMapProjection) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ConfigMapProjection_fields, ConfigMapProjection_inline)
 }
 
 type ConfigMapVolumeSource struct {
@@ -1256,13 +1328,13 @@ func init() {
 func createConfigMapVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ConfigMapVolumeSource
 }
-func (t ConfigMapVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t ConfigMapVolumeSource) Package() util.Package       { return util.V1 }
-func (t ConfigMapVolumeSource) Type() string                { return "k8s_v1_ConfigMapVolumeSource" }
-func (t ConfigMapVolumeSource) String() string              { return t.V.String() }
-func (t ConfigMapVolumeSource) Freeze()                     {} // TODO
-func (t ConfigMapVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t ConfigMapVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ConfigMapVolumeSource) Underlying() interface{} { return t.V }
+func (t ConfigMapVolumeSource) Package() util.Package   { return util.V1 }
+func (t ConfigMapVolumeSource) Type() string            { return "k8s_v1_ConfigMapVolumeSource" }
+func (t ConfigMapVolumeSource) String() string          { return t.V.String() }
+func (t ConfigMapVolumeSource) Freeze()                 {} // TODO
+func (t ConfigMapVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t ConfigMapVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ConfigMapVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ConfigMapVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1273,6 +1345,9 @@ func (t ConfigMapVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ConfigMapVolumeSource_fields, ConfigMapVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ConfigMapVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ConfigMapVolumeSource_fields, ConfigMapVolumeSource_inline)
 }
 
 type Container struct {
@@ -1306,13 +1381,13 @@ func init() {
 func createContainer(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Container
 }
-func (t Container) UnderlyingKind() interface{} { return t.V }
-func (t Container) Package() util.Package       { return util.V1 }
-func (t Container) Type() string                { return "k8s_v1_Container" }
-func (t Container) String() string              { return t.V.String() }
-func (t Container) Freeze()                     {} // TODO
-func (t Container) Truth() skylark.Bool         { return skylark.True }
-func (t Container) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Container) Underlying() interface{} { return t.V }
+func (t Container) Package() util.Package   { return util.V1 }
+func (t Container) Type() string            { return "k8s_v1_Container" }
+func (t Container) String() string          { return t.V.String() }
+func (t Container) Freeze()                 {} // TODO
+func (t Container) Truth() skylark.Bool     { return skylark.True }
+func (t Container) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Container) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Container)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1323,6 +1398,9 @@ func (t Container) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Container_fields, Container_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Container) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Container_fields, Container_inline)
 }
 
 type ContainerImage struct {
@@ -1356,13 +1434,13 @@ func init() {
 func createContainerImage(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ContainerImage
 }
-func (t ContainerImage) UnderlyingKind() interface{} { return t.V }
-func (t ContainerImage) Package() util.Package       { return util.V1 }
-func (t ContainerImage) Type() string                { return "k8s_v1_ContainerImage" }
-func (t ContainerImage) String() string              { return t.V.String() }
-func (t ContainerImage) Freeze()                     {} // TODO
-func (t ContainerImage) Truth() skylark.Bool         { return skylark.True }
-func (t ContainerImage) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ContainerImage) Underlying() interface{} { return t.V }
+func (t ContainerImage) Package() util.Package   { return util.V1 }
+func (t ContainerImage) Type() string            { return "k8s_v1_ContainerImage" }
+func (t ContainerImage) String() string          { return t.V.String() }
+func (t ContainerImage) Freeze()                 {} // TODO
+func (t ContainerImage) Truth() skylark.Bool     { return skylark.True }
+func (t ContainerImage) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ContainerImage) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ContainerImage)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1373,6 +1451,9 @@ func (t ContainerImage) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ContainerImage_fields, ContainerImage_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ContainerImage) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ContainerImage_fields, ContainerImage_inline)
 }
 
 type ContainerPort struct {
@@ -1406,13 +1487,13 @@ func init() {
 func createContainerPort(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ContainerPort
 }
-func (t ContainerPort) UnderlyingKind() interface{} { return t.V }
-func (t ContainerPort) Package() util.Package       { return util.V1 }
-func (t ContainerPort) Type() string                { return "k8s_v1_ContainerPort" }
-func (t ContainerPort) String() string              { return t.V.String() }
-func (t ContainerPort) Freeze()                     {} // TODO
-func (t ContainerPort) Truth() skylark.Bool         { return skylark.True }
-func (t ContainerPort) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ContainerPort) Underlying() interface{} { return t.V }
+func (t ContainerPort) Package() util.Package   { return util.V1 }
+func (t ContainerPort) Type() string            { return "k8s_v1_ContainerPort" }
+func (t ContainerPort) String() string          { return t.V.String() }
+func (t ContainerPort) Freeze()                 {} // TODO
+func (t ContainerPort) Truth() skylark.Bool     { return skylark.True }
+func (t ContainerPort) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ContainerPort) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ContainerPort)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1423,6 +1504,9 @@ func (t ContainerPort) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ContainerPort_fields, ContainerPort_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ContainerPort) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ContainerPort_fields, ContainerPort_inline)
 }
 
 type ContainerState struct {
@@ -1456,13 +1540,13 @@ func init() {
 func createContainerState(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ContainerState
 }
-func (t ContainerState) UnderlyingKind() interface{} { return t.V }
-func (t ContainerState) Package() util.Package       { return util.V1 }
-func (t ContainerState) Type() string                { return "k8s_v1_ContainerState" }
-func (t ContainerState) String() string              { return t.V.String() }
-func (t ContainerState) Freeze()                     {} // TODO
-func (t ContainerState) Truth() skylark.Bool         { return skylark.True }
-func (t ContainerState) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ContainerState) Underlying() interface{} { return t.V }
+func (t ContainerState) Package() util.Package   { return util.V1 }
+func (t ContainerState) Type() string            { return "k8s_v1_ContainerState" }
+func (t ContainerState) String() string          { return t.V.String() }
+func (t ContainerState) Freeze()                 {} // TODO
+func (t ContainerState) Truth() skylark.Bool     { return skylark.True }
+func (t ContainerState) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ContainerState) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ContainerState)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1473,6 +1557,9 @@ func (t ContainerState) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ContainerState_fields, ContainerState_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ContainerState) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ContainerState_fields, ContainerState_inline)
 }
 
 type ContainerStateRunning struct {
@@ -1506,13 +1593,13 @@ func init() {
 func createContainerStateRunning(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ContainerStateRunning
 }
-func (t ContainerStateRunning) UnderlyingKind() interface{} { return t.V }
-func (t ContainerStateRunning) Package() util.Package       { return util.V1 }
-func (t ContainerStateRunning) Type() string                { return "k8s_v1_ContainerStateRunning" }
-func (t ContainerStateRunning) String() string              { return t.V.String() }
-func (t ContainerStateRunning) Freeze()                     {} // TODO
-func (t ContainerStateRunning) Truth() skylark.Bool         { return skylark.True }
-func (t ContainerStateRunning) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ContainerStateRunning) Underlying() interface{} { return t.V }
+func (t ContainerStateRunning) Package() util.Package   { return util.V1 }
+func (t ContainerStateRunning) Type() string            { return "k8s_v1_ContainerStateRunning" }
+func (t ContainerStateRunning) String() string          { return t.V.String() }
+func (t ContainerStateRunning) Freeze()                 {} // TODO
+func (t ContainerStateRunning) Truth() skylark.Bool     { return skylark.True }
+func (t ContainerStateRunning) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ContainerStateRunning) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ContainerStateRunning)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1523,6 +1610,9 @@ func (t ContainerStateRunning) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ContainerStateRunning_fields, ContainerStateRunning_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ContainerStateRunning) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ContainerStateRunning_fields, ContainerStateRunning_inline)
 }
 
 type ContainerStateTerminated struct {
@@ -1556,13 +1646,13 @@ func init() {
 func createContainerStateTerminated(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ContainerStateTerminated
 }
-func (t ContainerStateTerminated) UnderlyingKind() interface{} { return t.V }
-func (t ContainerStateTerminated) Package() util.Package       { return util.V1 }
-func (t ContainerStateTerminated) Type() string                { return "k8s_v1_ContainerStateTerminated" }
-func (t ContainerStateTerminated) String() string              { return t.V.String() }
-func (t ContainerStateTerminated) Freeze()                     {} // TODO
-func (t ContainerStateTerminated) Truth() skylark.Bool         { return skylark.True }
-func (t ContainerStateTerminated) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ContainerStateTerminated) Underlying() interface{} { return t.V }
+func (t ContainerStateTerminated) Package() util.Package   { return util.V1 }
+func (t ContainerStateTerminated) Type() string            { return "k8s_v1_ContainerStateTerminated" }
+func (t ContainerStateTerminated) String() string          { return t.V.String() }
+func (t ContainerStateTerminated) Freeze()                 {} // TODO
+func (t ContainerStateTerminated) Truth() skylark.Bool     { return skylark.True }
+func (t ContainerStateTerminated) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ContainerStateTerminated) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ContainerStateTerminated)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1573,6 +1663,9 @@ func (t ContainerStateTerminated) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ContainerStateTerminated_fields, ContainerStateTerminated_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ContainerStateTerminated) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ContainerStateTerminated_fields, ContainerStateTerminated_inline)
 }
 
 type ContainerStateWaiting struct {
@@ -1606,13 +1699,13 @@ func init() {
 func createContainerStateWaiting(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ContainerStateWaiting
 }
-func (t ContainerStateWaiting) UnderlyingKind() interface{} { return t.V }
-func (t ContainerStateWaiting) Package() util.Package       { return util.V1 }
-func (t ContainerStateWaiting) Type() string                { return "k8s_v1_ContainerStateWaiting" }
-func (t ContainerStateWaiting) String() string              { return t.V.String() }
-func (t ContainerStateWaiting) Freeze()                     {} // TODO
-func (t ContainerStateWaiting) Truth() skylark.Bool         { return skylark.True }
-func (t ContainerStateWaiting) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ContainerStateWaiting) Underlying() interface{} { return t.V }
+func (t ContainerStateWaiting) Package() util.Package   { return util.V1 }
+func (t ContainerStateWaiting) Type() string            { return "k8s_v1_ContainerStateWaiting" }
+func (t ContainerStateWaiting) String() string          { return t.V.String() }
+func (t ContainerStateWaiting) Freeze()                 {} // TODO
+func (t ContainerStateWaiting) Truth() skylark.Bool     { return skylark.True }
+func (t ContainerStateWaiting) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ContainerStateWaiting) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ContainerStateWaiting)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1623,6 +1716,9 @@ func (t ContainerStateWaiting) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ContainerStateWaiting_fields, ContainerStateWaiting_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ContainerStateWaiting) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ContainerStateWaiting_fields, ContainerStateWaiting_inline)
 }
 
 type ContainerStatus struct {
@@ -1656,13 +1752,13 @@ func init() {
 func createContainerStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ContainerStatus
 }
-func (t ContainerStatus) UnderlyingKind() interface{} { return t.V }
-func (t ContainerStatus) Package() util.Package       { return util.V1 }
-func (t ContainerStatus) Type() string                { return "k8s_v1_ContainerStatus" }
-func (t ContainerStatus) String() string              { return t.V.String() }
-func (t ContainerStatus) Freeze()                     {} // TODO
-func (t ContainerStatus) Truth() skylark.Bool         { return skylark.True }
-func (t ContainerStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ContainerStatus) Underlying() interface{} { return t.V }
+func (t ContainerStatus) Package() util.Package   { return util.V1 }
+func (t ContainerStatus) Type() string            { return "k8s_v1_ContainerStatus" }
+func (t ContainerStatus) String() string          { return t.V.String() }
+func (t ContainerStatus) Freeze()                 {} // TODO
+func (t ContainerStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ContainerStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ContainerStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ContainerStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1673,6 +1769,9 @@ func (t ContainerStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ContainerStatus_fields, ContainerStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ContainerStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ContainerStatus_fields, ContainerStatus_inline)
 }
 
 type DaemonEndpoint struct {
@@ -1706,13 +1805,13 @@ func init() {
 func createDaemonEndpoint(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for DaemonEndpoint
 }
-func (t DaemonEndpoint) UnderlyingKind() interface{} { return t.V }
-func (t DaemonEndpoint) Package() util.Package       { return util.V1 }
-func (t DaemonEndpoint) Type() string                { return "k8s_v1_DaemonEndpoint" }
-func (t DaemonEndpoint) String() string              { return t.V.String() }
-func (t DaemonEndpoint) Freeze()                     {} // TODO
-func (t DaemonEndpoint) Truth() skylark.Bool         { return skylark.True }
-func (t DaemonEndpoint) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t DaemonEndpoint) Underlying() interface{} { return t.V }
+func (t DaemonEndpoint) Package() util.Package   { return util.V1 }
+func (t DaemonEndpoint) Type() string            { return "k8s_v1_DaemonEndpoint" }
+func (t DaemonEndpoint) String() string          { return t.V.String() }
+func (t DaemonEndpoint) Freeze()                 {} // TODO
+func (t DaemonEndpoint) Truth() skylark.Bool     { return skylark.True }
+func (t DaemonEndpoint) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t DaemonEndpoint) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*DaemonEndpoint)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1723,6 +1822,9 @@ func (t DaemonEndpoint) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, DaemonEndpoint_fields, DaemonEndpoint_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DaemonEndpoint) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DaemonEndpoint_fields, DaemonEndpoint_inline)
 }
 
 type DownwardAPIProjection struct {
@@ -1756,13 +1858,13 @@ func init() {
 func createDownwardAPIProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for DownwardAPIProjection
 }
-func (t DownwardAPIProjection) UnderlyingKind() interface{} { return t.V }
-func (t DownwardAPIProjection) Package() util.Package       { return util.V1 }
-func (t DownwardAPIProjection) Type() string                { return "k8s_v1_DownwardAPIProjection" }
-func (t DownwardAPIProjection) String() string              { return t.V.String() }
-func (t DownwardAPIProjection) Freeze()                     {} // TODO
-func (t DownwardAPIProjection) Truth() skylark.Bool         { return skylark.True }
-func (t DownwardAPIProjection) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t DownwardAPIProjection) Underlying() interface{} { return t.V }
+func (t DownwardAPIProjection) Package() util.Package   { return util.V1 }
+func (t DownwardAPIProjection) Type() string            { return "k8s_v1_DownwardAPIProjection" }
+func (t DownwardAPIProjection) String() string          { return t.V.String() }
+func (t DownwardAPIProjection) Freeze()                 {} // TODO
+func (t DownwardAPIProjection) Truth() skylark.Bool     { return skylark.True }
+func (t DownwardAPIProjection) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t DownwardAPIProjection) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*DownwardAPIProjection)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1773,6 +1875,9 @@ func (t DownwardAPIProjection) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, DownwardAPIProjection_fields, DownwardAPIProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DownwardAPIProjection) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DownwardAPIProjection_fields, DownwardAPIProjection_inline)
 }
 
 type DownwardAPIVolumeFile struct {
@@ -1806,13 +1911,13 @@ func init() {
 func createDownwardAPIVolumeFile(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for DownwardAPIVolumeFile
 }
-func (t DownwardAPIVolumeFile) UnderlyingKind() interface{} { return t.V }
-func (t DownwardAPIVolumeFile) Package() util.Package       { return util.V1 }
-func (t DownwardAPIVolumeFile) Type() string                { return "k8s_v1_DownwardAPIVolumeFile" }
-func (t DownwardAPIVolumeFile) String() string              { return t.V.String() }
-func (t DownwardAPIVolumeFile) Freeze()                     {} // TODO
-func (t DownwardAPIVolumeFile) Truth() skylark.Bool         { return skylark.True }
-func (t DownwardAPIVolumeFile) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t DownwardAPIVolumeFile) Underlying() interface{} { return t.V }
+func (t DownwardAPIVolumeFile) Package() util.Package   { return util.V1 }
+func (t DownwardAPIVolumeFile) Type() string            { return "k8s_v1_DownwardAPIVolumeFile" }
+func (t DownwardAPIVolumeFile) String() string          { return t.V.String() }
+func (t DownwardAPIVolumeFile) Freeze()                 {} // TODO
+func (t DownwardAPIVolumeFile) Truth() skylark.Bool     { return skylark.True }
+func (t DownwardAPIVolumeFile) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t DownwardAPIVolumeFile) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*DownwardAPIVolumeFile)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1823,6 +1928,9 @@ func (t DownwardAPIVolumeFile) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, DownwardAPIVolumeFile_fields, DownwardAPIVolumeFile_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DownwardAPIVolumeFile) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DownwardAPIVolumeFile_fields, DownwardAPIVolumeFile_inline)
 }
 
 type DownwardAPIVolumeSource struct {
@@ -1856,13 +1964,13 @@ func init() {
 func createDownwardAPIVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for DownwardAPIVolumeSource
 }
-func (t DownwardAPIVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t DownwardAPIVolumeSource) Package() util.Package       { return util.V1 }
-func (t DownwardAPIVolumeSource) Type() string                { return "k8s_v1_DownwardAPIVolumeSource" }
-func (t DownwardAPIVolumeSource) String() string              { return t.V.String() }
-func (t DownwardAPIVolumeSource) Freeze()                     {} // TODO
-func (t DownwardAPIVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t DownwardAPIVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t DownwardAPIVolumeSource) Underlying() interface{} { return t.V }
+func (t DownwardAPIVolumeSource) Package() util.Package   { return util.V1 }
+func (t DownwardAPIVolumeSource) Type() string            { return "k8s_v1_DownwardAPIVolumeSource" }
+func (t DownwardAPIVolumeSource) String() string          { return t.V.String() }
+func (t DownwardAPIVolumeSource) Freeze()                 {} // TODO
+func (t DownwardAPIVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t DownwardAPIVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t DownwardAPIVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*DownwardAPIVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1873,6 +1981,9 @@ func (t DownwardAPIVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, DownwardAPIVolumeSource_fields, DownwardAPIVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DownwardAPIVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DownwardAPIVolumeSource_fields, DownwardAPIVolumeSource_inline)
 }
 
 type EmptyDirVolumeSource struct {
@@ -1906,13 +2017,13 @@ func init() {
 func createEmptyDirVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EmptyDirVolumeSource
 }
-func (t EmptyDirVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t EmptyDirVolumeSource) Package() util.Package       { return util.V1 }
-func (t EmptyDirVolumeSource) Type() string                { return "k8s_v1_EmptyDirVolumeSource" }
-func (t EmptyDirVolumeSource) String() string              { return t.V.String() }
-func (t EmptyDirVolumeSource) Freeze()                     {} // TODO
-func (t EmptyDirVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t EmptyDirVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EmptyDirVolumeSource) Underlying() interface{} { return t.V }
+func (t EmptyDirVolumeSource) Package() util.Package   { return util.V1 }
+func (t EmptyDirVolumeSource) Type() string            { return "k8s_v1_EmptyDirVolumeSource" }
+func (t EmptyDirVolumeSource) String() string          { return t.V.String() }
+func (t EmptyDirVolumeSource) Freeze()                 {} // TODO
+func (t EmptyDirVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t EmptyDirVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EmptyDirVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EmptyDirVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1923,6 +2034,9 @@ func (t EmptyDirVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EmptyDirVolumeSource_fields, EmptyDirVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EmptyDirVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EmptyDirVolumeSource_fields, EmptyDirVolumeSource_inline)
 }
 
 type EndpointAddress struct {
@@ -1956,13 +2070,13 @@ func init() {
 func createEndpointAddress(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EndpointAddress
 }
-func (t EndpointAddress) UnderlyingKind() interface{} { return t.V }
-func (t EndpointAddress) Package() util.Package       { return util.V1 }
-func (t EndpointAddress) Type() string                { return "k8s_v1_EndpointAddress" }
-func (t EndpointAddress) String() string              { return t.V.String() }
-func (t EndpointAddress) Freeze()                     {} // TODO
-func (t EndpointAddress) Truth() skylark.Bool         { return skylark.True }
-func (t EndpointAddress) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EndpointAddress) Underlying() interface{} { return t.V }
+func (t EndpointAddress) Package() util.Package   { return util.V1 }
+func (t EndpointAddress) Type() string            { return "k8s_v1_EndpointAddress" }
+func (t EndpointAddress) String() string          { return t.V.String() }
+func (t EndpointAddress) Freeze()                 {} // TODO
+func (t EndpointAddress) Truth() skylark.Bool     { return skylark.True }
+func (t EndpointAddress) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EndpointAddress) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EndpointAddress)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -1973,6 +2087,9 @@ func (t EndpointAddress) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EndpointAddress_fields, EndpointAddress_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EndpointAddress) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EndpointAddress_fields, EndpointAddress_inline)
 }
 
 type EndpointPort struct {
@@ -2006,13 +2123,13 @@ func init() {
 func createEndpointPort(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EndpointPort
 }
-func (t EndpointPort) UnderlyingKind() interface{} { return t.V }
-func (t EndpointPort) Package() util.Package       { return util.V1 }
-func (t EndpointPort) Type() string                { return "k8s_v1_EndpointPort" }
-func (t EndpointPort) String() string              { return t.V.String() }
-func (t EndpointPort) Freeze()                     {} // TODO
-func (t EndpointPort) Truth() skylark.Bool         { return skylark.True }
-func (t EndpointPort) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EndpointPort) Underlying() interface{} { return t.V }
+func (t EndpointPort) Package() util.Package   { return util.V1 }
+func (t EndpointPort) Type() string            { return "k8s_v1_EndpointPort" }
+func (t EndpointPort) String() string          { return t.V.String() }
+func (t EndpointPort) Freeze()                 {} // TODO
+func (t EndpointPort) Truth() skylark.Bool     { return skylark.True }
+func (t EndpointPort) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EndpointPort) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EndpointPort)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2023,6 +2140,9 @@ func (t EndpointPort) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EndpointPort_fields, EndpointPort_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EndpointPort) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EndpointPort_fields, EndpointPort_inline)
 }
 
 type EndpointSubset struct {
@@ -2056,13 +2176,13 @@ func init() {
 func createEndpointSubset(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EndpointSubset
 }
-func (t EndpointSubset) UnderlyingKind() interface{} { return t.V }
-func (t EndpointSubset) Package() util.Package       { return util.V1 }
-func (t EndpointSubset) Type() string                { return "k8s_v1_EndpointSubset" }
-func (t EndpointSubset) String() string              { return t.V.String() }
-func (t EndpointSubset) Freeze()                     {} // TODO
-func (t EndpointSubset) Truth() skylark.Bool         { return skylark.True }
-func (t EndpointSubset) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EndpointSubset) Underlying() interface{} { return t.V }
+func (t EndpointSubset) Package() util.Package   { return util.V1 }
+func (t EndpointSubset) Type() string            { return "k8s_v1_EndpointSubset" }
+func (t EndpointSubset) String() string          { return t.V.String() }
+func (t EndpointSubset) Freeze()                 {} // TODO
+func (t EndpointSubset) Truth() skylark.Bool     { return skylark.True }
+func (t EndpointSubset) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EndpointSubset) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EndpointSubset)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2073,6 +2193,9 @@ func (t EndpointSubset) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EndpointSubset_fields, EndpointSubset_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EndpointSubset) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EndpointSubset_fields, EndpointSubset_inline)
 }
 
 type Endpoints struct {
@@ -2106,13 +2229,13 @@ func init() {
 func createEndpoints(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Endpoints
 }
-func (t Endpoints) UnderlyingKind() interface{} { return t.V }
-func (t Endpoints) Package() util.Package       { return util.V1 }
-func (t Endpoints) Type() string                { return "k8s_v1_Endpoints" }
-func (t Endpoints) String() string              { return t.V.String() }
-func (t Endpoints) Freeze()                     {} // TODO
-func (t Endpoints) Truth() skylark.Bool         { return skylark.True }
-func (t Endpoints) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Endpoints) Underlying() interface{} { return t.V }
+func (t Endpoints) Package() util.Package   { return util.V1 }
+func (t Endpoints) Type() string            { return "k8s_v1_Endpoints" }
+func (t Endpoints) String() string          { return t.V.String() }
+func (t Endpoints) Freeze()                 {} // TODO
+func (t Endpoints) Truth() skylark.Bool     { return skylark.True }
+func (t Endpoints) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Endpoints) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Endpoints)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2123,6 +2246,9 @@ func (t Endpoints) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Endpoints_fields, Endpoints_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Endpoints) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Endpoints_fields, Endpoints_inline)
 }
 
 type EndpointsList struct {
@@ -2156,13 +2282,13 @@ func init() {
 func createEndpointsList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EndpointsList
 }
-func (t EndpointsList) UnderlyingKind() interface{} { return t.V }
-func (t EndpointsList) Package() util.Package       { return util.V1 }
-func (t EndpointsList) Type() string                { return "k8s_v1_EndpointsList" }
-func (t EndpointsList) String() string              { return t.V.String() }
-func (t EndpointsList) Freeze()                     {} // TODO
-func (t EndpointsList) Truth() skylark.Bool         { return skylark.True }
-func (t EndpointsList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EndpointsList) Underlying() interface{} { return t.V }
+func (t EndpointsList) Package() util.Package   { return util.V1 }
+func (t EndpointsList) Type() string            { return "k8s_v1_EndpointsList" }
+func (t EndpointsList) String() string          { return t.V.String() }
+func (t EndpointsList) Freeze()                 {} // TODO
+func (t EndpointsList) Truth() skylark.Bool     { return skylark.True }
+func (t EndpointsList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EndpointsList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EndpointsList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2173,6 +2299,9 @@ func (t EndpointsList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EndpointsList_fields, EndpointsList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EndpointsList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EndpointsList_fields, EndpointsList_inline)
 }
 
 type EnvFromSource struct {
@@ -2206,13 +2335,13 @@ func init() {
 func createEnvFromSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EnvFromSource
 }
-func (t EnvFromSource) UnderlyingKind() interface{} { return t.V }
-func (t EnvFromSource) Package() util.Package       { return util.V1 }
-func (t EnvFromSource) Type() string                { return "k8s_v1_EnvFromSource" }
-func (t EnvFromSource) String() string              { return t.V.String() }
-func (t EnvFromSource) Freeze()                     {} // TODO
-func (t EnvFromSource) Truth() skylark.Bool         { return skylark.True }
-func (t EnvFromSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EnvFromSource) Underlying() interface{} { return t.V }
+func (t EnvFromSource) Package() util.Package   { return util.V1 }
+func (t EnvFromSource) Type() string            { return "k8s_v1_EnvFromSource" }
+func (t EnvFromSource) String() string          { return t.V.String() }
+func (t EnvFromSource) Freeze()                 {} // TODO
+func (t EnvFromSource) Truth() skylark.Bool     { return skylark.True }
+func (t EnvFromSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EnvFromSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EnvFromSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2223,6 +2352,9 @@ func (t EnvFromSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EnvFromSource_fields, EnvFromSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EnvFromSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EnvFromSource_fields, EnvFromSource_inline)
 }
 
 type EnvVar struct {
@@ -2256,13 +2388,13 @@ func init() {
 func createEnvVar(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EnvVar
 }
-func (t EnvVar) UnderlyingKind() interface{} { return t.V }
-func (t EnvVar) Package() util.Package       { return util.V1 }
-func (t EnvVar) Type() string                { return "k8s_v1_EnvVar" }
-func (t EnvVar) String() string              { return t.V.String() }
-func (t EnvVar) Freeze()                     {} // TODO
-func (t EnvVar) Truth() skylark.Bool         { return skylark.True }
-func (t EnvVar) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EnvVar) Underlying() interface{} { return t.V }
+func (t EnvVar) Package() util.Package   { return util.V1 }
+func (t EnvVar) Type() string            { return "k8s_v1_EnvVar" }
+func (t EnvVar) String() string          { return t.V.String() }
+func (t EnvVar) Freeze()                 {} // TODO
+func (t EnvVar) Truth() skylark.Bool     { return skylark.True }
+func (t EnvVar) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EnvVar) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EnvVar)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2273,6 +2405,9 @@ func (t EnvVar) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EnvVar_fields, EnvVar_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EnvVar) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EnvVar_fields, EnvVar_inline)
 }
 
 type EnvVarSource struct {
@@ -2306,13 +2441,13 @@ func init() {
 func createEnvVarSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EnvVarSource
 }
-func (t EnvVarSource) UnderlyingKind() interface{} { return t.V }
-func (t EnvVarSource) Package() util.Package       { return util.V1 }
-func (t EnvVarSource) Type() string                { return "k8s_v1_EnvVarSource" }
-func (t EnvVarSource) String() string              { return t.V.String() }
-func (t EnvVarSource) Freeze()                     {} // TODO
-func (t EnvVarSource) Truth() skylark.Bool         { return skylark.True }
-func (t EnvVarSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EnvVarSource) Underlying() interface{} { return t.V }
+func (t EnvVarSource) Package() util.Package   { return util.V1 }
+func (t EnvVarSource) Type() string            { return "k8s_v1_EnvVarSource" }
+func (t EnvVarSource) String() string          { return t.V.String() }
+func (t EnvVarSource) Freeze()                 {} // TODO
+func (t EnvVarSource) Truth() skylark.Bool     { return skylark.True }
+func (t EnvVarSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EnvVarSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EnvVarSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2323,6 +2458,9 @@ func (t EnvVarSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EnvVarSource_fields, EnvVarSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EnvVarSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EnvVarSource_fields, EnvVarSource_inline)
 }
 
 type Event struct {
@@ -2356,13 +2494,13 @@ func init() {
 func createEvent(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Event
 }
-func (t Event) UnderlyingKind() interface{} { return t.V }
-func (t Event) Package() util.Package       { return util.V1 }
-func (t Event) Type() string                { return "k8s_v1_Event" }
-func (t Event) String() string              { return t.V.String() }
-func (t Event) Freeze()                     {} // TODO
-func (t Event) Truth() skylark.Bool         { return skylark.True }
-func (t Event) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Event) Underlying() interface{} { return t.V }
+func (t Event) Package() util.Package   { return util.V1 }
+func (t Event) Type() string            { return "k8s_v1_Event" }
+func (t Event) String() string          { return t.V.String() }
+func (t Event) Freeze()                 {} // TODO
+func (t Event) Truth() skylark.Bool     { return skylark.True }
+func (t Event) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Event) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Event)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2373,6 +2511,9 @@ func (t Event) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Event_fields, Event_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Event) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Event_fields, Event_inline)
 }
 
 type EventList struct {
@@ -2406,13 +2547,13 @@ func init() {
 func createEventList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EventList
 }
-func (t EventList) UnderlyingKind() interface{} { return t.V }
-func (t EventList) Package() util.Package       { return util.V1 }
-func (t EventList) Type() string                { return "k8s_v1_EventList" }
-func (t EventList) String() string              { return t.V.String() }
-func (t EventList) Freeze()                     {} // TODO
-func (t EventList) Truth() skylark.Bool         { return skylark.True }
-func (t EventList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EventList) Underlying() interface{} { return t.V }
+func (t EventList) Package() util.Package   { return util.V1 }
+func (t EventList) Type() string            { return "k8s_v1_EventList" }
+func (t EventList) String() string          { return t.V.String() }
+func (t EventList) Freeze()                 {} // TODO
+func (t EventList) Truth() skylark.Bool     { return skylark.True }
+func (t EventList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EventList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EventList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2423,6 +2564,9 @@ func (t EventList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EventList_fields, EventList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EventList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EventList_fields, EventList_inline)
 }
 
 type EventSeries struct {
@@ -2456,13 +2600,13 @@ func init() {
 func createEventSeries(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EventSeries
 }
-func (t EventSeries) UnderlyingKind() interface{} { return t.V }
-func (t EventSeries) Package() util.Package       { return util.V1 }
-func (t EventSeries) Type() string                { return "k8s_v1_EventSeries" }
-func (t EventSeries) String() string              { return t.V.String() }
-func (t EventSeries) Freeze()                     {} // TODO
-func (t EventSeries) Truth() skylark.Bool         { return skylark.True }
-func (t EventSeries) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EventSeries) Underlying() interface{} { return t.V }
+func (t EventSeries) Package() util.Package   { return util.V1 }
+func (t EventSeries) Type() string            { return "k8s_v1_EventSeries" }
+func (t EventSeries) String() string          { return t.V.String() }
+func (t EventSeries) Freeze()                 {} // TODO
+func (t EventSeries) Truth() skylark.Bool     { return skylark.True }
+func (t EventSeries) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EventSeries) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EventSeries)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2473,6 +2617,9 @@ func (t EventSeries) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EventSeries_fields, EventSeries_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EventSeries) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EventSeries_fields, EventSeries_inline)
 }
 
 type EventSource struct {
@@ -2506,13 +2653,13 @@ func init() {
 func createEventSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for EventSource
 }
-func (t EventSource) UnderlyingKind() interface{} { return t.V }
-func (t EventSource) Package() util.Package       { return util.V1 }
-func (t EventSource) Type() string                { return "k8s_v1_EventSource" }
-func (t EventSource) String() string              { return t.V.String() }
-func (t EventSource) Freeze()                     {} // TODO
-func (t EventSource) Truth() skylark.Bool         { return skylark.True }
-func (t EventSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t EventSource) Underlying() interface{} { return t.V }
+func (t EventSource) Package() util.Package   { return util.V1 }
+func (t EventSource) Type() string            { return "k8s_v1_EventSource" }
+func (t EventSource) String() string          { return t.V.String() }
+func (t EventSource) Freeze()                 {} // TODO
+func (t EventSource) Truth() skylark.Bool     { return skylark.True }
+func (t EventSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t EventSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*EventSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2523,6 +2670,9 @@ func (t EventSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, EventSource_fields, EventSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t EventSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, EventSource_fields, EventSource_inline)
 }
 
 type ExecAction struct {
@@ -2556,13 +2706,13 @@ func init() {
 func createExecAction(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ExecAction
 }
-func (t ExecAction) UnderlyingKind() interface{} { return t.V }
-func (t ExecAction) Package() util.Package       { return util.V1 }
-func (t ExecAction) Type() string                { return "k8s_v1_ExecAction" }
-func (t ExecAction) String() string              { return t.V.String() }
-func (t ExecAction) Freeze()                     {} // TODO
-func (t ExecAction) Truth() skylark.Bool         { return skylark.True }
-func (t ExecAction) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ExecAction) Underlying() interface{} { return t.V }
+func (t ExecAction) Package() util.Package   { return util.V1 }
+func (t ExecAction) Type() string            { return "k8s_v1_ExecAction" }
+func (t ExecAction) String() string          { return t.V.String() }
+func (t ExecAction) Freeze()                 {} // TODO
+func (t ExecAction) Truth() skylark.Bool     { return skylark.True }
+func (t ExecAction) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ExecAction) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ExecAction)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2573,6 +2723,9 @@ func (t ExecAction) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ExecAction_fields, ExecAction_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ExecAction) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ExecAction_fields, ExecAction_inline)
 }
 
 type FCVolumeSource struct {
@@ -2606,13 +2759,13 @@ func init() {
 func createFCVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for FCVolumeSource
 }
-func (t FCVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t FCVolumeSource) Package() util.Package       { return util.V1 }
-func (t FCVolumeSource) Type() string                { return "k8s_v1_FCVolumeSource" }
-func (t FCVolumeSource) String() string              { return t.V.String() }
-func (t FCVolumeSource) Freeze()                     {} // TODO
-func (t FCVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t FCVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t FCVolumeSource) Underlying() interface{} { return t.V }
+func (t FCVolumeSource) Package() util.Package   { return util.V1 }
+func (t FCVolumeSource) Type() string            { return "k8s_v1_FCVolumeSource" }
+func (t FCVolumeSource) String() string          { return t.V.String() }
+func (t FCVolumeSource) Freeze()                 {} // TODO
+func (t FCVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t FCVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t FCVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*FCVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2623,6 +2776,9 @@ func (t FCVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, FCVolumeSource_fields, FCVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t FCVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, FCVolumeSource_fields, FCVolumeSource_inline)
 }
 
 type FlexPersistentVolumeSource struct {
@@ -2656,13 +2812,13 @@ func init() {
 func createFlexPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for FlexPersistentVolumeSource
 }
-func (t FlexPersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t FlexPersistentVolumeSource) Package() util.Package       { return util.V1 }
-func (t FlexPersistentVolumeSource) Type() string                { return "k8s_v1_FlexPersistentVolumeSource" }
-func (t FlexPersistentVolumeSource) String() string              { return t.V.String() }
-func (t FlexPersistentVolumeSource) Freeze()                     {} // TODO
-func (t FlexPersistentVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t FlexPersistentVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t FlexPersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t FlexPersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t FlexPersistentVolumeSource) Type() string            { return "k8s_v1_FlexPersistentVolumeSource" }
+func (t FlexPersistentVolumeSource) String() string          { return t.V.String() }
+func (t FlexPersistentVolumeSource) Freeze()                 {} // TODO
+func (t FlexPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t FlexPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t FlexPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*FlexPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2673,6 +2829,9 @@ func (t FlexPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, FlexPersistentVolumeSource_fields, FlexPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t FlexPersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, FlexPersistentVolumeSource_fields, FlexPersistentVolumeSource_inline)
 }
 
 type FlexVolumeSource struct {
@@ -2706,13 +2865,13 @@ func init() {
 func createFlexVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for FlexVolumeSource
 }
-func (t FlexVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t FlexVolumeSource) Package() util.Package       { return util.V1 }
-func (t FlexVolumeSource) Type() string                { return "k8s_v1_FlexVolumeSource" }
-func (t FlexVolumeSource) String() string              { return t.V.String() }
-func (t FlexVolumeSource) Freeze()                     {} // TODO
-func (t FlexVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t FlexVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t FlexVolumeSource) Underlying() interface{} { return t.V }
+func (t FlexVolumeSource) Package() util.Package   { return util.V1 }
+func (t FlexVolumeSource) Type() string            { return "k8s_v1_FlexVolumeSource" }
+func (t FlexVolumeSource) String() string          { return t.V.String() }
+func (t FlexVolumeSource) Freeze()                 {} // TODO
+func (t FlexVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t FlexVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t FlexVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*FlexVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2723,6 +2882,9 @@ func (t FlexVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, FlexVolumeSource_fields, FlexVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t FlexVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, FlexVolumeSource_fields, FlexVolumeSource_inline)
 }
 
 type FlockerVolumeSource struct {
@@ -2756,13 +2918,13 @@ func init() {
 func createFlockerVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for FlockerVolumeSource
 }
-func (t FlockerVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t FlockerVolumeSource) Package() util.Package       { return util.V1 }
-func (t FlockerVolumeSource) Type() string                { return "k8s_v1_FlockerVolumeSource" }
-func (t FlockerVolumeSource) String() string              { return t.V.String() }
-func (t FlockerVolumeSource) Freeze()                     {} // TODO
-func (t FlockerVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t FlockerVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t FlockerVolumeSource) Underlying() interface{} { return t.V }
+func (t FlockerVolumeSource) Package() util.Package   { return util.V1 }
+func (t FlockerVolumeSource) Type() string            { return "k8s_v1_FlockerVolumeSource" }
+func (t FlockerVolumeSource) String() string          { return t.V.String() }
+func (t FlockerVolumeSource) Freeze()                 {} // TODO
+func (t FlockerVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t FlockerVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t FlockerVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*FlockerVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2773,6 +2935,9 @@ func (t FlockerVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, FlockerVolumeSource_fields, FlockerVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t FlockerVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, FlockerVolumeSource_fields, FlockerVolumeSource_inline)
 }
 
 type GCEPersistentDiskVolumeSource struct {
@@ -2806,13 +2971,13 @@ func init() {
 func createGCEPersistentDiskVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GCEPersistentDiskVolumeSource
 }
-func (t GCEPersistentDiskVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t GCEPersistentDiskVolumeSource) Package() util.Package       { return util.V1 }
-func (t GCEPersistentDiskVolumeSource) Type() string                { return "k8s_v1_GCEPersistentDiskVolumeSource" }
-func (t GCEPersistentDiskVolumeSource) String() string              { return t.V.String() }
-func (t GCEPersistentDiskVolumeSource) Freeze()                     {} // TODO
-func (t GCEPersistentDiskVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t GCEPersistentDiskVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GCEPersistentDiskVolumeSource) Underlying() interface{} { return t.V }
+func (t GCEPersistentDiskVolumeSource) Package() util.Package   { return util.V1 }
+func (t GCEPersistentDiskVolumeSource) Type() string            { return "k8s_v1_GCEPersistentDiskVolumeSource" }
+func (t GCEPersistentDiskVolumeSource) String() string          { return t.V.String() }
+func (t GCEPersistentDiskVolumeSource) Freeze()                 {} // TODO
+func (t GCEPersistentDiskVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t GCEPersistentDiskVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GCEPersistentDiskVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GCEPersistentDiskVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2825,6 +2990,9 @@ func (t GCEPersistentDiskVolumeSource) Attr(name string) (skylark.Value, error) 
 		return getAttr(reflect.ValueOf(u), name, GCEPersistentDiskVolumeSource_fields, GCEPersistentDiskVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GCEPersistentDiskVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GCEPersistentDiskVolumeSource_fields, GCEPersistentDiskVolumeSource_inline)
 }
 
 type GitRepoVolumeSource struct {
@@ -2858,13 +3026,13 @@ func init() {
 func createGitRepoVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GitRepoVolumeSource
 }
-func (t GitRepoVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t GitRepoVolumeSource) Package() util.Package       { return util.V1 }
-func (t GitRepoVolumeSource) Type() string                { return "k8s_v1_GitRepoVolumeSource" }
-func (t GitRepoVolumeSource) String() string              { return t.V.String() }
-func (t GitRepoVolumeSource) Freeze()                     {} // TODO
-func (t GitRepoVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t GitRepoVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GitRepoVolumeSource) Underlying() interface{} { return t.V }
+func (t GitRepoVolumeSource) Package() util.Package   { return util.V1 }
+func (t GitRepoVolumeSource) Type() string            { return "k8s_v1_GitRepoVolumeSource" }
+func (t GitRepoVolumeSource) String() string          { return t.V.String() }
+func (t GitRepoVolumeSource) Freeze()                 {} // TODO
+func (t GitRepoVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t GitRepoVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GitRepoVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GitRepoVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2875,6 +3043,9 @@ func (t GitRepoVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, GitRepoVolumeSource_fields, GitRepoVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GitRepoVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GitRepoVolumeSource_fields, GitRepoVolumeSource_inline)
 }
 
 type GlusterfsVolumeSource struct {
@@ -2908,13 +3079,13 @@ func init() {
 func createGlusterfsVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GlusterfsVolumeSource
 }
-func (t GlusterfsVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t GlusterfsVolumeSource) Package() util.Package       { return util.V1 }
-func (t GlusterfsVolumeSource) Type() string                { return "k8s_v1_GlusterfsVolumeSource" }
-func (t GlusterfsVolumeSource) String() string              { return t.V.String() }
-func (t GlusterfsVolumeSource) Freeze()                     {} // TODO
-func (t GlusterfsVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t GlusterfsVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GlusterfsVolumeSource) Underlying() interface{} { return t.V }
+func (t GlusterfsVolumeSource) Package() util.Package   { return util.V1 }
+func (t GlusterfsVolumeSource) Type() string            { return "k8s_v1_GlusterfsVolumeSource" }
+func (t GlusterfsVolumeSource) String() string          { return t.V.String() }
+func (t GlusterfsVolumeSource) Freeze()                 {} // TODO
+func (t GlusterfsVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t GlusterfsVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GlusterfsVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GlusterfsVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2925,6 +3096,9 @@ func (t GlusterfsVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, GlusterfsVolumeSource_fields, GlusterfsVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GlusterfsVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GlusterfsVolumeSource_fields, GlusterfsVolumeSource_inline)
 }
 
 type HTTPGetAction struct {
@@ -2958,13 +3132,13 @@ func init() {
 func createHTTPGetAction(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for HTTPGetAction
 }
-func (t HTTPGetAction) UnderlyingKind() interface{} { return t.V }
-func (t HTTPGetAction) Package() util.Package       { return util.V1 }
-func (t HTTPGetAction) Type() string                { return "k8s_v1_HTTPGetAction" }
-func (t HTTPGetAction) String() string              { return t.V.String() }
-func (t HTTPGetAction) Freeze()                     {} // TODO
-func (t HTTPGetAction) Truth() skylark.Bool         { return skylark.True }
-func (t HTTPGetAction) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t HTTPGetAction) Underlying() interface{} { return t.V }
+func (t HTTPGetAction) Package() util.Package   { return util.V1 }
+func (t HTTPGetAction) Type() string            { return "k8s_v1_HTTPGetAction" }
+func (t HTTPGetAction) String() string          { return t.V.String() }
+func (t HTTPGetAction) Freeze()                 {} // TODO
+func (t HTTPGetAction) Truth() skylark.Bool     { return skylark.True }
+func (t HTTPGetAction) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t HTTPGetAction) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*HTTPGetAction)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2975,6 +3149,9 @@ func (t HTTPGetAction) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, HTTPGetAction_fields, HTTPGetAction_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t HTTPGetAction) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, HTTPGetAction_fields, HTTPGetAction_inline)
 }
 
 type HTTPHeader struct {
@@ -3008,13 +3185,13 @@ func init() {
 func createHTTPHeader(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for HTTPHeader
 }
-func (t HTTPHeader) UnderlyingKind() interface{} { return t.V }
-func (t HTTPHeader) Package() util.Package       { return util.V1 }
-func (t HTTPHeader) Type() string                { return "k8s_v1_HTTPHeader" }
-func (t HTTPHeader) String() string              { return t.V.String() }
-func (t HTTPHeader) Freeze()                     {} // TODO
-func (t HTTPHeader) Truth() skylark.Bool         { return skylark.True }
-func (t HTTPHeader) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t HTTPHeader) Underlying() interface{} { return t.V }
+func (t HTTPHeader) Package() util.Package   { return util.V1 }
+func (t HTTPHeader) Type() string            { return "k8s_v1_HTTPHeader" }
+func (t HTTPHeader) String() string          { return t.V.String() }
+func (t HTTPHeader) Freeze()                 {} // TODO
+func (t HTTPHeader) Truth() skylark.Bool     { return skylark.True }
+func (t HTTPHeader) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t HTTPHeader) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*HTTPHeader)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3025,6 +3202,9 @@ func (t HTTPHeader) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, HTTPHeader_fields, HTTPHeader_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t HTTPHeader) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, HTTPHeader_fields, HTTPHeader_inline)
 }
 
 type Handler struct {
@@ -3058,13 +3238,13 @@ func init() {
 func createHandler(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Handler
 }
-func (t Handler) UnderlyingKind() interface{} { return t.V }
-func (t Handler) Package() util.Package       { return util.V1 }
-func (t Handler) Type() string                { return "k8s_v1_Handler" }
-func (t Handler) String() string              { return t.V.String() }
-func (t Handler) Freeze()                     {} // TODO
-func (t Handler) Truth() skylark.Bool         { return skylark.True }
-func (t Handler) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Handler) Underlying() interface{} { return t.V }
+func (t Handler) Package() util.Package   { return util.V1 }
+func (t Handler) Type() string            { return "k8s_v1_Handler" }
+func (t Handler) String() string          { return t.V.String() }
+func (t Handler) Freeze()                 {} // TODO
+func (t Handler) Truth() skylark.Bool     { return skylark.True }
+func (t Handler) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Handler) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Handler)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3075,6 +3255,9 @@ func (t Handler) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Handler_fields, Handler_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Handler) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Handler_fields, Handler_inline)
 }
 
 type HostAlias struct {
@@ -3108,13 +3291,13 @@ func init() {
 func createHostAlias(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for HostAlias
 }
-func (t HostAlias) UnderlyingKind() interface{} { return t.V }
-func (t HostAlias) Package() util.Package       { return util.V1 }
-func (t HostAlias) Type() string                { return "k8s_v1_HostAlias" }
-func (t HostAlias) String() string              { return t.V.String() }
-func (t HostAlias) Freeze()                     {} // TODO
-func (t HostAlias) Truth() skylark.Bool         { return skylark.True }
-func (t HostAlias) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t HostAlias) Underlying() interface{} { return t.V }
+func (t HostAlias) Package() util.Package   { return util.V1 }
+func (t HostAlias) Type() string            { return "k8s_v1_HostAlias" }
+func (t HostAlias) String() string          { return t.V.String() }
+func (t HostAlias) Freeze()                 {} // TODO
+func (t HostAlias) Truth() skylark.Bool     { return skylark.True }
+func (t HostAlias) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t HostAlias) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*HostAlias)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3125,6 +3308,9 @@ func (t HostAlias) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, HostAlias_fields, HostAlias_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t HostAlias) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, HostAlias_fields, HostAlias_inline)
 }
 
 type HostPathVolumeSource struct {
@@ -3158,13 +3344,13 @@ func init() {
 func createHostPathVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for HostPathVolumeSource
 }
-func (t HostPathVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t HostPathVolumeSource) Package() util.Package       { return util.V1 }
-func (t HostPathVolumeSource) Type() string                { return "k8s_v1_HostPathVolumeSource" }
-func (t HostPathVolumeSource) String() string              { return t.V.String() }
-func (t HostPathVolumeSource) Freeze()                     {} // TODO
-func (t HostPathVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t HostPathVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t HostPathVolumeSource) Underlying() interface{} { return t.V }
+func (t HostPathVolumeSource) Package() util.Package   { return util.V1 }
+func (t HostPathVolumeSource) Type() string            { return "k8s_v1_HostPathVolumeSource" }
+func (t HostPathVolumeSource) String() string          { return t.V.String() }
+func (t HostPathVolumeSource) Freeze()                 {} // TODO
+func (t HostPathVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t HostPathVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t HostPathVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*HostPathVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3175,6 +3361,9 @@ func (t HostPathVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, HostPathVolumeSource_fields, HostPathVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t HostPathVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, HostPathVolumeSource_fields, HostPathVolumeSource_inline)
 }
 
 type ISCSIPersistentVolumeSource struct {
@@ -3208,13 +3397,13 @@ func init() {
 func createISCSIPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ISCSIPersistentVolumeSource
 }
-func (t ISCSIPersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t ISCSIPersistentVolumeSource) Package() util.Package       { return util.V1 }
-func (t ISCSIPersistentVolumeSource) Type() string                { return "k8s_v1_ISCSIPersistentVolumeSource" }
-func (t ISCSIPersistentVolumeSource) String() string              { return t.V.String() }
-func (t ISCSIPersistentVolumeSource) Freeze()                     {} // TODO
-func (t ISCSIPersistentVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t ISCSIPersistentVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ISCSIPersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t ISCSIPersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t ISCSIPersistentVolumeSource) Type() string            { return "k8s_v1_ISCSIPersistentVolumeSource" }
+func (t ISCSIPersistentVolumeSource) String() string          { return t.V.String() }
+func (t ISCSIPersistentVolumeSource) Freeze()                 {} // TODO
+func (t ISCSIPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t ISCSIPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ISCSIPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ISCSIPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3225,6 +3414,9 @@ func (t ISCSIPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ISCSIPersistentVolumeSource_fields, ISCSIPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ISCSIPersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ISCSIPersistentVolumeSource_fields, ISCSIPersistentVolumeSource_inline)
 }
 
 type ISCSIVolumeSource struct {
@@ -3258,13 +3450,13 @@ func init() {
 func createISCSIVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ISCSIVolumeSource
 }
-func (t ISCSIVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t ISCSIVolumeSource) Package() util.Package       { return util.V1 }
-func (t ISCSIVolumeSource) Type() string                { return "k8s_v1_ISCSIVolumeSource" }
-func (t ISCSIVolumeSource) String() string              { return t.V.String() }
-func (t ISCSIVolumeSource) Freeze()                     {} // TODO
-func (t ISCSIVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t ISCSIVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ISCSIVolumeSource) Underlying() interface{} { return t.V }
+func (t ISCSIVolumeSource) Package() util.Package   { return util.V1 }
+func (t ISCSIVolumeSource) Type() string            { return "k8s_v1_ISCSIVolumeSource" }
+func (t ISCSIVolumeSource) String() string          { return t.V.String() }
+func (t ISCSIVolumeSource) Freeze()                 {} // TODO
+func (t ISCSIVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t ISCSIVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ISCSIVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ISCSIVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3275,6 +3467,9 @@ func (t ISCSIVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ISCSIVolumeSource_fields, ISCSIVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ISCSIVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ISCSIVolumeSource_fields, ISCSIVolumeSource_inline)
 }
 
 type KeyToPath struct {
@@ -3308,13 +3503,13 @@ func init() {
 func createKeyToPath(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for KeyToPath
 }
-func (t KeyToPath) UnderlyingKind() interface{} { return t.V }
-func (t KeyToPath) Package() util.Package       { return util.V1 }
-func (t KeyToPath) Type() string                { return "k8s_v1_KeyToPath" }
-func (t KeyToPath) String() string              { return t.V.String() }
-func (t KeyToPath) Freeze()                     {} // TODO
-func (t KeyToPath) Truth() skylark.Bool         { return skylark.True }
-func (t KeyToPath) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t KeyToPath) Underlying() interface{} { return t.V }
+func (t KeyToPath) Package() util.Package   { return util.V1 }
+func (t KeyToPath) Type() string            { return "k8s_v1_KeyToPath" }
+func (t KeyToPath) String() string          { return t.V.String() }
+func (t KeyToPath) Freeze()                 {} // TODO
+func (t KeyToPath) Truth() skylark.Bool     { return skylark.True }
+func (t KeyToPath) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t KeyToPath) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*KeyToPath)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3325,6 +3520,9 @@ func (t KeyToPath) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, KeyToPath_fields, KeyToPath_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t KeyToPath) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, KeyToPath_fields, KeyToPath_inline)
 }
 
 type Lifecycle struct {
@@ -3358,13 +3556,13 @@ func init() {
 func createLifecycle(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Lifecycle
 }
-func (t Lifecycle) UnderlyingKind() interface{} { return t.V }
-func (t Lifecycle) Package() util.Package       { return util.V1 }
-func (t Lifecycle) Type() string                { return "k8s_v1_Lifecycle" }
-func (t Lifecycle) String() string              { return t.V.String() }
-func (t Lifecycle) Freeze()                     {} // TODO
-func (t Lifecycle) Truth() skylark.Bool         { return skylark.True }
-func (t Lifecycle) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Lifecycle) Underlying() interface{} { return t.V }
+func (t Lifecycle) Package() util.Package   { return util.V1 }
+func (t Lifecycle) Type() string            { return "k8s_v1_Lifecycle" }
+func (t Lifecycle) String() string          { return t.V.String() }
+func (t Lifecycle) Freeze()                 {} // TODO
+func (t Lifecycle) Truth() skylark.Bool     { return skylark.True }
+func (t Lifecycle) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Lifecycle) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Lifecycle)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3375,6 +3573,9 @@ func (t Lifecycle) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Lifecycle_fields, Lifecycle_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Lifecycle) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Lifecycle_fields, Lifecycle_inline)
 }
 
 type LimitRange struct {
@@ -3408,13 +3609,13 @@ func init() {
 func createLimitRange(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LimitRange
 }
-func (t LimitRange) UnderlyingKind() interface{} { return t.V }
-func (t LimitRange) Package() util.Package       { return util.V1 }
-func (t LimitRange) Type() string                { return "k8s_v1_LimitRange" }
-func (t LimitRange) String() string              { return t.V.String() }
-func (t LimitRange) Freeze()                     {} // TODO
-func (t LimitRange) Truth() skylark.Bool         { return skylark.True }
-func (t LimitRange) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LimitRange) Underlying() interface{} { return t.V }
+func (t LimitRange) Package() util.Package   { return util.V1 }
+func (t LimitRange) Type() string            { return "k8s_v1_LimitRange" }
+func (t LimitRange) String() string          { return t.V.String() }
+func (t LimitRange) Freeze()                 {} // TODO
+func (t LimitRange) Truth() skylark.Bool     { return skylark.True }
+func (t LimitRange) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LimitRange) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LimitRange)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3425,6 +3626,9 @@ func (t LimitRange) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LimitRange_fields, LimitRange_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LimitRange) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LimitRange_fields, LimitRange_inline)
 }
 
 type LimitRangeItem struct {
@@ -3458,13 +3662,13 @@ func init() {
 func createLimitRangeItem(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LimitRangeItem
 }
-func (t LimitRangeItem) UnderlyingKind() interface{} { return t.V }
-func (t LimitRangeItem) Package() util.Package       { return util.V1 }
-func (t LimitRangeItem) Type() string                { return "k8s_v1_LimitRangeItem" }
-func (t LimitRangeItem) String() string              { return t.V.String() }
-func (t LimitRangeItem) Freeze()                     {} // TODO
-func (t LimitRangeItem) Truth() skylark.Bool         { return skylark.True }
-func (t LimitRangeItem) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LimitRangeItem) Underlying() interface{} { return t.V }
+func (t LimitRangeItem) Package() util.Package   { return util.V1 }
+func (t LimitRangeItem) Type() string            { return "k8s_v1_LimitRangeItem" }
+func (t LimitRangeItem) String() string          { return t.V.String() }
+func (t LimitRangeItem) Freeze()                 {} // TODO
+func (t LimitRangeItem) Truth() skylark.Bool     { return skylark.True }
+func (t LimitRangeItem) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LimitRangeItem) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LimitRangeItem)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3475,6 +3679,9 @@ func (t LimitRangeItem) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LimitRangeItem_fields, LimitRangeItem_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LimitRangeItem) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LimitRangeItem_fields, LimitRangeItem_inline)
 }
 
 type LimitRangeList struct {
@@ -3508,13 +3715,13 @@ func init() {
 func createLimitRangeList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LimitRangeList
 }
-func (t LimitRangeList) UnderlyingKind() interface{} { return t.V }
-func (t LimitRangeList) Package() util.Package       { return util.V1 }
-func (t LimitRangeList) Type() string                { return "k8s_v1_LimitRangeList" }
-func (t LimitRangeList) String() string              { return t.V.String() }
-func (t LimitRangeList) Freeze()                     {} // TODO
-func (t LimitRangeList) Truth() skylark.Bool         { return skylark.True }
-func (t LimitRangeList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LimitRangeList) Underlying() interface{} { return t.V }
+func (t LimitRangeList) Package() util.Package   { return util.V1 }
+func (t LimitRangeList) Type() string            { return "k8s_v1_LimitRangeList" }
+func (t LimitRangeList) String() string          { return t.V.String() }
+func (t LimitRangeList) Freeze()                 {} // TODO
+func (t LimitRangeList) Truth() skylark.Bool     { return skylark.True }
+func (t LimitRangeList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LimitRangeList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LimitRangeList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3525,6 +3732,9 @@ func (t LimitRangeList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LimitRangeList_fields, LimitRangeList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LimitRangeList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LimitRangeList_fields, LimitRangeList_inline)
 }
 
 type LimitRangeSpec struct {
@@ -3558,13 +3768,13 @@ func init() {
 func createLimitRangeSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LimitRangeSpec
 }
-func (t LimitRangeSpec) UnderlyingKind() interface{} { return t.V }
-func (t LimitRangeSpec) Package() util.Package       { return util.V1 }
-func (t LimitRangeSpec) Type() string                { return "k8s_v1_LimitRangeSpec" }
-func (t LimitRangeSpec) String() string              { return t.V.String() }
-func (t LimitRangeSpec) Freeze()                     {} // TODO
-func (t LimitRangeSpec) Truth() skylark.Bool         { return skylark.True }
-func (t LimitRangeSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LimitRangeSpec) Underlying() interface{} { return t.V }
+func (t LimitRangeSpec) Package() util.Package   { return util.V1 }
+func (t LimitRangeSpec) Type() string            { return "k8s_v1_LimitRangeSpec" }
+func (t LimitRangeSpec) String() string          { return t.V.String() }
+func (t LimitRangeSpec) Freeze()                 {} // TODO
+func (t LimitRangeSpec) Truth() skylark.Bool     { return skylark.True }
+func (t LimitRangeSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LimitRangeSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LimitRangeSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3575,6 +3785,9 @@ func (t LimitRangeSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LimitRangeSpec_fields, LimitRangeSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LimitRangeSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LimitRangeSpec_fields, LimitRangeSpec_inline)
 }
 
 type List struct {
@@ -3608,13 +3821,13 @@ func init() {
 func createList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for List
 }
-func (t List) UnderlyingKind() interface{} { return t.V }
-func (t List) Package() util.Package       { return util.V1 }
-func (t List) Type() string                { return "k8s_v1_List" }
-func (t List) String() string              { return t.V.String() }
-func (t List) Freeze()                     {} // TODO
-func (t List) Truth() skylark.Bool         { return skylark.True }
-func (t List) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t List) Underlying() interface{} { return t.V }
+func (t List) Package() util.Package   { return util.V1 }
+func (t List) Type() string            { return "k8s_v1_List" }
+func (t List) String() string          { return t.V.String() }
+func (t List) Freeze()                 {} // TODO
+func (t List) Truth() skylark.Bool     { return skylark.True }
+func (t List) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t List) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*List)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3625,6 +3838,9 @@ func (t List) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, List_fields, List_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t List) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, List_fields, List_inline)
 }
 
 type LoadBalancerIngress struct {
@@ -3658,13 +3874,13 @@ func init() {
 func createLoadBalancerIngress(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LoadBalancerIngress
 }
-func (t LoadBalancerIngress) UnderlyingKind() interface{} { return t.V }
-func (t LoadBalancerIngress) Package() util.Package       { return util.V1 }
-func (t LoadBalancerIngress) Type() string                { return "k8s_v1_LoadBalancerIngress" }
-func (t LoadBalancerIngress) String() string              { return t.V.String() }
-func (t LoadBalancerIngress) Freeze()                     {} // TODO
-func (t LoadBalancerIngress) Truth() skylark.Bool         { return skylark.True }
-func (t LoadBalancerIngress) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LoadBalancerIngress) Underlying() interface{} { return t.V }
+func (t LoadBalancerIngress) Package() util.Package   { return util.V1 }
+func (t LoadBalancerIngress) Type() string            { return "k8s_v1_LoadBalancerIngress" }
+func (t LoadBalancerIngress) String() string          { return t.V.String() }
+func (t LoadBalancerIngress) Freeze()                 {} // TODO
+func (t LoadBalancerIngress) Truth() skylark.Bool     { return skylark.True }
+func (t LoadBalancerIngress) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LoadBalancerIngress) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LoadBalancerIngress)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3675,6 +3891,9 @@ func (t LoadBalancerIngress) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LoadBalancerIngress_fields, LoadBalancerIngress_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LoadBalancerIngress) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LoadBalancerIngress_fields, LoadBalancerIngress_inline)
 }
 
 type LoadBalancerStatus struct {
@@ -3708,13 +3927,13 @@ func init() {
 func createLoadBalancerStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LoadBalancerStatus
 }
-func (t LoadBalancerStatus) UnderlyingKind() interface{} { return t.V }
-func (t LoadBalancerStatus) Package() util.Package       { return util.V1 }
-func (t LoadBalancerStatus) Type() string                { return "k8s_v1_LoadBalancerStatus" }
-func (t LoadBalancerStatus) String() string              { return t.V.String() }
-func (t LoadBalancerStatus) Freeze()                     {} // TODO
-func (t LoadBalancerStatus) Truth() skylark.Bool         { return skylark.True }
-func (t LoadBalancerStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LoadBalancerStatus) Underlying() interface{} { return t.V }
+func (t LoadBalancerStatus) Package() util.Package   { return util.V1 }
+func (t LoadBalancerStatus) Type() string            { return "k8s_v1_LoadBalancerStatus" }
+func (t LoadBalancerStatus) String() string          { return t.V.String() }
+func (t LoadBalancerStatus) Freeze()                 {} // TODO
+func (t LoadBalancerStatus) Truth() skylark.Bool     { return skylark.True }
+func (t LoadBalancerStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LoadBalancerStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LoadBalancerStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3725,6 +3944,9 @@ func (t LoadBalancerStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LoadBalancerStatus_fields, LoadBalancerStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LoadBalancerStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LoadBalancerStatus_fields, LoadBalancerStatus_inline)
 }
 
 type LocalObjectReference struct {
@@ -3758,13 +3980,13 @@ func init() {
 func createLocalObjectReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LocalObjectReference
 }
-func (t LocalObjectReference) UnderlyingKind() interface{} { return t.V }
-func (t LocalObjectReference) Package() util.Package       { return util.V1 }
-func (t LocalObjectReference) Type() string                { return "k8s_v1_LocalObjectReference" }
-func (t LocalObjectReference) String() string              { return t.V.String() }
-func (t LocalObjectReference) Freeze()                     {} // TODO
-func (t LocalObjectReference) Truth() skylark.Bool         { return skylark.True }
-func (t LocalObjectReference) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LocalObjectReference) Underlying() interface{} { return t.V }
+func (t LocalObjectReference) Package() util.Package   { return util.V1 }
+func (t LocalObjectReference) Type() string            { return "k8s_v1_LocalObjectReference" }
+func (t LocalObjectReference) String() string          { return t.V.String() }
+func (t LocalObjectReference) Freeze()                 {} // TODO
+func (t LocalObjectReference) Truth() skylark.Bool     { return skylark.True }
+func (t LocalObjectReference) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LocalObjectReference) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LocalObjectReference)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3775,6 +3997,9 @@ func (t LocalObjectReference) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LocalObjectReference_fields, LocalObjectReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LocalObjectReference) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LocalObjectReference_fields, LocalObjectReference_inline)
 }
 
 type LocalVolumeSource struct {
@@ -3808,13 +4033,13 @@ func init() {
 func createLocalVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LocalVolumeSource
 }
-func (t LocalVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t LocalVolumeSource) Package() util.Package       { return util.V1 }
-func (t LocalVolumeSource) Type() string                { return "k8s_v1_LocalVolumeSource" }
-func (t LocalVolumeSource) String() string              { return t.V.String() }
-func (t LocalVolumeSource) Freeze()                     {} // TODO
-func (t LocalVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t LocalVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LocalVolumeSource) Underlying() interface{} { return t.V }
+func (t LocalVolumeSource) Package() util.Package   { return util.V1 }
+func (t LocalVolumeSource) Type() string            { return "k8s_v1_LocalVolumeSource" }
+func (t LocalVolumeSource) String() string          { return t.V.String() }
+func (t LocalVolumeSource) Freeze()                 {} // TODO
+func (t LocalVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t LocalVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LocalVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LocalVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3825,6 +4050,9 @@ func (t LocalVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LocalVolumeSource_fields, LocalVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LocalVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LocalVolumeSource_fields, LocalVolumeSource_inline)
 }
 
 type NFSVolumeSource struct {
@@ -3858,13 +4086,13 @@ func init() {
 func createNFSVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NFSVolumeSource
 }
-func (t NFSVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t NFSVolumeSource) Package() util.Package       { return util.V1 }
-func (t NFSVolumeSource) Type() string                { return "k8s_v1_NFSVolumeSource" }
-func (t NFSVolumeSource) String() string              { return t.V.String() }
-func (t NFSVolumeSource) Freeze()                     {} // TODO
-func (t NFSVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t NFSVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NFSVolumeSource) Underlying() interface{} { return t.V }
+func (t NFSVolumeSource) Package() util.Package   { return util.V1 }
+func (t NFSVolumeSource) Type() string            { return "k8s_v1_NFSVolumeSource" }
+func (t NFSVolumeSource) String() string          { return t.V.String() }
+func (t NFSVolumeSource) Freeze()                 {} // TODO
+func (t NFSVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t NFSVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NFSVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NFSVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3875,6 +4103,9 @@ func (t NFSVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NFSVolumeSource_fields, NFSVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NFSVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NFSVolumeSource_fields, NFSVolumeSource_inline)
 }
 
 type Namespace struct {
@@ -3908,13 +4139,13 @@ func init() {
 func createNamespace(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Namespace
 }
-func (t Namespace) UnderlyingKind() interface{} { return t.V }
-func (t Namespace) Package() util.Package       { return util.V1 }
-func (t Namespace) Type() string                { return "k8s_v1_Namespace" }
-func (t Namespace) String() string              { return t.V.String() }
-func (t Namespace) Freeze()                     {} // TODO
-func (t Namespace) Truth() skylark.Bool         { return skylark.True }
-func (t Namespace) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Namespace) Underlying() interface{} { return t.V }
+func (t Namespace) Package() util.Package   { return util.V1 }
+func (t Namespace) Type() string            { return "k8s_v1_Namespace" }
+func (t Namespace) String() string          { return t.V.String() }
+func (t Namespace) Freeze()                 {} // TODO
+func (t Namespace) Truth() skylark.Bool     { return skylark.True }
+func (t Namespace) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Namespace) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Namespace)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3925,6 +4156,9 @@ func (t Namespace) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Namespace_fields, Namespace_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Namespace) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Namespace_fields, Namespace_inline)
 }
 
 type NamespaceList struct {
@@ -3958,13 +4192,13 @@ func init() {
 func createNamespaceList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NamespaceList
 }
-func (t NamespaceList) UnderlyingKind() interface{} { return t.V }
-func (t NamespaceList) Package() util.Package       { return util.V1 }
-func (t NamespaceList) Type() string                { return "k8s_v1_NamespaceList" }
-func (t NamespaceList) String() string              { return t.V.String() }
-func (t NamespaceList) Freeze()                     {} // TODO
-func (t NamespaceList) Truth() skylark.Bool         { return skylark.True }
-func (t NamespaceList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NamespaceList) Underlying() interface{} { return t.V }
+func (t NamespaceList) Package() util.Package   { return util.V1 }
+func (t NamespaceList) Type() string            { return "k8s_v1_NamespaceList" }
+func (t NamespaceList) String() string          { return t.V.String() }
+func (t NamespaceList) Freeze()                 {} // TODO
+func (t NamespaceList) Truth() skylark.Bool     { return skylark.True }
+func (t NamespaceList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NamespaceList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NamespaceList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -3975,6 +4209,9 @@ func (t NamespaceList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NamespaceList_fields, NamespaceList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NamespaceList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NamespaceList_fields, NamespaceList_inline)
 }
 
 type NamespaceSpec struct {
@@ -4008,13 +4245,13 @@ func init() {
 func createNamespaceSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NamespaceSpec
 }
-func (t NamespaceSpec) UnderlyingKind() interface{} { return t.V }
-func (t NamespaceSpec) Package() util.Package       { return util.V1 }
-func (t NamespaceSpec) Type() string                { return "k8s_v1_NamespaceSpec" }
-func (t NamespaceSpec) String() string              { return t.V.String() }
-func (t NamespaceSpec) Freeze()                     {} // TODO
-func (t NamespaceSpec) Truth() skylark.Bool         { return skylark.True }
-func (t NamespaceSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NamespaceSpec) Underlying() interface{} { return t.V }
+func (t NamespaceSpec) Package() util.Package   { return util.V1 }
+func (t NamespaceSpec) Type() string            { return "k8s_v1_NamespaceSpec" }
+func (t NamespaceSpec) String() string          { return t.V.String() }
+func (t NamespaceSpec) Freeze()                 {} // TODO
+func (t NamespaceSpec) Truth() skylark.Bool     { return skylark.True }
+func (t NamespaceSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NamespaceSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NamespaceSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4025,6 +4262,9 @@ func (t NamespaceSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NamespaceSpec_fields, NamespaceSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NamespaceSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NamespaceSpec_fields, NamespaceSpec_inline)
 }
 
 type NamespaceStatus struct {
@@ -4058,13 +4298,13 @@ func init() {
 func createNamespaceStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NamespaceStatus
 }
-func (t NamespaceStatus) UnderlyingKind() interface{} { return t.V }
-func (t NamespaceStatus) Package() util.Package       { return util.V1 }
-func (t NamespaceStatus) Type() string                { return "k8s_v1_NamespaceStatus" }
-func (t NamespaceStatus) String() string              { return t.V.String() }
-func (t NamespaceStatus) Freeze()                     {} // TODO
-func (t NamespaceStatus) Truth() skylark.Bool         { return skylark.True }
-func (t NamespaceStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NamespaceStatus) Underlying() interface{} { return t.V }
+func (t NamespaceStatus) Package() util.Package   { return util.V1 }
+func (t NamespaceStatus) Type() string            { return "k8s_v1_NamespaceStatus" }
+func (t NamespaceStatus) String() string          { return t.V.String() }
+func (t NamespaceStatus) Freeze()                 {} // TODO
+func (t NamespaceStatus) Truth() skylark.Bool     { return skylark.True }
+func (t NamespaceStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NamespaceStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NamespaceStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4075,6 +4315,9 @@ func (t NamespaceStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NamespaceStatus_fields, NamespaceStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NamespaceStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NamespaceStatus_fields, NamespaceStatus_inline)
 }
 
 type Node struct {
@@ -4108,13 +4351,13 @@ func init() {
 func createNode(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Node
 }
-func (t Node) UnderlyingKind() interface{} { return t.V }
-func (t Node) Package() util.Package       { return util.V1 }
-func (t Node) Type() string                { return "k8s_v1_Node" }
-func (t Node) String() string              { return t.V.String() }
-func (t Node) Freeze()                     {} // TODO
-func (t Node) Truth() skylark.Bool         { return skylark.True }
-func (t Node) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Node) Underlying() interface{} { return t.V }
+func (t Node) Package() util.Package   { return util.V1 }
+func (t Node) Type() string            { return "k8s_v1_Node" }
+func (t Node) String() string          { return t.V.String() }
+func (t Node) Freeze()                 {} // TODO
+func (t Node) Truth() skylark.Bool     { return skylark.True }
+func (t Node) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Node) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Node)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4125,6 +4368,9 @@ func (t Node) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Node_fields, Node_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Node) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Node_fields, Node_inline)
 }
 
 type NodeAddress struct {
@@ -4158,13 +4404,13 @@ func init() {
 func createNodeAddress(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeAddress
 }
-func (t NodeAddress) UnderlyingKind() interface{} { return t.V }
-func (t NodeAddress) Package() util.Package       { return util.V1 }
-func (t NodeAddress) Type() string                { return "k8s_v1_NodeAddress" }
-func (t NodeAddress) String() string              { return t.V.String() }
-func (t NodeAddress) Freeze()                     {} // TODO
-func (t NodeAddress) Truth() skylark.Bool         { return skylark.True }
-func (t NodeAddress) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeAddress) Underlying() interface{} { return t.V }
+func (t NodeAddress) Package() util.Package   { return util.V1 }
+func (t NodeAddress) Type() string            { return "k8s_v1_NodeAddress" }
+func (t NodeAddress) String() string          { return t.V.String() }
+func (t NodeAddress) Freeze()                 {} // TODO
+func (t NodeAddress) Truth() skylark.Bool     { return skylark.True }
+func (t NodeAddress) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeAddress) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeAddress)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4175,6 +4421,9 @@ func (t NodeAddress) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeAddress_fields, NodeAddress_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeAddress) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeAddress_fields, NodeAddress_inline)
 }
 
 type NodeAffinity struct {
@@ -4208,13 +4457,13 @@ func init() {
 func createNodeAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeAffinity
 }
-func (t NodeAffinity) UnderlyingKind() interface{} { return t.V }
-func (t NodeAffinity) Package() util.Package       { return util.V1 }
-func (t NodeAffinity) Type() string                { return "k8s_v1_NodeAffinity" }
-func (t NodeAffinity) String() string              { return t.V.String() }
-func (t NodeAffinity) Freeze()                     {} // TODO
-func (t NodeAffinity) Truth() skylark.Bool         { return skylark.True }
-func (t NodeAffinity) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeAffinity) Underlying() interface{} { return t.V }
+func (t NodeAffinity) Package() util.Package   { return util.V1 }
+func (t NodeAffinity) Type() string            { return "k8s_v1_NodeAffinity" }
+func (t NodeAffinity) String() string          { return t.V.String() }
+func (t NodeAffinity) Freeze()                 {} // TODO
+func (t NodeAffinity) Truth() skylark.Bool     { return skylark.True }
+func (t NodeAffinity) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeAffinity) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeAffinity)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4225,6 +4474,9 @@ func (t NodeAffinity) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeAffinity_fields, NodeAffinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeAffinity) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeAffinity_fields, NodeAffinity_inline)
 }
 
 type NodeCondition struct {
@@ -4258,13 +4510,13 @@ func init() {
 func createNodeCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeCondition
 }
-func (t NodeCondition) UnderlyingKind() interface{} { return t.V }
-func (t NodeCondition) Package() util.Package       { return util.V1 }
-func (t NodeCondition) Type() string                { return "k8s_v1_NodeCondition" }
-func (t NodeCondition) String() string              { return t.V.String() }
-func (t NodeCondition) Freeze()                     {} // TODO
-func (t NodeCondition) Truth() skylark.Bool         { return skylark.True }
-func (t NodeCondition) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeCondition) Underlying() interface{} { return t.V }
+func (t NodeCondition) Package() util.Package   { return util.V1 }
+func (t NodeCondition) Type() string            { return "k8s_v1_NodeCondition" }
+func (t NodeCondition) String() string          { return t.V.String() }
+func (t NodeCondition) Freeze()                 {} // TODO
+func (t NodeCondition) Truth() skylark.Bool     { return skylark.True }
+func (t NodeCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeCondition)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4275,6 +4527,9 @@ func (t NodeCondition) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeCondition_fields, NodeCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeCondition_fields, NodeCondition_inline)
 }
 
 type NodeConfigSource struct {
@@ -4308,13 +4563,13 @@ func init() {
 func createNodeConfigSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeConfigSource
 }
-func (t NodeConfigSource) UnderlyingKind() interface{} { return t.V }
-func (t NodeConfigSource) Package() util.Package       { return util.V1 }
-func (t NodeConfigSource) Type() string                { return "k8s_v1_NodeConfigSource" }
-func (t NodeConfigSource) String() string              { return t.V.String() }
-func (t NodeConfigSource) Freeze()                     {} // TODO
-func (t NodeConfigSource) Truth() skylark.Bool         { return skylark.True }
-func (t NodeConfigSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeConfigSource) Underlying() interface{} { return t.V }
+func (t NodeConfigSource) Package() util.Package   { return util.V1 }
+func (t NodeConfigSource) Type() string            { return "k8s_v1_NodeConfigSource" }
+func (t NodeConfigSource) String() string          { return t.V.String() }
+func (t NodeConfigSource) Freeze()                 {} // TODO
+func (t NodeConfigSource) Truth() skylark.Bool     { return skylark.True }
+func (t NodeConfigSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeConfigSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeConfigSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4325,6 +4580,9 @@ func (t NodeConfigSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeConfigSource_fields, NodeConfigSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeConfigSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeConfigSource_fields, NodeConfigSource_inline)
 }
 
 type NodeConfigStatus struct {
@@ -4358,13 +4616,13 @@ func init() {
 func createNodeConfigStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeConfigStatus
 }
-func (t NodeConfigStatus) UnderlyingKind() interface{} { return t.V }
-func (t NodeConfigStatus) Package() util.Package       { return util.V1 }
-func (t NodeConfigStatus) Type() string                { return "k8s_v1_NodeConfigStatus" }
-func (t NodeConfigStatus) String() string              { return t.V.String() }
-func (t NodeConfigStatus) Freeze()                     {} // TODO
-func (t NodeConfigStatus) Truth() skylark.Bool         { return skylark.True }
-func (t NodeConfigStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeConfigStatus) Underlying() interface{} { return t.V }
+func (t NodeConfigStatus) Package() util.Package   { return util.V1 }
+func (t NodeConfigStatus) Type() string            { return "k8s_v1_NodeConfigStatus" }
+func (t NodeConfigStatus) String() string          { return t.V.String() }
+func (t NodeConfigStatus) Freeze()                 {} // TODO
+func (t NodeConfigStatus) Truth() skylark.Bool     { return skylark.True }
+func (t NodeConfigStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeConfigStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeConfigStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4375,6 +4633,9 @@ func (t NodeConfigStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeConfigStatus_fields, NodeConfigStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeConfigStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeConfigStatus_fields, NodeConfigStatus_inline)
 }
 
 type NodeDaemonEndpoints struct {
@@ -4408,13 +4669,13 @@ func init() {
 func createNodeDaemonEndpoints(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeDaemonEndpoints
 }
-func (t NodeDaemonEndpoints) UnderlyingKind() interface{} { return t.V }
-func (t NodeDaemonEndpoints) Package() util.Package       { return util.V1 }
-func (t NodeDaemonEndpoints) Type() string                { return "k8s_v1_NodeDaemonEndpoints" }
-func (t NodeDaemonEndpoints) String() string              { return t.V.String() }
-func (t NodeDaemonEndpoints) Freeze()                     {} // TODO
-func (t NodeDaemonEndpoints) Truth() skylark.Bool         { return skylark.True }
-func (t NodeDaemonEndpoints) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeDaemonEndpoints) Underlying() interface{} { return t.V }
+func (t NodeDaemonEndpoints) Package() util.Package   { return util.V1 }
+func (t NodeDaemonEndpoints) Type() string            { return "k8s_v1_NodeDaemonEndpoints" }
+func (t NodeDaemonEndpoints) String() string          { return t.V.String() }
+func (t NodeDaemonEndpoints) Freeze()                 {} // TODO
+func (t NodeDaemonEndpoints) Truth() skylark.Bool     { return skylark.True }
+func (t NodeDaemonEndpoints) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeDaemonEndpoints) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeDaemonEndpoints)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4425,6 +4686,9 @@ func (t NodeDaemonEndpoints) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeDaemonEndpoints_fields, NodeDaemonEndpoints_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeDaemonEndpoints) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeDaemonEndpoints_fields, NodeDaemonEndpoints_inline)
 }
 
 type NodeList struct {
@@ -4458,13 +4722,13 @@ func init() {
 func createNodeList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeList
 }
-func (t NodeList) UnderlyingKind() interface{} { return t.V }
-func (t NodeList) Package() util.Package       { return util.V1 }
-func (t NodeList) Type() string                { return "k8s_v1_NodeList" }
-func (t NodeList) String() string              { return t.V.String() }
-func (t NodeList) Freeze()                     {} // TODO
-func (t NodeList) Truth() skylark.Bool         { return skylark.True }
-func (t NodeList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeList) Underlying() interface{} { return t.V }
+func (t NodeList) Package() util.Package   { return util.V1 }
+func (t NodeList) Type() string            { return "k8s_v1_NodeList" }
+func (t NodeList) String() string          { return t.V.String() }
+func (t NodeList) Freeze()                 {} // TODO
+func (t NodeList) Truth() skylark.Bool     { return skylark.True }
+func (t NodeList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4475,6 +4739,9 @@ func (t NodeList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeList_fields, NodeList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeList_fields, NodeList_inline)
 }
 
 type NodeProxyOptions struct {
@@ -4508,13 +4775,13 @@ func init() {
 func createNodeProxyOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeProxyOptions
 }
-func (t NodeProxyOptions) UnderlyingKind() interface{} { return t.V }
-func (t NodeProxyOptions) Package() util.Package       { return util.V1 }
-func (t NodeProxyOptions) Type() string                { return "k8s_v1_NodeProxyOptions" }
-func (t NodeProxyOptions) String() string              { return t.V.String() }
-func (t NodeProxyOptions) Freeze()                     {} // TODO
-func (t NodeProxyOptions) Truth() skylark.Bool         { return skylark.True }
-func (t NodeProxyOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeProxyOptions) Underlying() interface{} { return t.V }
+func (t NodeProxyOptions) Package() util.Package   { return util.V1 }
+func (t NodeProxyOptions) Type() string            { return "k8s_v1_NodeProxyOptions" }
+func (t NodeProxyOptions) String() string          { return t.V.String() }
+func (t NodeProxyOptions) Freeze()                 {} // TODO
+func (t NodeProxyOptions) Truth() skylark.Bool     { return skylark.True }
+func (t NodeProxyOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeProxyOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeProxyOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4525,6 +4792,9 @@ func (t NodeProxyOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeProxyOptions_fields, NodeProxyOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeProxyOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeProxyOptions_fields, NodeProxyOptions_inline)
 }
 
 type NodeResources struct {
@@ -4558,13 +4828,13 @@ func init() {
 func createNodeResources(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeResources
 }
-func (t NodeResources) UnderlyingKind() interface{} { return t.V }
-func (t NodeResources) Package() util.Package       { return util.V1 }
-func (t NodeResources) Type() string                { return "k8s_v1_NodeResources" }
-func (t NodeResources) String() string              { return t.V.String() }
-func (t NodeResources) Freeze()                     {} // TODO
-func (t NodeResources) Truth() skylark.Bool         { return skylark.True }
-func (t NodeResources) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeResources) Underlying() interface{} { return t.V }
+func (t NodeResources) Package() util.Package   { return util.V1 }
+func (t NodeResources) Type() string            { return "k8s_v1_NodeResources" }
+func (t NodeResources) String() string          { return t.V.String() }
+func (t NodeResources) Freeze()                 {} // TODO
+func (t NodeResources) Truth() skylark.Bool     { return skylark.True }
+func (t NodeResources) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeResources) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeResources)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4575,6 +4845,9 @@ func (t NodeResources) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeResources_fields, NodeResources_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeResources) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeResources_fields, NodeResources_inline)
 }
 
 type NodeSelector struct {
@@ -4608,13 +4881,13 @@ func init() {
 func createNodeSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeSelector
 }
-func (t NodeSelector) UnderlyingKind() interface{} { return t.V }
-func (t NodeSelector) Package() util.Package       { return util.V1 }
-func (t NodeSelector) Type() string                { return "k8s_v1_NodeSelector" }
-func (t NodeSelector) String() string              { return t.V.String() }
-func (t NodeSelector) Freeze()                     {} // TODO
-func (t NodeSelector) Truth() skylark.Bool         { return skylark.True }
-func (t NodeSelector) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeSelector) Underlying() interface{} { return t.V }
+func (t NodeSelector) Package() util.Package   { return util.V1 }
+func (t NodeSelector) Type() string            { return "k8s_v1_NodeSelector" }
+func (t NodeSelector) String() string          { return t.V.String() }
+func (t NodeSelector) Freeze()                 {} // TODO
+func (t NodeSelector) Truth() skylark.Bool     { return skylark.True }
+func (t NodeSelector) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeSelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeSelector)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4625,6 +4898,9 @@ func (t NodeSelector) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeSelector_fields, NodeSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeSelector) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeSelector_fields, NodeSelector_inline)
 }
 
 type NodeSelectorRequirement struct {
@@ -4658,13 +4934,13 @@ func init() {
 func createNodeSelectorRequirement(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeSelectorRequirement
 }
-func (t NodeSelectorRequirement) UnderlyingKind() interface{} { return t.V }
-func (t NodeSelectorRequirement) Package() util.Package       { return util.V1 }
-func (t NodeSelectorRequirement) Type() string                { return "k8s_v1_NodeSelectorRequirement" }
-func (t NodeSelectorRequirement) String() string              { return t.V.String() }
-func (t NodeSelectorRequirement) Freeze()                     {} // TODO
-func (t NodeSelectorRequirement) Truth() skylark.Bool         { return skylark.True }
-func (t NodeSelectorRequirement) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeSelectorRequirement) Underlying() interface{} { return t.V }
+func (t NodeSelectorRequirement) Package() util.Package   { return util.V1 }
+func (t NodeSelectorRequirement) Type() string            { return "k8s_v1_NodeSelectorRequirement" }
+func (t NodeSelectorRequirement) String() string          { return t.V.String() }
+func (t NodeSelectorRequirement) Freeze()                 {} // TODO
+func (t NodeSelectorRequirement) Truth() skylark.Bool     { return skylark.True }
+func (t NodeSelectorRequirement) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeSelectorRequirement) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeSelectorRequirement)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4675,6 +4951,9 @@ func (t NodeSelectorRequirement) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeSelectorRequirement_fields, NodeSelectorRequirement_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeSelectorRequirement) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeSelectorRequirement_fields, NodeSelectorRequirement_inline)
 }
 
 type NodeSelectorTerm struct {
@@ -4708,13 +4987,13 @@ func init() {
 func createNodeSelectorTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeSelectorTerm
 }
-func (t NodeSelectorTerm) UnderlyingKind() interface{} { return t.V }
-func (t NodeSelectorTerm) Package() util.Package       { return util.V1 }
-func (t NodeSelectorTerm) Type() string                { return "k8s_v1_NodeSelectorTerm" }
-func (t NodeSelectorTerm) String() string              { return t.V.String() }
-func (t NodeSelectorTerm) Freeze()                     {} // TODO
-func (t NodeSelectorTerm) Truth() skylark.Bool         { return skylark.True }
-func (t NodeSelectorTerm) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeSelectorTerm) Underlying() interface{} { return t.V }
+func (t NodeSelectorTerm) Package() util.Package   { return util.V1 }
+func (t NodeSelectorTerm) Type() string            { return "k8s_v1_NodeSelectorTerm" }
+func (t NodeSelectorTerm) String() string          { return t.V.String() }
+func (t NodeSelectorTerm) Freeze()                 {} // TODO
+func (t NodeSelectorTerm) Truth() skylark.Bool     { return skylark.True }
+func (t NodeSelectorTerm) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeSelectorTerm) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeSelectorTerm)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4725,6 +5004,9 @@ func (t NodeSelectorTerm) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeSelectorTerm_fields, NodeSelectorTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeSelectorTerm) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeSelectorTerm_fields, NodeSelectorTerm_inline)
 }
 
 type NodeSpec struct {
@@ -4758,13 +5040,13 @@ func init() {
 func createNodeSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeSpec
 }
-func (t NodeSpec) UnderlyingKind() interface{} { return t.V }
-func (t NodeSpec) Package() util.Package       { return util.V1 }
-func (t NodeSpec) Type() string                { return "k8s_v1_NodeSpec" }
-func (t NodeSpec) String() string              { return t.V.String() }
-func (t NodeSpec) Freeze()                     {} // TODO
-func (t NodeSpec) Truth() skylark.Bool         { return skylark.True }
-func (t NodeSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeSpec) Underlying() interface{} { return t.V }
+func (t NodeSpec) Package() util.Package   { return util.V1 }
+func (t NodeSpec) Type() string            { return "k8s_v1_NodeSpec" }
+func (t NodeSpec) String() string          { return t.V.String() }
+func (t NodeSpec) Freeze()                 {} // TODO
+func (t NodeSpec) Truth() skylark.Bool     { return skylark.True }
+func (t NodeSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4775,6 +5057,9 @@ func (t NodeSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeSpec_fields, NodeSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeSpec_fields, NodeSpec_inline)
 }
 
 type NodeStatus struct {
@@ -4808,13 +5093,13 @@ func init() {
 func createNodeStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeStatus
 }
-func (t NodeStatus) UnderlyingKind() interface{} { return t.V }
-func (t NodeStatus) Package() util.Package       { return util.V1 }
-func (t NodeStatus) Type() string                { return "k8s_v1_NodeStatus" }
-func (t NodeStatus) String() string              { return t.V.String() }
-func (t NodeStatus) Freeze()                     {} // TODO
-func (t NodeStatus) Truth() skylark.Bool         { return skylark.True }
-func (t NodeStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeStatus) Underlying() interface{} { return t.V }
+func (t NodeStatus) Package() util.Package   { return util.V1 }
+func (t NodeStatus) Type() string            { return "k8s_v1_NodeStatus" }
+func (t NodeStatus) String() string          { return t.V.String() }
+func (t NodeStatus) Freeze()                 {} // TODO
+func (t NodeStatus) Truth() skylark.Bool     { return skylark.True }
+func (t NodeStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4825,6 +5110,9 @@ func (t NodeStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeStatus_fields, NodeStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeStatus_fields, NodeStatus_inline)
 }
 
 type NodeSystemInfo struct {
@@ -4858,13 +5146,13 @@ func init() {
 func createNodeSystemInfo(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for NodeSystemInfo
 }
-func (t NodeSystemInfo) UnderlyingKind() interface{} { return t.V }
-func (t NodeSystemInfo) Package() util.Package       { return util.V1 }
-func (t NodeSystemInfo) Type() string                { return "k8s_v1_NodeSystemInfo" }
-func (t NodeSystemInfo) String() string              { return t.V.String() }
-func (t NodeSystemInfo) Freeze()                     {} // TODO
-func (t NodeSystemInfo) Truth() skylark.Bool         { return skylark.True }
-func (t NodeSystemInfo) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t NodeSystemInfo) Underlying() interface{} { return t.V }
+func (t NodeSystemInfo) Package() util.Package   { return util.V1 }
+func (t NodeSystemInfo) Type() string            { return "k8s_v1_NodeSystemInfo" }
+func (t NodeSystemInfo) String() string          { return t.V.String() }
+func (t NodeSystemInfo) Freeze()                 {} // TODO
+func (t NodeSystemInfo) Truth() skylark.Bool     { return skylark.True }
+func (t NodeSystemInfo) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t NodeSystemInfo) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*NodeSystemInfo)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4875,6 +5163,9 @@ func (t NodeSystemInfo) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, NodeSystemInfo_fields, NodeSystemInfo_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NodeSystemInfo) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NodeSystemInfo_fields, NodeSystemInfo_inline)
 }
 
 type ObjectFieldSelector struct {
@@ -4908,13 +5199,13 @@ func init() {
 func createObjectFieldSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ObjectFieldSelector
 }
-func (t ObjectFieldSelector) UnderlyingKind() interface{} { return t.V }
-func (t ObjectFieldSelector) Package() util.Package       { return util.V1 }
-func (t ObjectFieldSelector) Type() string                { return "k8s_v1_ObjectFieldSelector" }
-func (t ObjectFieldSelector) String() string              { return t.V.String() }
-func (t ObjectFieldSelector) Freeze()                     {} // TODO
-func (t ObjectFieldSelector) Truth() skylark.Bool         { return skylark.True }
-func (t ObjectFieldSelector) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ObjectFieldSelector) Underlying() interface{} { return t.V }
+func (t ObjectFieldSelector) Package() util.Package   { return util.V1 }
+func (t ObjectFieldSelector) Type() string            { return "k8s_v1_ObjectFieldSelector" }
+func (t ObjectFieldSelector) String() string          { return t.V.String() }
+func (t ObjectFieldSelector) Freeze()                 {} // TODO
+func (t ObjectFieldSelector) Truth() skylark.Bool     { return skylark.True }
+func (t ObjectFieldSelector) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ObjectFieldSelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ObjectFieldSelector)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4925,6 +5216,9 @@ func (t ObjectFieldSelector) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ObjectFieldSelector_fields, ObjectFieldSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ObjectFieldSelector) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ObjectFieldSelector_fields, ObjectFieldSelector_inline)
 }
 
 type ObjectReference struct {
@@ -4958,13 +5252,13 @@ func init() {
 func createObjectReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ObjectReference
 }
-func (t ObjectReference) UnderlyingKind() interface{} { return t.V }
-func (t ObjectReference) Package() util.Package       { return util.V1 }
-func (t ObjectReference) Type() string                { return "k8s_v1_ObjectReference" }
-func (t ObjectReference) String() string              { return t.V.String() }
-func (t ObjectReference) Freeze()                     {} // TODO
-func (t ObjectReference) Truth() skylark.Bool         { return skylark.True }
-func (t ObjectReference) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ObjectReference) Underlying() interface{} { return t.V }
+func (t ObjectReference) Package() util.Package   { return util.V1 }
+func (t ObjectReference) Type() string            { return "k8s_v1_ObjectReference" }
+func (t ObjectReference) String() string          { return t.V.String() }
+func (t ObjectReference) Freeze()                 {} // TODO
+func (t ObjectReference) Truth() skylark.Bool     { return skylark.True }
+func (t ObjectReference) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ObjectReference) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ObjectReference)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -4975,6 +5269,9 @@ func (t ObjectReference) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ObjectReference_fields, ObjectReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ObjectReference) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ObjectReference_fields, ObjectReference_inline)
 }
 
 type PersistentVolume struct {
@@ -5008,13 +5305,13 @@ func init() {
 func createPersistentVolume(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolume
 }
-func (t PersistentVolume) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolume) Package() util.Package       { return util.V1 }
-func (t PersistentVolume) Type() string                { return "k8s_v1_PersistentVolume" }
-func (t PersistentVolume) String() string              { return t.V.String() }
-func (t PersistentVolume) Freeze()                     {} // TODO
-func (t PersistentVolume) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolume) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolume) Underlying() interface{} { return t.V }
+func (t PersistentVolume) Package() util.Package   { return util.V1 }
+func (t PersistentVolume) Type() string            { return "k8s_v1_PersistentVolume" }
+func (t PersistentVolume) String() string          { return t.V.String() }
+func (t PersistentVolume) Freeze()                 {} // TODO
+func (t PersistentVolume) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolume) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolume) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolume)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5025,6 +5322,9 @@ func (t PersistentVolume) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PersistentVolume_fields, PersistentVolume_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolume) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolume_fields, PersistentVolume_inline)
 }
 
 type PersistentVolumeClaim struct {
@@ -5058,13 +5358,13 @@ func init() {
 func createPersistentVolumeClaim(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeClaim
 }
-func (t PersistentVolumeClaim) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeClaim) Package() util.Package       { return util.V1 }
-func (t PersistentVolumeClaim) Type() string                { return "k8s_v1_PersistentVolumeClaim" }
-func (t PersistentVolumeClaim) String() string              { return t.V.String() }
-func (t PersistentVolumeClaim) Freeze()                     {} // TODO
-func (t PersistentVolumeClaim) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolumeClaim) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeClaim) Underlying() interface{} { return t.V }
+func (t PersistentVolumeClaim) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeClaim) Type() string            { return "k8s_v1_PersistentVolumeClaim" }
+func (t PersistentVolumeClaim) String() string          { return t.V.String() }
+func (t PersistentVolumeClaim) Freeze()                 {} // TODO
+func (t PersistentVolumeClaim) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolumeClaim) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeClaim) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeClaim)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5075,6 +5375,9 @@ func (t PersistentVolumeClaim) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaim_fields, PersistentVolumeClaim_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeClaim) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeClaim_fields, PersistentVolumeClaim_inline)
 }
 
 type PersistentVolumeClaimCondition struct {
@@ -5108,13 +5411,13 @@ func init() {
 func createPersistentVolumeClaimCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeClaimCondition
 }
-func (t PersistentVolumeClaimCondition) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeClaimCondition) Package() util.Package       { return util.V1 }
-func (t PersistentVolumeClaimCondition) Type() string                { return "k8s_v1_PersistentVolumeClaimCondition" }
-func (t PersistentVolumeClaimCondition) String() string              { return t.V.String() }
-func (t PersistentVolumeClaimCondition) Freeze()                     {} // TODO
-func (t PersistentVolumeClaimCondition) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolumeClaimCondition) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeClaimCondition) Underlying() interface{} { return t.V }
+func (t PersistentVolumeClaimCondition) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeClaimCondition) Type() string            { return "k8s_v1_PersistentVolumeClaimCondition" }
+func (t PersistentVolumeClaimCondition) String() string          { return t.V.String() }
+func (t PersistentVolumeClaimCondition) Freeze()                 {} // TODO
+func (t PersistentVolumeClaimCondition) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolumeClaimCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeClaimCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeClaimCondition)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5127,6 +5430,9 @@ func (t PersistentVolumeClaimCondition) Attr(name string) (skylark.Value, error)
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimCondition_fields, PersistentVolumeClaimCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeClaimCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeClaimCondition_fields, PersistentVolumeClaimCondition_inline)
 }
 
 type PersistentVolumeClaimList struct {
@@ -5160,13 +5466,13 @@ func init() {
 func createPersistentVolumeClaimList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeClaimList
 }
-func (t PersistentVolumeClaimList) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeClaimList) Package() util.Package       { return util.V1 }
-func (t PersistentVolumeClaimList) Type() string                { return "k8s_v1_PersistentVolumeClaimList" }
-func (t PersistentVolumeClaimList) String() string              { return t.V.String() }
-func (t PersistentVolumeClaimList) Freeze()                     {} // TODO
-func (t PersistentVolumeClaimList) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolumeClaimList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeClaimList) Underlying() interface{} { return t.V }
+func (t PersistentVolumeClaimList) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeClaimList) Type() string            { return "k8s_v1_PersistentVolumeClaimList" }
+func (t PersistentVolumeClaimList) String() string          { return t.V.String() }
+func (t PersistentVolumeClaimList) Freeze()                 {} // TODO
+func (t PersistentVolumeClaimList) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolumeClaimList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeClaimList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeClaimList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5177,6 +5483,9 @@ func (t PersistentVolumeClaimList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimList_fields, PersistentVolumeClaimList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeClaimList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeClaimList_fields, PersistentVolumeClaimList_inline)
 }
 
 type PersistentVolumeClaimSpec struct {
@@ -5210,13 +5519,13 @@ func init() {
 func createPersistentVolumeClaimSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeClaimSpec
 }
-func (t PersistentVolumeClaimSpec) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeClaimSpec) Package() util.Package       { return util.V1 }
-func (t PersistentVolumeClaimSpec) Type() string                { return "k8s_v1_PersistentVolumeClaimSpec" }
-func (t PersistentVolumeClaimSpec) String() string              { return t.V.String() }
-func (t PersistentVolumeClaimSpec) Freeze()                     {} // TODO
-func (t PersistentVolumeClaimSpec) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolumeClaimSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeClaimSpec) Underlying() interface{} { return t.V }
+func (t PersistentVolumeClaimSpec) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeClaimSpec) Type() string            { return "k8s_v1_PersistentVolumeClaimSpec" }
+func (t PersistentVolumeClaimSpec) String() string          { return t.V.String() }
+func (t PersistentVolumeClaimSpec) Freeze()                 {} // TODO
+func (t PersistentVolumeClaimSpec) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolumeClaimSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeClaimSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeClaimSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5227,6 +5536,9 @@ func (t PersistentVolumeClaimSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimSpec_fields, PersistentVolumeClaimSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeClaimSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeClaimSpec_fields, PersistentVolumeClaimSpec_inline)
 }
 
 type PersistentVolumeClaimStatus struct {
@@ -5260,13 +5572,13 @@ func init() {
 func createPersistentVolumeClaimStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeClaimStatus
 }
-func (t PersistentVolumeClaimStatus) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeClaimStatus) Package() util.Package       { return util.V1 }
-func (t PersistentVolumeClaimStatus) Type() string                { return "k8s_v1_PersistentVolumeClaimStatus" }
-func (t PersistentVolumeClaimStatus) String() string              { return t.V.String() }
-func (t PersistentVolumeClaimStatus) Freeze()                     {} // TODO
-func (t PersistentVolumeClaimStatus) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolumeClaimStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeClaimStatus) Underlying() interface{} { return t.V }
+func (t PersistentVolumeClaimStatus) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeClaimStatus) Type() string            { return "k8s_v1_PersistentVolumeClaimStatus" }
+func (t PersistentVolumeClaimStatus) String() string          { return t.V.String() }
+func (t PersistentVolumeClaimStatus) Freeze()                 {} // TODO
+func (t PersistentVolumeClaimStatus) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolumeClaimStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeClaimStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeClaimStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5277,6 +5589,9 @@ func (t PersistentVolumeClaimStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimStatus_fields, PersistentVolumeClaimStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeClaimStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeClaimStatus_fields, PersistentVolumeClaimStatus_inline)
 }
 
 type PersistentVolumeClaimVolumeSource struct {
@@ -5310,8 +5625,8 @@ func init() {
 func createPersistentVolumeClaimVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeClaimVolumeSource
 }
-func (t PersistentVolumeClaimVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeClaimVolumeSource) Package() util.Package       { return util.V1 }
+func (t PersistentVolumeClaimVolumeSource) Underlying() interface{} { return t.V }
+func (t PersistentVolumeClaimVolumeSource) Package() util.Package   { return util.V1 }
 func (t PersistentVolumeClaimVolumeSource) Type() string {
 	return "k8s_v1_PersistentVolumeClaimVolumeSource"
 }
@@ -5331,6 +5646,9 @@ func (t PersistentVolumeClaimVolumeSource) Attr(name string) (skylark.Value, err
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimVolumeSource_fields, PersistentVolumeClaimVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeClaimVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeClaimVolumeSource_fields, PersistentVolumeClaimVolumeSource_inline)
 }
 
 type PersistentVolumeList struct {
@@ -5364,13 +5682,13 @@ func init() {
 func createPersistentVolumeList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeList
 }
-func (t PersistentVolumeList) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeList) Package() util.Package       { return util.V1 }
-func (t PersistentVolumeList) Type() string                { return "k8s_v1_PersistentVolumeList" }
-func (t PersistentVolumeList) String() string              { return t.V.String() }
-func (t PersistentVolumeList) Freeze()                     {} // TODO
-func (t PersistentVolumeList) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolumeList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeList) Underlying() interface{} { return t.V }
+func (t PersistentVolumeList) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeList) Type() string            { return "k8s_v1_PersistentVolumeList" }
+func (t PersistentVolumeList) String() string          { return t.V.String() }
+func (t PersistentVolumeList) Freeze()                 {} // TODO
+func (t PersistentVolumeList) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolumeList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5381,6 +5699,9 @@ func (t PersistentVolumeList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeList_fields, PersistentVolumeList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeList_fields, PersistentVolumeList_inline)
 }
 
 type PersistentVolumeSource struct {
@@ -5414,13 +5735,13 @@ func init() {
 func createPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeSource
 }
-func (t PersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeSource) Package() util.Package       { return util.V1 }
-func (t PersistentVolumeSource) Type() string                { return "k8s_v1_PersistentVolumeSource" }
-func (t PersistentVolumeSource) String() string              { return t.V.String() }
-func (t PersistentVolumeSource) Freeze()                     {} // TODO
-func (t PersistentVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t PersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeSource) Type() string            { return "k8s_v1_PersistentVolumeSource" }
+func (t PersistentVolumeSource) String() string          { return t.V.String() }
+func (t PersistentVolumeSource) Freeze()                 {} // TODO
+func (t PersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5431,6 +5752,9 @@ func (t PersistentVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeSource_fields, PersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeSource_fields, PersistentVolumeSource_inline)
 }
 
 type PersistentVolumeSpec struct {
@@ -5464,13 +5788,13 @@ func init() {
 func createPersistentVolumeSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeSpec
 }
-func (t PersistentVolumeSpec) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeSpec) Package() util.Package       { return util.V1 }
-func (t PersistentVolumeSpec) Type() string                { return "k8s_v1_PersistentVolumeSpec" }
-func (t PersistentVolumeSpec) String() string              { return t.V.String() }
-func (t PersistentVolumeSpec) Freeze()                     {} // TODO
-func (t PersistentVolumeSpec) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolumeSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeSpec) Underlying() interface{} { return t.V }
+func (t PersistentVolumeSpec) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeSpec) Type() string            { return "k8s_v1_PersistentVolumeSpec" }
+func (t PersistentVolumeSpec) String() string          { return t.V.String() }
+func (t PersistentVolumeSpec) Freeze()                 {} // TODO
+func (t PersistentVolumeSpec) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolumeSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5481,6 +5805,9 @@ func (t PersistentVolumeSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeSpec_fields, PersistentVolumeSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeSpec_fields, PersistentVolumeSpec_inline)
 }
 
 type PersistentVolumeStatus struct {
@@ -5514,13 +5841,13 @@ func init() {
 func createPersistentVolumeStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PersistentVolumeStatus
 }
-func (t PersistentVolumeStatus) UnderlyingKind() interface{} { return t.V }
-func (t PersistentVolumeStatus) Package() util.Package       { return util.V1 }
-func (t PersistentVolumeStatus) Type() string                { return "k8s_v1_PersistentVolumeStatus" }
-func (t PersistentVolumeStatus) String() string              { return t.V.String() }
-func (t PersistentVolumeStatus) Freeze()                     {} // TODO
-func (t PersistentVolumeStatus) Truth() skylark.Bool         { return skylark.True }
-func (t PersistentVolumeStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeStatus) Underlying() interface{} { return t.V }
+func (t PersistentVolumeStatus) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeStatus) Type() string            { return "k8s_v1_PersistentVolumeStatus" }
+func (t PersistentVolumeStatus) String() string          { return t.V.String() }
+func (t PersistentVolumeStatus) Freeze()                 {} // TODO
+func (t PersistentVolumeStatus) Truth() skylark.Bool     { return skylark.True }
+func (t PersistentVolumeStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5531,6 +5858,9 @@ func (t PersistentVolumeStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PersistentVolumeStatus_fields, PersistentVolumeStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PersistentVolumeStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PersistentVolumeStatus_fields, PersistentVolumeStatus_inline)
 }
 
 type PhotonPersistentDiskVolumeSource struct {
@@ -5564,8 +5894,8 @@ func init() {
 func createPhotonPersistentDiskVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PhotonPersistentDiskVolumeSource
 }
-func (t PhotonPersistentDiskVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t PhotonPersistentDiskVolumeSource) Package() util.Package       { return util.V1 }
+func (t PhotonPersistentDiskVolumeSource) Underlying() interface{} { return t.V }
+func (t PhotonPersistentDiskVolumeSource) Package() util.Package   { return util.V1 }
 func (t PhotonPersistentDiskVolumeSource) Type() string {
 	return "k8s_v1_PhotonPersistentDiskVolumeSource"
 }
@@ -5585,6 +5915,9 @@ func (t PhotonPersistentDiskVolumeSource) Attr(name string) (skylark.Value, erro
 		return getAttr(reflect.ValueOf(u), name, PhotonPersistentDiskVolumeSource_fields, PhotonPersistentDiskVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PhotonPersistentDiskVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PhotonPersistentDiskVolumeSource_fields, PhotonPersistentDiskVolumeSource_inline)
 }
 
 type Pod struct {
@@ -5618,13 +5951,13 @@ func init() {
 func createPod(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Pod
 }
-func (t Pod) UnderlyingKind() interface{} { return t.V }
-func (t Pod) Package() util.Package       { return util.V1 }
-func (t Pod) Type() string                { return "k8s_v1_Pod" }
-func (t Pod) String() string              { return t.V.String() }
-func (t Pod) Freeze()                     {} // TODO
-func (t Pod) Truth() skylark.Bool         { return skylark.True }
-func (t Pod) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Pod) Underlying() interface{} { return t.V }
+func (t Pod) Package() util.Package   { return util.V1 }
+func (t Pod) Type() string            { return "k8s_v1_Pod" }
+func (t Pod) String() string          { return t.V.String() }
+func (t Pod) Freeze()                 {} // TODO
+func (t Pod) Truth() skylark.Bool     { return skylark.True }
+func (t Pod) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Pod) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Pod)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5635,6 +5968,9 @@ func (t Pod) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Pod_fields, Pod_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Pod) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Pod_fields, Pod_inline)
 }
 
 type PodAffinity struct {
@@ -5668,13 +6004,13 @@ func init() {
 func createPodAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodAffinity
 }
-func (t PodAffinity) UnderlyingKind() interface{} { return t.V }
-func (t PodAffinity) Package() util.Package       { return util.V1 }
-func (t PodAffinity) Type() string                { return "k8s_v1_PodAffinity" }
-func (t PodAffinity) String() string              { return t.V.String() }
-func (t PodAffinity) Freeze()                     {} // TODO
-func (t PodAffinity) Truth() skylark.Bool         { return skylark.True }
-func (t PodAffinity) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodAffinity) Underlying() interface{} { return t.V }
+func (t PodAffinity) Package() util.Package   { return util.V1 }
+func (t PodAffinity) Type() string            { return "k8s_v1_PodAffinity" }
+func (t PodAffinity) String() string          { return t.V.String() }
+func (t PodAffinity) Freeze()                 {} // TODO
+func (t PodAffinity) Truth() skylark.Bool     { return skylark.True }
+func (t PodAffinity) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodAffinity) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodAffinity)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5685,6 +6021,9 @@ func (t PodAffinity) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodAffinity_fields, PodAffinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodAffinity) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodAffinity_fields, PodAffinity_inline)
 }
 
 type PodAffinityTerm struct {
@@ -5718,13 +6057,13 @@ func init() {
 func createPodAffinityTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodAffinityTerm
 }
-func (t PodAffinityTerm) UnderlyingKind() interface{} { return t.V }
-func (t PodAffinityTerm) Package() util.Package       { return util.V1 }
-func (t PodAffinityTerm) Type() string                { return "k8s_v1_PodAffinityTerm" }
-func (t PodAffinityTerm) String() string              { return t.V.String() }
-func (t PodAffinityTerm) Freeze()                     {} // TODO
-func (t PodAffinityTerm) Truth() skylark.Bool         { return skylark.True }
-func (t PodAffinityTerm) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodAffinityTerm) Underlying() interface{} { return t.V }
+func (t PodAffinityTerm) Package() util.Package   { return util.V1 }
+func (t PodAffinityTerm) Type() string            { return "k8s_v1_PodAffinityTerm" }
+func (t PodAffinityTerm) String() string          { return t.V.String() }
+func (t PodAffinityTerm) Freeze()                 {} // TODO
+func (t PodAffinityTerm) Truth() skylark.Bool     { return skylark.True }
+func (t PodAffinityTerm) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodAffinityTerm) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodAffinityTerm)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5735,6 +6074,9 @@ func (t PodAffinityTerm) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodAffinityTerm_fields, PodAffinityTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodAffinityTerm) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodAffinityTerm_fields, PodAffinityTerm_inline)
 }
 
 type PodAntiAffinity struct {
@@ -5768,13 +6110,13 @@ func init() {
 func createPodAntiAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodAntiAffinity
 }
-func (t PodAntiAffinity) UnderlyingKind() interface{} { return t.V }
-func (t PodAntiAffinity) Package() util.Package       { return util.V1 }
-func (t PodAntiAffinity) Type() string                { return "k8s_v1_PodAntiAffinity" }
-func (t PodAntiAffinity) String() string              { return t.V.String() }
-func (t PodAntiAffinity) Freeze()                     {} // TODO
-func (t PodAntiAffinity) Truth() skylark.Bool         { return skylark.True }
-func (t PodAntiAffinity) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodAntiAffinity) Underlying() interface{} { return t.V }
+func (t PodAntiAffinity) Package() util.Package   { return util.V1 }
+func (t PodAntiAffinity) Type() string            { return "k8s_v1_PodAntiAffinity" }
+func (t PodAntiAffinity) String() string          { return t.V.String() }
+func (t PodAntiAffinity) Freeze()                 {} // TODO
+func (t PodAntiAffinity) Truth() skylark.Bool     { return skylark.True }
+func (t PodAntiAffinity) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodAntiAffinity) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodAntiAffinity)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5785,6 +6127,9 @@ func (t PodAntiAffinity) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodAntiAffinity_fields, PodAntiAffinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodAntiAffinity) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodAntiAffinity_fields, PodAntiAffinity_inline)
 }
 
 type PodAttachOptions struct {
@@ -5818,13 +6163,13 @@ func init() {
 func createPodAttachOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodAttachOptions
 }
-func (t PodAttachOptions) UnderlyingKind() interface{} { return t.V }
-func (t PodAttachOptions) Package() util.Package       { return util.V1 }
-func (t PodAttachOptions) Type() string                { return "k8s_v1_PodAttachOptions" }
-func (t PodAttachOptions) String() string              { return t.V.String() }
-func (t PodAttachOptions) Freeze()                     {} // TODO
-func (t PodAttachOptions) Truth() skylark.Bool         { return skylark.True }
-func (t PodAttachOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodAttachOptions) Underlying() interface{} { return t.V }
+func (t PodAttachOptions) Package() util.Package   { return util.V1 }
+func (t PodAttachOptions) Type() string            { return "k8s_v1_PodAttachOptions" }
+func (t PodAttachOptions) String() string          { return t.V.String() }
+func (t PodAttachOptions) Freeze()                 {} // TODO
+func (t PodAttachOptions) Truth() skylark.Bool     { return skylark.True }
+func (t PodAttachOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodAttachOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodAttachOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5835,6 +6180,9 @@ func (t PodAttachOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodAttachOptions_fields, PodAttachOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodAttachOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodAttachOptions_fields, PodAttachOptions_inline)
 }
 
 type PodCondition struct {
@@ -5868,13 +6216,13 @@ func init() {
 func createPodCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodCondition
 }
-func (t PodCondition) UnderlyingKind() interface{} { return t.V }
-func (t PodCondition) Package() util.Package       { return util.V1 }
-func (t PodCondition) Type() string                { return "k8s_v1_PodCondition" }
-func (t PodCondition) String() string              { return t.V.String() }
-func (t PodCondition) Freeze()                     {} // TODO
-func (t PodCondition) Truth() skylark.Bool         { return skylark.True }
-func (t PodCondition) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodCondition) Underlying() interface{} { return t.V }
+func (t PodCondition) Package() util.Package   { return util.V1 }
+func (t PodCondition) Type() string            { return "k8s_v1_PodCondition" }
+func (t PodCondition) String() string          { return t.V.String() }
+func (t PodCondition) Freeze()                 {} // TODO
+func (t PodCondition) Truth() skylark.Bool     { return skylark.True }
+func (t PodCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodCondition)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5885,6 +6233,9 @@ func (t PodCondition) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodCondition_fields, PodCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodCondition_fields, PodCondition_inline)
 }
 
 type PodDNSConfig struct {
@@ -5918,13 +6269,13 @@ func init() {
 func createPodDNSConfig(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodDNSConfig
 }
-func (t PodDNSConfig) UnderlyingKind() interface{} { return t.V }
-func (t PodDNSConfig) Package() util.Package       { return util.V1 }
-func (t PodDNSConfig) Type() string                { return "k8s_v1_PodDNSConfig" }
-func (t PodDNSConfig) String() string              { return t.V.String() }
-func (t PodDNSConfig) Freeze()                     {} // TODO
-func (t PodDNSConfig) Truth() skylark.Bool         { return skylark.True }
-func (t PodDNSConfig) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodDNSConfig) Underlying() interface{} { return t.V }
+func (t PodDNSConfig) Package() util.Package   { return util.V1 }
+func (t PodDNSConfig) Type() string            { return "k8s_v1_PodDNSConfig" }
+func (t PodDNSConfig) String() string          { return t.V.String() }
+func (t PodDNSConfig) Freeze()                 {} // TODO
+func (t PodDNSConfig) Truth() skylark.Bool     { return skylark.True }
+func (t PodDNSConfig) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodDNSConfig) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodDNSConfig)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5935,6 +6286,9 @@ func (t PodDNSConfig) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodDNSConfig_fields, PodDNSConfig_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodDNSConfig) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodDNSConfig_fields, PodDNSConfig_inline)
 }
 
 type PodDNSConfigOption struct {
@@ -5968,13 +6322,13 @@ func init() {
 func createPodDNSConfigOption(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodDNSConfigOption
 }
-func (t PodDNSConfigOption) UnderlyingKind() interface{} { return t.V }
-func (t PodDNSConfigOption) Package() util.Package       { return util.V1 }
-func (t PodDNSConfigOption) Type() string                { return "k8s_v1_PodDNSConfigOption" }
-func (t PodDNSConfigOption) String() string              { return t.V.String() }
-func (t PodDNSConfigOption) Freeze()                     {} // TODO
-func (t PodDNSConfigOption) Truth() skylark.Bool         { return skylark.True }
-func (t PodDNSConfigOption) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodDNSConfigOption) Underlying() interface{} { return t.V }
+func (t PodDNSConfigOption) Package() util.Package   { return util.V1 }
+func (t PodDNSConfigOption) Type() string            { return "k8s_v1_PodDNSConfigOption" }
+func (t PodDNSConfigOption) String() string          { return t.V.String() }
+func (t PodDNSConfigOption) Freeze()                 {} // TODO
+func (t PodDNSConfigOption) Truth() skylark.Bool     { return skylark.True }
+func (t PodDNSConfigOption) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodDNSConfigOption) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodDNSConfigOption)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5985,6 +6339,9 @@ func (t PodDNSConfigOption) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodDNSConfigOption_fields, PodDNSConfigOption_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodDNSConfigOption) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodDNSConfigOption_fields, PodDNSConfigOption_inline)
 }
 
 type PodExecOptions struct {
@@ -6018,13 +6375,13 @@ func init() {
 func createPodExecOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodExecOptions
 }
-func (t PodExecOptions) UnderlyingKind() interface{} { return t.V }
-func (t PodExecOptions) Package() util.Package       { return util.V1 }
-func (t PodExecOptions) Type() string                { return "k8s_v1_PodExecOptions" }
-func (t PodExecOptions) String() string              { return t.V.String() }
-func (t PodExecOptions) Freeze()                     {} // TODO
-func (t PodExecOptions) Truth() skylark.Bool         { return skylark.True }
-func (t PodExecOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodExecOptions) Underlying() interface{} { return t.V }
+func (t PodExecOptions) Package() util.Package   { return util.V1 }
+func (t PodExecOptions) Type() string            { return "k8s_v1_PodExecOptions" }
+func (t PodExecOptions) String() string          { return t.V.String() }
+func (t PodExecOptions) Freeze()                 {} // TODO
+func (t PodExecOptions) Truth() skylark.Bool     { return skylark.True }
+func (t PodExecOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodExecOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodExecOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6035,6 +6392,9 @@ func (t PodExecOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodExecOptions_fields, PodExecOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodExecOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodExecOptions_fields, PodExecOptions_inline)
 }
 
 type PodList struct {
@@ -6068,13 +6428,13 @@ func init() {
 func createPodList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodList
 }
-func (t PodList) UnderlyingKind() interface{} { return t.V }
-func (t PodList) Package() util.Package       { return util.V1 }
-func (t PodList) Type() string                { return "k8s_v1_PodList" }
-func (t PodList) String() string              { return t.V.String() }
-func (t PodList) Freeze()                     {} // TODO
-func (t PodList) Truth() skylark.Bool         { return skylark.True }
-func (t PodList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodList) Underlying() interface{} { return t.V }
+func (t PodList) Package() util.Package   { return util.V1 }
+func (t PodList) Type() string            { return "k8s_v1_PodList" }
+func (t PodList) String() string          { return t.V.String() }
+func (t PodList) Freeze()                 {} // TODO
+func (t PodList) Truth() skylark.Bool     { return skylark.True }
+func (t PodList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6085,6 +6445,9 @@ func (t PodList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodList_fields, PodList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodList_fields, PodList_inline)
 }
 
 type PodLogOptions struct {
@@ -6118,13 +6481,13 @@ func init() {
 func createPodLogOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodLogOptions
 }
-func (t PodLogOptions) UnderlyingKind() interface{} { return t.V }
-func (t PodLogOptions) Package() util.Package       { return util.V1 }
-func (t PodLogOptions) Type() string                { return "k8s_v1_PodLogOptions" }
-func (t PodLogOptions) String() string              { return t.V.String() }
-func (t PodLogOptions) Freeze()                     {} // TODO
-func (t PodLogOptions) Truth() skylark.Bool         { return skylark.True }
-func (t PodLogOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodLogOptions) Underlying() interface{} { return t.V }
+func (t PodLogOptions) Package() util.Package   { return util.V1 }
+func (t PodLogOptions) Type() string            { return "k8s_v1_PodLogOptions" }
+func (t PodLogOptions) String() string          { return t.V.String() }
+func (t PodLogOptions) Freeze()                 {} // TODO
+func (t PodLogOptions) Truth() skylark.Bool     { return skylark.True }
+func (t PodLogOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodLogOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodLogOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6135,6 +6498,9 @@ func (t PodLogOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodLogOptions_fields, PodLogOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodLogOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodLogOptions_fields, PodLogOptions_inline)
 }
 
 type PodPortForwardOptions struct {
@@ -6168,13 +6534,13 @@ func init() {
 func createPodPortForwardOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodPortForwardOptions
 }
-func (t PodPortForwardOptions) UnderlyingKind() interface{} { return t.V }
-func (t PodPortForwardOptions) Package() util.Package       { return util.V1 }
-func (t PodPortForwardOptions) Type() string                { return "k8s_v1_PodPortForwardOptions" }
-func (t PodPortForwardOptions) String() string              { return t.V.String() }
-func (t PodPortForwardOptions) Freeze()                     {} // TODO
-func (t PodPortForwardOptions) Truth() skylark.Bool         { return skylark.True }
-func (t PodPortForwardOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodPortForwardOptions) Underlying() interface{} { return t.V }
+func (t PodPortForwardOptions) Package() util.Package   { return util.V1 }
+func (t PodPortForwardOptions) Type() string            { return "k8s_v1_PodPortForwardOptions" }
+func (t PodPortForwardOptions) String() string          { return t.V.String() }
+func (t PodPortForwardOptions) Freeze()                 {} // TODO
+func (t PodPortForwardOptions) Truth() skylark.Bool     { return skylark.True }
+func (t PodPortForwardOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodPortForwardOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodPortForwardOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6185,6 +6551,9 @@ func (t PodPortForwardOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodPortForwardOptions_fields, PodPortForwardOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodPortForwardOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodPortForwardOptions_fields, PodPortForwardOptions_inline)
 }
 
 type PodProxyOptions struct {
@@ -6218,13 +6587,13 @@ func init() {
 func createPodProxyOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodProxyOptions
 }
-func (t PodProxyOptions) UnderlyingKind() interface{} { return t.V }
-func (t PodProxyOptions) Package() util.Package       { return util.V1 }
-func (t PodProxyOptions) Type() string                { return "k8s_v1_PodProxyOptions" }
-func (t PodProxyOptions) String() string              { return t.V.String() }
-func (t PodProxyOptions) Freeze()                     {} // TODO
-func (t PodProxyOptions) Truth() skylark.Bool         { return skylark.True }
-func (t PodProxyOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodProxyOptions) Underlying() interface{} { return t.V }
+func (t PodProxyOptions) Package() util.Package   { return util.V1 }
+func (t PodProxyOptions) Type() string            { return "k8s_v1_PodProxyOptions" }
+func (t PodProxyOptions) String() string          { return t.V.String() }
+func (t PodProxyOptions) Freeze()                 {} // TODO
+func (t PodProxyOptions) Truth() skylark.Bool     { return skylark.True }
+func (t PodProxyOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodProxyOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodProxyOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6235,6 +6604,9 @@ func (t PodProxyOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodProxyOptions_fields, PodProxyOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodProxyOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodProxyOptions_fields, PodProxyOptions_inline)
 }
 
 type PodReadinessGate struct {
@@ -6268,13 +6640,13 @@ func init() {
 func createPodReadinessGate(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodReadinessGate
 }
-func (t PodReadinessGate) UnderlyingKind() interface{} { return t.V }
-func (t PodReadinessGate) Package() util.Package       { return util.V1 }
-func (t PodReadinessGate) Type() string                { return "k8s_v1_PodReadinessGate" }
-func (t PodReadinessGate) String() string              { return t.V.String() }
-func (t PodReadinessGate) Freeze()                     {} // TODO
-func (t PodReadinessGate) Truth() skylark.Bool         { return skylark.True }
-func (t PodReadinessGate) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodReadinessGate) Underlying() interface{} { return t.V }
+func (t PodReadinessGate) Package() util.Package   { return util.V1 }
+func (t PodReadinessGate) Type() string            { return "k8s_v1_PodReadinessGate" }
+func (t PodReadinessGate) String() string          { return t.V.String() }
+func (t PodReadinessGate) Freeze()                 {} // TODO
+func (t PodReadinessGate) Truth() skylark.Bool     { return skylark.True }
+func (t PodReadinessGate) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodReadinessGate) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodReadinessGate)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6285,6 +6657,9 @@ func (t PodReadinessGate) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodReadinessGate_fields, PodReadinessGate_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodReadinessGate) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodReadinessGate_fields, PodReadinessGate_inline)
 }
 
 type PodSecurityContext struct {
@@ -6318,13 +6693,13 @@ func init() {
 func createPodSecurityContext(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodSecurityContext
 }
-func (t PodSecurityContext) UnderlyingKind() interface{} { return t.V }
-func (t PodSecurityContext) Package() util.Package       { return util.V1 }
-func (t PodSecurityContext) Type() string                { return "k8s_v1_PodSecurityContext" }
-func (t PodSecurityContext) String() string              { return t.V.String() }
-func (t PodSecurityContext) Freeze()                     {} // TODO
-func (t PodSecurityContext) Truth() skylark.Bool         { return skylark.True }
-func (t PodSecurityContext) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodSecurityContext) Underlying() interface{} { return t.V }
+func (t PodSecurityContext) Package() util.Package   { return util.V1 }
+func (t PodSecurityContext) Type() string            { return "k8s_v1_PodSecurityContext" }
+func (t PodSecurityContext) String() string          { return t.V.String() }
+func (t PodSecurityContext) Freeze()                 {} // TODO
+func (t PodSecurityContext) Truth() skylark.Bool     { return skylark.True }
+func (t PodSecurityContext) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodSecurityContext) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodSecurityContext)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6335,6 +6710,9 @@ func (t PodSecurityContext) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodSecurityContext_fields, PodSecurityContext_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodSecurityContext) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodSecurityContext_fields, PodSecurityContext_inline)
 }
 
 type PodSignature struct {
@@ -6368,13 +6746,13 @@ func init() {
 func createPodSignature(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodSignature
 }
-func (t PodSignature) UnderlyingKind() interface{} { return t.V }
-func (t PodSignature) Package() util.Package       { return util.V1 }
-func (t PodSignature) Type() string                { return "k8s_v1_PodSignature" }
-func (t PodSignature) String() string              { return t.V.String() }
-func (t PodSignature) Freeze()                     {} // TODO
-func (t PodSignature) Truth() skylark.Bool         { return skylark.True }
-func (t PodSignature) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodSignature) Underlying() interface{} { return t.V }
+func (t PodSignature) Package() util.Package   { return util.V1 }
+func (t PodSignature) Type() string            { return "k8s_v1_PodSignature" }
+func (t PodSignature) String() string          { return t.V.String() }
+func (t PodSignature) Freeze()                 {} // TODO
+func (t PodSignature) Truth() skylark.Bool     { return skylark.True }
+func (t PodSignature) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodSignature) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodSignature)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6385,6 +6763,9 @@ func (t PodSignature) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodSignature_fields, PodSignature_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodSignature) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodSignature_fields, PodSignature_inline)
 }
 
 type PodSpec struct {
@@ -6418,13 +6799,13 @@ func init() {
 func createPodSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodSpec
 }
-func (t PodSpec) UnderlyingKind() interface{} { return t.V }
-func (t PodSpec) Package() util.Package       { return util.V1 }
-func (t PodSpec) Type() string                { return "k8s_v1_PodSpec" }
-func (t PodSpec) String() string              { return t.V.String() }
-func (t PodSpec) Freeze()                     {} // TODO
-func (t PodSpec) Truth() skylark.Bool         { return skylark.True }
-func (t PodSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodSpec) Underlying() interface{} { return t.V }
+func (t PodSpec) Package() util.Package   { return util.V1 }
+func (t PodSpec) Type() string            { return "k8s_v1_PodSpec" }
+func (t PodSpec) String() string          { return t.V.String() }
+func (t PodSpec) Freeze()                 {} // TODO
+func (t PodSpec) Truth() skylark.Bool     { return skylark.True }
+func (t PodSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6435,6 +6816,9 @@ func (t PodSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodSpec_fields, PodSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodSpec_fields, PodSpec_inline)
 }
 
 type PodStatus struct {
@@ -6468,13 +6852,13 @@ func init() {
 func createPodStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodStatus
 }
-func (t PodStatus) UnderlyingKind() interface{} { return t.V }
-func (t PodStatus) Package() util.Package       { return util.V1 }
-func (t PodStatus) Type() string                { return "k8s_v1_PodStatus" }
-func (t PodStatus) String() string              { return t.V.String() }
-func (t PodStatus) Freeze()                     {} // TODO
-func (t PodStatus) Truth() skylark.Bool         { return skylark.True }
-func (t PodStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodStatus) Underlying() interface{} { return t.V }
+func (t PodStatus) Package() util.Package   { return util.V1 }
+func (t PodStatus) Type() string            { return "k8s_v1_PodStatus" }
+func (t PodStatus) String() string          { return t.V.String() }
+func (t PodStatus) Freeze()                 {} // TODO
+func (t PodStatus) Truth() skylark.Bool     { return skylark.True }
+func (t PodStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6485,6 +6869,9 @@ func (t PodStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodStatus_fields, PodStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodStatus_fields, PodStatus_inline)
 }
 
 type PodStatusResult struct {
@@ -6518,13 +6905,13 @@ func init() {
 func createPodStatusResult(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodStatusResult
 }
-func (t PodStatusResult) UnderlyingKind() interface{} { return t.V }
-func (t PodStatusResult) Package() util.Package       { return util.V1 }
-func (t PodStatusResult) Type() string                { return "k8s_v1_PodStatusResult" }
-func (t PodStatusResult) String() string              { return t.V.String() }
-func (t PodStatusResult) Freeze()                     {} // TODO
-func (t PodStatusResult) Truth() skylark.Bool         { return skylark.True }
-func (t PodStatusResult) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodStatusResult) Underlying() interface{} { return t.V }
+func (t PodStatusResult) Package() util.Package   { return util.V1 }
+func (t PodStatusResult) Type() string            { return "k8s_v1_PodStatusResult" }
+func (t PodStatusResult) String() string          { return t.V.String() }
+func (t PodStatusResult) Freeze()                 {} // TODO
+func (t PodStatusResult) Truth() skylark.Bool     { return skylark.True }
+func (t PodStatusResult) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodStatusResult) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodStatusResult)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6535,6 +6922,9 @@ func (t PodStatusResult) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodStatusResult_fields, PodStatusResult_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodStatusResult) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodStatusResult_fields, PodStatusResult_inline)
 }
 
 type PodTemplate struct {
@@ -6568,13 +6958,13 @@ func init() {
 func createPodTemplate(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodTemplate
 }
-func (t PodTemplate) UnderlyingKind() interface{} { return t.V }
-func (t PodTemplate) Package() util.Package       { return util.V1 }
-func (t PodTemplate) Type() string                { return "k8s_v1_PodTemplate" }
-func (t PodTemplate) String() string              { return t.V.String() }
-func (t PodTemplate) Freeze()                     {} // TODO
-func (t PodTemplate) Truth() skylark.Bool         { return skylark.True }
-func (t PodTemplate) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodTemplate) Underlying() interface{} { return t.V }
+func (t PodTemplate) Package() util.Package   { return util.V1 }
+func (t PodTemplate) Type() string            { return "k8s_v1_PodTemplate" }
+func (t PodTemplate) String() string          { return t.V.String() }
+func (t PodTemplate) Freeze()                 {} // TODO
+func (t PodTemplate) Truth() skylark.Bool     { return skylark.True }
+func (t PodTemplate) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodTemplate) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodTemplate)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6585,6 +6975,9 @@ func (t PodTemplate) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodTemplate_fields, PodTemplate_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodTemplate) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodTemplate_fields, PodTemplate_inline)
 }
 
 type PodTemplateList struct {
@@ -6618,13 +7011,13 @@ func init() {
 func createPodTemplateList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodTemplateList
 }
-func (t PodTemplateList) UnderlyingKind() interface{} { return t.V }
-func (t PodTemplateList) Package() util.Package       { return util.V1 }
-func (t PodTemplateList) Type() string                { return "k8s_v1_PodTemplateList" }
-func (t PodTemplateList) String() string              { return t.V.String() }
-func (t PodTemplateList) Freeze()                     {} // TODO
-func (t PodTemplateList) Truth() skylark.Bool         { return skylark.True }
-func (t PodTemplateList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodTemplateList) Underlying() interface{} { return t.V }
+func (t PodTemplateList) Package() util.Package   { return util.V1 }
+func (t PodTemplateList) Type() string            { return "k8s_v1_PodTemplateList" }
+func (t PodTemplateList) String() string          { return t.V.String() }
+func (t PodTemplateList) Freeze()                 {} // TODO
+func (t PodTemplateList) Truth() skylark.Bool     { return skylark.True }
+func (t PodTemplateList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodTemplateList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodTemplateList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6635,6 +7028,9 @@ func (t PodTemplateList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodTemplateList_fields, PodTemplateList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodTemplateList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodTemplateList_fields, PodTemplateList_inline)
 }
 
 type PodTemplateSpec struct {
@@ -6668,13 +7064,13 @@ func init() {
 func createPodTemplateSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PodTemplateSpec
 }
-func (t PodTemplateSpec) UnderlyingKind() interface{} { return t.V }
-func (t PodTemplateSpec) Package() util.Package       { return util.V1 }
-func (t PodTemplateSpec) Type() string                { return "k8s_v1_PodTemplateSpec" }
-func (t PodTemplateSpec) String() string              { return t.V.String() }
-func (t PodTemplateSpec) Freeze()                     {} // TODO
-func (t PodTemplateSpec) Truth() skylark.Bool         { return skylark.True }
-func (t PodTemplateSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PodTemplateSpec) Underlying() interface{} { return t.V }
+func (t PodTemplateSpec) Package() util.Package   { return util.V1 }
+func (t PodTemplateSpec) Type() string            { return "k8s_v1_PodTemplateSpec" }
+func (t PodTemplateSpec) String() string          { return t.V.String() }
+func (t PodTemplateSpec) Freeze()                 {} // TODO
+func (t PodTemplateSpec) Truth() skylark.Bool     { return skylark.True }
+func (t PodTemplateSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PodTemplateSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PodTemplateSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6685,6 +7081,9 @@ func (t PodTemplateSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PodTemplateSpec_fields, PodTemplateSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodTemplateSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodTemplateSpec_fields, PodTemplateSpec_inline)
 }
 
 type PortworxVolumeSource struct {
@@ -6718,13 +7117,13 @@ func init() {
 func createPortworxVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PortworxVolumeSource
 }
-func (t PortworxVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t PortworxVolumeSource) Package() util.Package       { return util.V1 }
-func (t PortworxVolumeSource) Type() string                { return "k8s_v1_PortworxVolumeSource" }
-func (t PortworxVolumeSource) String() string              { return t.V.String() }
-func (t PortworxVolumeSource) Freeze()                     {} // TODO
-func (t PortworxVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t PortworxVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PortworxVolumeSource) Underlying() interface{} { return t.V }
+func (t PortworxVolumeSource) Package() util.Package   { return util.V1 }
+func (t PortworxVolumeSource) Type() string            { return "k8s_v1_PortworxVolumeSource" }
+func (t PortworxVolumeSource) String() string          { return t.V.String() }
+func (t PortworxVolumeSource) Freeze()                 {} // TODO
+func (t PortworxVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t PortworxVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PortworxVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PortworxVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6735,6 +7134,9 @@ func (t PortworxVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PortworxVolumeSource_fields, PortworxVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PortworxVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PortworxVolumeSource_fields, PortworxVolumeSource_inline)
 }
 
 type Preconditions struct {
@@ -6768,13 +7170,13 @@ func init() {
 func createPreconditions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Preconditions
 }
-func (t Preconditions) UnderlyingKind() interface{} { return t.V }
-func (t Preconditions) Package() util.Package       { return util.V1 }
-func (t Preconditions) Type() string                { return "k8s_v1_Preconditions" }
-func (t Preconditions) String() string              { return t.V.String() }
-func (t Preconditions) Freeze()                     {} // TODO
-func (t Preconditions) Truth() skylark.Bool         { return skylark.True }
-func (t Preconditions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Preconditions) Underlying() interface{} { return t.V }
+func (t Preconditions) Package() util.Package   { return util.V1 }
+func (t Preconditions) Type() string            { return "k8s_v1_Preconditions" }
+func (t Preconditions) String() string          { return t.V.String() }
+func (t Preconditions) Freeze()                 {} // TODO
+func (t Preconditions) Truth() skylark.Bool     { return skylark.True }
+func (t Preconditions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Preconditions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Preconditions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6785,6 +7187,9 @@ func (t Preconditions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Preconditions_fields, Preconditions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Preconditions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Preconditions_fields, Preconditions_inline)
 }
 
 type PreferAvoidPodsEntry struct {
@@ -6818,13 +7223,13 @@ func init() {
 func createPreferAvoidPodsEntry(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PreferAvoidPodsEntry
 }
-func (t PreferAvoidPodsEntry) UnderlyingKind() interface{} { return t.V }
-func (t PreferAvoidPodsEntry) Package() util.Package       { return util.V1 }
-func (t PreferAvoidPodsEntry) Type() string                { return "k8s_v1_PreferAvoidPodsEntry" }
-func (t PreferAvoidPodsEntry) String() string              { return t.V.String() }
-func (t PreferAvoidPodsEntry) Freeze()                     {} // TODO
-func (t PreferAvoidPodsEntry) Truth() skylark.Bool         { return skylark.True }
-func (t PreferAvoidPodsEntry) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PreferAvoidPodsEntry) Underlying() interface{} { return t.V }
+func (t PreferAvoidPodsEntry) Package() util.Package   { return util.V1 }
+func (t PreferAvoidPodsEntry) Type() string            { return "k8s_v1_PreferAvoidPodsEntry" }
+func (t PreferAvoidPodsEntry) String() string          { return t.V.String() }
+func (t PreferAvoidPodsEntry) Freeze()                 {} // TODO
+func (t PreferAvoidPodsEntry) Truth() skylark.Bool     { return skylark.True }
+func (t PreferAvoidPodsEntry) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PreferAvoidPodsEntry) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PreferAvoidPodsEntry)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6835,6 +7240,9 @@ func (t PreferAvoidPodsEntry) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PreferAvoidPodsEntry_fields, PreferAvoidPodsEntry_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PreferAvoidPodsEntry) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PreferAvoidPodsEntry_fields, PreferAvoidPodsEntry_inline)
 }
 
 type PreferredSchedulingTerm struct {
@@ -6868,13 +7276,13 @@ func init() {
 func createPreferredSchedulingTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for PreferredSchedulingTerm
 }
-func (t PreferredSchedulingTerm) UnderlyingKind() interface{} { return t.V }
-func (t PreferredSchedulingTerm) Package() util.Package       { return util.V1 }
-func (t PreferredSchedulingTerm) Type() string                { return "k8s_v1_PreferredSchedulingTerm" }
-func (t PreferredSchedulingTerm) String() string              { return t.V.String() }
-func (t PreferredSchedulingTerm) Freeze()                     {} // TODO
-func (t PreferredSchedulingTerm) Truth() skylark.Bool         { return skylark.True }
-func (t PreferredSchedulingTerm) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t PreferredSchedulingTerm) Underlying() interface{} { return t.V }
+func (t PreferredSchedulingTerm) Package() util.Package   { return util.V1 }
+func (t PreferredSchedulingTerm) Type() string            { return "k8s_v1_PreferredSchedulingTerm" }
+func (t PreferredSchedulingTerm) String() string          { return t.V.String() }
+func (t PreferredSchedulingTerm) Freeze()                 {} // TODO
+func (t PreferredSchedulingTerm) Truth() skylark.Bool     { return skylark.True }
+func (t PreferredSchedulingTerm) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t PreferredSchedulingTerm) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PreferredSchedulingTerm)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6885,6 +7293,9 @@ func (t PreferredSchedulingTerm) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, PreferredSchedulingTerm_fields, PreferredSchedulingTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PreferredSchedulingTerm) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PreferredSchedulingTerm_fields, PreferredSchedulingTerm_inline)
 }
 
 type Probe struct {
@@ -6918,13 +7329,13 @@ func init() {
 func createProbe(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Probe
 }
-func (t Probe) UnderlyingKind() interface{} { return t.V }
-func (t Probe) Package() util.Package       { return util.V1 }
-func (t Probe) Type() string                { return "k8s_v1_Probe" }
-func (t Probe) String() string              { return t.V.String() }
-func (t Probe) Freeze()                     {} // TODO
-func (t Probe) Truth() skylark.Bool         { return skylark.True }
-func (t Probe) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Probe) Underlying() interface{} { return t.V }
+func (t Probe) Package() util.Package   { return util.V1 }
+func (t Probe) Type() string            { return "k8s_v1_Probe" }
+func (t Probe) String() string          { return t.V.String() }
+func (t Probe) Freeze()                 {} // TODO
+func (t Probe) Truth() skylark.Bool     { return skylark.True }
+func (t Probe) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Probe) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Probe)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6935,6 +7346,9 @@ func (t Probe) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Probe_fields, Probe_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Probe) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Probe_fields, Probe_inline)
 }
 
 type ProjectedVolumeSource struct {
@@ -6968,13 +7382,13 @@ func init() {
 func createProjectedVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ProjectedVolumeSource
 }
-func (t ProjectedVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t ProjectedVolumeSource) Package() util.Package       { return util.V1 }
-func (t ProjectedVolumeSource) Type() string                { return "k8s_v1_ProjectedVolumeSource" }
-func (t ProjectedVolumeSource) String() string              { return t.V.String() }
-func (t ProjectedVolumeSource) Freeze()                     {} // TODO
-func (t ProjectedVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t ProjectedVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ProjectedVolumeSource) Underlying() interface{} { return t.V }
+func (t ProjectedVolumeSource) Package() util.Package   { return util.V1 }
+func (t ProjectedVolumeSource) Type() string            { return "k8s_v1_ProjectedVolumeSource" }
+func (t ProjectedVolumeSource) String() string          { return t.V.String() }
+func (t ProjectedVolumeSource) Freeze()                 {} // TODO
+func (t ProjectedVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t ProjectedVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ProjectedVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ProjectedVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -6985,6 +7399,9 @@ func (t ProjectedVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ProjectedVolumeSource_fields, ProjectedVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ProjectedVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ProjectedVolumeSource_fields, ProjectedVolumeSource_inline)
 }
 
 type QuobyteVolumeSource struct {
@@ -7018,13 +7435,13 @@ func init() {
 func createQuobyteVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for QuobyteVolumeSource
 }
-func (t QuobyteVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t QuobyteVolumeSource) Package() util.Package       { return util.V1 }
-func (t QuobyteVolumeSource) Type() string                { return "k8s_v1_QuobyteVolumeSource" }
-func (t QuobyteVolumeSource) String() string              { return t.V.String() }
-func (t QuobyteVolumeSource) Freeze()                     {} // TODO
-func (t QuobyteVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t QuobyteVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t QuobyteVolumeSource) Underlying() interface{} { return t.V }
+func (t QuobyteVolumeSource) Package() util.Package   { return util.V1 }
+func (t QuobyteVolumeSource) Type() string            { return "k8s_v1_QuobyteVolumeSource" }
+func (t QuobyteVolumeSource) String() string          { return t.V.String() }
+func (t QuobyteVolumeSource) Freeze()                 {} // TODO
+func (t QuobyteVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t QuobyteVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t QuobyteVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*QuobyteVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7035,6 +7452,9 @@ func (t QuobyteVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, QuobyteVolumeSource_fields, QuobyteVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t QuobyteVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, QuobyteVolumeSource_fields, QuobyteVolumeSource_inline)
 }
 
 type RBDPersistentVolumeSource struct {
@@ -7068,13 +7488,13 @@ func init() {
 func createRBDPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for RBDPersistentVolumeSource
 }
-func (t RBDPersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t RBDPersistentVolumeSource) Package() util.Package       { return util.V1 }
-func (t RBDPersistentVolumeSource) Type() string                { return "k8s_v1_RBDPersistentVolumeSource" }
-func (t RBDPersistentVolumeSource) String() string              { return t.V.String() }
-func (t RBDPersistentVolumeSource) Freeze()                     {} // TODO
-func (t RBDPersistentVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t RBDPersistentVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t RBDPersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t RBDPersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t RBDPersistentVolumeSource) Type() string            { return "k8s_v1_RBDPersistentVolumeSource" }
+func (t RBDPersistentVolumeSource) String() string          { return t.V.String() }
+func (t RBDPersistentVolumeSource) Freeze()                 {} // TODO
+func (t RBDPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t RBDPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t RBDPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*RBDPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7085,6 +7505,9 @@ func (t RBDPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, RBDPersistentVolumeSource_fields, RBDPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RBDPersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RBDPersistentVolumeSource_fields, RBDPersistentVolumeSource_inline)
 }
 
 type RBDVolumeSource struct {
@@ -7118,13 +7541,13 @@ func init() {
 func createRBDVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for RBDVolumeSource
 }
-func (t RBDVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t RBDVolumeSource) Package() util.Package       { return util.V1 }
-func (t RBDVolumeSource) Type() string                { return "k8s_v1_RBDVolumeSource" }
-func (t RBDVolumeSource) String() string              { return t.V.String() }
-func (t RBDVolumeSource) Freeze()                     {} // TODO
-func (t RBDVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t RBDVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t RBDVolumeSource) Underlying() interface{} { return t.V }
+func (t RBDVolumeSource) Package() util.Package   { return util.V1 }
+func (t RBDVolumeSource) Type() string            { return "k8s_v1_RBDVolumeSource" }
+func (t RBDVolumeSource) String() string          { return t.V.String() }
+func (t RBDVolumeSource) Freeze()                 {} // TODO
+func (t RBDVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t RBDVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t RBDVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*RBDVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7135,6 +7558,9 @@ func (t RBDVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, RBDVolumeSource_fields, RBDVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RBDVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RBDVolumeSource_fields, RBDVolumeSource_inline)
 }
 
 type RangeAllocation struct {
@@ -7168,13 +7594,13 @@ func init() {
 func createRangeAllocation(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for RangeAllocation
 }
-func (t RangeAllocation) UnderlyingKind() interface{} { return t.V }
-func (t RangeAllocation) Package() util.Package       { return util.V1 }
-func (t RangeAllocation) Type() string                { return "k8s_v1_RangeAllocation" }
-func (t RangeAllocation) String() string              { return t.V.String() }
-func (t RangeAllocation) Freeze()                     {} // TODO
-func (t RangeAllocation) Truth() skylark.Bool         { return skylark.True }
-func (t RangeAllocation) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t RangeAllocation) Underlying() interface{} { return t.V }
+func (t RangeAllocation) Package() util.Package   { return util.V1 }
+func (t RangeAllocation) Type() string            { return "k8s_v1_RangeAllocation" }
+func (t RangeAllocation) String() string          { return t.V.String() }
+func (t RangeAllocation) Freeze()                 {} // TODO
+func (t RangeAllocation) Truth() skylark.Bool     { return skylark.True }
+func (t RangeAllocation) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t RangeAllocation) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*RangeAllocation)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7185,6 +7611,9 @@ func (t RangeAllocation) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, RangeAllocation_fields, RangeAllocation_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RangeAllocation) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RangeAllocation_fields, RangeAllocation_inline)
 }
 
 type ReplicationController struct {
@@ -7218,13 +7647,13 @@ func init() {
 func createReplicationController(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ReplicationController
 }
-func (t ReplicationController) UnderlyingKind() interface{} { return t.V }
-func (t ReplicationController) Package() util.Package       { return util.V1 }
-func (t ReplicationController) Type() string                { return "k8s_v1_ReplicationController" }
-func (t ReplicationController) String() string              { return t.V.String() }
-func (t ReplicationController) Freeze()                     {} // TODO
-func (t ReplicationController) Truth() skylark.Bool         { return skylark.True }
-func (t ReplicationController) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ReplicationController) Underlying() interface{} { return t.V }
+func (t ReplicationController) Package() util.Package   { return util.V1 }
+func (t ReplicationController) Type() string            { return "k8s_v1_ReplicationController" }
+func (t ReplicationController) String() string          { return t.V.String() }
+func (t ReplicationController) Freeze()                 {} // TODO
+func (t ReplicationController) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicationController) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ReplicationController) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ReplicationController)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7235,6 +7664,9 @@ func (t ReplicationController) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ReplicationController_fields, ReplicationController_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicationController) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicationController_fields, ReplicationController_inline)
 }
 
 type ReplicationControllerCondition struct {
@@ -7268,13 +7700,13 @@ func init() {
 func createReplicationControllerCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ReplicationControllerCondition
 }
-func (t ReplicationControllerCondition) UnderlyingKind() interface{} { return t.V }
-func (t ReplicationControllerCondition) Package() util.Package       { return util.V1 }
-func (t ReplicationControllerCondition) Type() string                { return "k8s_v1_ReplicationControllerCondition" }
-func (t ReplicationControllerCondition) String() string              { return t.V.String() }
-func (t ReplicationControllerCondition) Freeze()                     {} // TODO
-func (t ReplicationControllerCondition) Truth() skylark.Bool         { return skylark.True }
-func (t ReplicationControllerCondition) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ReplicationControllerCondition) Underlying() interface{} { return t.V }
+func (t ReplicationControllerCondition) Package() util.Package   { return util.V1 }
+func (t ReplicationControllerCondition) Type() string            { return "k8s_v1_ReplicationControllerCondition" }
+func (t ReplicationControllerCondition) String() string          { return t.V.String() }
+func (t ReplicationControllerCondition) Freeze()                 {} // TODO
+func (t ReplicationControllerCondition) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicationControllerCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ReplicationControllerCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ReplicationControllerCondition)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7287,6 +7719,9 @@ func (t ReplicationControllerCondition) Attr(name string) (skylark.Value, error)
 		return getAttr(reflect.ValueOf(u), name, ReplicationControllerCondition_fields, ReplicationControllerCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicationControllerCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicationControllerCondition_fields, ReplicationControllerCondition_inline)
 }
 
 type ReplicationControllerList struct {
@@ -7320,13 +7755,13 @@ func init() {
 func createReplicationControllerList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ReplicationControllerList
 }
-func (t ReplicationControllerList) UnderlyingKind() interface{} { return t.V }
-func (t ReplicationControllerList) Package() util.Package       { return util.V1 }
-func (t ReplicationControllerList) Type() string                { return "k8s_v1_ReplicationControllerList" }
-func (t ReplicationControllerList) String() string              { return t.V.String() }
-func (t ReplicationControllerList) Freeze()                     {} // TODO
-func (t ReplicationControllerList) Truth() skylark.Bool         { return skylark.True }
-func (t ReplicationControllerList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ReplicationControllerList) Underlying() interface{} { return t.V }
+func (t ReplicationControllerList) Package() util.Package   { return util.V1 }
+func (t ReplicationControllerList) Type() string            { return "k8s_v1_ReplicationControllerList" }
+func (t ReplicationControllerList) String() string          { return t.V.String() }
+func (t ReplicationControllerList) Freeze()                 {} // TODO
+func (t ReplicationControllerList) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicationControllerList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ReplicationControllerList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ReplicationControllerList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7337,6 +7772,9 @@ func (t ReplicationControllerList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ReplicationControllerList_fields, ReplicationControllerList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicationControllerList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicationControllerList_fields, ReplicationControllerList_inline)
 }
 
 type ReplicationControllerSpec struct {
@@ -7370,13 +7808,13 @@ func init() {
 func createReplicationControllerSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ReplicationControllerSpec
 }
-func (t ReplicationControllerSpec) UnderlyingKind() interface{} { return t.V }
-func (t ReplicationControllerSpec) Package() util.Package       { return util.V1 }
-func (t ReplicationControllerSpec) Type() string                { return "k8s_v1_ReplicationControllerSpec" }
-func (t ReplicationControllerSpec) String() string              { return t.V.String() }
-func (t ReplicationControllerSpec) Freeze()                     {} // TODO
-func (t ReplicationControllerSpec) Truth() skylark.Bool         { return skylark.True }
-func (t ReplicationControllerSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ReplicationControllerSpec) Underlying() interface{} { return t.V }
+func (t ReplicationControllerSpec) Package() util.Package   { return util.V1 }
+func (t ReplicationControllerSpec) Type() string            { return "k8s_v1_ReplicationControllerSpec" }
+func (t ReplicationControllerSpec) String() string          { return t.V.String() }
+func (t ReplicationControllerSpec) Freeze()                 {} // TODO
+func (t ReplicationControllerSpec) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicationControllerSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ReplicationControllerSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ReplicationControllerSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7387,6 +7825,9 @@ func (t ReplicationControllerSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ReplicationControllerSpec_fields, ReplicationControllerSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicationControllerSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicationControllerSpec_fields, ReplicationControllerSpec_inline)
 }
 
 type ReplicationControllerStatus struct {
@@ -7420,13 +7861,13 @@ func init() {
 func createReplicationControllerStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ReplicationControllerStatus
 }
-func (t ReplicationControllerStatus) UnderlyingKind() interface{} { return t.V }
-func (t ReplicationControllerStatus) Package() util.Package       { return util.V1 }
-func (t ReplicationControllerStatus) Type() string                { return "k8s_v1_ReplicationControllerStatus" }
-func (t ReplicationControllerStatus) String() string              { return t.V.String() }
-func (t ReplicationControllerStatus) Freeze()                     {} // TODO
-func (t ReplicationControllerStatus) Truth() skylark.Bool         { return skylark.True }
-func (t ReplicationControllerStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ReplicationControllerStatus) Underlying() interface{} { return t.V }
+func (t ReplicationControllerStatus) Package() util.Package   { return util.V1 }
+func (t ReplicationControllerStatus) Type() string            { return "k8s_v1_ReplicationControllerStatus" }
+func (t ReplicationControllerStatus) String() string          { return t.V.String() }
+func (t ReplicationControllerStatus) Freeze()                 {} // TODO
+func (t ReplicationControllerStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicationControllerStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ReplicationControllerStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ReplicationControllerStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7437,6 +7878,9 @@ func (t ReplicationControllerStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ReplicationControllerStatus_fields, ReplicationControllerStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicationControllerStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicationControllerStatus_fields, ReplicationControllerStatus_inline)
 }
 
 type ResourceFieldSelector struct {
@@ -7470,13 +7914,13 @@ func init() {
 func createResourceFieldSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ResourceFieldSelector
 }
-func (t ResourceFieldSelector) UnderlyingKind() interface{} { return t.V }
-func (t ResourceFieldSelector) Package() util.Package       { return util.V1 }
-func (t ResourceFieldSelector) Type() string                { return "k8s_v1_ResourceFieldSelector" }
-func (t ResourceFieldSelector) String() string              { return t.V.String() }
-func (t ResourceFieldSelector) Freeze()                     {} // TODO
-func (t ResourceFieldSelector) Truth() skylark.Bool         { return skylark.True }
-func (t ResourceFieldSelector) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ResourceFieldSelector) Underlying() interface{} { return t.V }
+func (t ResourceFieldSelector) Package() util.Package   { return util.V1 }
+func (t ResourceFieldSelector) Type() string            { return "k8s_v1_ResourceFieldSelector" }
+func (t ResourceFieldSelector) String() string          { return t.V.String() }
+func (t ResourceFieldSelector) Freeze()                 {} // TODO
+func (t ResourceFieldSelector) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceFieldSelector) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ResourceFieldSelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ResourceFieldSelector)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7487,6 +7931,9 @@ func (t ResourceFieldSelector) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ResourceFieldSelector_fields, ResourceFieldSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceFieldSelector) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceFieldSelector_fields, ResourceFieldSelector_inline)
 }
 
 type ResourceQuota struct {
@@ -7520,13 +7967,13 @@ func init() {
 func createResourceQuota(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ResourceQuota
 }
-func (t ResourceQuota) UnderlyingKind() interface{} { return t.V }
-func (t ResourceQuota) Package() util.Package       { return util.V1 }
-func (t ResourceQuota) Type() string                { return "k8s_v1_ResourceQuota" }
-func (t ResourceQuota) String() string              { return t.V.String() }
-func (t ResourceQuota) Freeze()                     {} // TODO
-func (t ResourceQuota) Truth() skylark.Bool         { return skylark.True }
-func (t ResourceQuota) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ResourceQuota) Underlying() interface{} { return t.V }
+func (t ResourceQuota) Package() util.Package   { return util.V1 }
+func (t ResourceQuota) Type() string            { return "k8s_v1_ResourceQuota" }
+func (t ResourceQuota) String() string          { return t.V.String() }
+func (t ResourceQuota) Freeze()                 {} // TODO
+func (t ResourceQuota) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceQuota) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ResourceQuota) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ResourceQuota)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7537,6 +7984,9 @@ func (t ResourceQuota) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ResourceQuota_fields, ResourceQuota_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceQuota) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceQuota_fields, ResourceQuota_inline)
 }
 
 type ResourceQuotaList struct {
@@ -7570,13 +8020,13 @@ func init() {
 func createResourceQuotaList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ResourceQuotaList
 }
-func (t ResourceQuotaList) UnderlyingKind() interface{} { return t.V }
-func (t ResourceQuotaList) Package() util.Package       { return util.V1 }
-func (t ResourceQuotaList) Type() string                { return "k8s_v1_ResourceQuotaList" }
-func (t ResourceQuotaList) String() string              { return t.V.String() }
-func (t ResourceQuotaList) Freeze()                     {} // TODO
-func (t ResourceQuotaList) Truth() skylark.Bool         { return skylark.True }
-func (t ResourceQuotaList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ResourceQuotaList) Underlying() interface{} { return t.V }
+func (t ResourceQuotaList) Package() util.Package   { return util.V1 }
+func (t ResourceQuotaList) Type() string            { return "k8s_v1_ResourceQuotaList" }
+func (t ResourceQuotaList) String() string          { return t.V.String() }
+func (t ResourceQuotaList) Freeze()                 {} // TODO
+func (t ResourceQuotaList) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceQuotaList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ResourceQuotaList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ResourceQuotaList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7587,6 +8037,9 @@ func (t ResourceQuotaList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ResourceQuotaList_fields, ResourceQuotaList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceQuotaList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceQuotaList_fields, ResourceQuotaList_inline)
 }
 
 type ResourceQuotaSpec struct {
@@ -7620,13 +8073,13 @@ func init() {
 func createResourceQuotaSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ResourceQuotaSpec
 }
-func (t ResourceQuotaSpec) UnderlyingKind() interface{} { return t.V }
-func (t ResourceQuotaSpec) Package() util.Package       { return util.V1 }
-func (t ResourceQuotaSpec) Type() string                { return "k8s_v1_ResourceQuotaSpec" }
-func (t ResourceQuotaSpec) String() string              { return t.V.String() }
-func (t ResourceQuotaSpec) Freeze()                     {} // TODO
-func (t ResourceQuotaSpec) Truth() skylark.Bool         { return skylark.True }
-func (t ResourceQuotaSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ResourceQuotaSpec) Underlying() interface{} { return t.V }
+func (t ResourceQuotaSpec) Package() util.Package   { return util.V1 }
+func (t ResourceQuotaSpec) Type() string            { return "k8s_v1_ResourceQuotaSpec" }
+func (t ResourceQuotaSpec) String() string          { return t.V.String() }
+func (t ResourceQuotaSpec) Freeze()                 {} // TODO
+func (t ResourceQuotaSpec) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceQuotaSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ResourceQuotaSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ResourceQuotaSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7637,6 +8090,9 @@ func (t ResourceQuotaSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ResourceQuotaSpec_fields, ResourceQuotaSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceQuotaSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceQuotaSpec_fields, ResourceQuotaSpec_inline)
 }
 
 type ResourceQuotaStatus struct {
@@ -7670,13 +8126,13 @@ func init() {
 func createResourceQuotaStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ResourceQuotaStatus
 }
-func (t ResourceQuotaStatus) UnderlyingKind() interface{} { return t.V }
-func (t ResourceQuotaStatus) Package() util.Package       { return util.V1 }
-func (t ResourceQuotaStatus) Type() string                { return "k8s_v1_ResourceQuotaStatus" }
-func (t ResourceQuotaStatus) String() string              { return t.V.String() }
-func (t ResourceQuotaStatus) Freeze()                     {} // TODO
-func (t ResourceQuotaStatus) Truth() skylark.Bool         { return skylark.True }
-func (t ResourceQuotaStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ResourceQuotaStatus) Underlying() interface{} { return t.V }
+func (t ResourceQuotaStatus) Package() util.Package   { return util.V1 }
+func (t ResourceQuotaStatus) Type() string            { return "k8s_v1_ResourceQuotaStatus" }
+func (t ResourceQuotaStatus) String() string          { return t.V.String() }
+func (t ResourceQuotaStatus) Freeze()                 {} // TODO
+func (t ResourceQuotaStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceQuotaStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ResourceQuotaStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ResourceQuotaStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7687,6 +8143,9 @@ func (t ResourceQuotaStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ResourceQuotaStatus_fields, ResourceQuotaStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceQuotaStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceQuotaStatus_fields, ResourceQuotaStatus_inline)
 }
 
 type ResourceRequirements struct {
@@ -7720,13 +8179,13 @@ func init() {
 func createResourceRequirements(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ResourceRequirements
 }
-func (t ResourceRequirements) UnderlyingKind() interface{} { return t.V }
-func (t ResourceRequirements) Package() util.Package       { return util.V1 }
-func (t ResourceRequirements) Type() string                { return "k8s_v1_ResourceRequirements" }
-func (t ResourceRequirements) String() string              { return t.V.String() }
-func (t ResourceRequirements) Freeze()                     {} // TODO
-func (t ResourceRequirements) Truth() skylark.Bool         { return skylark.True }
-func (t ResourceRequirements) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ResourceRequirements) Underlying() interface{} { return t.V }
+func (t ResourceRequirements) Package() util.Package   { return util.V1 }
+func (t ResourceRequirements) Type() string            { return "k8s_v1_ResourceRequirements" }
+func (t ResourceRequirements) String() string          { return t.V.String() }
+func (t ResourceRequirements) Freeze()                 {} // TODO
+func (t ResourceRequirements) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceRequirements) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ResourceRequirements) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ResourceRequirements)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7737,6 +8196,9 @@ func (t ResourceRequirements) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ResourceRequirements_fields, ResourceRequirements_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceRequirements) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceRequirements_fields, ResourceRequirements_inline)
 }
 
 type SELinuxOptions struct {
@@ -7770,13 +8232,13 @@ func init() {
 func createSELinuxOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SELinuxOptions
 }
-func (t SELinuxOptions) UnderlyingKind() interface{} { return t.V }
-func (t SELinuxOptions) Package() util.Package       { return util.V1 }
-func (t SELinuxOptions) Type() string                { return "k8s_v1_SELinuxOptions" }
-func (t SELinuxOptions) String() string              { return t.V.String() }
-func (t SELinuxOptions) Freeze()                     {} // TODO
-func (t SELinuxOptions) Truth() skylark.Bool         { return skylark.True }
-func (t SELinuxOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SELinuxOptions) Underlying() interface{} { return t.V }
+func (t SELinuxOptions) Package() util.Package   { return util.V1 }
+func (t SELinuxOptions) Type() string            { return "k8s_v1_SELinuxOptions" }
+func (t SELinuxOptions) String() string          { return t.V.String() }
+func (t SELinuxOptions) Freeze()                 {} // TODO
+func (t SELinuxOptions) Truth() skylark.Bool     { return skylark.True }
+func (t SELinuxOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SELinuxOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SELinuxOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7787,6 +8249,9 @@ func (t SELinuxOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SELinuxOptions_fields, SELinuxOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SELinuxOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SELinuxOptions_fields, SELinuxOptions_inline)
 }
 
 type ScaleIOPersistentVolumeSource struct {
@@ -7820,13 +8285,13 @@ func init() {
 func createScaleIOPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ScaleIOPersistentVolumeSource
 }
-func (t ScaleIOPersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t ScaleIOPersistentVolumeSource) Package() util.Package       { return util.V1 }
-func (t ScaleIOPersistentVolumeSource) Type() string                { return "k8s_v1_ScaleIOPersistentVolumeSource" }
-func (t ScaleIOPersistentVolumeSource) String() string              { return t.V.String() }
-func (t ScaleIOPersistentVolumeSource) Freeze()                     {} // TODO
-func (t ScaleIOPersistentVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t ScaleIOPersistentVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ScaleIOPersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t ScaleIOPersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t ScaleIOPersistentVolumeSource) Type() string            { return "k8s_v1_ScaleIOPersistentVolumeSource" }
+func (t ScaleIOPersistentVolumeSource) String() string          { return t.V.String() }
+func (t ScaleIOPersistentVolumeSource) Freeze()                 {} // TODO
+func (t ScaleIOPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t ScaleIOPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ScaleIOPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ScaleIOPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7839,6 +8304,9 @@ func (t ScaleIOPersistentVolumeSource) Attr(name string) (skylark.Value, error) 
 		return getAttr(reflect.ValueOf(u), name, ScaleIOPersistentVolumeSource_fields, ScaleIOPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ScaleIOPersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ScaleIOPersistentVolumeSource_fields, ScaleIOPersistentVolumeSource_inline)
 }
 
 type ScaleIOVolumeSource struct {
@@ -7872,13 +8340,13 @@ func init() {
 func createScaleIOVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ScaleIOVolumeSource
 }
-func (t ScaleIOVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t ScaleIOVolumeSource) Package() util.Package       { return util.V1 }
-func (t ScaleIOVolumeSource) Type() string                { return "k8s_v1_ScaleIOVolumeSource" }
-func (t ScaleIOVolumeSource) String() string              { return t.V.String() }
-func (t ScaleIOVolumeSource) Freeze()                     {} // TODO
-func (t ScaleIOVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t ScaleIOVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ScaleIOVolumeSource) Underlying() interface{} { return t.V }
+func (t ScaleIOVolumeSource) Package() util.Package   { return util.V1 }
+func (t ScaleIOVolumeSource) Type() string            { return "k8s_v1_ScaleIOVolumeSource" }
+func (t ScaleIOVolumeSource) String() string          { return t.V.String() }
+func (t ScaleIOVolumeSource) Freeze()                 {} // TODO
+func (t ScaleIOVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t ScaleIOVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ScaleIOVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ScaleIOVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7889,6 +8357,9 @@ func (t ScaleIOVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ScaleIOVolumeSource_fields, ScaleIOVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ScaleIOVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ScaleIOVolumeSource_fields, ScaleIOVolumeSource_inline)
 }
 
 type ScopeSelector struct {
@@ -7922,13 +8393,13 @@ func init() {
 func createScopeSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ScopeSelector
 }
-func (t ScopeSelector) UnderlyingKind() interface{} { return t.V }
-func (t ScopeSelector) Package() util.Package       { return util.V1 }
-func (t ScopeSelector) Type() string                { return "k8s_v1_ScopeSelector" }
-func (t ScopeSelector) String() string              { return t.V.String() }
-func (t ScopeSelector) Freeze()                     {} // TODO
-func (t ScopeSelector) Truth() skylark.Bool         { return skylark.True }
-func (t ScopeSelector) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ScopeSelector) Underlying() interface{} { return t.V }
+func (t ScopeSelector) Package() util.Package   { return util.V1 }
+func (t ScopeSelector) Type() string            { return "k8s_v1_ScopeSelector" }
+func (t ScopeSelector) String() string          { return t.V.String() }
+func (t ScopeSelector) Freeze()                 {} // TODO
+func (t ScopeSelector) Truth() skylark.Bool     { return skylark.True }
+func (t ScopeSelector) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ScopeSelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ScopeSelector)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7939,6 +8410,9 @@ func (t ScopeSelector) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ScopeSelector_fields, ScopeSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ScopeSelector) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ScopeSelector_fields, ScopeSelector_inline)
 }
 
 type ScopedResourceSelectorRequirement struct {
@@ -7972,8 +8446,8 @@ func init() {
 func createScopedResourceSelectorRequirement(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ScopedResourceSelectorRequirement
 }
-func (t ScopedResourceSelectorRequirement) UnderlyingKind() interface{} { return t.V }
-func (t ScopedResourceSelectorRequirement) Package() util.Package       { return util.V1 }
+func (t ScopedResourceSelectorRequirement) Underlying() interface{} { return t.V }
+func (t ScopedResourceSelectorRequirement) Package() util.Package   { return util.V1 }
 func (t ScopedResourceSelectorRequirement) Type() string {
 	return "k8s_v1_ScopedResourceSelectorRequirement"
 }
@@ -7993,6 +8467,9 @@ func (t ScopedResourceSelectorRequirement) Attr(name string) (skylark.Value, err
 		return getAttr(reflect.ValueOf(u), name, ScopedResourceSelectorRequirement_fields, ScopedResourceSelectorRequirement_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ScopedResourceSelectorRequirement) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ScopedResourceSelectorRequirement_fields, ScopedResourceSelectorRequirement_inline)
 }
 
 type Secret struct {
@@ -8026,13 +8503,13 @@ func init() {
 func createSecret(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Secret
 }
-func (t Secret) UnderlyingKind() interface{} { return t.V }
-func (t Secret) Package() util.Package       { return util.V1 }
-func (t Secret) Type() string                { return "k8s_v1_Secret" }
-func (t Secret) String() string              { return t.V.String() }
-func (t Secret) Freeze()                     {} // TODO
-func (t Secret) Truth() skylark.Bool         { return skylark.True }
-func (t Secret) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Secret) Underlying() interface{} { return t.V }
+func (t Secret) Package() util.Package   { return util.V1 }
+func (t Secret) Type() string            { return "k8s_v1_Secret" }
+func (t Secret) String() string          { return t.V.String() }
+func (t Secret) Freeze()                 {} // TODO
+func (t Secret) Truth() skylark.Bool     { return skylark.True }
+func (t Secret) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Secret) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Secret)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8043,6 +8520,9 @@ func (t Secret) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Secret_fields, Secret_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Secret) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Secret_fields, Secret_inline)
 }
 
 type SecretEnvSource struct {
@@ -8076,13 +8556,13 @@ func init() {
 func createSecretEnvSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SecretEnvSource
 }
-func (t SecretEnvSource) UnderlyingKind() interface{} { return t.V }
-func (t SecretEnvSource) Package() util.Package       { return util.V1 }
-func (t SecretEnvSource) Type() string                { return "k8s_v1_SecretEnvSource" }
-func (t SecretEnvSource) String() string              { return t.V.String() }
-func (t SecretEnvSource) Freeze()                     {} // TODO
-func (t SecretEnvSource) Truth() skylark.Bool         { return skylark.True }
-func (t SecretEnvSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SecretEnvSource) Underlying() interface{} { return t.V }
+func (t SecretEnvSource) Package() util.Package   { return util.V1 }
+func (t SecretEnvSource) Type() string            { return "k8s_v1_SecretEnvSource" }
+func (t SecretEnvSource) String() string          { return t.V.String() }
+func (t SecretEnvSource) Freeze()                 {} // TODO
+func (t SecretEnvSource) Truth() skylark.Bool     { return skylark.True }
+func (t SecretEnvSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SecretEnvSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SecretEnvSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8093,6 +8573,9 @@ func (t SecretEnvSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SecretEnvSource_fields, SecretEnvSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SecretEnvSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SecretEnvSource_fields, SecretEnvSource_inline)
 }
 
 type SecretKeySelector struct {
@@ -8126,13 +8609,13 @@ func init() {
 func createSecretKeySelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SecretKeySelector
 }
-func (t SecretKeySelector) UnderlyingKind() interface{} { return t.V }
-func (t SecretKeySelector) Package() util.Package       { return util.V1 }
-func (t SecretKeySelector) Type() string                { return "k8s_v1_SecretKeySelector" }
-func (t SecretKeySelector) String() string              { return t.V.String() }
-func (t SecretKeySelector) Freeze()                     {} // TODO
-func (t SecretKeySelector) Truth() skylark.Bool         { return skylark.True }
-func (t SecretKeySelector) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SecretKeySelector) Underlying() interface{} { return t.V }
+func (t SecretKeySelector) Package() util.Package   { return util.V1 }
+func (t SecretKeySelector) Type() string            { return "k8s_v1_SecretKeySelector" }
+func (t SecretKeySelector) String() string          { return t.V.String() }
+func (t SecretKeySelector) Freeze()                 {} // TODO
+func (t SecretKeySelector) Truth() skylark.Bool     { return skylark.True }
+func (t SecretKeySelector) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SecretKeySelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SecretKeySelector)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8143,6 +8626,9 @@ func (t SecretKeySelector) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SecretKeySelector_fields, SecretKeySelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SecretKeySelector) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SecretKeySelector_fields, SecretKeySelector_inline)
 }
 
 type SecretList struct {
@@ -8176,13 +8662,13 @@ func init() {
 func createSecretList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SecretList
 }
-func (t SecretList) UnderlyingKind() interface{} { return t.V }
-func (t SecretList) Package() util.Package       { return util.V1 }
-func (t SecretList) Type() string                { return "k8s_v1_SecretList" }
-func (t SecretList) String() string              { return t.V.String() }
-func (t SecretList) Freeze()                     {} // TODO
-func (t SecretList) Truth() skylark.Bool         { return skylark.True }
-func (t SecretList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SecretList) Underlying() interface{} { return t.V }
+func (t SecretList) Package() util.Package   { return util.V1 }
+func (t SecretList) Type() string            { return "k8s_v1_SecretList" }
+func (t SecretList) String() string          { return t.V.String() }
+func (t SecretList) Freeze()                 {} // TODO
+func (t SecretList) Truth() skylark.Bool     { return skylark.True }
+func (t SecretList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SecretList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SecretList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8193,6 +8679,9 @@ func (t SecretList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SecretList_fields, SecretList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SecretList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SecretList_fields, SecretList_inline)
 }
 
 type SecretProjection struct {
@@ -8226,13 +8715,13 @@ func init() {
 func createSecretProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SecretProjection
 }
-func (t SecretProjection) UnderlyingKind() interface{} { return t.V }
-func (t SecretProjection) Package() util.Package       { return util.V1 }
-func (t SecretProjection) Type() string                { return "k8s_v1_SecretProjection" }
-func (t SecretProjection) String() string              { return t.V.String() }
-func (t SecretProjection) Freeze()                     {} // TODO
-func (t SecretProjection) Truth() skylark.Bool         { return skylark.True }
-func (t SecretProjection) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SecretProjection) Underlying() interface{} { return t.V }
+func (t SecretProjection) Package() util.Package   { return util.V1 }
+func (t SecretProjection) Type() string            { return "k8s_v1_SecretProjection" }
+func (t SecretProjection) String() string          { return t.V.String() }
+func (t SecretProjection) Freeze()                 {} // TODO
+func (t SecretProjection) Truth() skylark.Bool     { return skylark.True }
+func (t SecretProjection) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SecretProjection) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SecretProjection)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8243,6 +8732,9 @@ func (t SecretProjection) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SecretProjection_fields, SecretProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SecretProjection) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SecretProjection_fields, SecretProjection_inline)
 }
 
 type SecretReference struct {
@@ -8276,13 +8768,13 @@ func init() {
 func createSecretReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SecretReference
 }
-func (t SecretReference) UnderlyingKind() interface{} { return t.V }
-func (t SecretReference) Package() util.Package       { return util.V1 }
-func (t SecretReference) Type() string                { return "k8s_v1_SecretReference" }
-func (t SecretReference) String() string              { return t.V.String() }
-func (t SecretReference) Freeze()                     {} // TODO
-func (t SecretReference) Truth() skylark.Bool         { return skylark.True }
-func (t SecretReference) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SecretReference) Underlying() interface{} { return t.V }
+func (t SecretReference) Package() util.Package   { return util.V1 }
+func (t SecretReference) Type() string            { return "k8s_v1_SecretReference" }
+func (t SecretReference) String() string          { return t.V.String() }
+func (t SecretReference) Freeze()                 {} // TODO
+func (t SecretReference) Truth() skylark.Bool     { return skylark.True }
+func (t SecretReference) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SecretReference) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SecretReference)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8293,6 +8785,9 @@ func (t SecretReference) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SecretReference_fields, SecretReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SecretReference) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SecretReference_fields, SecretReference_inline)
 }
 
 type SecretVolumeSource struct {
@@ -8326,13 +8821,13 @@ func init() {
 func createSecretVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SecretVolumeSource
 }
-func (t SecretVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t SecretVolumeSource) Package() util.Package       { return util.V1 }
-func (t SecretVolumeSource) Type() string                { return "k8s_v1_SecretVolumeSource" }
-func (t SecretVolumeSource) String() string              { return t.V.String() }
-func (t SecretVolumeSource) Freeze()                     {} // TODO
-func (t SecretVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t SecretVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SecretVolumeSource) Underlying() interface{} { return t.V }
+func (t SecretVolumeSource) Package() util.Package   { return util.V1 }
+func (t SecretVolumeSource) Type() string            { return "k8s_v1_SecretVolumeSource" }
+func (t SecretVolumeSource) String() string          { return t.V.String() }
+func (t SecretVolumeSource) Freeze()                 {} // TODO
+func (t SecretVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t SecretVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SecretVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SecretVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8343,6 +8838,9 @@ func (t SecretVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SecretVolumeSource_fields, SecretVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SecretVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SecretVolumeSource_fields, SecretVolumeSource_inline)
 }
 
 type SecurityContext struct {
@@ -8376,13 +8874,13 @@ func init() {
 func createSecurityContext(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SecurityContext
 }
-func (t SecurityContext) UnderlyingKind() interface{} { return t.V }
-func (t SecurityContext) Package() util.Package       { return util.V1 }
-func (t SecurityContext) Type() string                { return "k8s_v1_SecurityContext" }
-func (t SecurityContext) String() string              { return t.V.String() }
-func (t SecurityContext) Freeze()                     {} // TODO
-func (t SecurityContext) Truth() skylark.Bool         { return skylark.True }
-func (t SecurityContext) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SecurityContext) Underlying() interface{} { return t.V }
+func (t SecurityContext) Package() util.Package   { return util.V1 }
+func (t SecurityContext) Type() string            { return "k8s_v1_SecurityContext" }
+func (t SecurityContext) String() string          { return t.V.String() }
+func (t SecurityContext) Freeze()                 {} // TODO
+func (t SecurityContext) Truth() skylark.Bool     { return skylark.True }
+func (t SecurityContext) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SecurityContext) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SecurityContext)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8393,6 +8891,9 @@ func (t SecurityContext) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SecurityContext_fields, SecurityContext_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SecurityContext) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SecurityContext_fields, SecurityContext_inline)
 }
 
 type SerializedReference struct {
@@ -8426,13 +8927,13 @@ func init() {
 func createSerializedReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SerializedReference
 }
-func (t SerializedReference) UnderlyingKind() interface{} { return t.V }
-func (t SerializedReference) Package() util.Package       { return util.V1 }
-func (t SerializedReference) Type() string                { return "k8s_v1_SerializedReference" }
-func (t SerializedReference) String() string              { return t.V.String() }
-func (t SerializedReference) Freeze()                     {} // TODO
-func (t SerializedReference) Truth() skylark.Bool         { return skylark.True }
-func (t SerializedReference) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SerializedReference) Underlying() interface{} { return t.V }
+func (t SerializedReference) Package() util.Package   { return util.V1 }
+func (t SerializedReference) Type() string            { return "k8s_v1_SerializedReference" }
+func (t SerializedReference) String() string          { return t.V.String() }
+func (t SerializedReference) Freeze()                 {} // TODO
+func (t SerializedReference) Truth() skylark.Bool     { return skylark.True }
+func (t SerializedReference) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SerializedReference) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SerializedReference)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8443,6 +8944,9 @@ func (t SerializedReference) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SerializedReference_fields, SerializedReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SerializedReference) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SerializedReference_fields, SerializedReference_inline)
 }
 
 type Service struct {
@@ -8476,13 +8980,13 @@ func init() {
 func createService(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Service
 }
-func (t Service) UnderlyingKind() interface{} { return t.V }
-func (t Service) Package() util.Package       { return util.V1 }
-func (t Service) Type() string                { return "k8s_v1_Service" }
-func (t Service) String() string              { return t.V.String() }
-func (t Service) Freeze()                     {} // TODO
-func (t Service) Truth() skylark.Bool         { return skylark.True }
-func (t Service) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Service) Underlying() interface{} { return t.V }
+func (t Service) Package() util.Package   { return util.V1 }
+func (t Service) Type() string            { return "k8s_v1_Service" }
+func (t Service) String() string          { return t.V.String() }
+func (t Service) Freeze()                 {} // TODO
+func (t Service) Truth() skylark.Bool     { return skylark.True }
+func (t Service) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Service) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Service)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8493,6 +8997,9 @@ func (t Service) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Service_fields, Service_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Service) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Service_fields, Service_inline)
 }
 
 type ServiceAccount struct {
@@ -8526,13 +9033,13 @@ func init() {
 func createServiceAccount(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ServiceAccount
 }
-func (t ServiceAccount) UnderlyingKind() interface{} { return t.V }
-func (t ServiceAccount) Package() util.Package       { return util.V1 }
-func (t ServiceAccount) Type() string                { return "k8s_v1_ServiceAccount" }
-func (t ServiceAccount) String() string              { return t.V.String() }
-func (t ServiceAccount) Freeze()                     {} // TODO
-func (t ServiceAccount) Truth() skylark.Bool         { return skylark.True }
-func (t ServiceAccount) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ServiceAccount) Underlying() interface{} { return t.V }
+func (t ServiceAccount) Package() util.Package   { return util.V1 }
+func (t ServiceAccount) Type() string            { return "k8s_v1_ServiceAccount" }
+func (t ServiceAccount) String() string          { return t.V.String() }
+func (t ServiceAccount) Freeze()                 {} // TODO
+func (t ServiceAccount) Truth() skylark.Bool     { return skylark.True }
+func (t ServiceAccount) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ServiceAccount) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServiceAccount)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8543,6 +9050,9 @@ func (t ServiceAccount) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ServiceAccount_fields, ServiceAccount_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ServiceAccount) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ServiceAccount_fields, ServiceAccount_inline)
 }
 
 type ServiceAccountList struct {
@@ -8576,13 +9086,13 @@ func init() {
 func createServiceAccountList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ServiceAccountList
 }
-func (t ServiceAccountList) UnderlyingKind() interface{} { return t.V }
-func (t ServiceAccountList) Package() util.Package       { return util.V1 }
-func (t ServiceAccountList) Type() string                { return "k8s_v1_ServiceAccountList" }
-func (t ServiceAccountList) String() string              { return t.V.String() }
-func (t ServiceAccountList) Freeze()                     {} // TODO
-func (t ServiceAccountList) Truth() skylark.Bool         { return skylark.True }
-func (t ServiceAccountList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ServiceAccountList) Underlying() interface{} { return t.V }
+func (t ServiceAccountList) Package() util.Package   { return util.V1 }
+func (t ServiceAccountList) Type() string            { return "k8s_v1_ServiceAccountList" }
+func (t ServiceAccountList) String() string          { return t.V.String() }
+func (t ServiceAccountList) Freeze()                 {} // TODO
+func (t ServiceAccountList) Truth() skylark.Bool     { return skylark.True }
+func (t ServiceAccountList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ServiceAccountList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServiceAccountList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8593,6 +9103,9 @@ func (t ServiceAccountList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ServiceAccountList_fields, ServiceAccountList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ServiceAccountList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ServiceAccountList_fields, ServiceAccountList_inline)
 }
 
 type ServiceAccountTokenProjection struct {
@@ -8626,13 +9139,13 @@ func init() {
 func createServiceAccountTokenProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ServiceAccountTokenProjection
 }
-func (t ServiceAccountTokenProjection) UnderlyingKind() interface{} { return t.V }
-func (t ServiceAccountTokenProjection) Package() util.Package       { return util.V1 }
-func (t ServiceAccountTokenProjection) Type() string                { return "k8s_v1_ServiceAccountTokenProjection" }
-func (t ServiceAccountTokenProjection) String() string              { return t.V.String() }
-func (t ServiceAccountTokenProjection) Freeze()                     {} // TODO
-func (t ServiceAccountTokenProjection) Truth() skylark.Bool         { return skylark.True }
-func (t ServiceAccountTokenProjection) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ServiceAccountTokenProjection) Underlying() interface{} { return t.V }
+func (t ServiceAccountTokenProjection) Package() util.Package   { return util.V1 }
+func (t ServiceAccountTokenProjection) Type() string            { return "k8s_v1_ServiceAccountTokenProjection" }
+func (t ServiceAccountTokenProjection) String() string          { return t.V.String() }
+func (t ServiceAccountTokenProjection) Freeze()                 {} // TODO
+func (t ServiceAccountTokenProjection) Truth() skylark.Bool     { return skylark.True }
+func (t ServiceAccountTokenProjection) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ServiceAccountTokenProjection) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServiceAccountTokenProjection)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8645,6 +9158,9 @@ func (t ServiceAccountTokenProjection) Attr(name string) (skylark.Value, error) 
 		return getAttr(reflect.ValueOf(u), name, ServiceAccountTokenProjection_fields, ServiceAccountTokenProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ServiceAccountTokenProjection) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ServiceAccountTokenProjection_fields, ServiceAccountTokenProjection_inline)
 }
 
 type ServiceList struct {
@@ -8678,13 +9194,13 @@ func init() {
 func createServiceList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ServiceList
 }
-func (t ServiceList) UnderlyingKind() interface{} { return t.V }
-func (t ServiceList) Package() util.Package       { return util.V1 }
-func (t ServiceList) Type() string                { return "k8s_v1_ServiceList" }
-func (t ServiceList) String() string              { return t.V.String() }
-func (t ServiceList) Freeze()                     {} // TODO
-func (t ServiceList) Truth() skylark.Bool         { return skylark.True }
-func (t ServiceList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ServiceList) Underlying() interface{} { return t.V }
+func (t ServiceList) Package() util.Package   { return util.V1 }
+func (t ServiceList) Type() string            { return "k8s_v1_ServiceList" }
+func (t ServiceList) String() string          { return t.V.String() }
+func (t ServiceList) Freeze()                 {} // TODO
+func (t ServiceList) Truth() skylark.Bool     { return skylark.True }
+func (t ServiceList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ServiceList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServiceList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8695,6 +9211,9 @@ func (t ServiceList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ServiceList_fields, ServiceList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ServiceList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ServiceList_fields, ServiceList_inline)
 }
 
 type ServicePort struct {
@@ -8728,13 +9247,13 @@ func init() {
 func createServicePort(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ServicePort
 }
-func (t ServicePort) UnderlyingKind() interface{} { return t.V }
-func (t ServicePort) Package() util.Package       { return util.V1 }
-func (t ServicePort) Type() string                { return "k8s_v1_ServicePort" }
-func (t ServicePort) String() string              { return t.V.String() }
-func (t ServicePort) Freeze()                     {} // TODO
-func (t ServicePort) Truth() skylark.Bool         { return skylark.True }
-func (t ServicePort) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ServicePort) Underlying() interface{} { return t.V }
+func (t ServicePort) Package() util.Package   { return util.V1 }
+func (t ServicePort) Type() string            { return "k8s_v1_ServicePort" }
+func (t ServicePort) String() string          { return t.V.String() }
+func (t ServicePort) Freeze()                 {} // TODO
+func (t ServicePort) Truth() skylark.Bool     { return skylark.True }
+func (t ServicePort) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ServicePort) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServicePort)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8745,6 +9264,9 @@ func (t ServicePort) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ServicePort_fields, ServicePort_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ServicePort) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ServicePort_fields, ServicePort_inline)
 }
 
 type ServiceProxyOptions struct {
@@ -8778,13 +9300,13 @@ func init() {
 func createServiceProxyOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ServiceProxyOptions
 }
-func (t ServiceProxyOptions) UnderlyingKind() interface{} { return t.V }
-func (t ServiceProxyOptions) Package() util.Package       { return util.V1 }
-func (t ServiceProxyOptions) Type() string                { return "k8s_v1_ServiceProxyOptions" }
-func (t ServiceProxyOptions) String() string              { return t.V.String() }
-func (t ServiceProxyOptions) Freeze()                     {} // TODO
-func (t ServiceProxyOptions) Truth() skylark.Bool         { return skylark.True }
-func (t ServiceProxyOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ServiceProxyOptions) Underlying() interface{} { return t.V }
+func (t ServiceProxyOptions) Package() util.Package   { return util.V1 }
+func (t ServiceProxyOptions) Type() string            { return "k8s_v1_ServiceProxyOptions" }
+func (t ServiceProxyOptions) String() string          { return t.V.String() }
+func (t ServiceProxyOptions) Freeze()                 {} // TODO
+func (t ServiceProxyOptions) Truth() skylark.Bool     { return skylark.True }
+func (t ServiceProxyOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ServiceProxyOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServiceProxyOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8795,6 +9317,9 @@ func (t ServiceProxyOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ServiceProxyOptions_fields, ServiceProxyOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ServiceProxyOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ServiceProxyOptions_fields, ServiceProxyOptions_inline)
 }
 
 type ServiceSpec struct {
@@ -8828,13 +9353,13 @@ func init() {
 func createServiceSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ServiceSpec
 }
-func (t ServiceSpec) UnderlyingKind() interface{} { return t.V }
-func (t ServiceSpec) Package() util.Package       { return util.V1 }
-func (t ServiceSpec) Type() string                { return "k8s_v1_ServiceSpec" }
-func (t ServiceSpec) String() string              { return t.V.String() }
-func (t ServiceSpec) Freeze()                     {} // TODO
-func (t ServiceSpec) Truth() skylark.Bool         { return skylark.True }
-func (t ServiceSpec) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ServiceSpec) Underlying() interface{} { return t.V }
+func (t ServiceSpec) Package() util.Package   { return util.V1 }
+func (t ServiceSpec) Type() string            { return "k8s_v1_ServiceSpec" }
+func (t ServiceSpec) String() string          { return t.V.String() }
+func (t ServiceSpec) Freeze()                 {} // TODO
+func (t ServiceSpec) Truth() skylark.Bool     { return skylark.True }
+func (t ServiceSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ServiceSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServiceSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8845,6 +9370,9 @@ func (t ServiceSpec) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ServiceSpec_fields, ServiceSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ServiceSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ServiceSpec_fields, ServiceSpec_inline)
 }
 
 type ServiceStatus struct {
@@ -8878,13 +9406,13 @@ func init() {
 func createServiceStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ServiceStatus
 }
-func (t ServiceStatus) UnderlyingKind() interface{} { return t.V }
-func (t ServiceStatus) Package() util.Package       { return util.V1 }
-func (t ServiceStatus) Type() string                { return "k8s_v1_ServiceStatus" }
-func (t ServiceStatus) String() string              { return t.V.String() }
-func (t ServiceStatus) Freeze()                     {} // TODO
-func (t ServiceStatus) Truth() skylark.Bool         { return skylark.True }
-func (t ServiceStatus) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ServiceStatus) Underlying() interface{} { return t.V }
+func (t ServiceStatus) Package() util.Package   { return util.V1 }
+func (t ServiceStatus) Type() string            { return "k8s_v1_ServiceStatus" }
+func (t ServiceStatus) String() string          { return t.V.String() }
+func (t ServiceStatus) Freeze()                 {} // TODO
+func (t ServiceStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ServiceStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ServiceStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServiceStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8895,6 +9423,9 @@ func (t ServiceStatus) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ServiceStatus_fields, ServiceStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ServiceStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ServiceStatus_fields, ServiceStatus_inline)
 }
 
 type SessionAffinityConfig struct {
@@ -8928,13 +9459,13 @@ func init() {
 func createSessionAffinityConfig(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for SessionAffinityConfig
 }
-func (t SessionAffinityConfig) UnderlyingKind() interface{} { return t.V }
-func (t SessionAffinityConfig) Package() util.Package       { return util.V1 }
-func (t SessionAffinityConfig) Type() string                { return "k8s_v1_SessionAffinityConfig" }
-func (t SessionAffinityConfig) String() string              { return t.V.String() }
-func (t SessionAffinityConfig) Freeze()                     {} // TODO
-func (t SessionAffinityConfig) Truth() skylark.Bool         { return skylark.True }
-func (t SessionAffinityConfig) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t SessionAffinityConfig) Underlying() interface{} { return t.V }
+func (t SessionAffinityConfig) Package() util.Package   { return util.V1 }
+func (t SessionAffinityConfig) Type() string            { return "k8s_v1_SessionAffinityConfig" }
+func (t SessionAffinityConfig) String() string          { return t.V.String() }
+func (t SessionAffinityConfig) Freeze()                 {} // TODO
+func (t SessionAffinityConfig) Truth() skylark.Bool     { return skylark.True }
+func (t SessionAffinityConfig) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t SessionAffinityConfig) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*SessionAffinityConfig)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8945,6 +9476,9 @@ func (t SessionAffinityConfig) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, SessionAffinityConfig_fields, SessionAffinityConfig_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SessionAffinityConfig) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SessionAffinityConfig_fields, SessionAffinityConfig_inline)
 }
 
 type StorageOSPersistentVolumeSource struct {
@@ -8978,8 +9512,8 @@ func init() {
 func createStorageOSPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for StorageOSPersistentVolumeSource
 }
-func (t StorageOSPersistentVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t StorageOSPersistentVolumeSource) Package() util.Package       { return util.V1 }
+func (t StorageOSPersistentVolumeSource) Underlying() interface{} { return t.V }
+func (t StorageOSPersistentVolumeSource) Package() util.Package   { return util.V1 }
 func (t StorageOSPersistentVolumeSource) Type() string {
 	return "k8s_v1_StorageOSPersistentVolumeSource"
 }
@@ -8999,6 +9533,9 @@ func (t StorageOSPersistentVolumeSource) Attr(name string) (skylark.Value, error
 		return getAttr(reflect.ValueOf(u), name, StorageOSPersistentVolumeSource_fields, StorageOSPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StorageOSPersistentVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StorageOSPersistentVolumeSource_fields, StorageOSPersistentVolumeSource_inline)
 }
 
 type StorageOSVolumeSource struct {
@@ -9032,13 +9569,13 @@ func init() {
 func createStorageOSVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for StorageOSVolumeSource
 }
-func (t StorageOSVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t StorageOSVolumeSource) Package() util.Package       { return util.V1 }
-func (t StorageOSVolumeSource) Type() string                { return "k8s_v1_StorageOSVolumeSource" }
-func (t StorageOSVolumeSource) String() string              { return t.V.String() }
-func (t StorageOSVolumeSource) Freeze()                     {} // TODO
-func (t StorageOSVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t StorageOSVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t StorageOSVolumeSource) Underlying() interface{} { return t.V }
+func (t StorageOSVolumeSource) Package() util.Package   { return util.V1 }
+func (t StorageOSVolumeSource) Type() string            { return "k8s_v1_StorageOSVolumeSource" }
+func (t StorageOSVolumeSource) String() string          { return t.V.String() }
+func (t StorageOSVolumeSource) Freeze()                 {} // TODO
+func (t StorageOSVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t StorageOSVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t StorageOSVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*StorageOSVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9049,6 +9586,9 @@ func (t StorageOSVolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, StorageOSVolumeSource_fields, StorageOSVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StorageOSVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StorageOSVolumeSource_fields, StorageOSVolumeSource_inline)
 }
 
 type Sysctl struct {
@@ -9082,13 +9622,13 @@ func init() {
 func createSysctl(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Sysctl
 }
-func (t Sysctl) UnderlyingKind() interface{} { return t.V }
-func (t Sysctl) Package() util.Package       { return util.V1 }
-func (t Sysctl) Type() string                { return "k8s_v1_Sysctl" }
-func (t Sysctl) String() string              { return t.V.String() }
-func (t Sysctl) Freeze()                     {} // TODO
-func (t Sysctl) Truth() skylark.Bool         { return skylark.True }
-func (t Sysctl) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Sysctl) Underlying() interface{} { return t.V }
+func (t Sysctl) Package() util.Package   { return util.V1 }
+func (t Sysctl) Type() string            { return "k8s_v1_Sysctl" }
+func (t Sysctl) String() string          { return t.V.String() }
+func (t Sysctl) Freeze()                 {} // TODO
+func (t Sysctl) Truth() skylark.Bool     { return skylark.True }
+func (t Sysctl) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Sysctl) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Sysctl)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9099,6 +9639,9 @@ func (t Sysctl) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Sysctl_fields, Sysctl_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Sysctl) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Sysctl_fields, Sysctl_inline)
 }
 
 type TCPSocketAction struct {
@@ -9132,13 +9675,13 @@ func init() {
 func createTCPSocketAction(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for TCPSocketAction
 }
-func (t TCPSocketAction) UnderlyingKind() interface{} { return t.V }
-func (t TCPSocketAction) Package() util.Package       { return util.V1 }
-func (t TCPSocketAction) Type() string                { return "k8s_v1_TCPSocketAction" }
-func (t TCPSocketAction) String() string              { return t.V.String() }
-func (t TCPSocketAction) Freeze()                     {} // TODO
-func (t TCPSocketAction) Truth() skylark.Bool         { return skylark.True }
-func (t TCPSocketAction) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t TCPSocketAction) Underlying() interface{} { return t.V }
+func (t TCPSocketAction) Package() util.Package   { return util.V1 }
+func (t TCPSocketAction) Type() string            { return "k8s_v1_TCPSocketAction" }
+func (t TCPSocketAction) String() string          { return t.V.String() }
+func (t TCPSocketAction) Freeze()                 {} // TODO
+func (t TCPSocketAction) Truth() skylark.Bool     { return skylark.True }
+func (t TCPSocketAction) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t TCPSocketAction) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*TCPSocketAction)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9149,6 +9692,9 @@ func (t TCPSocketAction) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, TCPSocketAction_fields, TCPSocketAction_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TCPSocketAction) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TCPSocketAction_fields, TCPSocketAction_inline)
 }
 
 type Taint struct {
@@ -9182,13 +9728,13 @@ func init() {
 func createTaint(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Taint
 }
-func (t Taint) UnderlyingKind() interface{} { return t.V }
-func (t Taint) Package() util.Package       { return util.V1 }
-func (t Taint) Type() string                { return "k8s_v1_Taint" }
-func (t Taint) String() string              { return t.V.String() }
-func (t Taint) Freeze()                     {} // TODO
-func (t Taint) Truth() skylark.Bool         { return skylark.True }
-func (t Taint) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Taint) Underlying() interface{} { return t.V }
+func (t Taint) Package() util.Package   { return util.V1 }
+func (t Taint) Type() string            { return "k8s_v1_Taint" }
+func (t Taint) String() string          { return t.V.String() }
+func (t Taint) Freeze()                 {} // TODO
+func (t Taint) Truth() skylark.Bool     { return skylark.True }
+func (t Taint) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Taint) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Taint)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9199,6 +9745,9 @@ func (t Taint) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Taint_fields, Taint_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Taint) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Taint_fields, Taint_inline)
 }
 
 type Toleration struct {
@@ -9232,13 +9781,13 @@ func init() {
 func createToleration(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Toleration
 }
-func (t Toleration) UnderlyingKind() interface{} { return t.V }
-func (t Toleration) Package() util.Package       { return util.V1 }
-func (t Toleration) Type() string                { return "k8s_v1_Toleration" }
-func (t Toleration) String() string              { return t.V.String() }
-func (t Toleration) Freeze()                     {} // TODO
-func (t Toleration) Truth() skylark.Bool         { return skylark.True }
-func (t Toleration) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Toleration) Underlying() interface{} { return t.V }
+func (t Toleration) Package() util.Package   { return util.V1 }
+func (t Toleration) Type() string            { return "k8s_v1_Toleration" }
+func (t Toleration) String() string          { return t.V.String() }
+func (t Toleration) Freeze()                 {} // TODO
+func (t Toleration) Truth() skylark.Bool     { return skylark.True }
+func (t Toleration) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Toleration) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Toleration)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9249,6 +9798,9 @@ func (t Toleration) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Toleration_fields, Toleration_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Toleration) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Toleration_fields, Toleration_inline)
 }
 
 type TopologySelectorLabelRequirement struct {
@@ -9282,8 +9834,8 @@ func init() {
 func createTopologySelectorLabelRequirement(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for TopologySelectorLabelRequirement
 }
-func (t TopologySelectorLabelRequirement) UnderlyingKind() interface{} { return t.V }
-func (t TopologySelectorLabelRequirement) Package() util.Package       { return util.V1 }
+func (t TopologySelectorLabelRequirement) Underlying() interface{} { return t.V }
+func (t TopologySelectorLabelRequirement) Package() util.Package   { return util.V1 }
 func (t TopologySelectorLabelRequirement) Type() string {
 	return "k8s_v1_TopologySelectorLabelRequirement"
 }
@@ -9303,6 +9855,9 @@ func (t TopologySelectorLabelRequirement) Attr(name string) (skylark.Value, erro
 		return getAttr(reflect.ValueOf(u), name, TopologySelectorLabelRequirement_fields, TopologySelectorLabelRequirement_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TopologySelectorLabelRequirement) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TopologySelectorLabelRequirement_fields, TopologySelectorLabelRequirement_inline)
 }
 
 type TopologySelectorTerm struct {
@@ -9336,13 +9891,13 @@ func init() {
 func createTopologySelectorTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for TopologySelectorTerm
 }
-func (t TopologySelectorTerm) UnderlyingKind() interface{} { return t.V }
-func (t TopologySelectorTerm) Package() util.Package       { return util.V1 }
-func (t TopologySelectorTerm) Type() string                { return "k8s_v1_TopologySelectorTerm" }
-func (t TopologySelectorTerm) String() string              { return t.V.String() }
-func (t TopologySelectorTerm) Freeze()                     {} // TODO
-func (t TopologySelectorTerm) Truth() skylark.Bool         { return skylark.True }
-func (t TopologySelectorTerm) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t TopologySelectorTerm) Underlying() interface{} { return t.V }
+func (t TopologySelectorTerm) Package() util.Package   { return util.V1 }
+func (t TopologySelectorTerm) Type() string            { return "k8s_v1_TopologySelectorTerm" }
+func (t TopologySelectorTerm) String() string          { return t.V.String() }
+func (t TopologySelectorTerm) Freeze()                 {} // TODO
+func (t TopologySelectorTerm) Truth() skylark.Bool     { return skylark.True }
+func (t TopologySelectorTerm) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t TopologySelectorTerm) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*TopologySelectorTerm)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9353,6 +9908,9 @@ func (t TopologySelectorTerm) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, TopologySelectorTerm_fields, TopologySelectorTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TopologySelectorTerm) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TopologySelectorTerm_fields, TopologySelectorTerm_inline)
 }
 
 type Volume struct {
@@ -9386,13 +9944,13 @@ func init() {
 func createVolume(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Volume
 }
-func (t Volume) UnderlyingKind() interface{} { return t.V }
-func (t Volume) Package() util.Package       { return util.V1 }
-func (t Volume) Type() string                { return "k8s_v1_Volume" }
-func (t Volume) String() string              { return t.V.String() }
-func (t Volume) Freeze()                     {} // TODO
-func (t Volume) Truth() skylark.Bool         { return skylark.True }
-func (t Volume) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Volume) Underlying() interface{} { return t.V }
+func (t Volume) Package() util.Package   { return util.V1 }
+func (t Volume) Type() string            { return "k8s_v1_Volume" }
+func (t Volume) String() string          { return t.V.String() }
+func (t Volume) Freeze()                 {} // TODO
+func (t Volume) Truth() skylark.Bool     { return skylark.True }
+func (t Volume) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Volume) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Volume)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9403,6 +9961,9 @@ func (t Volume) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Volume_fields, Volume_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Volume) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Volume_fields, Volume_inline)
 }
 
 type VolumeDevice struct {
@@ -9436,13 +9997,13 @@ func init() {
 func createVolumeDevice(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for VolumeDevice
 }
-func (t VolumeDevice) UnderlyingKind() interface{} { return t.V }
-func (t VolumeDevice) Package() util.Package       { return util.V1 }
-func (t VolumeDevice) Type() string                { return "k8s_v1_VolumeDevice" }
-func (t VolumeDevice) String() string              { return t.V.String() }
-func (t VolumeDevice) Freeze()                     {} // TODO
-func (t VolumeDevice) Truth() skylark.Bool         { return skylark.True }
-func (t VolumeDevice) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t VolumeDevice) Underlying() interface{} { return t.V }
+func (t VolumeDevice) Package() util.Package   { return util.V1 }
+func (t VolumeDevice) Type() string            { return "k8s_v1_VolumeDevice" }
+func (t VolumeDevice) String() string          { return t.V.String() }
+func (t VolumeDevice) Freeze()                 {} // TODO
+func (t VolumeDevice) Truth() skylark.Bool     { return skylark.True }
+func (t VolumeDevice) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t VolumeDevice) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*VolumeDevice)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9453,6 +10014,9 @@ func (t VolumeDevice) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, VolumeDevice_fields, VolumeDevice_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t VolumeDevice) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, VolumeDevice_fields, VolumeDevice_inline)
 }
 
 type VolumeMount struct {
@@ -9486,13 +10050,13 @@ func init() {
 func createVolumeMount(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for VolumeMount
 }
-func (t VolumeMount) UnderlyingKind() interface{} { return t.V }
-func (t VolumeMount) Package() util.Package       { return util.V1 }
-func (t VolumeMount) Type() string                { return "k8s_v1_VolumeMount" }
-func (t VolumeMount) String() string              { return t.V.String() }
-func (t VolumeMount) Freeze()                     {} // TODO
-func (t VolumeMount) Truth() skylark.Bool         { return skylark.True }
-func (t VolumeMount) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t VolumeMount) Underlying() interface{} { return t.V }
+func (t VolumeMount) Package() util.Package   { return util.V1 }
+func (t VolumeMount) Type() string            { return "k8s_v1_VolumeMount" }
+func (t VolumeMount) String() string          { return t.V.String() }
+func (t VolumeMount) Freeze()                 {} // TODO
+func (t VolumeMount) Truth() skylark.Bool     { return skylark.True }
+func (t VolumeMount) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t VolumeMount) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*VolumeMount)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9503,6 +10067,9 @@ func (t VolumeMount) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, VolumeMount_fields, VolumeMount_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t VolumeMount) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, VolumeMount_fields, VolumeMount_inline)
 }
 
 type VolumeNodeAffinity struct {
@@ -9536,13 +10103,13 @@ func init() {
 func createVolumeNodeAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for VolumeNodeAffinity
 }
-func (t VolumeNodeAffinity) UnderlyingKind() interface{} { return t.V }
-func (t VolumeNodeAffinity) Package() util.Package       { return util.V1 }
-func (t VolumeNodeAffinity) Type() string                { return "k8s_v1_VolumeNodeAffinity" }
-func (t VolumeNodeAffinity) String() string              { return t.V.String() }
-func (t VolumeNodeAffinity) Freeze()                     {} // TODO
-func (t VolumeNodeAffinity) Truth() skylark.Bool         { return skylark.True }
-func (t VolumeNodeAffinity) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t VolumeNodeAffinity) Underlying() interface{} { return t.V }
+func (t VolumeNodeAffinity) Package() util.Package   { return util.V1 }
+func (t VolumeNodeAffinity) Type() string            { return "k8s_v1_VolumeNodeAffinity" }
+func (t VolumeNodeAffinity) String() string          { return t.V.String() }
+func (t VolumeNodeAffinity) Freeze()                 {} // TODO
+func (t VolumeNodeAffinity) Truth() skylark.Bool     { return skylark.True }
+func (t VolumeNodeAffinity) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t VolumeNodeAffinity) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*VolumeNodeAffinity)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9553,6 +10120,9 @@ func (t VolumeNodeAffinity) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, VolumeNodeAffinity_fields, VolumeNodeAffinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t VolumeNodeAffinity) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, VolumeNodeAffinity_fields, VolumeNodeAffinity_inline)
 }
 
 type VolumeProjection struct {
@@ -9586,13 +10156,13 @@ func init() {
 func createVolumeProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for VolumeProjection
 }
-func (t VolumeProjection) UnderlyingKind() interface{} { return t.V }
-func (t VolumeProjection) Package() util.Package       { return util.V1 }
-func (t VolumeProjection) Type() string                { return "k8s_v1_VolumeProjection" }
-func (t VolumeProjection) String() string              { return t.V.String() }
-func (t VolumeProjection) Freeze()                     {} // TODO
-func (t VolumeProjection) Truth() skylark.Bool         { return skylark.True }
-func (t VolumeProjection) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t VolumeProjection) Underlying() interface{} { return t.V }
+func (t VolumeProjection) Package() util.Package   { return util.V1 }
+func (t VolumeProjection) Type() string            { return "k8s_v1_VolumeProjection" }
+func (t VolumeProjection) String() string          { return t.V.String() }
+func (t VolumeProjection) Freeze()                 {} // TODO
+func (t VolumeProjection) Truth() skylark.Bool     { return skylark.True }
+func (t VolumeProjection) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t VolumeProjection) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*VolumeProjection)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9603,6 +10173,9 @@ func (t VolumeProjection) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, VolumeProjection_fields, VolumeProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t VolumeProjection) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, VolumeProjection_fields, VolumeProjection_inline)
 }
 
 type VolumeSource struct {
@@ -9636,13 +10209,13 @@ func init() {
 func createVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for VolumeSource
 }
-func (t VolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t VolumeSource) Package() util.Package       { return util.V1 }
-func (t VolumeSource) Type() string                { return "k8s_v1_VolumeSource" }
-func (t VolumeSource) String() string              { return t.V.String() }
-func (t VolumeSource) Freeze()                     {} // TODO
-func (t VolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t VolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t VolumeSource) Underlying() interface{} { return t.V }
+func (t VolumeSource) Package() util.Package   { return util.V1 }
+func (t VolumeSource) Type() string            { return "k8s_v1_VolumeSource" }
+func (t VolumeSource) String() string          { return t.V.String() }
+func (t VolumeSource) Freeze()                 {} // TODO
+func (t VolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t VolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t VolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*VolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9653,6 +10226,9 @@ func (t VolumeSource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, VolumeSource_fields, VolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t VolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, VolumeSource_fields, VolumeSource_inline)
 }
 
 type VsphereVirtualDiskVolumeSource struct {
@@ -9686,13 +10262,13 @@ func init() {
 func createVsphereVirtualDiskVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for VsphereVirtualDiskVolumeSource
 }
-func (t VsphereVirtualDiskVolumeSource) UnderlyingKind() interface{} { return t.V }
-func (t VsphereVirtualDiskVolumeSource) Package() util.Package       { return util.V1 }
-func (t VsphereVirtualDiskVolumeSource) Type() string                { return "k8s_v1_VsphereVirtualDiskVolumeSource" }
-func (t VsphereVirtualDiskVolumeSource) String() string              { return t.V.String() }
-func (t VsphereVirtualDiskVolumeSource) Freeze()                     {} // TODO
-func (t VsphereVirtualDiskVolumeSource) Truth() skylark.Bool         { return skylark.True }
-func (t VsphereVirtualDiskVolumeSource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t VsphereVirtualDiskVolumeSource) Underlying() interface{} { return t.V }
+func (t VsphereVirtualDiskVolumeSource) Package() util.Package   { return util.V1 }
+func (t VsphereVirtualDiskVolumeSource) Type() string            { return "k8s_v1_VsphereVirtualDiskVolumeSource" }
+func (t VsphereVirtualDiskVolumeSource) String() string          { return t.V.String() }
+func (t VsphereVirtualDiskVolumeSource) Freeze()                 {} // TODO
+func (t VsphereVirtualDiskVolumeSource) Truth() skylark.Bool     { return skylark.True }
+func (t VsphereVirtualDiskVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t VsphereVirtualDiskVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*VsphereVirtualDiskVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9705,6 +10281,9 @@ func (t VsphereVirtualDiskVolumeSource) Attr(name string) (skylark.Value, error)
 		return getAttr(reflect.ValueOf(u), name, VsphereVirtualDiskVolumeSource_fields, VsphereVirtualDiskVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t VsphereVirtualDiskVolumeSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, VsphereVirtualDiskVolumeSource_fields, VsphereVirtualDiskVolumeSource_inline)
 }
 
 type WeightedPodAffinityTerm struct {
@@ -9738,13 +10317,13 @@ func init() {
 func createWeightedPodAffinityTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for WeightedPodAffinityTerm
 }
-func (t WeightedPodAffinityTerm) UnderlyingKind() interface{} { return t.V }
-func (t WeightedPodAffinityTerm) Package() util.Package       { return util.V1 }
-func (t WeightedPodAffinityTerm) Type() string                { return "k8s_v1_WeightedPodAffinityTerm" }
-func (t WeightedPodAffinityTerm) String() string              { return t.V.String() }
-func (t WeightedPodAffinityTerm) Freeze()                     {} // TODO
-func (t WeightedPodAffinityTerm) Truth() skylark.Bool         { return skylark.True }
-func (t WeightedPodAffinityTerm) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t WeightedPodAffinityTerm) Underlying() interface{} { return t.V }
+func (t WeightedPodAffinityTerm) Package() util.Package   { return util.V1 }
+func (t WeightedPodAffinityTerm) Type() string            { return "k8s_v1_WeightedPodAffinityTerm" }
+func (t WeightedPodAffinityTerm) String() string          { return t.V.String() }
+func (t WeightedPodAffinityTerm) Freeze()                 {} // TODO
+func (t WeightedPodAffinityTerm) Truth() skylark.Bool     { return skylark.True }
+func (t WeightedPodAffinityTerm) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t WeightedPodAffinityTerm) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*WeightedPodAffinityTerm)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9755,6 +10334,9 @@ func (t WeightedPodAffinityTerm) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, WeightedPodAffinityTerm_fields, WeightedPodAffinityTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t WeightedPodAffinityTerm) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, WeightedPodAffinityTerm_fields, WeightedPodAffinityTerm_inline)
 }
 
 type APIGroup struct {
@@ -9788,13 +10370,13 @@ func init() {
 func createAPIGroup(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for APIGroup
 }
-func (t APIGroup) UnderlyingKind() interface{} { return t.V }
-func (t APIGroup) Package() util.Package       { return util.Metav1 }
-func (t APIGroup) Type() string                { return "k8s_metav1_APIGroup" }
-func (t APIGroup) String() string              { return t.V.String() }
-func (t APIGroup) Freeze()                     {} // TODO
-func (t APIGroup) Truth() skylark.Bool         { return skylark.True }
-func (t APIGroup) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t APIGroup) Underlying() interface{} { return t.V }
+func (t APIGroup) Package() util.Package   { return util.Metav1 }
+func (t APIGroup) Type() string            { return "k8s_metav1_APIGroup" }
+func (t APIGroup) String() string          { return t.V.String() }
+func (t APIGroup) Freeze()                 {} // TODO
+func (t APIGroup) Truth() skylark.Bool     { return skylark.True }
+func (t APIGroup) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t APIGroup) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*APIGroup)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9805,6 +10387,9 @@ func (t APIGroup) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, APIGroup_fields, APIGroup_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t APIGroup) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, APIGroup_fields, APIGroup_inline)
 }
 
 type APIGroupList struct {
@@ -9838,13 +10423,13 @@ func init() {
 func createAPIGroupList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for APIGroupList
 }
-func (t APIGroupList) UnderlyingKind() interface{} { return t.V }
-func (t APIGroupList) Package() util.Package       { return util.Metav1 }
-func (t APIGroupList) Type() string                { return "k8s_metav1_APIGroupList" }
-func (t APIGroupList) String() string              { return t.V.String() }
-func (t APIGroupList) Freeze()                     {} // TODO
-func (t APIGroupList) Truth() skylark.Bool         { return skylark.True }
-func (t APIGroupList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t APIGroupList) Underlying() interface{} { return t.V }
+func (t APIGroupList) Package() util.Package   { return util.Metav1 }
+func (t APIGroupList) Type() string            { return "k8s_metav1_APIGroupList" }
+func (t APIGroupList) String() string          { return t.V.String() }
+func (t APIGroupList) Freeze()                 {} // TODO
+func (t APIGroupList) Truth() skylark.Bool     { return skylark.True }
+func (t APIGroupList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t APIGroupList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*APIGroupList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9855,6 +10440,9 @@ func (t APIGroupList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, APIGroupList_fields, APIGroupList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t APIGroupList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, APIGroupList_fields, APIGroupList_inline)
 }
 
 type APIResource struct {
@@ -9888,13 +10476,13 @@ func init() {
 func createAPIResource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for APIResource
 }
-func (t APIResource) UnderlyingKind() interface{} { return t.V }
-func (t APIResource) Package() util.Package       { return util.Metav1 }
-func (t APIResource) Type() string                { return "k8s_metav1_APIResource" }
-func (t APIResource) String() string              { return t.V.String() }
-func (t APIResource) Freeze()                     {} // TODO
-func (t APIResource) Truth() skylark.Bool         { return skylark.True }
-func (t APIResource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t APIResource) Underlying() interface{} { return t.V }
+func (t APIResource) Package() util.Package   { return util.Metav1 }
+func (t APIResource) Type() string            { return "k8s_metav1_APIResource" }
+func (t APIResource) String() string          { return t.V.String() }
+func (t APIResource) Freeze()                 {} // TODO
+func (t APIResource) Truth() skylark.Bool     { return skylark.True }
+func (t APIResource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t APIResource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*APIResource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9905,6 +10493,9 @@ func (t APIResource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, APIResource_fields, APIResource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t APIResource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, APIResource_fields, APIResource_inline)
 }
 
 type APIResourceList struct {
@@ -9938,13 +10529,13 @@ func init() {
 func createAPIResourceList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for APIResourceList
 }
-func (t APIResourceList) UnderlyingKind() interface{} { return t.V }
-func (t APIResourceList) Package() util.Package       { return util.Metav1 }
-func (t APIResourceList) Type() string                { return "k8s_metav1_APIResourceList" }
-func (t APIResourceList) String() string              { return t.V.String() }
-func (t APIResourceList) Freeze()                     {} // TODO
-func (t APIResourceList) Truth() skylark.Bool         { return skylark.True }
-func (t APIResourceList) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t APIResourceList) Underlying() interface{} { return t.V }
+func (t APIResourceList) Package() util.Package   { return util.Metav1 }
+func (t APIResourceList) Type() string            { return "k8s_metav1_APIResourceList" }
+func (t APIResourceList) String() string          { return t.V.String() }
+func (t APIResourceList) Freeze()                 {} // TODO
+func (t APIResourceList) Truth() skylark.Bool     { return skylark.True }
+func (t APIResourceList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t APIResourceList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*APIResourceList)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9955,6 +10546,9 @@ func (t APIResourceList) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, APIResourceList_fields, APIResourceList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t APIResourceList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, APIResourceList_fields, APIResourceList_inline)
 }
 
 type APIVersions struct {
@@ -9988,13 +10582,13 @@ func init() {
 func createAPIVersions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for APIVersions
 }
-func (t APIVersions) UnderlyingKind() interface{} { return t.V }
-func (t APIVersions) Package() util.Package       { return util.Metav1 }
-func (t APIVersions) Type() string                { return "k8s_metav1_APIVersions" }
-func (t APIVersions) String() string              { return t.V.String() }
-func (t APIVersions) Freeze()                     {} // TODO
-func (t APIVersions) Truth() skylark.Bool         { return skylark.True }
-func (t APIVersions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t APIVersions) Underlying() interface{} { return t.V }
+func (t APIVersions) Package() util.Package   { return util.Metav1 }
+func (t APIVersions) Type() string            { return "k8s_metav1_APIVersions" }
+func (t APIVersions) String() string          { return t.V.String() }
+func (t APIVersions) Freeze()                 {} // TODO
+func (t APIVersions) Truth() skylark.Bool     { return skylark.True }
+func (t APIVersions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t APIVersions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*APIVersions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10005,6 +10599,9 @@ func (t APIVersions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, APIVersions_fields, APIVersions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t APIVersions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, APIVersions_fields, APIVersions_inline)
 }
 
 type CreateOptions struct {
@@ -10038,13 +10635,13 @@ func init() {
 func createCreateOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for CreateOptions
 }
-func (t CreateOptions) UnderlyingKind() interface{} { return t.V }
-func (t CreateOptions) Package() util.Package       { return util.Metav1 }
-func (t CreateOptions) Type() string                { return "k8s_metav1_CreateOptions" }
-func (t CreateOptions) String() string              { return t.V.String() }
-func (t CreateOptions) Freeze()                     {} // TODO
-func (t CreateOptions) Truth() skylark.Bool         { return skylark.True }
-func (t CreateOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t CreateOptions) Underlying() interface{} { return t.V }
+func (t CreateOptions) Package() util.Package   { return util.Metav1 }
+func (t CreateOptions) Type() string            { return "k8s_metav1_CreateOptions" }
+func (t CreateOptions) String() string          { return t.V.String() }
+func (t CreateOptions) Freeze()                 {} // TODO
+func (t CreateOptions) Truth() skylark.Bool     { return skylark.True }
+func (t CreateOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t CreateOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*CreateOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10055,6 +10652,9 @@ func (t CreateOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, CreateOptions_fields, CreateOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t CreateOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, CreateOptions_fields, CreateOptions_inline)
 }
 
 type DeleteOptions struct {
@@ -10088,13 +10688,13 @@ func init() {
 func createDeleteOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for DeleteOptions
 }
-func (t DeleteOptions) UnderlyingKind() interface{} { return t.V }
-func (t DeleteOptions) Package() util.Package       { return util.Metav1 }
-func (t DeleteOptions) Type() string                { return "k8s_metav1_DeleteOptions" }
-func (t DeleteOptions) String() string              { return t.V.String() }
-func (t DeleteOptions) Freeze()                     {} // TODO
-func (t DeleteOptions) Truth() skylark.Bool         { return skylark.True }
-func (t DeleteOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t DeleteOptions) Underlying() interface{} { return t.V }
+func (t DeleteOptions) Package() util.Package   { return util.Metav1 }
+func (t DeleteOptions) Type() string            { return "k8s_metav1_DeleteOptions" }
+func (t DeleteOptions) String() string          { return t.V.String() }
+func (t DeleteOptions) Freeze()                 {} // TODO
+func (t DeleteOptions) Truth() skylark.Bool     { return skylark.True }
+func (t DeleteOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t DeleteOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*DeleteOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10105,6 +10705,9 @@ func (t DeleteOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, DeleteOptions_fields, DeleteOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DeleteOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DeleteOptions_fields, DeleteOptions_inline)
 }
 
 type Duration struct {
@@ -10138,13 +10741,13 @@ func init() {
 func createDuration(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Duration
 }
-func (t Duration) UnderlyingKind() interface{} { return t.V }
-func (t Duration) Package() util.Package       { return util.Metav1 }
-func (t Duration) Type() string                { return "k8s_metav1_Duration" }
-func (t Duration) String() string              { return t.V.String() }
-func (t Duration) Freeze()                     {} // TODO
-func (t Duration) Truth() skylark.Bool         { return skylark.True }
-func (t Duration) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Duration) Underlying() interface{} { return t.V }
+func (t Duration) Package() util.Package   { return util.Metav1 }
+func (t Duration) Type() string            { return "k8s_metav1_Duration" }
+func (t Duration) String() string          { return t.V.String() }
+func (t Duration) Freeze()                 {} // TODO
+func (t Duration) Truth() skylark.Bool     { return skylark.True }
+func (t Duration) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Duration) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Duration)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10155,6 +10758,9 @@ func (t Duration) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Duration_fields, Duration_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Duration) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Duration_fields, Duration_inline)
 }
 
 type ExportOptions struct {
@@ -10188,13 +10794,13 @@ func init() {
 func createExportOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ExportOptions
 }
-func (t ExportOptions) UnderlyingKind() interface{} { return t.V }
-func (t ExportOptions) Package() util.Package       { return util.Metav1 }
-func (t ExportOptions) Type() string                { return "k8s_metav1_ExportOptions" }
-func (t ExportOptions) String() string              { return t.V.String() }
-func (t ExportOptions) Freeze()                     {} // TODO
-func (t ExportOptions) Truth() skylark.Bool         { return skylark.True }
-func (t ExportOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ExportOptions) Underlying() interface{} { return t.V }
+func (t ExportOptions) Package() util.Package   { return util.Metav1 }
+func (t ExportOptions) Type() string            { return "k8s_metav1_ExportOptions" }
+func (t ExportOptions) String() string          { return t.V.String() }
+func (t ExportOptions) Freeze()                 {} // TODO
+func (t ExportOptions) Truth() skylark.Bool     { return skylark.True }
+func (t ExportOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ExportOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ExportOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10205,6 +10811,9 @@ func (t ExportOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ExportOptions_fields, ExportOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ExportOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ExportOptions_fields, ExportOptions_inline)
 }
 
 type GetOptions struct {
@@ -10238,13 +10847,13 @@ func init() {
 func createGetOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GetOptions
 }
-func (t GetOptions) UnderlyingKind() interface{} { return t.V }
-func (t GetOptions) Package() util.Package       { return util.Metav1 }
-func (t GetOptions) Type() string                { return "k8s_metav1_GetOptions" }
-func (t GetOptions) String() string              { return t.V.String() }
-func (t GetOptions) Freeze()                     {} // TODO
-func (t GetOptions) Truth() skylark.Bool         { return skylark.True }
-func (t GetOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GetOptions) Underlying() interface{} { return t.V }
+func (t GetOptions) Package() util.Package   { return util.Metav1 }
+func (t GetOptions) Type() string            { return "k8s_metav1_GetOptions" }
+func (t GetOptions) String() string          { return t.V.String() }
+func (t GetOptions) Freeze()                 {} // TODO
+func (t GetOptions) Truth() skylark.Bool     { return skylark.True }
+func (t GetOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GetOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GetOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10255,6 +10864,9 @@ func (t GetOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, GetOptions_fields, GetOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GetOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GetOptions_fields, GetOptions_inline)
 }
 
 type GroupKind struct {
@@ -10288,13 +10900,13 @@ func init() {
 func createGroupKind(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GroupKind
 }
-func (t GroupKind) UnderlyingKind() interface{} { return t.V }
-func (t GroupKind) Package() util.Package       { return util.Metav1 }
-func (t GroupKind) Type() string                { return "k8s_metav1_GroupKind" }
-func (t GroupKind) String() string              { return t.V.String() }
-func (t GroupKind) Freeze()                     {} // TODO
-func (t GroupKind) Truth() skylark.Bool         { return skylark.True }
-func (t GroupKind) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GroupKind) Underlying() interface{} { return t.V }
+func (t GroupKind) Package() util.Package   { return util.Metav1 }
+func (t GroupKind) Type() string            { return "k8s_metav1_GroupKind" }
+func (t GroupKind) String() string          { return t.V.String() }
+func (t GroupKind) Freeze()                 {} // TODO
+func (t GroupKind) Truth() skylark.Bool     { return skylark.True }
+func (t GroupKind) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GroupKind) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GroupKind)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10305,6 +10917,9 @@ func (t GroupKind) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, GroupKind_fields, GroupKind_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GroupKind) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GroupKind_fields, GroupKind_inline)
 }
 
 type GroupResource struct {
@@ -10338,13 +10953,13 @@ func init() {
 func createGroupResource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GroupResource
 }
-func (t GroupResource) UnderlyingKind() interface{} { return t.V }
-func (t GroupResource) Package() util.Package       { return util.Metav1 }
-func (t GroupResource) Type() string                { return "k8s_metav1_GroupResource" }
-func (t GroupResource) String() string              { return t.V.String() }
-func (t GroupResource) Freeze()                     {} // TODO
-func (t GroupResource) Truth() skylark.Bool         { return skylark.True }
-func (t GroupResource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GroupResource) Underlying() interface{} { return t.V }
+func (t GroupResource) Package() util.Package   { return util.Metav1 }
+func (t GroupResource) Type() string            { return "k8s_metav1_GroupResource" }
+func (t GroupResource) String() string          { return t.V.String() }
+func (t GroupResource) Freeze()                 {} // TODO
+func (t GroupResource) Truth() skylark.Bool     { return skylark.True }
+func (t GroupResource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GroupResource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GroupResource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10355,6 +10970,9 @@ func (t GroupResource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, GroupResource_fields, GroupResource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GroupResource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GroupResource_fields, GroupResource_inline)
 }
 
 type GroupVersion struct {
@@ -10388,13 +11006,13 @@ func init() {
 func createGroupVersion(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GroupVersion
 }
-func (t GroupVersion) UnderlyingKind() interface{} { return t.V }
-func (t GroupVersion) Package() util.Package       { return util.Metav1 }
-func (t GroupVersion) Type() string                { return "k8s_metav1_GroupVersion" }
-func (t GroupVersion) String() string              { return t.V.String() }
-func (t GroupVersion) Freeze()                     {} // TODO
-func (t GroupVersion) Truth() skylark.Bool         { return skylark.True }
-func (t GroupVersion) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GroupVersion) Underlying() interface{} { return t.V }
+func (t GroupVersion) Package() util.Package   { return util.Metav1 }
+func (t GroupVersion) Type() string            { return "k8s_metav1_GroupVersion" }
+func (t GroupVersion) String() string          { return t.V.String() }
+func (t GroupVersion) Freeze()                 {} // TODO
+func (t GroupVersion) Truth() skylark.Bool     { return skylark.True }
+func (t GroupVersion) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GroupVersion) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GroupVersion)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10405,6 +11023,9 @@ func (t GroupVersion) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, GroupVersion_fields, GroupVersion_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GroupVersion) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GroupVersion_fields, GroupVersion_inline)
 }
 
 type GroupVersionForDiscovery struct {
@@ -10438,13 +11059,13 @@ func init() {
 func createGroupVersionForDiscovery(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GroupVersionForDiscovery
 }
-func (t GroupVersionForDiscovery) UnderlyingKind() interface{} { return t.V }
-func (t GroupVersionForDiscovery) Package() util.Package       { return util.Metav1 }
-func (t GroupVersionForDiscovery) Type() string                { return "k8s_metav1_GroupVersionForDiscovery" }
-func (t GroupVersionForDiscovery) String() string              { return t.V.String() }
-func (t GroupVersionForDiscovery) Freeze()                     {} // TODO
-func (t GroupVersionForDiscovery) Truth() skylark.Bool         { return skylark.True }
-func (t GroupVersionForDiscovery) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GroupVersionForDiscovery) Underlying() interface{} { return t.V }
+func (t GroupVersionForDiscovery) Package() util.Package   { return util.Metav1 }
+func (t GroupVersionForDiscovery) Type() string            { return "k8s_metav1_GroupVersionForDiscovery" }
+func (t GroupVersionForDiscovery) String() string          { return t.V.String() }
+func (t GroupVersionForDiscovery) Freeze()                 {} // TODO
+func (t GroupVersionForDiscovery) Truth() skylark.Bool     { return skylark.True }
+func (t GroupVersionForDiscovery) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GroupVersionForDiscovery) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GroupVersionForDiscovery)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10455,6 +11076,9 @@ func (t GroupVersionForDiscovery) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, GroupVersionForDiscovery_fields, GroupVersionForDiscovery_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GroupVersionForDiscovery) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GroupVersionForDiscovery_fields, GroupVersionForDiscovery_inline)
 }
 
 type GroupVersionKind struct {
@@ -10488,13 +11112,13 @@ func init() {
 func createGroupVersionKind(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GroupVersionKind
 }
-func (t GroupVersionKind) UnderlyingKind() interface{} { return t.V }
-func (t GroupVersionKind) Package() util.Package       { return util.Metav1 }
-func (t GroupVersionKind) Type() string                { return "k8s_metav1_GroupVersionKind" }
-func (t GroupVersionKind) String() string              { return t.V.String() }
-func (t GroupVersionKind) Freeze()                     {} // TODO
-func (t GroupVersionKind) Truth() skylark.Bool         { return skylark.True }
-func (t GroupVersionKind) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GroupVersionKind) Underlying() interface{} { return t.V }
+func (t GroupVersionKind) Package() util.Package   { return util.Metav1 }
+func (t GroupVersionKind) Type() string            { return "k8s_metav1_GroupVersionKind" }
+func (t GroupVersionKind) String() string          { return t.V.String() }
+func (t GroupVersionKind) Freeze()                 {} // TODO
+func (t GroupVersionKind) Truth() skylark.Bool     { return skylark.True }
+func (t GroupVersionKind) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GroupVersionKind) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GroupVersionKind)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10505,6 +11129,9 @@ func (t GroupVersionKind) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, GroupVersionKind_fields, GroupVersionKind_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GroupVersionKind) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GroupVersionKind_fields, GroupVersionKind_inline)
 }
 
 type GroupVersionResource struct {
@@ -10538,13 +11165,13 @@ func init() {
 func createGroupVersionResource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for GroupVersionResource
 }
-func (t GroupVersionResource) UnderlyingKind() interface{} { return t.V }
-func (t GroupVersionResource) Package() util.Package       { return util.Metav1 }
-func (t GroupVersionResource) Type() string                { return "k8s_metav1_GroupVersionResource" }
-func (t GroupVersionResource) String() string              { return t.V.String() }
-func (t GroupVersionResource) Freeze()                     {} // TODO
-func (t GroupVersionResource) Truth() skylark.Bool         { return skylark.True }
-func (t GroupVersionResource) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t GroupVersionResource) Underlying() interface{} { return t.V }
+func (t GroupVersionResource) Package() util.Package   { return util.Metav1 }
+func (t GroupVersionResource) Type() string            { return "k8s_metav1_GroupVersionResource" }
+func (t GroupVersionResource) String() string          { return t.V.String() }
+func (t GroupVersionResource) Freeze()                 {} // TODO
+func (t GroupVersionResource) Truth() skylark.Bool     { return skylark.True }
+func (t GroupVersionResource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t GroupVersionResource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GroupVersionResource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10555,6 +11182,9 @@ func (t GroupVersionResource) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, GroupVersionResource_fields, GroupVersionResource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t GroupVersionResource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, GroupVersionResource_fields, GroupVersionResource_inline)
 }
 
 type Initializer struct {
@@ -10588,13 +11218,13 @@ func init() {
 func createInitializer(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Initializer
 }
-func (t Initializer) UnderlyingKind() interface{} { return t.V }
-func (t Initializer) Package() util.Package       { return util.Metav1 }
-func (t Initializer) Type() string                { return "k8s_metav1_Initializer" }
-func (t Initializer) String() string              { return t.V.String() }
-func (t Initializer) Freeze()                     {} // TODO
-func (t Initializer) Truth() skylark.Bool         { return skylark.True }
-func (t Initializer) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Initializer) Underlying() interface{} { return t.V }
+func (t Initializer) Package() util.Package   { return util.Metav1 }
+func (t Initializer) Type() string            { return "k8s_metav1_Initializer" }
+func (t Initializer) String() string          { return t.V.String() }
+func (t Initializer) Freeze()                 {} // TODO
+func (t Initializer) Truth() skylark.Bool     { return skylark.True }
+func (t Initializer) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Initializer) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Initializer)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10605,6 +11235,9 @@ func (t Initializer) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Initializer_fields, Initializer_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Initializer) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Initializer_fields, Initializer_inline)
 }
 
 type Initializers struct {
@@ -10638,13 +11271,13 @@ func init() {
 func createInitializers(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Initializers
 }
-func (t Initializers) UnderlyingKind() interface{} { return t.V }
-func (t Initializers) Package() util.Package       { return util.Metav1 }
-func (t Initializers) Type() string                { return "k8s_metav1_Initializers" }
-func (t Initializers) String() string              { return t.V.String() }
-func (t Initializers) Freeze()                     {} // TODO
-func (t Initializers) Truth() skylark.Bool         { return skylark.True }
-func (t Initializers) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Initializers) Underlying() interface{} { return t.V }
+func (t Initializers) Package() util.Package   { return util.Metav1 }
+func (t Initializers) Type() string            { return "k8s_metav1_Initializers" }
+func (t Initializers) String() string          { return t.V.String() }
+func (t Initializers) Freeze()                 {} // TODO
+func (t Initializers) Truth() skylark.Bool     { return skylark.True }
+func (t Initializers) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Initializers) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Initializers)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10655,6 +11288,9 @@ func (t Initializers) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Initializers_fields, Initializers_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Initializers) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Initializers_fields, Initializers_inline)
 }
 
 type InternalEvent struct {
@@ -10688,13 +11324,13 @@ func init() {
 func createInternalEvent(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for InternalEvent
 }
-func (t InternalEvent) UnderlyingKind() interface{} { return t.V }
-func (t InternalEvent) Package() util.Package       { return util.Metav1 }
-func (t InternalEvent) Type() string                { return "k8s_metav1_InternalEvent" }
-func (t InternalEvent) String() string              { return genericStringMethod(t.V) }
-func (t InternalEvent) Freeze()                     {} // TODO
-func (t InternalEvent) Truth() skylark.Bool         { return skylark.True }
-func (t InternalEvent) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t InternalEvent) Underlying() interface{} { return t.V }
+func (t InternalEvent) Package() util.Package   { return util.Metav1 }
+func (t InternalEvent) Type() string            { return "k8s_metav1_InternalEvent" }
+func (t InternalEvent) String() string          { return genericStringMethod(t.V) }
+func (t InternalEvent) Freeze()                 {} // TODO
+func (t InternalEvent) Truth() skylark.Bool     { return skylark.True }
+func (t InternalEvent) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t InternalEvent) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*InternalEvent)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10705,6 +11341,9 @@ func (t InternalEvent) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, InternalEvent_fields, InternalEvent_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t InternalEvent) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, InternalEvent_fields, InternalEvent_inline)
 }
 
 type LabelSelector struct {
@@ -10738,13 +11377,13 @@ func init() {
 func createLabelSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LabelSelector
 }
-func (t LabelSelector) UnderlyingKind() interface{} { return t.V }
-func (t LabelSelector) Package() util.Package       { return util.Metav1 }
-func (t LabelSelector) Type() string                { return "k8s_metav1_LabelSelector" }
-func (t LabelSelector) String() string              { return t.V.String() }
-func (t LabelSelector) Freeze()                     {} // TODO
-func (t LabelSelector) Truth() skylark.Bool         { return skylark.True }
-func (t LabelSelector) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LabelSelector) Underlying() interface{} { return t.V }
+func (t LabelSelector) Package() util.Package   { return util.Metav1 }
+func (t LabelSelector) Type() string            { return "k8s_metav1_LabelSelector" }
+func (t LabelSelector) String() string          { return t.V.String() }
+func (t LabelSelector) Freeze()                 {} // TODO
+func (t LabelSelector) Truth() skylark.Bool     { return skylark.True }
+func (t LabelSelector) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LabelSelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LabelSelector)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10755,6 +11394,9 @@ func (t LabelSelector) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LabelSelector_fields, LabelSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LabelSelector) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LabelSelector_fields, LabelSelector_inline)
 }
 
 type LabelSelectorRequirement struct {
@@ -10788,13 +11430,13 @@ func init() {
 func createLabelSelectorRequirement(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for LabelSelectorRequirement
 }
-func (t LabelSelectorRequirement) UnderlyingKind() interface{} { return t.V }
-func (t LabelSelectorRequirement) Package() util.Package       { return util.Metav1 }
-func (t LabelSelectorRequirement) Type() string                { return "k8s_metav1_LabelSelectorRequirement" }
-func (t LabelSelectorRequirement) String() string              { return t.V.String() }
-func (t LabelSelectorRequirement) Freeze()                     {} // TODO
-func (t LabelSelectorRequirement) Truth() skylark.Bool         { return skylark.True }
-func (t LabelSelectorRequirement) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t LabelSelectorRequirement) Underlying() interface{} { return t.V }
+func (t LabelSelectorRequirement) Package() util.Package   { return util.Metav1 }
+func (t LabelSelectorRequirement) Type() string            { return "k8s_metav1_LabelSelectorRequirement" }
+func (t LabelSelectorRequirement) String() string          { return t.V.String() }
+func (t LabelSelectorRequirement) Freeze()                 {} // TODO
+func (t LabelSelectorRequirement) Truth() skylark.Bool     { return skylark.True }
+func (t LabelSelectorRequirement) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t LabelSelectorRequirement) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*LabelSelectorRequirement)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10805,6 +11447,9 @@ func (t LabelSelectorRequirement) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, LabelSelectorRequirement_fields, LabelSelectorRequirement_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LabelSelectorRequirement) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LabelSelectorRequirement_fields, LabelSelectorRequirement_inline)
 }
 
 type ListMeta struct {
@@ -10838,13 +11483,13 @@ func init() {
 func createListMeta(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ListMeta
 }
-func (t ListMeta) UnderlyingKind() interface{} { return t.V }
-func (t ListMeta) Package() util.Package       { return util.Metav1 }
-func (t ListMeta) Type() string                { return "k8s_metav1_ListMeta" }
-func (t ListMeta) String() string              { return t.V.String() }
-func (t ListMeta) Freeze()                     {} // TODO
-func (t ListMeta) Truth() skylark.Bool         { return skylark.True }
-func (t ListMeta) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ListMeta) Underlying() interface{} { return t.V }
+func (t ListMeta) Package() util.Package   { return util.Metav1 }
+func (t ListMeta) Type() string            { return "k8s_metav1_ListMeta" }
+func (t ListMeta) String() string          { return t.V.String() }
+func (t ListMeta) Freeze()                 {} // TODO
+func (t ListMeta) Truth() skylark.Bool     { return skylark.True }
+func (t ListMeta) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ListMeta) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ListMeta)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10855,6 +11500,9 @@ func (t ListMeta) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ListMeta_fields, ListMeta_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ListMeta) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ListMeta_fields, ListMeta_inline)
 }
 
 type ListOptions struct {
@@ -10888,13 +11536,13 @@ func init() {
 func createListOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ListOptions
 }
-func (t ListOptions) UnderlyingKind() interface{} { return t.V }
-func (t ListOptions) Package() util.Package       { return util.Metav1 }
-func (t ListOptions) Type() string                { return "k8s_metav1_ListOptions" }
-func (t ListOptions) String() string              { return t.V.String() }
-func (t ListOptions) Freeze()                     {} // TODO
-func (t ListOptions) Truth() skylark.Bool         { return skylark.True }
-func (t ListOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ListOptions) Underlying() interface{} { return t.V }
+func (t ListOptions) Package() util.Package   { return util.Metav1 }
+func (t ListOptions) Type() string            { return "k8s_metav1_ListOptions" }
+func (t ListOptions) String() string          { return t.V.String() }
+func (t ListOptions) Freeze()                 {} // TODO
+func (t ListOptions) Truth() skylark.Bool     { return skylark.True }
+func (t ListOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ListOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ListOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10905,6 +11553,9 @@ func (t ListOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ListOptions_fields, ListOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ListOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ListOptions_fields, ListOptions_inline)
 }
 
 type ObjectMeta struct {
@@ -10938,13 +11589,13 @@ func init() {
 func createObjectMeta(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ObjectMeta
 }
-func (t ObjectMeta) UnderlyingKind() interface{} { return t.V }
-func (t ObjectMeta) Package() util.Package       { return util.Metav1 }
-func (t ObjectMeta) Type() string                { return "k8s_metav1_ObjectMeta" }
-func (t ObjectMeta) String() string              { return t.V.String() }
-func (t ObjectMeta) Freeze()                     {} // TODO
-func (t ObjectMeta) Truth() skylark.Bool         { return skylark.True }
-func (t ObjectMeta) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ObjectMeta) Underlying() interface{} { return t.V }
+func (t ObjectMeta) Package() util.Package   { return util.Metav1 }
+func (t ObjectMeta) Type() string            { return "k8s_metav1_ObjectMeta" }
+func (t ObjectMeta) String() string          { return t.V.String() }
+func (t ObjectMeta) Freeze()                 {} // TODO
+func (t ObjectMeta) Truth() skylark.Bool     { return skylark.True }
+func (t ObjectMeta) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ObjectMeta) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ObjectMeta)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10955,6 +11606,9 @@ func (t ObjectMeta) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ObjectMeta_fields, ObjectMeta_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ObjectMeta) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ObjectMeta_fields, ObjectMeta_inline)
 }
 
 type OwnerReference struct {
@@ -10988,13 +11642,13 @@ func init() {
 func createOwnerReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for OwnerReference
 }
-func (t OwnerReference) UnderlyingKind() interface{} { return t.V }
-func (t OwnerReference) Package() util.Package       { return util.Metav1 }
-func (t OwnerReference) Type() string                { return "k8s_metav1_OwnerReference" }
-func (t OwnerReference) String() string              { return t.V.String() }
-func (t OwnerReference) Freeze()                     {} // TODO
-func (t OwnerReference) Truth() skylark.Bool         { return skylark.True }
-func (t OwnerReference) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t OwnerReference) Underlying() interface{} { return t.V }
+func (t OwnerReference) Package() util.Package   { return util.Metav1 }
+func (t OwnerReference) Type() string            { return "k8s_metav1_OwnerReference" }
+func (t OwnerReference) String() string          { return t.V.String() }
+func (t OwnerReference) Freeze()                 {} // TODO
+func (t OwnerReference) Truth() skylark.Bool     { return skylark.True }
+func (t OwnerReference) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t OwnerReference) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*OwnerReference)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11005,6 +11659,9 @@ func (t OwnerReference) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, OwnerReference_fields, OwnerReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t OwnerReference) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, OwnerReference_fields, OwnerReference_inline)
 }
 
 type Patch struct {
@@ -11038,13 +11695,13 @@ func init() {
 func createPatch(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Patch
 }
-func (t Patch) UnderlyingKind() interface{} { return t.V }
-func (t Patch) Package() util.Package       { return util.Metav1 }
-func (t Patch) Type() string                { return "k8s_metav1_Patch" }
-func (t Patch) String() string              { return t.V.String() }
-func (t Patch) Freeze()                     {} // TODO
-func (t Patch) Truth() skylark.Bool         { return skylark.True }
-func (t Patch) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Patch) Underlying() interface{} { return t.V }
+func (t Patch) Package() util.Package   { return util.Metav1 }
+func (t Patch) Type() string            { return "k8s_metav1_Patch" }
+func (t Patch) String() string          { return t.V.String() }
+func (t Patch) Freeze()                 {} // TODO
+func (t Patch) Truth() skylark.Bool     { return skylark.True }
+func (t Patch) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Patch) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Patch)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11055,6 +11712,9 @@ func (t Patch) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Patch_fields, Patch_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Patch) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Patch_fields, Patch_inline)
 }
 
 type RootPaths struct {
@@ -11088,13 +11748,13 @@ func init() {
 func createRootPaths(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for RootPaths
 }
-func (t RootPaths) UnderlyingKind() interface{} { return t.V }
-func (t RootPaths) Package() util.Package       { return util.Metav1 }
-func (t RootPaths) Type() string                { return "k8s_metav1_RootPaths" }
-func (t RootPaths) String() string              { return t.V.String() }
-func (t RootPaths) Freeze()                     {} // TODO
-func (t RootPaths) Truth() skylark.Bool         { return skylark.True }
-func (t RootPaths) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t RootPaths) Underlying() interface{} { return t.V }
+func (t RootPaths) Package() util.Package   { return util.Metav1 }
+func (t RootPaths) Type() string            { return "k8s_metav1_RootPaths" }
+func (t RootPaths) String() string          { return t.V.String() }
+func (t RootPaths) Freeze()                 {} // TODO
+func (t RootPaths) Truth() skylark.Bool     { return skylark.True }
+func (t RootPaths) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t RootPaths) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*RootPaths)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11105,6 +11765,9 @@ func (t RootPaths) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, RootPaths_fields, RootPaths_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RootPaths) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RootPaths_fields, RootPaths_inline)
 }
 
 type ServerAddressByClientCIDR struct {
@@ -11138,13 +11801,13 @@ func init() {
 func createServerAddressByClientCIDR(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for ServerAddressByClientCIDR
 }
-func (t ServerAddressByClientCIDR) UnderlyingKind() interface{} { return t.V }
-func (t ServerAddressByClientCIDR) Package() util.Package       { return util.Metav1 }
-func (t ServerAddressByClientCIDR) Type() string                { return "k8s_metav1_ServerAddressByClientCIDR" }
-func (t ServerAddressByClientCIDR) String() string              { return t.V.String() }
-func (t ServerAddressByClientCIDR) Freeze()                     {} // TODO
-func (t ServerAddressByClientCIDR) Truth() skylark.Bool         { return skylark.True }
-func (t ServerAddressByClientCIDR) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t ServerAddressByClientCIDR) Underlying() interface{} { return t.V }
+func (t ServerAddressByClientCIDR) Package() util.Package   { return util.Metav1 }
+func (t ServerAddressByClientCIDR) Type() string            { return "k8s_metav1_ServerAddressByClientCIDR" }
+func (t ServerAddressByClientCIDR) String() string          { return t.V.String() }
+func (t ServerAddressByClientCIDR) Freeze()                 {} // TODO
+func (t ServerAddressByClientCIDR) Truth() skylark.Bool     { return skylark.True }
+func (t ServerAddressByClientCIDR) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t ServerAddressByClientCIDR) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServerAddressByClientCIDR)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11155,6 +11818,9 @@ func (t ServerAddressByClientCIDR) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, ServerAddressByClientCIDR_fields, ServerAddressByClientCIDR_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ServerAddressByClientCIDR) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ServerAddressByClientCIDR_fields, ServerAddressByClientCIDR_inline)
 }
 
 type Status struct {
@@ -11188,13 +11854,13 @@ func init() {
 func createStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for Status
 }
-func (t Status) UnderlyingKind() interface{} { return t.V }
-func (t Status) Package() util.Package       { return util.Metav1 }
-func (t Status) Type() string                { return "k8s_metav1_Status" }
-func (t Status) String() string              { return t.V.String() }
-func (t Status) Freeze()                     {} // TODO
-func (t Status) Truth() skylark.Bool         { return skylark.True }
-func (t Status) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t Status) Underlying() interface{} { return t.V }
+func (t Status) Package() util.Package   { return util.Metav1 }
+func (t Status) Type() string            { return "k8s_metav1_Status" }
+func (t Status) String() string          { return t.V.String() }
+func (t Status) Freeze()                 {} // TODO
+func (t Status) Truth() skylark.Bool     { return skylark.True }
+func (t Status) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t Status) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*Status)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11205,6 +11871,9 @@ func (t Status) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, Status_fields, Status_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Status) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Status_fields, Status_inline)
 }
 
 type StatusCause struct {
@@ -11238,13 +11907,13 @@ func init() {
 func createStatusCause(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for StatusCause
 }
-func (t StatusCause) UnderlyingKind() interface{} { return t.V }
-func (t StatusCause) Package() util.Package       { return util.Metav1 }
-func (t StatusCause) Type() string                { return "k8s_metav1_StatusCause" }
-func (t StatusCause) String() string              { return t.V.String() }
-func (t StatusCause) Freeze()                     {} // TODO
-func (t StatusCause) Truth() skylark.Bool         { return skylark.True }
-func (t StatusCause) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t StatusCause) Underlying() interface{} { return t.V }
+func (t StatusCause) Package() util.Package   { return util.Metav1 }
+func (t StatusCause) Type() string            { return "k8s_metav1_StatusCause" }
+func (t StatusCause) String() string          { return t.V.String() }
+func (t StatusCause) Freeze()                 {} // TODO
+func (t StatusCause) Truth() skylark.Bool     { return skylark.True }
+func (t StatusCause) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t StatusCause) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*StatusCause)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11255,6 +11924,9 @@ func (t StatusCause) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, StatusCause_fields, StatusCause_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StatusCause) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StatusCause_fields, StatusCause_inline)
 }
 
 type StatusDetails struct {
@@ -11288,13 +11960,13 @@ func init() {
 func createStatusDetails(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for StatusDetails
 }
-func (t StatusDetails) UnderlyingKind() interface{} { return t.V }
-func (t StatusDetails) Package() util.Package       { return util.Metav1 }
-func (t StatusDetails) Type() string                { return "k8s_metav1_StatusDetails" }
-func (t StatusDetails) String() string              { return t.V.String() }
-func (t StatusDetails) Freeze()                     {} // TODO
-func (t StatusDetails) Truth() skylark.Bool         { return skylark.True }
-func (t StatusDetails) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t StatusDetails) Underlying() interface{} { return t.V }
+func (t StatusDetails) Package() util.Package   { return util.Metav1 }
+func (t StatusDetails) Type() string            { return "k8s_metav1_StatusDetails" }
+func (t StatusDetails) String() string          { return t.V.String() }
+func (t StatusDetails) Freeze()                 {} // TODO
+func (t StatusDetails) Truth() skylark.Bool     { return skylark.True }
+func (t StatusDetails) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t StatusDetails) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*StatusDetails)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11305,6 +11977,9 @@ func (t StatusDetails) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, StatusDetails_fields, StatusDetails_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StatusDetails) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StatusDetails_fields, StatusDetails_inline)
 }
 
 type TypeMeta struct {
@@ -11338,13 +12013,13 @@ func init() {
 func createTypeMeta(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for TypeMeta
 }
-func (t TypeMeta) UnderlyingKind() interface{} { return t.V }
-func (t TypeMeta) Package() util.Package       { return util.Metav1 }
-func (t TypeMeta) Type() string                { return "k8s_metav1_TypeMeta" }
-func (t TypeMeta) String() string              { return t.V.String() }
-func (t TypeMeta) Freeze()                     {} // TODO
-func (t TypeMeta) Truth() skylark.Bool         { return skylark.True }
-func (t TypeMeta) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t TypeMeta) Underlying() interface{} { return t.V }
+func (t TypeMeta) Package() util.Package   { return util.Metav1 }
+func (t TypeMeta) Type() string            { return "k8s_metav1_TypeMeta" }
+func (t TypeMeta) String() string          { return t.V.String() }
+func (t TypeMeta) Freeze()                 {} // TODO
+func (t TypeMeta) Truth() skylark.Bool     { return skylark.True }
+func (t TypeMeta) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t TypeMeta) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*TypeMeta)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11355,6 +12030,9 @@ func (t TypeMeta) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, TypeMeta_fields, TypeMeta_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TypeMeta) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TypeMeta_fields, TypeMeta_inline)
 }
 
 type UpdateOptions struct {
@@ -11388,13 +12066,13 @@ func init() {
 func createUpdateOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for UpdateOptions
 }
-func (t UpdateOptions) UnderlyingKind() interface{} { return t.V }
-func (t UpdateOptions) Package() util.Package       { return util.Metav1 }
-func (t UpdateOptions) Type() string                { return "k8s_metav1_UpdateOptions" }
-func (t UpdateOptions) String() string              { return t.V.String() }
-func (t UpdateOptions) Freeze()                     {} // TODO
-func (t UpdateOptions) Truth() skylark.Bool         { return skylark.True }
-func (t UpdateOptions) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t UpdateOptions) Underlying() interface{} { return t.V }
+func (t UpdateOptions) Package() util.Package   { return util.Metav1 }
+func (t UpdateOptions) Type() string            { return "k8s_metav1_UpdateOptions" }
+func (t UpdateOptions) String() string          { return t.V.String() }
+func (t UpdateOptions) Freeze()                 {} // TODO
+func (t UpdateOptions) Truth() skylark.Bool     { return skylark.True }
+func (t UpdateOptions) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t UpdateOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*UpdateOptions)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11405,6 +12083,9 @@ func (t UpdateOptions) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, UpdateOptions_fields, UpdateOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t UpdateOptions) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, UpdateOptions_fields, UpdateOptions_inline)
 }
 
 type WatchEvent struct {
@@ -11438,13 +12119,13 @@ func init() {
 func createWatchEvent(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for WatchEvent
 }
-func (t WatchEvent) UnderlyingKind() interface{} { return t.V }
-func (t WatchEvent) Package() util.Package       { return util.Metav1 }
-func (t WatchEvent) Type() string                { return "k8s_metav1_WatchEvent" }
-func (t WatchEvent) String() string              { return t.V.String() }
-func (t WatchEvent) Freeze()                     {} // TODO
-func (t WatchEvent) Truth() skylark.Bool         { return skylark.True }
-func (t WatchEvent) Hash() (uint32, error)       { return 0, unhashable(t.Type()) }
+func (t WatchEvent) Underlying() interface{} { return t.V }
+func (t WatchEvent) Package() util.Package   { return util.Metav1 }
+func (t WatchEvent) Type() string            { return "k8s_metav1_WatchEvent" }
+func (t WatchEvent) String() string          { return t.V.String() }
+func (t WatchEvent) Freeze()                 {} // TODO
+func (t WatchEvent) Truth() skylark.Bool     { return skylark.True }
+func (t WatchEvent) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
 func (t WatchEvent) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*WatchEvent)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -11455,4 +12136,7 @@ func (t WatchEvent) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, WatchEvent_fields, WatchEvent_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t WatchEvent) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, WatchEvent_fields, WatchEvent_inline)
 }

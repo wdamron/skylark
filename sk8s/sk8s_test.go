@@ -47,7 +47,7 @@ func TestBasicInlineAttr(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		name, err := meta.(skylark.HasAttrs).Attr("name")
+		name, err := meta.(kinds.ObjectMeta).Attr("name")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -81,5 +81,89 @@ func TestResourceSliceAttr(t *testing.T) {
 	}
 	if list.Index(0).(skylark.String) != skylark.String("my-capability") {
 		t.Fatalf("Expected a list containing my-capability, found %#+v", list.Index(0))
+	}
+}
+
+func TestBasicInlineSetAttr(t *testing.T) {
+	v1pod := &v1.Pod{
+		TypeMeta:   metav1.TypeMeta{Kind: "Pod"},
+		ObjectMeta: metav1.ObjectMeta{Name: "my-pod"},
+	}
+
+	v, err := sk8s.ToSky(v1pod)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	pod := v.(kinds.Pod)
+
+	if err = pod.SetField("kind", skylark.String("NotPod")); err != nil {
+		t.Fatal(err)
+	}
+
+	kind, err := pod.Attr("kind")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if kind.(skylark.String) != skylark.String("NotPod") {
+		t.Fatalf("Expected kind = NotPod, found %v", kind)
+	}
+	if v1pod.TypeMeta.Kind != "NotPod" {
+		t.Fatalf("Expected Kind = NotPod, found %s", v1pod.TypeMeta.Kind)
+	}
+
+	meta, err := pod.Attr("metadata")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = meta.(kinds.ObjectMeta).SetField("name", skylark.String("not-my-pod")); err != nil {
+		t.Fatal(err)
+	}
+	name, err := meta.(kinds.ObjectMeta).Attr("name")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if name.(skylark.String) != skylark.String("not-my-pod") {
+		t.Fatalf("Expected name = not-my-pod, found %v", name)
+	}
+	if v1pod.ObjectMeta.Name != "not-my-pod" {
+		t.Fatalf("Expected Name = not-my-pod, found %s", v1pod.ObjectMeta.Name)
+	}
+}
+
+func TestResourceSliceSetAttr(t *testing.T) {
+	v1caps := &v1.Capabilities{}
+
+	conv, err := sk8s.ToSky(v1caps)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	caps := conv.(kinds.Capabilities)
+	list := skylark.NewList([]skylark.Value{skylark.String("my-capability")})
+	if err := caps.SetField("add", list); err != nil {
+		t.Fatal(err)
+	}
+
+	add, err := caps.Attr("add")
+	if err != nil {
+		t.Fatal(err)
+	}
+	list = add.(*skylark.List)
+	if list.Len() == 0 {
+		t.Fatalf("Expected a non-empty list of capabilities")
+	}
+	if list.Index(0).(skylark.String) != skylark.String("my-capability") {
+		t.Fatalf("Expected a list containing my-capability, found %#+v", list.Index(0))
+	}
+	if len(v1caps.Add) == 0 || string(v1caps.Add[0]) != "my-capability" {
+		t.Fatalf("Expected my-capability to be added to Capabilities")
+	}
+
+	if err = caps.SetField("add", skylark.None); err != nil {
+		t.Fatal(err)
+	}
+	if len(v1caps.Add) != 0 {
+		t.Fatalf("Expected capabilities to me cleared when set to None")
 	}
 }

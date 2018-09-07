@@ -19,8 +19,8 @@ import (
 )
 
 type Kind interface {
-	skylark.HasAttrs
-	UnderlyingKind() interface{}
+	skylark.HasSetField
+	Underlying() interface{}
 }
 
 func IsKind(v interface{}) bool {

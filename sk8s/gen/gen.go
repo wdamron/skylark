@@ -184,7 +184,7 @@ func init() {
 func create{{ $name }}(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
 	return nil, nil // TODO: add constructor for {{ $name }}
 }
-func (t {{ $name }}) UnderlyingKind() interface{} { return t.V }
+func (t {{ $name }}) Underlying() interface{} { return t.V }
 func (t {{ $name }}) Package() util.Package  { return util.{{ $pkg | titlecase }} }
 func (t {{ $name }}) Type() string        { return "k8s_{{ $pkg }}_{{ $name }}" }
 func (t {{ $name }}) String() string { return {{ if ( hasstringmethod $tn ) }} t.V.String() {{ else }} genericStringMethod(t.V) {{ end }} }
@@ -201,4 +201,7 @@ func (t {{ $name }}) Attr(name string) (skylark.Value, error) {
 		return getAttr(reflect.ValueOf(u), name, {{ $name }}_fields, {{ $name }}_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t {{ $name }}) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, {{ $name }}_fields, {{ $name }}_inline)
 }`))
