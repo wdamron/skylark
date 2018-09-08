@@ -10,6 +10,7 @@ import (
 	"github.com/google/skylark"
 	"github.com/google/skylark/sk8s"
 	"github.com/google/skylark/sk8s/kinds"
+	"github.com/google/skylark/skylarktest"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -166,4 +167,74 @@ func TestResourceSliceSetAttr(t *testing.T) {
 	if len(v1caps.Add) != 0 {
 		t.Fatalf("Expected capabilities to me cleared when set to None")
 	}
+}
+
+func TestConstructors(t *testing.T) {
+	filename := "sk8s_test.sky"
+	predeclared := skylark.StringDict{
+		"Pod":        sk8s.Library["Pod"],
+		"ObjectMeta": sk8s.Library["ObjectMeta"],
+	}
+
+	script := `
+meta = ObjectMeta(name="my-pod")
+
+pod1 = Pod(kind="Pod", metadata=meta)
+
+pod2 = Pod({"kind": "Pod", "metadata": meta})
+
+pod3 = Pod({"kind": "Pod"}, metadata=meta)
+
+pod4 = Pod(pod3)
+
+pod5 = Pod(Pod(kind="Pod"), metadata=meta)
+
+pod6 = Pod()
+pod6.kind = "Pod"
+pod6.metadata.name = "my-pod"
+
+pod7 = Pod(None, kind="Pod", metadata=meta)
+
+pod8 = Pod({}, kind="Pod", metadata=meta)
+
+pod9 = Pod({}, kind="Pod", metadata={"name": "my-pod"})
+`
+
+	thread := &skylark.Thread{}
+	skylarktest.SetReporter(thread, t)
+
+	result, err := skylark.ExecFile(thread, filename, script, predeclared)
+	switch err := err.(type) {
+	case *skylark.EvalError:
+		t.Fatal(err.Backtrace())
+	case nil:
+		// success
+	default:
+		t.Error(err)
+		return
+	}
+
+	for _, global := range []string{"pod1", "pod2", "pod3", "pod4", "pod5", "pod6", "pod7", "pod8", "pod9"} {
+		pod := result[global].(kinds.Pod)
+
+		kind, err := pod.Attr("kind")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if kind.(skylark.String) != skylark.String("Pod") {
+			t.Fatalf("Expected kind = Pod\n")
+		}
+		meta, err := pod.Attr("metadata")
+		if err != nil {
+			t.Fatal(err)
+		}
+		name, err := meta.(kinds.ObjectMeta).Attr("name")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if name.(skylark.String) != skylark.String("my-pod") {
+			t.Fatalf("Expected name = my-pod\n")
+		}
+	}
+
 }

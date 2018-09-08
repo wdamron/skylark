@@ -16,31 +16,50 @@ import (
 	"github.com/google/skylark/sk8s/util"
 )
 
-var packages = []string{
+var includedPackages = []string{
 	"k8s.io/api/core/v1",
+	"k8s.io/api/apps/v1",
+	"k8s.io/api/autoscaling/v1",
+	"k8s.io/api/batch/v1",
+	"k8s.io/api/authentication/v1",
+	"k8s.io/api/authorization/v1",
+	"k8s.io/api/networking/v1",
+	"k8s.io/api/rbac/v1",
+	"k8s.io/api/storage/v1",
 	"k8s.io/apimachinery/pkg/apis/meta/v1",
+	// "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions",
 }
 
 var packageAliases = map[string]string{
-	"k8s.io/api/core/v1":                   "v1",
-	"k8s.io/apimachinery/pkg/apis/meta/v1": "metav1",
-	"k8s.io/apimachinery/pkg/api/resource": "resource",
-	"k8s.io/apimachinery/pkg/util/intstr":  "intstr",
+	"k8s.io/api/core/v1":                                    "core",
+	"k8s.io/api/apps/v1":                                    "apps",
+	"k8s.io/api/autoscaling/v1":                             "autoscaling",
+	"k8s.io/api/batch/v1":                                   "batch",
+	"k8s.io/api/authentication/v1":                          "authentication",
+	"k8s.io/api/authorization/v1":                           "authorization",
+	"k8s.io/api/networking/v1":                              "networking",
+	"k8s.io/api/rbac/v1":                                    "rbac",
+	"k8s.io/api/storage/v1":                                 "storage",
+	"k8s.io/apimachinery/pkg/apis/meta/v1":                  "meta",
+	"k8s.io/apimachinery/pkg/api/resource":                  "resource",
+	"k8s.io/apimachinery/pkg/util/intstr":                   "intstr",
+	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions": "apiextensions",
 }
 
 var primitives = map[string]bool{
 	"Time":      true,
 	"Timestamp": true,
 	"MicroTime": true,
+	"Duration":  true,
 }
 
 func main() {
 
 	out := &bytes.Buffer{}
-	out.WriteString(header)
+	// out.WriteString(header)
 
 	imported := make(map[util.Package]*types.Package)
-	for _, path := range packages {
+	for _, path := range includedPackages {
 		p, err := importer.Default().Import(path)
 		if err != nil {
 			log.Fatal(err)
@@ -48,8 +67,20 @@ func main() {
 		imported[util.PackageForPath(path)] = p
 	}
 
+	type aliasedImports []struct {
+		Alias string
+		Path  string
+	}
+	aliased := make(aliasedImports, len(includedPackages))
+	for i, path := range includedPackages {
+		aliased[i].Alias, aliased[i].Path = packageAliases[path], path
+	}
+	if err := header.Execute(out, aliased); err != nil {
+		log.Fatal(err)
+	}
+
 	written := make(map[string]bool)
-	for _, path := range packages {
+	for _, path := range includedPackages {
 		if err := writeTypes(out, util.PackageForPath(path), imported, written); err != nil {
 			log.Fatal(err)
 		}
@@ -122,12 +153,25 @@ func hasstringmethod(tn *types.TypeName) bool {
 	return false
 }
 
-var funcs = template.FuncMap{
-	"titlecase":       strings.Title,
-	"hasstringmethod": hasstringmethod,
+func hasdeepcopymethod(tn *types.TypeName) bool {
+	n := tn.Type().(*types.Named)
+	nm := n.NumMethods()
+	for i := 0; i < nm; i++ {
+		m := n.Method(i)
+		if m.Name() == "DeepCopy" {
+			return true
+		}
+	}
+	return false
 }
 
-const header = `// Copyright 2018 West Damron. All rights reserved.
+var funcs = template.FuncMap{
+	"titlecase":         strings.Title,
+	"hasstringmethod":   hasstringmethod,
+	"hasdeepcopymethod": hasdeepcopymethod,
+}
+
+var header = template.Must(template.New("sk8s_generated_head").Parse(`// Copyright 2018 West Damron. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -142,9 +186,12 @@ import (
 	"github.com/google/skylark/sk8s/util"
 	"github.com/google/skylark/syntax"
 
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-)`
+{{- range $i, $import := . }}
+	{{ $import.Alias }} "{{ $import.Path }}"
+{{- end}}
+
+)
+`))
 
 var body = template.Must(template.New("sk8s_generated_body").Funcs(funcs).Parse(`
 {{ $pkg := .PkgAlias }}
@@ -182,9 +229,18 @@ func init() {
 }
 
 func create{{ $name }}(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for {{ $name }}
+	box := {{ $name }}{ V: &{{ $pkg }}.{{ $name }}{} }
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t {{ $name }}) Underlying() interface{} { return t.V }
+func (t {{ $name }}) DeepCopy() boxed {{ if ( hasdeepcopymethod $tn ) }} { return {{ $name }}{V: t.V.DeepCopy()} } {{ else}} {
+	if t.V == nil {
+		return {{ $name }}{}
+	}
+	v := *t.V
+	return {{ $name }}{V: &v}
+} {{ end}}
 func (t {{ $name }}) Package() util.Package  { return util.{{ $pkg | titlecase }} }
 func (t {{ $name }}) Type() string        { return "k8s_{{ $pkg }}_{{ $name }}" }
 func (t {{ $name }}) String() string { return {{ if ( hasstringmethod $tn ) }} t.V.String() {{ else }} genericStringMethod(t.V) {{ end }} }
@@ -197,8 +253,8 @@ func (t {{ $name }}) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t {{ $name }}) AttrNames() []string { return {{ $name }}_attrs }
 func (t {{ $name }}) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, {{ $name }}_fields, {{ $name }}_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, {{ $name }}_fields, {{ $name }}_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }

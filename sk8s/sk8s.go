@@ -28,6 +28,6 @@ func IsKind(v interface{}) bool {
 	return ok
 }
 
-func Library() map[string]*skylark.Builtin { return kinds.Library }
+var Library map[string]*skylark.Builtin = kinds.Library
 
 func ToSky(v interface{}) (skylark.Value, error) { return kinds.ToSky(v) }

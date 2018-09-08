@@ -35,6 +35,7 @@ var (
 type boxed interface {
 	skylark.HasSetField
 	Underlying() interface{}
+	DeepCopy() boxed
 }
 
 func ToSky(v interface{}) (skylark.Value, error) {
@@ -64,6 +65,43 @@ func compareSameType(x interface{}, op syntax.Token, y interface{}, t string, de
 	default:
 		return false, skylark.TypeErrorf("%s %s %s not implemented", t, op, t)
 	}
+}
+
+func construct(box boxed, args skylark.Tuple, kwargs []skylark.Tuple) error {
+	if len(args) > 1 {
+		return skylark.TypeErrorf("unable to construct %s from more than 1 positional argument", box.Type())
+	}
+	if len(args) != 0 {
+		switch arg := args[0].(type) {
+		case *skylark.Dict:
+			iter := arg.Iterate()
+			defer iter.Done()
+			var k skylark.Value
+			for iter.Next(&k) {
+				ks, ok := k.(skylark.String)
+				if !ok {
+					return skylark.TypeErrorf("unable to assign %v key in %v", k.Type(), box.Type())
+				}
+				v, _, _ := arg.Get(ks)
+				if err := box.SetField(string(ks), v); err != nil {
+					return err
+				}
+			}
+		case boxed:
+			if arg.Type() != box.Type() {
+				return skylark.TypeErrorf("unable to construct %s from %s", box.Type(), arg.Type())
+			}
+			v := reflect.ValueOf(arg.DeepCopy().Underlying()).Elem()
+			reflect.ValueOf(box.Underlying()).Elem().Set(v)
+		}
+	}
+	for _, pair := range kwargs {
+		k, _ := pair[0].(skylark.String)
+		if err := box.SetField(string(k), pair[1]); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func getAttr(container reflect.Value, name string, fields, inline map[string]util.FieldSpec) (skylark.Value, error) {
@@ -167,15 +205,14 @@ func fieldValue(container reflect.Value, spec util.FieldSpec, name string) (skyl
 
 func setFieldValue(container reflect.Value, spec util.FieldSpec, name string, value skylark.Value) error {
 	field := container.FieldByIndex([]int{int(spec.FieldIndex)})
-	fieldType := spec.FieldType
-	if debugfieldtypes && fieldType != field.Type() {
-		return skylark.TypeErrorf("unexpected field type %s for attribute %s", fieldType.Name(), name)
+	if debugfieldtypes && spec.FieldType != field.Type() {
+		return skylark.TypeErrorf("unexpected field type %s for attribute %s", spec.FieldType.Name(), name)
 	}
 	if debugfieldtypes && !field.CanSet() {
-		return skylark.TypeErrorf("unable to set field %s of type %s", name, fieldType.Name())
+		return skylark.TypeErrorf("unable to set field %s of type %s", name, spec.FieldType.Name())
 	}
 	if _, ok := value.(skylark.NoneType); ok {
-		field.Set(reflect.Zero(fieldType))
+		field.Set(reflect.Zero(spec.FieldType))
 		return nil
 	}
 	if spec.Primitive {
@@ -185,19 +222,44 @@ func setFieldValue(container reflect.Value, spec util.FieldSpec, name string, va
 		return setSliceField(field, value, spec)
 	}
 	if debugfieldtypes {
-		if (spec.Pointer && fieldType.Elem().Kind() != reflect.Struct) || fieldType.Kind() != reflect.Struct {
-			return skylark.TypeErrorf("unable to set field %s of type %s", name, fieldType.Name())
+		if (spec.Pointer && spec.FieldType.Elem().Kind() != reflect.Struct) || spec.FieldType.Kind() != reflect.Struct {
+			return skylark.TypeErrorf("unable to set field %s of type %s", name, spec.FieldType.Name())
 		}
 	}
-	b, ok := value.(boxed)
-	if !ok {
-		return skylark.TypeErrorf("unable to set field %s from type %s", name, value.Type())
+	var u reflect.Value
+	switch v := value.(type) {
+	case boxed:
+		u = reflect.ValueOf(v.Underlying())
+	case *skylark.Dict:
+		t := spec.FieldType
+		if t.Kind() == reflect.Ptr {
+			t = t.Elem()
+		}
+		if box, ok := g2s[spec.FieldType](reflect.New(t).Elem().Interface()).(boxed); ok {
+			var k skylark.Value
+			iter := v.Iterate()
+			defer iter.Done()
+			for iter.Next(&k) {
+				attrName, ok := k.(skylark.String)
+				if !ok {
+					return skylark.TypeErrorf("unable to assign %v key in %v", k.Type(), box.Type())
+				}
+				attrValue, _, _ := v.Get(attrName)
+				if err := box.SetField(string(attrName), attrValue); err != nil {
+					return err
+				}
+			}
+			u = reflect.ValueOf(box.Underlying())
+		} else {
+			return skylark.TypeErrorf("unable to set field %s from type %s to type %s", name, v.Type(), spec.FieldType.Name())
+		}
+	default:
+		return skylark.TypeErrorf("unable to set field %s from type %s", name, v.Type())
 	}
-	u := reflect.ValueOf(b.Underlying())
 	if spec.Pointer {
 		field.Set(u)
 	} else if u.IsNil() {
-		field.Set(reflect.Zero(fieldType))
+		field.Set(reflect.Zero(spec.FieldType))
 	} else {
 		field.Set(u.Elem())
 	}

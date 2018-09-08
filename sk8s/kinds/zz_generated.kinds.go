@@ -12,13 +12,20 @@ import (
 	"github.com/google/skylark"
 	"github.com/google/skylark/sk8s/util"
 	"github.com/google/skylark/syntax"
-
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	apps "k8s.io/api/apps/v1"
+	authentication "k8s.io/api/authentication/v1"
+	authorization "k8s.io/api/authorization/v1"
+	autoscaling "k8s.io/api/autoscaling/v1"
+	batch "k8s.io/api/batch/v1"
+	core "k8s.io/api/core/v1"
+	networking "k8s.io/api/networking/v1"
+	rbac "k8s.io/api/rbac/v1"
+	storage "k8s.io/api/storage/v1"
+	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type AWSElasticBlockStoreVolumeSource struct {
-	V *v1.AWSElasticBlockStoreVolumeSource
+	V *core.AWSElasticBlockStoreVolumeSource
 }
 
 var (
@@ -30,12 +37,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.AWSElasticBlockStoreVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.AWSElasticBlockStoreVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.AWSElasticBlockStoreVolumeSource:
+		case *core.AWSElasticBlockStoreVolumeSource:
 			return AWSElasticBlockStoreVolumeSource{V: v}
-		case v1.AWSElasticBlockStoreVolumeSource:
+		case core.AWSElasticBlockStoreVolumeSource:
 			return AWSElasticBlockStoreVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -46,12 +53,17 @@ func init() {
 }
 
 func createAWSElasticBlockStoreVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for AWSElasticBlockStoreVolumeSource
+	box := AWSElasticBlockStoreVolumeSource{V: &core.AWSElasticBlockStoreVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t AWSElasticBlockStoreVolumeSource) Underlying() interface{} { return t.V }
-func (t AWSElasticBlockStoreVolumeSource) Package() util.Package   { return util.V1 }
+func (t AWSElasticBlockStoreVolumeSource) DeepCopy() boxed {
+	return AWSElasticBlockStoreVolumeSource{V: t.V.DeepCopy()}
+}
+func (t AWSElasticBlockStoreVolumeSource) Package() util.Package { return util.Core }
 func (t AWSElasticBlockStoreVolumeSource) Type() string {
-	return "k8s_v1_AWSElasticBlockStoreVolumeSource"
+	return "k8s_core_AWSElasticBlockStoreVolumeSource"
 }
 func (t AWSElasticBlockStoreVolumeSource) String() string        { return t.V.String() }
 func (t AWSElasticBlockStoreVolumeSource) Freeze()               {} // TODO
@@ -65,8 +77,8 @@ func (t AWSElasticBlockStoreVolumeSource) AttrNames() []string {
 	return AWSElasticBlockStoreVolumeSource_attrs
 }
 func (t AWSElasticBlockStoreVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, AWSElasticBlockStoreVolumeSource_fields, AWSElasticBlockStoreVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, AWSElasticBlockStoreVolumeSource_fields, AWSElasticBlockStoreVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -75,7 +87,7 @@ func (t AWSElasticBlockStoreVolumeSource) SetField(name string, value skylark.Va
 }
 
 type Affinity struct {
-	V *v1.Affinity
+	V *core.Affinity
 }
 
 var (
@@ -87,12 +99,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Affinity)(nil)).Elem()
+	t := reflect.TypeOf((*core.Affinity)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Affinity:
+		case *core.Affinity:
 			return Affinity{V: v}
-		case v1.Affinity:
+		case core.Affinity:
 			return Affinity{V: &v}
 		default:
 			return skylark.None
@@ -103,11 +115,14 @@ func init() {
 }
 
 func createAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Affinity
+	box := Affinity{V: &core.Affinity{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Affinity) Underlying() interface{} { return t.V }
-func (t Affinity) Package() util.Package   { return util.V1 }
-func (t Affinity) Type() string            { return "k8s_v1_Affinity" }
+func (t Affinity) DeepCopy() boxed         { return Affinity{V: t.V.DeepCopy()} }
+func (t Affinity) Package() util.Package   { return util.Core }
+func (t Affinity) Type() string            { return "k8s_core_Affinity" }
 func (t Affinity) String() string          { return t.V.String() }
 func (t Affinity) Freeze()                 {} // TODO
 func (t Affinity) Truth() skylark.Bool     { return skylark.True }
@@ -118,8 +133,8 @@ func (t Affinity) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) 
 }
 func (t Affinity) AttrNames() []string { return Affinity_attrs }
 func (t Affinity) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Affinity_fields, Affinity_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Affinity_fields, Affinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -128,7 +143,7 @@ func (t Affinity) SetField(name string, value skylark.Value) error {
 }
 
 type AttachedVolume struct {
-	V *v1.AttachedVolume
+	V *core.AttachedVolume
 }
 
 var (
@@ -140,12 +155,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.AttachedVolume)(nil)).Elem()
+	t := reflect.TypeOf((*core.AttachedVolume)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.AttachedVolume:
+		case *core.AttachedVolume:
 			return AttachedVolume{V: v}
-		case v1.AttachedVolume:
+		case core.AttachedVolume:
 			return AttachedVolume{V: &v}
 		default:
 			return skylark.None
@@ -156,11 +171,14 @@ func init() {
 }
 
 func createAttachedVolume(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for AttachedVolume
+	box := AttachedVolume{V: &core.AttachedVolume{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t AttachedVolume) Underlying() interface{} { return t.V }
-func (t AttachedVolume) Package() util.Package   { return util.V1 }
-func (t AttachedVolume) Type() string            { return "k8s_v1_AttachedVolume" }
+func (t AttachedVolume) DeepCopy() boxed         { return AttachedVolume{V: t.V.DeepCopy()} }
+func (t AttachedVolume) Package() util.Package   { return util.Core }
+func (t AttachedVolume) Type() string            { return "k8s_core_AttachedVolume" }
 func (t AttachedVolume) String() string          { return t.V.String() }
 func (t AttachedVolume) Freeze()                 {} // TODO
 func (t AttachedVolume) Truth() skylark.Bool     { return skylark.True }
@@ -171,8 +189,8 @@ func (t AttachedVolume) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t AttachedVolume) AttrNames() []string { return AttachedVolume_attrs }
 func (t AttachedVolume) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, AttachedVolume_fields, AttachedVolume_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, AttachedVolume_fields, AttachedVolume_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -181,7 +199,7 @@ func (t AttachedVolume) SetField(name string, value skylark.Value) error {
 }
 
 type AvoidPods struct {
-	V *v1.AvoidPods
+	V *core.AvoidPods
 }
 
 var (
@@ -193,12 +211,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.AvoidPods)(nil)).Elem()
+	t := reflect.TypeOf((*core.AvoidPods)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.AvoidPods:
+		case *core.AvoidPods:
 			return AvoidPods{V: v}
-		case v1.AvoidPods:
+		case core.AvoidPods:
 			return AvoidPods{V: &v}
 		default:
 			return skylark.None
@@ -209,11 +227,14 @@ func init() {
 }
 
 func createAvoidPods(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for AvoidPods
+	box := AvoidPods{V: &core.AvoidPods{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t AvoidPods) Underlying() interface{} { return t.V }
-func (t AvoidPods) Package() util.Package   { return util.V1 }
-func (t AvoidPods) Type() string            { return "k8s_v1_AvoidPods" }
+func (t AvoidPods) DeepCopy() boxed         { return AvoidPods{V: t.V.DeepCopy()} }
+func (t AvoidPods) Package() util.Package   { return util.Core }
+func (t AvoidPods) Type() string            { return "k8s_core_AvoidPods" }
 func (t AvoidPods) String() string          { return t.V.String() }
 func (t AvoidPods) Freeze()                 {} // TODO
 func (t AvoidPods) Truth() skylark.Bool     { return skylark.True }
@@ -224,8 +245,8 @@ func (t AvoidPods) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t AvoidPods) AttrNames() []string { return AvoidPods_attrs }
 func (t AvoidPods) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, AvoidPods_fields, AvoidPods_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, AvoidPods_fields, AvoidPods_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -234,7 +255,7 @@ func (t AvoidPods) SetField(name string, value skylark.Value) error {
 }
 
 type AzureDiskVolumeSource struct {
-	V *v1.AzureDiskVolumeSource
+	V *core.AzureDiskVolumeSource
 }
 
 var (
@@ -246,12 +267,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.AzureDiskVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.AzureDiskVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.AzureDiskVolumeSource:
+		case *core.AzureDiskVolumeSource:
 			return AzureDiskVolumeSource{V: v}
-		case v1.AzureDiskVolumeSource:
+		case core.AzureDiskVolumeSource:
 			return AzureDiskVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -262,11 +283,14 @@ func init() {
 }
 
 func createAzureDiskVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for AzureDiskVolumeSource
+	box := AzureDiskVolumeSource{V: &core.AzureDiskVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t AzureDiskVolumeSource) Underlying() interface{} { return t.V }
-func (t AzureDiskVolumeSource) Package() util.Package   { return util.V1 }
-func (t AzureDiskVolumeSource) Type() string            { return "k8s_v1_AzureDiskVolumeSource" }
+func (t AzureDiskVolumeSource) DeepCopy() boxed         { return AzureDiskVolumeSource{V: t.V.DeepCopy()} }
+func (t AzureDiskVolumeSource) Package() util.Package   { return util.Core }
+func (t AzureDiskVolumeSource) Type() string            { return "k8s_core_AzureDiskVolumeSource" }
 func (t AzureDiskVolumeSource) String() string          { return t.V.String() }
 func (t AzureDiskVolumeSource) Freeze()                 {} // TODO
 func (t AzureDiskVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -277,8 +301,8 @@ func (t AzureDiskVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t AzureDiskVolumeSource) AttrNames() []string { return AzureDiskVolumeSource_attrs }
 func (t AzureDiskVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, AzureDiskVolumeSource_fields, AzureDiskVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, AzureDiskVolumeSource_fields, AzureDiskVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -287,7 +311,7 @@ func (t AzureDiskVolumeSource) SetField(name string, value skylark.Value) error 
 }
 
 type AzureFilePersistentVolumeSource struct {
-	V *v1.AzureFilePersistentVolumeSource
+	V *core.AzureFilePersistentVolumeSource
 }
 
 var (
@@ -299,12 +323,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.AzureFilePersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.AzureFilePersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.AzureFilePersistentVolumeSource:
+		case *core.AzureFilePersistentVolumeSource:
 			return AzureFilePersistentVolumeSource{V: v}
-		case v1.AzureFilePersistentVolumeSource:
+		case core.AzureFilePersistentVolumeSource:
 			return AzureFilePersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -315,12 +339,17 @@ func init() {
 }
 
 func createAzureFilePersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for AzureFilePersistentVolumeSource
+	box := AzureFilePersistentVolumeSource{V: &core.AzureFilePersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t AzureFilePersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t AzureFilePersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t AzureFilePersistentVolumeSource) DeepCopy() boxed {
+	return AzureFilePersistentVolumeSource{V: t.V.DeepCopy()}
+}
+func (t AzureFilePersistentVolumeSource) Package() util.Package { return util.Core }
 func (t AzureFilePersistentVolumeSource) Type() string {
-	return "k8s_v1_AzureFilePersistentVolumeSource"
+	return "k8s_core_AzureFilePersistentVolumeSource"
 }
 func (t AzureFilePersistentVolumeSource) String() string        { return t.V.String() }
 func (t AzureFilePersistentVolumeSource) Freeze()               {} // TODO
@@ -334,8 +363,8 @@ func (t AzureFilePersistentVolumeSource) AttrNames() []string {
 	return AzureFilePersistentVolumeSource_attrs
 }
 func (t AzureFilePersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, AzureFilePersistentVolumeSource_fields, AzureFilePersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, AzureFilePersistentVolumeSource_fields, AzureFilePersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -344,7 +373,7 @@ func (t AzureFilePersistentVolumeSource) SetField(name string, value skylark.Val
 }
 
 type AzureFileVolumeSource struct {
-	V *v1.AzureFileVolumeSource
+	V *core.AzureFileVolumeSource
 }
 
 var (
@@ -356,12 +385,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.AzureFileVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.AzureFileVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.AzureFileVolumeSource:
+		case *core.AzureFileVolumeSource:
 			return AzureFileVolumeSource{V: v}
-		case v1.AzureFileVolumeSource:
+		case core.AzureFileVolumeSource:
 			return AzureFileVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -372,11 +401,14 @@ func init() {
 }
 
 func createAzureFileVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for AzureFileVolumeSource
+	box := AzureFileVolumeSource{V: &core.AzureFileVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t AzureFileVolumeSource) Underlying() interface{} { return t.V }
-func (t AzureFileVolumeSource) Package() util.Package   { return util.V1 }
-func (t AzureFileVolumeSource) Type() string            { return "k8s_v1_AzureFileVolumeSource" }
+func (t AzureFileVolumeSource) DeepCopy() boxed         { return AzureFileVolumeSource{V: t.V.DeepCopy()} }
+func (t AzureFileVolumeSource) Package() util.Package   { return util.Core }
+func (t AzureFileVolumeSource) Type() string            { return "k8s_core_AzureFileVolumeSource" }
 func (t AzureFileVolumeSource) String() string          { return t.V.String() }
 func (t AzureFileVolumeSource) Freeze()                 {} // TODO
 func (t AzureFileVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -387,8 +419,8 @@ func (t AzureFileVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t AzureFileVolumeSource) AttrNames() []string { return AzureFileVolumeSource_attrs }
 func (t AzureFileVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, AzureFileVolumeSource_fields, AzureFileVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, AzureFileVolumeSource_fields, AzureFileVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -397,7 +429,7 @@ func (t AzureFileVolumeSource) SetField(name string, value skylark.Value) error 
 }
 
 type Binding struct {
-	V *v1.Binding
+	V *core.Binding
 }
 
 var (
@@ -409,12 +441,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Binding)(nil)).Elem()
+	t := reflect.TypeOf((*core.Binding)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Binding:
+		case *core.Binding:
 			return Binding{V: v}
-		case v1.Binding:
+		case core.Binding:
 			return Binding{V: &v}
 		default:
 			return skylark.None
@@ -425,11 +457,14 @@ func init() {
 }
 
 func createBinding(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Binding
+	box := Binding{V: &core.Binding{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Binding) Underlying() interface{} { return t.V }
-func (t Binding) Package() util.Package   { return util.V1 }
-func (t Binding) Type() string            { return "k8s_v1_Binding" }
+func (t Binding) DeepCopy() boxed         { return Binding{V: t.V.DeepCopy()} }
+func (t Binding) Package() util.Package   { return util.Core }
+func (t Binding) Type() string            { return "k8s_core_Binding" }
 func (t Binding) String() string          { return t.V.String() }
 func (t Binding) Freeze()                 {} // TODO
 func (t Binding) Truth() skylark.Bool     { return skylark.True }
@@ -440,8 +475,8 @@ func (t Binding) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (
 }
 func (t Binding) AttrNames() []string { return Binding_attrs }
 func (t Binding) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Binding_fields, Binding_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Binding_fields, Binding_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -450,7 +485,7 @@ func (t Binding) SetField(name string, value skylark.Value) error {
 }
 
 type CSIPersistentVolumeSource struct {
-	V *v1.CSIPersistentVolumeSource
+	V *core.CSIPersistentVolumeSource
 }
 
 var (
@@ -462,12 +497,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.CSIPersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.CSIPersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.CSIPersistentVolumeSource:
+		case *core.CSIPersistentVolumeSource:
 			return CSIPersistentVolumeSource{V: v}
-		case v1.CSIPersistentVolumeSource:
+		case core.CSIPersistentVolumeSource:
 			return CSIPersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -478,23 +513,28 @@ func init() {
 }
 
 func createCSIPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for CSIPersistentVolumeSource
+	box := CSIPersistentVolumeSource{V: &core.CSIPersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t CSIPersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t CSIPersistentVolumeSource) Package() util.Package   { return util.V1 }
-func (t CSIPersistentVolumeSource) Type() string            { return "k8s_v1_CSIPersistentVolumeSource" }
-func (t CSIPersistentVolumeSource) String() string          { return t.V.String() }
-func (t CSIPersistentVolumeSource) Freeze()                 {} // TODO
-func (t CSIPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
-func (t CSIPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t CSIPersistentVolumeSource) DeepCopy() boxed {
+	return CSIPersistentVolumeSource{V: t.V.DeepCopy()}
+}
+func (t CSIPersistentVolumeSource) Package() util.Package { return util.Core }
+func (t CSIPersistentVolumeSource) Type() string          { return "k8s_core_CSIPersistentVolumeSource" }
+func (t CSIPersistentVolumeSource) String() string        { return t.V.String() }
+func (t CSIPersistentVolumeSource) Freeze()               {} // TODO
+func (t CSIPersistentVolumeSource) Truth() skylark.Bool   { return skylark.True }
+func (t CSIPersistentVolumeSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t CSIPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*CSIPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t CSIPersistentVolumeSource) AttrNames() []string { return CSIPersistentVolumeSource_attrs }
 func (t CSIPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, CSIPersistentVolumeSource_fields, CSIPersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, CSIPersistentVolumeSource_fields, CSIPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -503,7 +543,7 @@ func (t CSIPersistentVolumeSource) SetField(name string, value skylark.Value) er
 }
 
 type Capabilities struct {
-	V *v1.Capabilities
+	V *core.Capabilities
 }
 
 var (
@@ -515,12 +555,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Capabilities)(nil)).Elem()
+	t := reflect.TypeOf((*core.Capabilities)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Capabilities:
+		case *core.Capabilities:
 			return Capabilities{V: v}
-		case v1.Capabilities:
+		case core.Capabilities:
 			return Capabilities{V: &v}
 		default:
 			return skylark.None
@@ -531,11 +571,14 @@ func init() {
 }
 
 func createCapabilities(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Capabilities
+	box := Capabilities{V: &core.Capabilities{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Capabilities) Underlying() interface{} { return t.V }
-func (t Capabilities) Package() util.Package   { return util.V1 }
-func (t Capabilities) Type() string            { return "k8s_v1_Capabilities" }
+func (t Capabilities) DeepCopy() boxed         { return Capabilities{V: t.V.DeepCopy()} }
+func (t Capabilities) Package() util.Package   { return util.Core }
+func (t Capabilities) Type() string            { return "k8s_core_Capabilities" }
 func (t Capabilities) String() string          { return t.V.String() }
 func (t Capabilities) Freeze()                 {} // TODO
 func (t Capabilities) Truth() skylark.Bool     { return skylark.True }
@@ -546,8 +589,8 @@ func (t Capabilities) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t Capabilities) AttrNames() []string { return Capabilities_attrs }
 func (t Capabilities) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Capabilities_fields, Capabilities_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Capabilities_fields, Capabilities_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -556,7 +599,7 @@ func (t Capabilities) SetField(name string, value skylark.Value) error {
 }
 
 type CephFSPersistentVolumeSource struct {
-	V *v1.CephFSPersistentVolumeSource
+	V *core.CephFSPersistentVolumeSource
 }
 
 var (
@@ -568,12 +611,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.CephFSPersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.CephFSPersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.CephFSPersistentVolumeSource:
+		case *core.CephFSPersistentVolumeSource:
 			return CephFSPersistentVolumeSource{V: v}
-		case v1.CephFSPersistentVolumeSource:
+		case core.CephFSPersistentVolumeSource:
 			return CephFSPersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -584,23 +627,28 @@ func init() {
 }
 
 func createCephFSPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for CephFSPersistentVolumeSource
+	box := CephFSPersistentVolumeSource{V: &core.CephFSPersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t CephFSPersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t CephFSPersistentVolumeSource) Package() util.Package   { return util.V1 }
-func (t CephFSPersistentVolumeSource) Type() string            { return "k8s_v1_CephFSPersistentVolumeSource" }
-func (t CephFSPersistentVolumeSource) String() string          { return t.V.String() }
-func (t CephFSPersistentVolumeSource) Freeze()                 {} // TODO
-func (t CephFSPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
-func (t CephFSPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t CephFSPersistentVolumeSource) DeepCopy() boxed {
+	return CephFSPersistentVolumeSource{V: t.V.DeepCopy()}
+}
+func (t CephFSPersistentVolumeSource) Package() util.Package { return util.Core }
+func (t CephFSPersistentVolumeSource) Type() string          { return "k8s_core_CephFSPersistentVolumeSource" }
+func (t CephFSPersistentVolumeSource) String() string        { return t.V.String() }
+func (t CephFSPersistentVolumeSource) Freeze()               {} // TODO
+func (t CephFSPersistentVolumeSource) Truth() skylark.Bool   { return skylark.True }
+func (t CephFSPersistentVolumeSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t CephFSPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*CephFSPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t CephFSPersistentVolumeSource) AttrNames() []string { return CephFSPersistentVolumeSource_attrs }
 func (t CephFSPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, CephFSPersistentVolumeSource_fields, CephFSPersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, CephFSPersistentVolumeSource_fields, CephFSPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -609,7 +657,7 @@ func (t CephFSPersistentVolumeSource) SetField(name string, value skylark.Value)
 }
 
 type CephFSVolumeSource struct {
-	V *v1.CephFSVolumeSource
+	V *core.CephFSVolumeSource
 }
 
 var (
@@ -621,12 +669,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.CephFSVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.CephFSVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.CephFSVolumeSource:
+		case *core.CephFSVolumeSource:
 			return CephFSVolumeSource{V: v}
-		case v1.CephFSVolumeSource:
+		case core.CephFSVolumeSource:
 			return CephFSVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -637,11 +685,14 @@ func init() {
 }
 
 func createCephFSVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for CephFSVolumeSource
+	box := CephFSVolumeSource{V: &core.CephFSVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t CephFSVolumeSource) Underlying() interface{} { return t.V }
-func (t CephFSVolumeSource) Package() util.Package   { return util.V1 }
-func (t CephFSVolumeSource) Type() string            { return "k8s_v1_CephFSVolumeSource" }
+func (t CephFSVolumeSource) DeepCopy() boxed         { return CephFSVolumeSource{V: t.V.DeepCopy()} }
+func (t CephFSVolumeSource) Package() util.Package   { return util.Core }
+func (t CephFSVolumeSource) Type() string            { return "k8s_core_CephFSVolumeSource" }
 func (t CephFSVolumeSource) String() string          { return t.V.String() }
 func (t CephFSVolumeSource) Freeze()                 {} // TODO
 func (t CephFSVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -652,8 +703,8 @@ func (t CephFSVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t CephFSVolumeSource) AttrNames() []string { return CephFSVolumeSource_attrs }
 func (t CephFSVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, CephFSVolumeSource_fields, CephFSVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, CephFSVolumeSource_fields, CephFSVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -662,7 +713,7 @@ func (t CephFSVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type CinderPersistentVolumeSource struct {
-	V *v1.CinderPersistentVolumeSource
+	V *core.CinderPersistentVolumeSource
 }
 
 var (
@@ -674,12 +725,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.CinderPersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.CinderPersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.CinderPersistentVolumeSource:
+		case *core.CinderPersistentVolumeSource:
 			return CinderPersistentVolumeSource{V: v}
-		case v1.CinderPersistentVolumeSource:
+		case core.CinderPersistentVolumeSource:
 			return CinderPersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -690,23 +741,28 @@ func init() {
 }
 
 func createCinderPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for CinderPersistentVolumeSource
+	box := CinderPersistentVolumeSource{V: &core.CinderPersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t CinderPersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t CinderPersistentVolumeSource) Package() util.Package   { return util.V1 }
-func (t CinderPersistentVolumeSource) Type() string            { return "k8s_v1_CinderPersistentVolumeSource" }
-func (t CinderPersistentVolumeSource) String() string          { return t.V.String() }
-func (t CinderPersistentVolumeSource) Freeze()                 {} // TODO
-func (t CinderPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
-func (t CinderPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t CinderPersistentVolumeSource) DeepCopy() boxed {
+	return CinderPersistentVolumeSource{V: t.V.DeepCopy()}
+}
+func (t CinderPersistentVolumeSource) Package() util.Package { return util.Core }
+func (t CinderPersistentVolumeSource) Type() string          { return "k8s_core_CinderPersistentVolumeSource" }
+func (t CinderPersistentVolumeSource) String() string        { return t.V.String() }
+func (t CinderPersistentVolumeSource) Freeze()               {} // TODO
+func (t CinderPersistentVolumeSource) Truth() skylark.Bool   { return skylark.True }
+func (t CinderPersistentVolumeSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t CinderPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*CinderPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t CinderPersistentVolumeSource) AttrNames() []string { return CinderPersistentVolumeSource_attrs }
 func (t CinderPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, CinderPersistentVolumeSource_fields, CinderPersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, CinderPersistentVolumeSource_fields, CinderPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -715,7 +771,7 @@ func (t CinderPersistentVolumeSource) SetField(name string, value skylark.Value)
 }
 
 type CinderVolumeSource struct {
-	V *v1.CinderVolumeSource
+	V *core.CinderVolumeSource
 }
 
 var (
@@ -727,12 +783,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.CinderVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.CinderVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.CinderVolumeSource:
+		case *core.CinderVolumeSource:
 			return CinderVolumeSource{V: v}
-		case v1.CinderVolumeSource:
+		case core.CinderVolumeSource:
 			return CinderVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -743,11 +799,14 @@ func init() {
 }
 
 func createCinderVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for CinderVolumeSource
+	box := CinderVolumeSource{V: &core.CinderVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t CinderVolumeSource) Underlying() interface{} { return t.V }
-func (t CinderVolumeSource) Package() util.Package   { return util.V1 }
-func (t CinderVolumeSource) Type() string            { return "k8s_v1_CinderVolumeSource" }
+func (t CinderVolumeSource) DeepCopy() boxed         { return CinderVolumeSource{V: t.V.DeepCopy()} }
+func (t CinderVolumeSource) Package() util.Package   { return util.Core }
+func (t CinderVolumeSource) Type() string            { return "k8s_core_CinderVolumeSource" }
 func (t CinderVolumeSource) String() string          { return t.V.String() }
 func (t CinderVolumeSource) Freeze()                 {} // TODO
 func (t CinderVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -758,8 +817,8 @@ func (t CinderVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t CinderVolumeSource) AttrNames() []string { return CinderVolumeSource_attrs }
 func (t CinderVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, CinderVolumeSource_fields, CinderVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, CinderVolumeSource_fields, CinderVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -768,7 +827,7 @@ func (t CinderVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type ClientIPConfig struct {
-	V *v1.ClientIPConfig
+	V *core.ClientIPConfig
 }
 
 var (
@@ -780,12 +839,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ClientIPConfig)(nil)).Elem()
+	t := reflect.TypeOf((*core.ClientIPConfig)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ClientIPConfig:
+		case *core.ClientIPConfig:
 			return ClientIPConfig{V: v}
-		case v1.ClientIPConfig:
+		case core.ClientIPConfig:
 			return ClientIPConfig{V: &v}
 		default:
 			return skylark.None
@@ -796,11 +855,14 @@ func init() {
 }
 
 func createClientIPConfig(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ClientIPConfig
+	box := ClientIPConfig{V: &core.ClientIPConfig{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ClientIPConfig) Underlying() interface{} { return t.V }
-func (t ClientIPConfig) Package() util.Package   { return util.V1 }
-func (t ClientIPConfig) Type() string            { return "k8s_v1_ClientIPConfig" }
+func (t ClientIPConfig) DeepCopy() boxed         { return ClientIPConfig{V: t.V.DeepCopy()} }
+func (t ClientIPConfig) Package() util.Package   { return util.Core }
+func (t ClientIPConfig) Type() string            { return "k8s_core_ClientIPConfig" }
 func (t ClientIPConfig) String() string          { return t.V.String() }
 func (t ClientIPConfig) Freeze()                 {} // TODO
 func (t ClientIPConfig) Truth() skylark.Bool     { return skylark.True }
@@ -811,8 +873,8 @@ func (t ClientIPConfig) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t ClientIPConfig) AttrNames() []string { return ClientIPConfig_attrs }
 func (t ClientIPConfig) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ClientIPConfig_fields, ClientIPConfig_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ClientIPConfig_fields, ClientIPConfig_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -821,7 +883,7 @@ func (t ClientIPConfig) SetField(name string, value skylark.Value) error {
 }
 
 type ComponentCondition struct {
-	V *v1.ComponentCondition
+	V *core.ComponentCondition
 }
 
 var (
@@ -833,12 +895,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ComponentCondition)(nil)).Elem()
+	t := reflect.TypeOf((*core.ComponentCondition)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ComponentCondition:
+		case *core.ComponentCondition:
 			return ComponentCondition{V: v}
-		case v1.ComponentCondition:
+		case core.ComponentCondition:
 			return ComponentCondition{V: &v}
 		default:
 			return skylark.None
@@ -849,11 +911,14 @@ func init() {
 }
 
 func createComponentCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ComponentCondition
+	box := ComponentCondition{V: &core.ComponentCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ComponentCondition) Underlying() interface{} { return t.V }
-func (t ComponentCondition) Package() util.Package   { return util.V1 }
-func (t ComponentCondition) Type() string            { return "k8s_v1_ComponentCondition" }
+func (t ComponentCondition) DeepCopy() boxed         { return ComponentCondition{V: t.V.DeepCopy()} }
+func (t ComponentCondition) Package() util.Package   { return util.Core }
+func (t ComponentCondition) Type() string            { return "k8s_core_ComponentCondition" }
 func (t ComponentCondition) String() string          { return t.V.String() }
 func (t ComponentCondition) Freeze()                 {} // TODO
 func (t ComponentCondition) Truth() skylark.Bool     { return skylark.True }
@@ -864,8 +929,8 @@ func (t ComponentCondition) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t ComponentCondition) AttrNames() []string { return ComponentCondition_attrs }
 func (t ComponentCondition) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ComponentCondition_fields, ComponentCondition_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ComponentCondition_fields, ComponentCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -874,7 +939,7 @@ func (t ComponentCondition) SetField(name string, value skylark.Value) error {
 }
 
 type ComponentStatus struct {
-	V *v1.ComponentStatus
+	V *core.ComponentStatus
 }
 
 var (
@@ -886,12 +951,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ComponentStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.ComponentStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ComponentStatus:
+		case *core.ComponentStatus:
 			return ComponentStatus{V: v}
-		case v1.ComponentStatus:
+		case core.ComponentStatus:
 			return ComponentStatus{V: &v}
 		default:
 			return skylark.None
@@ -902,11 +967,14 @@ func init() {
 }
 
 func createComponentStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ComponentStatus
+	box := ComponentStatus{V: &core.ComponentStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ComponentStatus) Underlying() interface{} { return t.V }
-func (t ComponentStatus) Package() util.Package   { return util.V1 }
-func (t ComponentStatus) Type() string            { return "k8s_v1_ComponentStatus" }
+func (t ComponentStatus) DeepCopy() boxed         { return ComponentStatus{V: t.V.DeepCopy()} }
+func (t ComponentStatus) Package() util.Package   { return util.Core }
+func (t ComponentStatus) Type() string            { return "k8s_core_ComponentStatus" }
 func (t ComponentStatus) String() string          { return t.V.String() }
 func (t ComponentStatus) Freeze()                 {} // TODO
 func (t ComponentStatus) Truth() skylark.Bool     { return skylark.True }
@@ -917,8 +985,8 @@ func (t ComponentStatus) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t ComponentStatus) AttrNames() []string { return ComponentStatus_attrs }
 func (t ComponentStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ComponentStatus_fields, ComponentStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ComponentStatus_fields, ComponentStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -927,7 +995,7 @@ func (t ComponentStatus) SetField(name string, value skylark.Value) error {
 }
 
 type ComponentStatusList struct {
-	V *v1.ComponentStatusList
+	V *core.ComponentStatusList
 }
 
 var (
@@ -939,12 +1007,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ComponentStatusList)(nil)).Elem()
+	t := reflect.TypeOf((*core.ComponentStatusList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ComponentStatusList:
+		case *core.ComponentStatusList:
 			return ComponentStatusList{V: v}
-		case v1.ComponentStatusList:
+		case core.ComponentStatusList:
 			return ComponentStatusList{V: &v}
 		default:
 			return skylark.None
@@ -955,11 +1023,14 @@ func init() {
 }
 
 func createComponentStatusList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ComponentStatusList
+	box := ComponentStatusList{V: &core.ComponentStatusList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ComponentStatusList) Underlying() interface{} { return t.V }
-func (t ComponentStatusList) Package() util.Package   { return util.V1 }
-func (t ComponentStatusList) Type() string            { return "k8s_v1_ComponentStatusList" }
+func (t ComponentStatusList) DeepCopy() boxed         { return ComponentStatusList{V: t.V.DeepCopy()} }
+func (t ComponentStatusList) Package() util.Package   { return util.Core }
+func (t ComponentStatusList) Type() string            { return "k8s_core_ComponentStatusList" }
 func (t ComponentStatusList) String() string          { return t.V.String() }
 func (t ComponentStatusList) Freeze()                 {} // TODO
 func (t ComponentStatusList) Truth() skylark.Bool     { return skylark.True }
@@ -970,8 +1041,8 @@ func (t ComponentStatusList) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t ComponentStatusList) AttrNames() []string { return ComponentStatusList_attrs }
 func (t ComponentStatusList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ComponentStatusList_fields, ComponentStatusList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ComponentStatusList_fields, ComponentStatusList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -980,7 +1051,7 @@ func (t ComponentStatusList) SetField(name string, value skylark.Value) error {
 }
 
 type ConfigMap struct {
-	V *v1.ConfigMap
+	V *core.ConfigMap
 }
 
 var (
@@ -992,12 +1063,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ConfigMap)(nil)).Elem()
+	t := reflect.TypeOf((*core.ConfigMap)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ConfigMap:
+		case *core.ConfigMap:
 			return ConfigMap{V: v}
-		case v1.ConfigMap:
+		case core.ConfigMap:
 			return ConfigMap{V: &v}
 		default:
 			return skylark.None
@@ -1008,11 +1079,14 @@ func init() {
 }
 
 func createConfigMap(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ConfigMap
+	box := ConfigMap{V: &core.ConfigMap{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ConfigMap) Underlying() interface{} { return t.V }
-func (t ConfigMap) Package() util.Package   { return util.V1 }
-func (t ConfigMap) Type() string            { return "k8s_v1_ConfigMap" }
+func (t ConfigMap) DeepCopy() boxed         { return ConfigMap{V: t.V.DeepCopy()} }
+func (t ConfigMap) Package() util.Package   { return util.Core }
+func (t ConfigMap) Type() string            { return "k8s_core_ConfigMap" }
 func (t ConfigMap) String() string          { return t.V.String() }
 func (t ConfigMap) Freeze()                 {} // TODO
 func (t ConfigMap) Truth() skylark.Bool     { return skylark.True }
@@ -1023,8 +1097,8 @@ func (t ConfigMap) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t ConfigMap) AttrNames() []string { return ConfigMap_attrs }
 func (t ConfigMap) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ConfigMap_fields, ConfigMap_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ConfigMap_fields, ConfigMap_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1033,7 +1107,7 @@ func (t ConfigMap) SetField(name string, value skylark.Value) error {
 }
 
 type ConfigMapEnvSource struct {
-	V *v1.ConfigMapEnvSource
+	V *core.ConfigMapEnvSource
 }
 
 var (
@@ -1045,12 +1119,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ConfigMapEnvSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.ConfigMapEnvSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ConfigMapEnvSource:
+		case *core.ConfigMapEnvSource:
 			return ConfigMapEnvSource{V: v}
-		case v1.ConfigMapEnvSource:
+		case core.ConfigMapEnvSource:
 			return ConfigMapEnvSource{V: &v}
 		default:
 			return skylark.None
@@ -1061,11 +1135,14 @@ func init() {
 }
 
 func createConfigMapEnvSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ConfigMapEnvSource
+	box := ConfigMapEnvSource{V: &core.ConfigMapEnvSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ConfigMapEnvSource) Underlying() interface{} { return t.V }
-func (t ConfigMapEnvSource) Package() util.Package   { return util.V1 }
-func (t ConfigMapEnvSource) Type() string            { return "k8s_v1_ConfigMapEnvSource" }
+func (t ConfigMapEnvSource) DeepCopy() boxed         { return ConfigMapEnvSource{V: t.V.DeepCopy()} }
+func (t ConfigMapEnvSource) Package() util.Package   { return util.Core }
+func (t ConfigMapEnvSource) Type() string            { return "k8s_core_ConfigMapEnvSource" }
 func (t ConfigMapEnvSource) String() string          { return t.V.String() }
 func (t ConfigMapEnvSource) Freeze()                 {} // TODO
 func (t ConfigMapEnvSource) Truth() skylark.Bool     { return skylark.True }
@@ -1076,8 +1153,8 @@ func (t ConfigMapEnvSource) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t ConfigMapEnvSource) AttrNames() []string { return ConfigMapEnvSource_attrs }
 func (t ConfigMapEnvSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ConfigMapEnvSource_fields, ConfigMapEnvSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ConfigMapEnvSource_fields, ConfigMapEnvSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1086,7 +1163,7 @@ func (t ConfigMapEnvSource) SetField(name string, value skylark.Value) error {
 }
 
 type ConfigMapKeySelector struct {
-	V *v1.ConfigMapKeySelector
+	V *core.ConfigMapKeySelector
 }
 
 var (
@@ -1098,12 +1175,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ConfigMapKeySelector)(nil)).Elem()
+	t := reflect.TypeOf((*core.ConfigMapKeySelector)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ConfigMapKeySelector:
+		case *core.ConfigMapKeySelector:
 			return ConfigMapKeySelector{V: v}
-		case v1.ConfigMapKeySelector:
+		case core.ConfigMapKeySelector:
 			return ConfigMapKeySelector{V: &v}
 		default:
 			return skylark.None
@@ -1114,11 +1191,14 @@ func init() {
 }
 
 func createConfigMapKeySelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ConfigMapKeySelector
+	box := ConfigMapKeySelector{V: &core.ConfigMapKeySelector{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ConfigMapKeySelector) Underlying() interface{} { return t.V }
-func (t ConfigMapKeySelector) Package() util.Package   { return util.V1 }
-func (t ConfigMapKeySelector) Type() string            { return "k8s_v1_ConfigMapKeySelector" }
+func (t ConfigMapKeySelector) DeepCopy() boxed         { return ConfigMapKeySelector{V: t.V.DeepCopy()} }
+func (t ConfigMapKeySelector) Package() util.Package   { return util.Core }
+func (t ConfigMapKeySelector) Type() string            { return "k8s_core_ConfigMapKeySelector" }
 func (t ConfigMapKeySelector) String() string          { return t.V.String() }
 func (t ConfigMapKeySelector) Freeze()                 {} // TODO
 func (t ConfigMapKeySelector) Truth() skylark.Bool     { return skylark.True }
@@ -1129,8 +1209,8 @@ func (t ConfigMapKeySelector) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t ConfigMapKeySelector) AttrNames() []string { return ConfigMapKeySelector_attrs }
 func (t ConfigMapKeySelector) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ConfigMapKeySelector_fields, ConfigMapKeySelector_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ConfigMapKeySelector_fields, ConfigMapKeySelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1139,7 +1219,7 @@ func (t ConfigMapKeySelector) SetField(name string, value skylark.Value) error {
 }
 
 type ConfigMapList struct {
-	V *v1.ConfigMapList
+	V *core.ConfigMapList
 }
 
 var (
@@ -1151,12 +1231,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ConfigMapList)(nil)).Elem()
+	t := reflect.TypeOf((*core.ConfigMapList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ConfigMapList:
+		case *core.ConfigMapList:
 			return ConfigMapList{V: v}
-		case v1.ConfigMapList:
+		case core.ConfigMapList:
 			return ConfigMapList{V: &v}
 		default:
 			return skylark.None
@@ -1167,11 +1247,14 @@ func init() {
 }
 
 func createConfigMapList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ConfigMapList
+	box := ConfigMapList{V: &core.ConfigMapList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ConfigMapList) Underlying() interface{} { return t.V }
-func (t ConfigMapList) Package() util.Package   { return util.V1 }
-func (t ConfigMapList) Type() string            { return "k8s_v1_ConfigMapList" }
+func (t ConfigMapList) DeepCopy() boxed         { return ConfigMapList{V: t.V.DeepCopy()} }
+func (t ConfigMapList) Package() util.Package   { return util.Core }
+func (t ConfigMapList) Type() string            { return "k8s_core_ConfigMapList" }
 func (t ConfigMapList) String() string          { return t.V.String() }
 func (t ConfigMapList) Freeze()                 {} // TODO
 func (t ConfigMapList) Truth() skylark.Bool     { return skylark.True }
@@ -1182,8 +1265,8 @@ func (t ConfigMapList) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t ConfigMapList) AttrNames() []string { return ConfigMapList_attrs }
 func (t ConfigMapList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ConfigMapList_fields, ConfigMapList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ConfigMapList_fields, ConfigMapList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1192,7 +1275,7 @@ func (t ConfigMapList) SetField(name string, value skylark.Value) error {
 }
 
 type ConfigMapNodeConfigSource struct {
-	V *v1.ConfigMapNodeConfigSource
+	V *core.ConfigMapNodeConfigSource
 }
 
 var (
@@ -1204,12 +1287,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ConfigMapNodeConfigSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.ConfigMapNodeConfigSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ConfigMapNodeConfigSource:
+		case *core.ConfigMapNodeConfigSource:
 			return ConfigMapNodeConfigSource{V: v}
-		case v1.ConfigMapNodeConfigSource:
+		case core.ConfigMapNodeConfigSource:
 			return ConfigMapNodeConfigSource{V: &v}
 		default:
 			return skylark.None
@@ -1220,23 +1303,28 @@ func init() {
 }
 
 func createConfigMapNodeConfigSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ConfigMapNodeConfigSource
+	box := ConfigMapNodeConfigSource{V: &core.ConfigMapNodeConfigSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ConfigMapNodeConfigSource) Underlying() interface{} { return t.V }
-func (t ConfigMapNodeConfigSource) Package() util.Package   { return util.V1 }
-func (t ConfigMapNodeConfigSource) Type() string            { return "k8s_v1_ConfigMapNodeConfigSource" }
-func (t ConfigMapNodeConfigSource) String() string          { return t.V.String() }
-func (t ConfigMapNodeConfigSource) Freeze()                 {} // TODO
-func (t ConfigMapNodeConfigSource) Truth() skylark.Bool     { return skylark.True }
-func (t ConfigMapNodeConfigSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ConfigMapNodeConfigSource) DeepCopy() boxed {
+	return ConfigMapNodeConfigSource{V: t.V.DeepCopy()}
+}
+func (t ConfigMapNodeConfigSource) Package() util.Package { return util.Core }
+func (t ConfigMapNodeConfigSource) Type() string          { return "k8s_core_ConfigMapNodeConfigSource" }
+func (t ConfigMapNodeConfigSource) String() string        { return t.V.String() }
+func (t ConfigMapNodeConfigSource) Freeze()               {} // TODO
+func (t ConfigMapNodeConfigSource) Truth() skylark.Bool   { return skylark.True }
+func (t ConfigMapNodeConfigSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t ConfigMapNodeConfigSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ConfigMapNodeConfigSource)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t ConfigMapNodeConfigSource) AttrNames() []string { return ConfigMapNodeConfigSource_attrs }
 func (t ConfigMapNodeConfigSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ConfigMapNodeConfigSource_fields, ConfigMapNodeConfigSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ConfigMapNodeConfigSource_fields, ConfigMapNodeConfigSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1245,7 +1333,7 @@ func (t ConfigMapNodeConfigSource) SetField(name string, value skylark.Value) er
 }
 
 type ConfigMapProjection struct {
-	V *v1.ConfigMapProjection
+	V *core.ConfigMapProjection
 }
 
 var (
@@ -1257,12 +1345,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ConfigMapProjection)(nil)).Elem()
+	t := reflect.TypeOf((*core.ConfigMapProjection)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ConfigMapProjection:
+		case *core.ConfigMapProjection:
 			return ConfigMapProjection{V: v}
-		case v1.ConfigMapProjection:
+		case core.ConfigMapProjection:
 			return ConfigMapProjection{V: &v}
 		default:
 			return skylark.None
@@ -1273,11 +1361,14 @@ func init() {
 }
 
 func createConfigMapProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ConfigMapProjection
+	box := ConfigMapProjection{V: &core.ConfigMapProjection{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ConfigMapProjection) Underlying() interface{} { return t.V }
-func (t ConfigMapProjection) Package() util.Package   { return util.V1 }
-func (t ConfigMapProjection) Type() string            { return "k8s_v1_ConfigMapProjection" }
+func (t ConfigMapProjection) DeepCopy() boxed         { return ConfigMapProjection{V: t.V.DeepCopy()} }
+func (t ConfigMapProjection) Package() util.Package   { return util.Core }
+func (t ConfigMapProjection) Type() string            { return "k8s_core_ConfigMapProjection" }
 func (t ConfigMapProjection) String() string          { return t.V.String() }
 func (t ConfigMapProjection) Freeze()                 {} // TODO
 func (t ConfigMapProjection) Truth() skylark.Bool     { return skylark.True }
@@ -1288,8 +1379,8 @@ func (t ConfigMapProjection) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t ConfigMapProjection) AttrNames() []string { return ConfigMapProjection_attrs }
 func (t ConfigMapProjection) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ConfigMapProjection_fields, ConfigMapProjection_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ConfigMapProjection_fields, ConfigMapProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1298,7 +1389,7 @@ func (t ConfigMapProjection) SetField(name string, value skylark.Value) error {
 }
 
 type ConfigMapVolumeSource struct {
-	V *v1.ConfigMapVolumeSource
+	V *core.ConfigMapVolumeSource
 }
 
 var (
@@ -1310,12 +1401,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ConfigMapVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.ConfigMapVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ConfigMapVolumeSource:
+		case *core.ConfigMapVolumeSource:
 			return ConfigMapVolumeSource{V: v}
-		case v1.ConfigMapVolumeSource:
+		case core.ConfigMapVolumeSource:
 			return ConfigMapVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -1326,11 +1417,14 @@ func init() {
 }
 
 func createConfigMapVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ConfigMapVolumeSource
+	box := ConfigMapVolumeSource{V: &core.ConfigMapVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ConfigMapVolumeSource) Underlying() interface{} { return t.V }
-func (t ConfigMapVolumeSource) Package() util.Package   { return util.V1 }
-func (t ConfigMapVolumeSource) Type() string            { return "k8s_v1_ConfigMapVolumeSource" }
+func (t ConfigMapVolumeSource) DeepCopy() boxed         { return ConfigMapVolumeSource{V: t.V.DeepCopy()} }
+func (t ConfigMapVolumeSource) Package() util.Package   { return util.Core }
+func (t ConfigMapVolumeSource) Type() string            { return "k8s_core_ConfigMapVolumeSource" }
 func (t ConfigMapVolumeSource) String() string          { return t.V.String() }
 func (t ConfigMapVolumeSource) Freeze()                 {} // TODO
 func (t ConfigMapVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -1341,8 +1435,8 @@ func (t ConfigMapVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t ConfigMapVolumeSource) AttrNames() []string { return ConfigMapVolumeSource_attrs }
 func (t ConfigMapVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ConfigMapVolumeSource_fields, ConfigMapVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ConfigMapVolumeSource_fields, ConfigMapVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1351,7 +1445,7 @@ func (t ConfigMapVolumeSource) SetField(name string, value skylark.Value) error 
 }
 
 type Container struct {
-	V *v1.Container
+	V *core.Container
 }
 
 var (
@@ -1363,12 +1457,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Container)(nil)).Elem()
+	t := reflect.TypeOf((*core.Container)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Container:
+		case *core.Container:
 			return Container{V: v}
-		case v1.Container:
+		case core.Container:
 			return Container{V: &v}
 		default:
 			return skylark.None
@@ -1379,11 +1473,14 @@ func init() {
 }
 
 func createContainer(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Container
+	box := Container{V: &core.Container{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Container) Underlying() interface{} { return t.V }
-func (t Container) Package() util.Package   { return util.V1 }
-func (t Container) Type() string            { return "k8s_v1_Container" }
+func (t Container) DeepCopy() boxed         { return Container{V: t.V.DeepCopy()} }
+func (t Container) Package() util.Package   { return util.Core }
+func (t Container) Type() string            { return "k8s_core_Container" }
 func (t Container) String() string          { return t.V.String() }
 func (t Container) Freeze()                 {} // TODO
 func (t Container) Truth() skylark.Bool     { return skylark.True }
@@ -1394,8 +1491,8 @@ func (t Container) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t Container) AttrNames() []string { return Container_attrs }
 func (t Container) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Container_fields, Container_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Container_fields, Container_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1404,7 +1501,7 @@ func (t Container) SetField(name string, value skylark.Value) error {
 }
 
 type ContainerImage struct {
-	V *v1.ContainerImage
+	V *core.ContainerImage
 }
 
 var (
@@ -1416,12 +1513,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ContainerImage)(nil)).Elem()
+	t := reflect.TypeOf((*core.ContainerImage)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ContainerImage:
+		case *core.ContainerImage:
 			return ContainerImage{V: v}
-		case v1.ContainerImage:
+		case core.ContainerImage:
 			return ContainerImage{V: &v}
 		default:
 			return skylark.None
@@ -1432,11 +1529,14 @@ func init() {
 }
 
 func createContainerImage(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ContainerImage
+	box := ContainerImage{V: &core.ContainerImage{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ContainerImage) Underlying() interface{} { return t.V }
-func (t ContainerImage) Package() util.Package   { return util.V1 }
-func (t ContainerImage) Type() string            { return "k8s_v1_ContainerImage" }
+func (t ContainerImage) DeepCopy() boxed         { return ContainerImage{V: t.V.DeepCopy()} }
+func (t ContainerImage) Package() util.Package   { return util.Core }
+func (t ContainerImage) Type() string            { return "k8s_core_ContainerImage" }
 func (t ContainerImage) String() string          { return t.V.String() }
 func (t ContainerImage) Freeze()                 {} // TODO
 func (t ContainerImage) Truth() skylark.Bool     { return skylark.True }
@@ -1447,8 +1547,8 @@ func (t ContainerImage) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t ContainerImage) AttrNames() []string { return ContainerImage_attrs }
 func (t ContainerImage) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ContainerImage_fields, ContainerImage_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ContainerImage_fields, ContainerImage_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1457,7 +1557,7 @@ func (t ContainerImage) SetField(name string, value skylark.Value) error {
 }
 
 type ContainerPort struct {
-	V *v1.ContainerPort
+	V *core.ContainerPort
 }
 
 var (
@@ -1469,12 +1569,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ContainerPort)(nil)).Elem()
+	t := reflect.TypeOf((*core.ContainerPort)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ContainerPort:
+		case *core.ContainerPort:
 			return ContainerPort{V: v}
-		case v1.ContainerPort:
+		case core.ContainerPort:
 			return ContainerPort{V: &v}
 		default:
 			return skylark.None
@@ -1485,11 +1585,14 @@ func init() {
 }
 
 func createContainerPort(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ContainerPort
+	box := ContainerPort{V: &core.ContainerPort{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ContainerPort) Underlying() interface{} { return t.V }
-func (t ContainerPort) Package() util.Package   { return util.V1 }
-func (t ContainerPort) Type() string            { return "k8s_v1_ContainerPort" }
+func (t ContainerPort) DeepCopy() boxed         { return ContainerPort{V: t.V.DeepCopy()} }
+func (t ContainerPort) Package() util.Package   { return util.Core }
+func (t ContainerPort) Type() string            { return "k8s_core_ContainerPort" }
 func (t ContainerPort) String() string          { return t.V.String() }
 func (t ContainerPort) Freeze()                 {} // TODO
 func (t ContainerPort) Truth() skylark.Bool     { return skylark.True }
@@ -1500,8 +1603,8 @@ func (t ContainerPort) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t ContainerPort) AttrNames() []string { return ContainerPort_attrs }
 func (t ContainerPort) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ContainerPort_fields, ContainerPort_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ContainerPort_fields, ContainerPort_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1510,7 +1613,7 @@ func (t ContainerPort) SetField(name string, value skylark.Value) error {
 }
 
 type ContainerState struct {
-	V *v1.ContainerState
+	V *core.ContainerState
 }
 
 var (
@@ -1522,12 +1625,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ContainerState)(nil)).Elem()
+	t := reflect.TypeOf((*core.ContainerState)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ContainerState:
+		case *core.ContainerState:
 			return ContainerState{V: v}
-		case v1.ContainerState:
+		case core.ContainerState:
 			return ContainerState{V: &v}
 		default:
 			return skylark.None
@@ -1538,11 +1641,14 @@ func init() {
 }
 
 func createContainerState(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ContainerState
+	box := ContainerState{V: &core.ContainerState{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ContainerState) Underlying() interface{} { return t.V }
-func (t ContainerState) Package() util.Package   { return util.V1 }
-func (t ContainerState) Type() string            { return "k8s_v1_ContainerState" }
+func (t ContainerState) DeepCopy() boxed         { return ContainerState{V: t.V.DeepCopy()} }
+func (t ContainerState) Package() util.Package   { return util.Core }
+func (t ContainerState) Type() string            { return "k8s_core_ContainerState" }
 func (t ContainerState) String() string          { return t.V.String() }
 func (t ContainerState) Freeze()                 {} // TODO
 func (t ContainerState) Truth() skylark.Bool     { return skylark.True }
@@ -1553,8 +1659,8 @@ func (t ContainerState) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t ContainerState) AttrNames() []string { return ContainerState_attrs }
 func (t ContainerState) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ContainerState_fields, ContainerState_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ContainerState_fields, ContainerState_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1563,7 +1669,7 @@ func (t ContainerState) SetField(name string, value skylark.Value) error {
 }
 
 type ContainerStateRunning struct {
-	V *v1.ContainerStateRunning
+	V *core.ContainerStateRunning
 }
 
 var (
@@ -1575,12 +1681,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ContainerStateRunning)(nil)).Elem()
+	t := reflect.TypeOf((*core.ContainerStateRunning)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ContainerStateRunning:
+		case *core.ContainerStateRunning:
 			return ContainerStateRunning{V: v}
-		case v1.ContainerStateRunning:
+		case core.ContainerStateRunning:
 			return ContainerStateRunning{V: &v}
 		default:
 			return skylark.None
@@ -1591,11 +1697,14 @@ func init() {
 }
 
 func createContainerStateRunning(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ContainerStateRunning
+	box := ContainerStateRunning{V: &core.ContainerStateRunning{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ContainerStateRunning) Underlying() interface{} { return t.V }
-func (t ContainerStateRunning) Package() util.Package   { return util.V1 }
-func (t ContainerStateRunning) Type() string            { return "k8s_v1_ContainerStateRunning" }
+func (t ContainerStateRunning) DeepCopy() boxed         { return ContainerStateRunning{V: t.V.DeepCopy()} }
+func (t ContainerStateRunning) Package() util.Package   { return util.Core }
+func (t ContainerStateRunning) Type() string            { return "k8s_core_ContainerStateRunning" }
 func (t ContainerStateRunning) String() string          { return t.V.String() }
 func (t ContainerStateRunning) Freeze()                 {} // TODO
 func (t ContainerStateRunning) Truth() skylark.Bool     { return skylark.True }
@@ -1606,8 +1715,8 @@ func (t ContainerStateRunning) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t ContainerStateRunning) AttrNames() []string { return ContainerStateRunning_attrs }
 func (t ContainerStateRunning) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ContainerStateRunning_fields, ContainerStateRunning_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ContainerStateRunning_fields, ContainerStateRunning_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1616,7 +1725,7 @@ func (t ContainerStateRunning) SetField(name string, value skylark.Value) error 
 }
 
 type ContainerStateTerminated struct {
-	V *v1.ContainerStateTerminated
+	V *core.ContainerStateTerminated
 }
 
 var (
@@ -1628,12 +1737,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ContainerStateTerminated)(nil)).Elem()
+	t := reflect.TypeOf((*core.ContainerStateTerminated)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ContainerStateTerminated:
+		case *core.ContainerStateTerminated:
 			return ContainerStateTerminated{V: v}
-		case v1.ContainerStateTerminated:
+		case core.ContainerStateTerminated:
 			return ContainerStateTerminated{V: &v}
 		default:
 			return skylark.None
@@ -1644,11 +1753,14 @@ func init() {
 }
 
 func createContainerStateTerminated(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ContainerStateTerminated
+	box := ContainerStateTerminated{V: &core.ContainerStateTerminated{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ContainerStateTerminated) Underlying() interface{} { return t.V }
-func (t ContainerStateTerminated) Package() util.Package   { return util.V1 }
-func (t ContainerStateTerminated) Type() string            { return "k8s_v1_ContainerStateTerminated" }
+func (t ContainerStateTerminated) DeepCopy() boxed         { return ContainerStateTerminated{V: t.V.DeepCopy()} }
+func (t ContainerStateTerminated) Package() util.Package   { return util.Core }
+func (t ContainerStateTerminated) Type() string            { return "k8s_core_ContainerStateTerminated" }
 func (t ContainerStateTerminated) String() string          { return t.V.String() }
 func (t ContainerStateTerminated) Freeze()                 {} // TODO
 func (t ContainerStateTerminated) Truth() skylark.Bool     { return skylark.True }
@@ -1659,8 +1771,8 @@ func (t ContainerStateTerminated) CompareSameType(op syntax.Token, y_ skylark.Va
 }
 func (t ContainerStateTerminated) AttrNames() []string { return ContainerStateTerminated_attrs }
 func (t ContainerStateTerminated) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ContainerStateTerminated_fields, ContainerStateTerminated_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ContainerStateTerminated_fields, ContainerStateTerminated_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1669,7 +1781,7 @@ func (t ContainerStateTerminated) SetField(name string, value skylark.Value) err
 }
 
 type ContainerStateWaiting struct {
-	V *v1.ContainerStateWaiting
+	V *core.ContainerStateWaiting
 }
 
 var (
@@ -1681,12 +1793,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ContainerStateWaiting)(nil)).Elem()
+	t := reflect.TypeOf((*core.ContainerStateWaiting)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ContainerStateWaiting:
+		case *core.ContainerStateWaiting:
 			return ContainerStateWaiting{V: v}
-		case v1.ContainerStateWaiting:
+		case core.ContainerStateWaiting:
 			return ContainerStateWaiting{V: &v}
 		default:
 			return skylark.None
@@ -1697,11 +1809,14 @@ func init() {
 }
 
 func createContainerStateWaiting(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ContainerStateWaiting
+	box := ContainerStateWaiting{V: &core.ContainerStateWaiting{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ContainerStateWaiting) Underlying() interface{} { return t.V }
-func (t ContainerStateWaiting) Package() util.Package   { return util.V1 }
-func (t ContainerStateWaiting) Type() string            { return "k8s_v1_ContainerStateWaiting" }
+func (t ContainerStateWaiting) DeepCopy() boxed         { return ContainerStateWaiting{V: t.V.DeepCopy()} }
+func (t ContainerStateWaiting) Package() util.Package   { return util.Core }
+func (t ContainerStateWaiting) Type() string            { return "k8s_core_ContainerStateWaiting" }
 func (t ContainerStateWaiting) String() string          { return t.V.String() }
 func (t ContainerStateWaiting) Freeze()                 {} // TODO
 func (t ContainerStateWaiting) Truth() skylark.Bool     { return skylark.True }
@@ -1712,8 +1827,8 @@ func (t ContainerStateWaiting) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t ContainerStateWaiting) AttrNames() []string { return ContainerStateWaiting_attrs }
 func (t ContainerStateWaiting) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ContainerStateWaiting_fields, ContainerStateWaiting_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ContainerStateWaiting_fields, ContainerStateWaiting_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1722,7 +1837,7 @@ func (t ContainerStateWaiting) SetField(name string, value skylark.Value) error 
 }
 
 type ContainerStatus struct {
-	V *v1.ContainerStatus
+	V *core.ContainerStatus
 }
 
 var (
@@ -1734,12 +1849,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ContainerStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.ContainerStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ContainerStatus:
+		case *core.ContainerStatus:
 			return ContainerStatus{V: v}
-		case v1.ContainerStatus:
+		case core.ContainerStatus:
 			return ContainerStatus{V: &v}
 		default:
 			return skylark.None
@@ -1750,11 +1865,14 @@ func init() {
 }
 
 func createContainerStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ContainerStatus
+	box := ContainerStatus{V: &core.ContainerStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ContainerStatus) Underlying() interface{} { return t.V }
-func (t ContainerStatus) Package() util.Package   { return util.V1 }
-func (t ContainerStatus) Type() string            { return "k8s_v1_ContainerStatus" }
+func (t ContainerStatus) DeepCopy() boxed         { return ContainerStatus{V: t.V.DeepCopy()} }
+func (t ContainerStatus) Package() util.Package   { return util.Core }
+func (t ContainerStatus) Type() string            { return "k8s_core_ContainerStatus" }
 func (t ContainerStatus) String() string          { return t.V.String() }
 func (t ContainerStatus) Freeze()                 {} // TODO
 func (t ContainerStatus) Truth() skylark.Bool     { return skylark.True }
@@ -1765,8 +1883,8 @@ func (t ContainerStatus) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t ContainerStatus) AttrNames() []string { return ContainerStatus_attrs }
 func (t ContainerStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ContainerStatus_fields, ContainerStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ContainerStatus_fields, ContainerStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1775,7 +1893,7 @@ func (t ContainerStatus) SetField(name string, value skylark.Value) error {
 }
 
 type DaemonEndpoint struct {
-	V *v1.DaemonEndpoint
+	V *core.DaemonEndpoint
 }
 
 var (
@@ -1787,12 +1905,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.DaemonEndpoint)(nil)).Elem()
+	t := reflect.TypeOf((*core.DaemonEndpoint)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.DaemonEndpoint:
+		case *core.DaemonEndpoint:
 			return DaemonEndpoint{V: v}
-		case v1.DaemonEndpoint:
+		case core.DaemonEndpoint:
 			return DaemonEndpoint{V: &v}
 		default:
 			return skylark.None
@@ -1803,11 +1921,14 @@ func init() {
 }
 
 func createDaemonEndpoint(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for DaemonEndpoint
+	box := DaemonEndpoint{V: &core.DaemonEndpoint{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t DaemonEndpoint) Underlying() interface{} { return t.V }
-func (t DaemonEndpoint) Package() util.Package   { return util.V1 }
-func (t DaemonEndpoint) Type() string            { return "k8s_v1_DaemonEndpoint" }
+func (t DaemonEndpoint) DeepCopy() boxed         { return DaemonEndpoint{V: t.V.DeepCopy()} }
+func (t DaemonEndpoint) Package() util.Package   { return util.Core }
+func (t DaemonEndpoint) Type() string            { return "k8s_core_DaemonEndpoint" }
 func (t DaemonEndpoint) String() string          { return t.V.String() }
 func (t DaemonEndpoint) Freeze()                 {} // TODO
 func (t DaemonEndpoint) Truth() skylark.Bool     { return skylark.True }
@@ -1818,8 +1939,8 @@ func (t DaemonEndpoint) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t DaemonEndpoint) AttrNames() []string { return DaemonEndpoint_attrs }
 func (t DaemonEndpoint) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, DaemonEndpoint_fields, DaemonEndpoint_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DaemonEndpoint_fields, DaemonEndpoint_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1828,7 +1949,7 @@ func (t DaemonEndpoint) SetField(name string, value skylark.Value) error {
 }
 
 type DownwardAPIProjection struct {
-	V *v1.DownwardAPIProjection
+	V *core.DownwardAPIProjection
 }
 
 var (
@@ -1840,12 +1961,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.DownwardAPIProjection)(nil)).Elem()
+	t := reflect.TypeOf((*core.DownwardAPIProjection)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.DownwardAPIProjection:
+		case *core.DownwardAPIProjection:
 			return DownwardAPIProjection{V: v}
-		case v1.DownwardAPIProjection:
+		case core.DownwardAPIProjection:
 			return DownwardAPIProjection{V: &v}
 		default:
 			return skylark.None
@@ -1856,11 +1977,14 @@ func init() {
 }
 
 func createDownwardAPIProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for DownwardAPIProjection
+	box := DownwardAPIProjection{V: &core.DownwardAPIProjection{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t DownwardAPIProjection) Underlying() interface{} { return t.V }
-func (t DownwardAPIProjection) Package() util.Package   { return util.V1 }
-func (t DownwardAPIProjection) Type() string            { return "k8s_v1_DownwardAPIProjection" }
+func (t DownwardAPIProjection) DeepCopy() boxed         { return DownwardAPIProjection{V: t.V.DeepCopy()} }
+func (t DownwardAPIProjection) Package() util.Package   { return util.Core }
+func (t DownwardAPIProjection) Type() string            { return "k8s_core_DownwardAPIProjection" }
 func (t DownwardAPIProjection) String() string          { return t.V.String() }
 func (t DownwardAPIProjection) Freeze()                 {} // TODO
 func (t DownwardAPIProjection) Truth() skylark.Bool     { return skylark.True }
@@ -1871,8 +1995,8 @@ func (t DownwardAPIProjection) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t DownwardAPIProjection) AttrNames() []string { return DownwardAPIProjection_attrs }
 func (t DownwardAPIProjection) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, DownwardAPIProjection_fields, DownwardAPIProjection_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DownwardAPIProjection_fields, DownwardAPIProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1881,7 +2005,7 @@ func (t DownwardAPIProjection) SetField(name string, value skylark.Value) error 
 }
 
 type DownwardAPIVolumeFile struct {
-	V *v1.DownwardAPIVolumeFile
+	V *core.DownwardAPIVolumeFile
 }
 
 var (
@@ -1893,12 +2017,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.DownwardAPIVolumeFile)(nil)).Elem()
+	t := reflect.TypeOf((*core.DownwardAPIVolumeFile)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.DownwardAPIVolumeFile:
+		case *core.DownwardAPIVolumeFile:
 			return DownwardAPIVolumeFile{V: v}
-		case v1.DownwardAPIVolumeFile:
+		case core.DownwardAPIVolumeFile:
 			return DownwardAPIVolumeFile{V: &v}
 		default:
 			return skylark.None
@@ -1909,11 +2033,14 @@ func init() {
 }
 
 func createDownwardAPIVolumeFile(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for DownwardAPIVolumeFile
+	box := DownwardAPIVolumeFile{V: &core.DownwardAPIVolumeFile{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t DownwardAPIVolumeFile) Underlying() interface{} { return t.V }
-func (t DownwardAPIVolumeFile) Package() util.Package   { return util.V1 }
-func (t DownwardAPIVolumeFile) Type() string            { return "k8s_v1_DownwardAPIVolumeFile" }
+func (t DownwardAPIVolumeFile) DeepCopy() boxed         { return DownwardAPIVolumeFile{V: t.V.DeepCopy()} }
+func (t DownwardAPIVolumeFile) Package() util.Package   { return util.Core }
+func (t DownwardAPIVolumeFile) Type() string            { return "k8s_core_DownwardAPIVolumeFile" }
 func (t DownwardAPIVolumeFile) String() string          { return t.V.String() }
 func (t DownwardAPIVolumeFile) Freeze()                 {} // TODO
 func (t DownwardAPIVolumeFile) Truth() skylark.Bool     { return skylark.True }
@@ -1924,8 +2051,8 @@ func (t DownwardAPIVolumeFile) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t DownwardAPIVolumeFile) AttrNames() []string { return DownwardAPIVolumeFile_attrs }
 func (t DownwardAPIVolumeFile) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, DownwardAPIVolumeFile_fields, DownwardAPIVolumeFile_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DownwardAPIVolumeFile_fields, DownwardAPIVolumeFile_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1934,7 +2061,7 @@ func (t DownwardAPIVolumeFile) SetField(name string, value skylark.Value) error 
 }
 
 type DownwardAPIVolumeSource struct {
-	V *v1.DownwardAPIVolumeSource
+	V *core.DownwardAPIVolumeSource
 }
 
 var (
@@ -1946,12 +2073,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.DownwardAPIVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.DownwardAPIVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.DownwardAPIVolumeSource:
+		case *core.DownwardAPIVolumeSource:
 			return DownwardAPIVolumeSource{V: v}
-		case v1.DownwardAPIVolumeSource:
+		case core.DownwardAPIVolumeSource:
 			return DownwardAPIVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -1962,11 +2089,14 @@ func init() {
 }
 
 func createDownwardAPIVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for DownwardAPIVolumeSource
+	box := DownwardAPIVolumeSource{V: &core.DownwardAPIVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t DownwardAPIVolumeSource) Underlying() interface{} { return t.V }
-func (t DownwardAPIVolumeSource) Package() util.Package   { return util.V1 }
-func (t DownwardAPIVolumeSource) Type() string            { return "k8s_v1_DownwardAPIVolumeSource" }
+func (t DownwardAPIVolumeSource) DeepCopy() boxed         { return DownwardAPIVolumeSource{V: t.V.DeepCopy()} }
+func (t DownwardAPIVolumeSource) Package() util.Package   { return util.Core }
+func (t DownwardAPIVolumeSource) Type() string            { return "k8s_core_DownwardAPIVolumeSource" }
 func (t DownwardAPIVolumeSource) String() string          { return t.V.String() }
 func (t DownwardAPIVolumeSource) Freeze()                 {} // TODO
 func (t DownwardAPIVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -1977,8 +2107,8 @@ func (t DownwardAPIVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Val
 }
 func (t DownwardAPIVolumeSource) AttrNames() []string { return DownwardAPIVolumeSource_attrs }
 func (t DownwardAPIVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, DownwardAPIVolumeSource_fields, DownwardAPIVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DownwardAPIVolumeSource_fields, DownwardAPIVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -1987,7 +2117,7 @@ func (t DownwardAPIVolumeSource) SetField(name string, value skylark.Value) erro
 }
 
 type EmptyDirVolumeSource struct {
-	V *v1.EmptyDirVolumeSource
+	V *core.EmptyDirVolumeSource
 }
 
 var (
@@ -1999,12 +2129,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EmptyDirVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.EmptyDirVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EmptyDirVolumeSource:
+		case *core.EmptyDirVolumeSource:
 			return EmptyDirVolumeSource{V: v}
-		case v1.EmptyDirVolumeSource:
+		case core.EmptyDirVolumeSource:
 			return EmptyDirVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -2015,11 +2145,14 @@ func init() {
 }
 
 func createEmptyDirVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EmptyDirVolumeSource
+	box := EmptyDirVolumeSource{V: &core.EmptyDirVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EmptyDirVolumeSource) Underlying() interface{} { return t.V }
-func (t EmptyDirVolumeSource) Package() util.Package   { return util.V1 }
-func (t EmptyDirVolumeSource) Type() string            { return "k8s_v1_EmptyDirVolumeSource" }
+func (t EmptyDirVolumeSource) DeepCopy() boxed         { return EmptyDirVolumeSource{V: t.V.DeepCopy()} }
+func (t EmptyDirVolumeSource) Package() util.Package   { return util.Core }
+func (t EmptyDirVolumeSource) Type() string            { return "k8s_core_EmptyDirVolumeSource" }
 func (t EmptyDirVolumeSource) String() string          { return t.V.String() }
 func (t EmptyDirVolumeSource) Freeze()                 {} // TODO
 func (t EmptyDirVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -2030,8 +2163,8 @@ func (t EmptyDirVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t EmptyDirVolumeSource) AttrNames() []string { return EmptyDirVolumeSource_attrs }
 func (t EmptyDirVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EmptyDirVolumeSource_fields, EmptyDirVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EmptyDirVolumeSource_fields, EmptyDirVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2040,7 +2173,7 @@ func (t EmptyDirVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type EndpointAddress struct {
-	V *v1.EndpointAddress
+	V *core.EndpointAddress
 }
 
 var (
@@ -2052,12 +2185,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EndpointAddress)(nil)).Elem()
+	t := reflect.TypeOf((*core.EndpointAddress)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EndpointAddress:
+		case *core.EndpointAddress:
 			return EndpointAddress{V: v}
-		case v1.EndpointAddress:
+		case core.EndpointAddress:
 			return EndpointAddress{V: &v}
 		default:
 			return skylark.None
@@ -2068,11 +2201,14 @@ func init() {
 }
 
 func createEndpointAddress(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EndpointAddress
+	box := EndpointAddress{V: &core.EndpointAddress{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EndpointAddress) Underlying() interface{} { return t.V }
-func (t EndpointAddress) Package() util.Package   { return util.V1 }
-func (t EndpointAddress) Type() string            { return "k8s_v1_EndpointAddress" }
+func (t EndpointAddress) DeepCopy() boxed         { return EndpointAddress{V: t.V.DeepCopy()} }
+func (t EndpointAddress) Package() util.Package   { return util.Core }
+func (t EndpointAddress) Type() string            { return "k8s_core_EndpointAddress" }
 func (t EndpointAddress) String() string          { return t.V.String() }
 func (t EndpointAddress) Freeze()                 {} // TODO
 func (t EndpointAddress) Truth() skylark.Bool     { return skylark.True }
@@ -2083,8 +2219,8 @@ func (t EndpointAddress) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t EndpointAddress) AttrNames() []string { return EndpointAddress_attrs }
 func (t EndpointAddress) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EndpointAddress_fields, EndpointAddress_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EndpointAddress_fields, EndpointAddress_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2093,7 +2229,7 @@ func (t EndpointAddress) SetField(name string, value skylark.Value) error {
 }
 
 type EndpointPort struct {
-	V *v1.EndpointPort
+	V *core.EndpointPort
 }
 
 var (
@@ -2105,12 +2241,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EndpointPort)(nil)).Elem()
+	t := reflect.TypeOf((*core.EndpointPort)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EndpointPort:
+		case *core.EndpointPort:
 			return EndpointPort{V: v}
-		case v1.EndpointPort:
+		case core.EndpointPort:
 			return EndpointPort{V: &v}
 		default:
 			return skylark.None
@@ -2121,11 +2257,14 @@ func init() {
 }
 
 func createEndpointPort(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EndpointPort
+	box := EndpointPort{V: &core.EndpointPort{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EndpointPort) Underlying() interface{} { return t.V }
-func (t EndpointPort) Package() util.Package   { return util.V1 }
-func (t EndpointPort) Type() string            { return "k8s_v1_EndpointPort" }
+func (t EndpointPort) DeepCopy() boxed         { return EndpointPort{V: t.V.DeepCopy()} }
+func (t EndpointPort) Package() util.Package   { return util.Core }
+func (t EndpointPort) Type() string            { return "k8s_core_EndpointPort" }
 func (t EndpointPort) String() string          { return t.V.String() }
 func (t EndpointPort) Freeze()                 {} // TODO
 func (t EndpointPort) Truth() skylark.Bool     { return skylark.True }
@@ -2136,8 +2275,8 @@ func (t EndpointPort) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t EndpointPort) AttrNames() []string { return EndpointPort_attrs }
 func (t EndpointPort) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EndpointPort_fields, EndpointPort_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EndpointPort_fields, EndpointPort_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2146,7 +2285,7 @@ func (t EndpointPort) SetField(name string, value skylark.Value) error {
 }
 
 type EndpointSubset struct {
-	V *v1.EndpointSubset
+	V *core.EndpointSubset
 }
 
 var (
@@ -2158,12 +2297,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EndpointSubset)(nil)).Elem()
+	t := reflect.TypeOf((*core.EndpointSubset)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EndpointSubset:
+		case *core.EndpointSubset:
 			return EndpointSubset{V: v}
-		case v1.EndpointSubset:
+		case core.EndpointSubset:
 			return EndpointSubset{V: &v}
 		default:
 			return skylark.None
@@ -2174,11 +2313,14 @@ func init() {
 }
 
 func createEndpointSubset(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EndpointSubset
+	box := EndpointSubset{V: &core.EndpointSubset{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EndpointSubset) Underlying() interface{} { return t.V }
-func (t EndpointSubset) Package() util.Package   { return util.V1 }
-func (t EndpointSubset) Type() string            { return "k8s_v1_EndpointSubset" }
+func (t EndpointSubset) DeepCopy() boxed         { return EndpointSubset{V: t.V.DeepCopy()} }
+func (t EndpointSubset) Package() util.Package   { return util.Core }
+func (t EndpointSubset) Type() string            { return "k8s_core_EndpointSubset" }
 func (t EndpointSubset) String() string          { return t.V.String() }
 func (t EndpointSubset) Freeze()                 {} // TODO
 func (t EndpointSubset) Truth() skylark.Bool     { return skylark.True }
@@ -2189,8 +2331,8 @@ func (t EndpointSubset) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t EndpointSubset) AttrNames() []string { return EndpointSubset_attrs }
 func (t EndpointSubset) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EndpointSubset_fields, EndpointSubset_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EndpointSubset_fields, EndpointSubset_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2199,7 +2341,7 @@ func (t EndpointSubset) SetField(name string, value skylark.Value) error {
 }
 
 type Endpoints struct {
-	V *v1.Endpoints
+	V *core.Endpoints
 }
 
 var (
@@ -2211,12 +2353,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Endpoints)(nil)).Elem()
+	t := reflect.TypeOf((*core.Endpoints)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Endpoints:
+		case *core.Endpoints:
 			return Endpoints{V: v}
-		case v1.Endpoints:
+		case core.Endpoints:
 			return Endpoints{V: &v}
 		default:
 			return skylark.None
@@ -2227,11 +2369,14 @@ func init() {
 }
 
 func createEndpoints(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Endpoints
+	box := Endpoints{V: &core.Endpoints{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Endpoints) Underlying() interface{} { return t.V }
-func (t Endpoints) Package() util.Package   { return util.V1 }
-func (t Endpoints) Type() string            { return "k8s_v1_Endpoints" }
+func (t Endpoints) DeepCopy() boxed         { return Endpoints{V: t.V.DeepCopy()} }
+func (t Endpoints) Package() util.Package   { return util.Core }
+func (t Endpoints) Type() string            { return "k8s_core_Endpoints" }
 func (t Endpoints) String() string          { return t.V.String() }
 func (t Endpoints) Freeze()                 {} // TODO
 func (t Endpoints) Truth() skylark.Bool     { return skylark.True }
@@ -2242,8 +2387,8 @@ func (t Endpoints) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t Endpoints) AttrNames() []string { return Endpoints_attrs }
 func (t Endpoints) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Endpoints_fields, Endpoints_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Endpoints_fields, Endpoints_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2252,7 +2397,7 @@ func (t Endpoints) SetField(name string, value skylark.Value) error {
 }
 
 type EndpointsList struct {
-	V *v1.EndpointsList
+	V *core.EndpointsList
 }
 
 var (
@@ -2264,12 +2409,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EndpointsList)(nil)).Elem()
+	t := reflect.TypeOf((*core.EndpointsList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EndpointsList:
+		case *core.EndpointsList:
 			return EndpointsList{V: v}
-		case v1.EndpointsList:
+		case core.EndpointsList:
 			return EndpointsList{V: &v}
 		default:
 			return skylark.None
@@ -2280,11 +2425,14 @@ func init() {
 }
 
 func createEndpointsList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EndpointsList
+	box := EndpointsList{V: &core.EndpointsList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EndpointsList) Underlying() interface{} { return t.V }
-func (t EndpointsList) Package() util.Package   { return util.V1 }
-func (t EndpointsList) Type() string            { return "k8s_v1_EndpointsList" }
+func (t EndpointsList) DeepCopy() boxed         { return EndpointsList{V: t.V.DeepCopy()} }
+func (t EndpointsList) Package() util.Package   { return util.Core }
+func (t EndpointsList) Type() string            { return "k8s_core_EndpointsList" }
 func (t EndpointsList) String() string          { return t.V.String() }
 func (t EndpointsList) Freeze()                 {} // TODO
 func (t EndpointsList) Truth() skylark.Bool     { return skylark.True }
@@ -2295,8 +2443,8 @@ func (t EndpointsList) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t EndpointsList) AttrNames() []string { return EndpointsList_attrs }
 func (t EndpointsList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EndpointsList_fields, EndpointsList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EndpointsList_fields, EndpointsList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2305,7 +2453,7 @@ func (t EndpointsList) SetField(name string, value skylark.Value) error {
 }
 
 type EnvFromSource struct {
-	V *v1.EnvFromSource
+	V *core.EnvFromSource
 }
 
 var (
@@ -2317,12 +2465,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EnvFromSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.EnvFromSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EnvFromSource:
+		case *core.EnvFromSource:
 			return EnvFromSource{V: v}
-		case v1.EnvFromSource:
+		case core.EnvFromSource:
 			return EnvFromSource{V: &v}
 		default:
 			return skylark.None
@@ -2333,11 +2481,14 @@ func init() {
 }
 
 func createEnvFromSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EnvFromSource
+	box := EnvFromSource{V: &core.EnvFromSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EnvFromSource) Underlying() interface{} { return t.V }
-func (t EnvFromSource) Package() util.Package   { return util.V1 }
-func (t EnvFromSource) Type() string            { return "k8s_v1_EnvFromSource" }
+func (t EnvFromSource) DeepCopy() boxed         { return EnvFromSource{V: t.V.DeepCopy()} }
+func (t EnvFromSource) Package() util.Package   { return util.Core }
+func (t EnvFromSource) Type() string            { return "k8s_core_EnvFromSource" }
 func (t EnvFromSource) String() string          { return t.V.String() }
 func (t EnvFromSource) Freeze()                 {} // TODO
 func (t EnvFromSource) Truth() skylark.Bool     { return skylark.True }
@@ -2348,8 +2499,8 @@ func (t EnvFromSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t EnvFromSource) AttrNames() []string { return EnvFromSource_attrs }
 func (t EnvFromSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EnvFromSource_fields, EnvFromSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EnvFromSource_fields, EnvFromSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2358,7 +2509,7 @@ func (t EnvFromSource) SetField(name string, value skylark.Value) error {
 }
 
 type EnvVar struct {
-	V *v1.EnvVar
+	V *core.EnvVar
 }
 
 var (
@@ -2370,12 +2521,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EnvVar)(nil)).Elem()
+	t := reflect.TypeOf((*core.EnvVar)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EnvVar:
+		case *core.EnvVar:
 			return EnvVar{V: v}
-		case v1.EnvVar:
+		case core.EnvVar:
 			return EnvVar{V: &v}
 		default:
 			return skylark.None
@@ -2386,11 +2537,14 @@ func init() {
 }
 
 func createEnvVar(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EnvVar
+	box := EnvVar{V: &core.EnvVar{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EnvVar) Underlying() interface{} { return t.V }
-func (t EnvVar) Package() util.Package   { return util.V1 }
-func (t EnvVar) Type() string            { return "k8s_v1_EnvVar" }
+func (t EnvVar) DeepCopy() boxed         { return EnvVar{V: t.V.DeepCopy()} }
+func (t EnvVar) Package() util.Package   { return util.Core }
+func (t EnvVar) Type() string            { return "k8s_core_EnvVar" }
 func (t EnvVar) String() string          { return t.V.String() }
 func (t EnvVar) Freeze()                 {} // TODO
 func (t EnvVar) Truth() skylark.Bool     { return skylark.True }
@@ -2401,8 +2555,8 @@ func (t EnvVar) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (b
 }
 func (t EnvVar) AttrNames() []string { return EnvVar_attrs }
 func (t EnvVar) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EnvVar_fields, EnvVar_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EnvVar_fields, EnvVar_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2411,7 +2565,7 @@ func (t EnvVar) SetField(name string, value skylark.Value) error {
 }
 
 type EnvVarSource struct {
-	V *v1.EnvVarSource
+	V *core.EnvVarSource
 }
 
 var (
@@ -2423,12 +2577,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EnvVarSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.EnvVarSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EnvVarSource:
+		case *core.EnvVarSource:
 			return EnvVarSource{V: v}
-		case v1.EnvVarSource:
+		case core.EnvVarSource:
 			return EnvVarSource{V: &v}
 		default:
 			return skylark.None
@@ -2439,11 +2593,14 @@ func init() {
 }
 
 func createEnvVarSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EnvVarSource
+	box := EnvVarSource{V: &core.EnvVarSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EnvVarSource) Underlying() interface{} { return t.V }
-func (t EnvVarSource) Package() util.Package   { return util.V1 }
-func (t EnvVarSource) Type() string            { return "k8s_v1_EnvVarSource" }
+func (t EnvVarSource) DeepCopy() boxed         { return EnvVarSource{V: t.V.DeepCopy()} }
+func (t EnvVarSource) Package() util.Package   { return util.Core }
+func (t EnvVarSource) Type() string            { return "k8s_core_EnvVarSource" }
 func (t EnvVarSource) String() string          { return t.V.String() }
 func (t EnvVarSource) Freeze()                 {} // TODO
 func (t EnvVarSource) Truth() skylark.Bool     { return skylark.True }
@@ -2454,8 +2611,8 @@ func (t EnvVarSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t EnvVarSource) AttrNames() []string { return EnvVarSource_attrs }
 func (t EnvVarSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EnvVarSource_fields, EnvVarSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EnvVarSource_fields, EnvVarSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2464,7 +2621,7 @@ func (t EnvVarSource) SetField(name string, value skylark.Value) error {
 }
 
 type Event struct {
-	V *v1.Event
+	V *core.Event
 }
 
 var (
@@ -2476,12 +2633,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Event)(nil)).Elem()
+	t := reflect.TypeOf((*core.Event)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Event:
+		case *core.Event:
 			return Event{V: v}
-		case v1.Event:
+		case core.Event:
 			return Event{V: &v}
 		default:
 			return skylark.None
@@ -2492,11 +2649,14 @@ func init() {
 }
 
 func createEvent(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Event
+	box := Event{V: &core.Event{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Event) Underlying() interface{} { return t.V }
-func (t Event) Package() util.Package   { return util.V1 }
-func (t Event) Type() string            { return "k8s_v1_Event" }
+func (t Event) DeepCopy() boxed         { return Event{V: t.V.DeepCopy()} }
+func (t Event) Package() util.Package   { return util.Core }
+func (t Event) Type() string            { return "k8s_core_Event" }
 func (t Event) String() string          { return t.V.String() }
 func (t Event) Freeze()                 {} // TODO
 func (t Event) Truth() skylark.Bool     { return skylark.True }
@@ -2507,8 +2667,8 @@ func (t Event) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bo
 }
 func (t Event) AttrNames() []string { return Event_attrs }
 func (t Event) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Event_fields, Event_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Event_fields, Event_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2517,7 +2677,7 @@ func (t Event) SetField(name string, value skylark.Value) error {
 }
 
 type EventList struct {
-	V *v1.EventList
+	V *core.EventList
 }
 
 var (
@@ -2529,12 +2689,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EventList)(nil)).Elem()
+	t := reflect.TypeOf((*core.EventList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EventList:
+		case *core.EventList:
 			return EventList{V: v}
-		case v1.EventList:
+		case core.EventList:
 			return EventList{V: &v}
 		default:
 			return skylark.None
@@ -2545,11 +2705,14 @@ func init() {
 }
 
 func createEventList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EventList
+	box := EventList{V: &core.EventList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EventList) Underlying() interface{} { return t.V }
-func (t EventList) Package() util.Package   { return util.V1 }
-func (t EventList) Type() string            { return "k8s_v1_EventList" }
+func (t EventList) DeepCopy() boxed         { return EventList{V: t.V.DeepCopy()} }
+func (t EventList) Package() util.Package   { return util.Core }
+func (t EventList) Type() string            { return "k8s_core_EventList" }
 func (t EventList) String() string          { return t.V.String() }
 func (t EventList) Freeze()                 {} // TODO
 func (t EventList) Truth() skylark.Bool     { return skylark.True }
@@ -2560,8 +2723,8 @@ func (t EventList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t EventList) AttrNames() []string { return EventList_attrs }
 func (t EventList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EventList_fields, EventList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EventList_fields, EventList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2570,7 +2733,7 @@ func (t EventList) SetField(name string, value skylark.Value) error {
 }
 
 type EventSeries struct {
-	V *v1.EventSeries
+	V *core.EventSeries
 }
 
 var (
@@ -2582,12 +2745,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EventSeries)(nil)).Elem()
+	t := reflect.TypeOf((*core.EventSeries)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EventSeries:
+		case *core.EventSeries:
 			return EventSeries{V: v}
-		case v1.EventSeries:
+		case core.EventSeries:
 			return EventSeries{V: &v}
 		default:
 			return skylark.None
@@ -2598,11 +2761,14 @@ func init() {
 }
 
 func createEventSeries(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EventSeries
+	box := EventSeries{V: &core.EventSeries{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EventSeries) Underlying() interface{} { return t.V }
-func (t EventSeries) Package() util.Package   { return util.V1 }
-func (t EventSeries) Type() string            { return "k8s_v1_EventSeries" }
+func (t EventSeries) DeepCopy() boxed         { return EventSeries{V: t.V.DeepCopy()} }
+func (t EventSeries) Package() util.Package   { return util.Core }
+func (t EventSeries) Type() string            { return "k8s_core_EventSeries" }
 func (t EventSeries) String() string          { return t.V.String() }
 func (t EventSeries) Freeze()                 {} // TODO
 func (t EventSeries) Truth() skylark.Bool     { return skylark.True }
@@ -2613,8 +2779,8 @@ func (t EventSeries) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t EventSeries) AttrNames() []string { return EventSeries_attrs }
 func (t EventSeries) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EventSeries_fields, EventSeries_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EventSeries_fields, EventSeries_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2623,7 +2789,7 @@ func (t EventSeries) SetField(name string, value skylark.Value) error {
 }
 
 type EventSource struct {
-	V *v1.EventSource
+	V *core.EventSource
 }
 
 var (
@@ -2635,12 +2801,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.EventSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.EventSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.EventSource:
+		case *core.EventSource:
 			return EventSource{V: v}
-		case v1.EventSource:
+		case core.EventSource:
 			return EventSource{V: &v}
 		default:
 			return skylark.None
@@ -2651,11 +2817,14 @@ func init() {
 }
 
 func createEventSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for EventSource
+	box := EventSource{V: &core.EventSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t EventSource) Underlying() interface{} { return t.V }
-func (t EventSource) Package() util.Package   { return util.V1 }
-func (t EventSource) Type() string            { return "k8s_v1_EventSource" }
+func (t EventSource) DeepCopy() boxed         { return EventSource{V: t.V.DeepCopy()} }
+func (t EventSource) Package() util.Package   { return util.Core }
+func (t EventSource) Type() string            { return "k8s_core_EventSource" }
 func (t EventSource) String() string          { return t.V.String() }
 func (t EventSource) Freeze()                 {} // TODO
 func (t EventSource) Truth() skylark.Bool     { return skylark.True }
@@ -2666,8 +2835,8 @@ func (t EventSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t EventSource) AttrNames() []string { return EventSource_attrs }
 func (t EventSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, EventSource_fields, EventSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, EventSource_fields, EventSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2676,7 +2845,7 @@ func (t EventSource) SetField(name string, value skylark.Value) error {
 }
 
 type ExecAction struct {
-	V *v1.ExecAction
+	V *core.ExecAction
 }
 
 var (
@@ -2688,12 +2857,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ExecAction)(nil)).Elem()
+	t := reflect.TypeOf((*core.ExecAction)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ExecAction:
+		case *core.ExecAction:
 			return ExecAction{V: v}
-		case v1.ExecAction:
+		case core.ExecAction:
 			return ExecAction{V: &v}
 		default:
 			return skylark.None
@@ -2704,11 +2873,14 @@ func init() {
 }
 
 func createExecAction(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ExecAction
+	box := ExecAction{V: &core.ExecAction{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ExecAction) Underlying() interface{} { return t.V }
-func (t ExecAction) Package() util.Package   { return util.V1 }
-func (t ExecAction) Type() string            { return "k8s_v1_ExecAction" }
+func (t ExecAction) DeepCopy() boxed         { return ExecAction{V: t.V.DeepCopy()} }
+func (t ExecAction) Package() util.Package   { return util.Core }
+func (t ExecAction) Type() string            { return "k8s_core_ExecAction" }
 func (t ExecAction) String() string          { return t.V.String() }
 func (t ExecAction) Freeze()                 {} // TODO
 func (t ExecAction) Truth() skylark.Bool     { return skylark.True }
@@ -2719,8 +2891,8 @@ func (t ExecAction) CompareSameType(op syntax.Token, y_ skylark.Value, depth int
 }
 func (t ExecAction) AttrNames() []string { return ExecAction_attrs }
 func (t ExecAction) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ExecAction_fields, ExecAction_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ExecAction_fields, ExecAction_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2729,7 +2901,7 @@ func (t ExecAction) SetField(name string, value skylark.Value) error {
 }
 
 type FCVolumeSource struct {
-	V *v1.FCVolumeSource
+	V *core.FCVolumeSource
 }
 
 var (
@@ -2741,12 +2913,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.FCVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.FCVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.FCVolumeSource:
+		case *core.FCVolumeSource:
 			return FCVolumeSource{V: v}
-		case v1.FCVolumeSource:
+		case core.FCVolumeSource:
 			return FCVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -2757,11 +2929,14 @@ func init() {
 }
 
 func createFCVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for FCVolumeSource
+	box := FCVolumeSource{V: &core.FCVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t FCVolumeSource) Underlying() interface{} { return t.V }
-func (t FCVolumeSource) Package() util.Package   { return util.V1 }
-func (t FCVolumeSource) Type() string            { return "k8s_v1_FCVolumeSource" }
+func (t FCVolumeSource) DeepCopy() boxed         { return FCVolumeSource{V: t.V.DeepCopy()} }
+func (t FCVolumeSource) Package() util.Package   { return util.Core }
+func (t FCVolumeSource) Type() string            { return "k8s_core_FCVolumeSource" }
 func (t FCVolumeSource) String() string          { return t.V.String() }
 func (t FCVolumeSource) Freeze()                 {} // TODO
 func (t FCVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -2772,8 +2947,8 @@ func (t FCVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t FCVolumeSource) AttrNames() []string { return FCVolumeSource_attrs }
 func (t FCVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, FCVolumeSource_fields, FCVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, FCVolumeSource_fields, FCVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2782,7 +2957,7 @@ func (t FCVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type FlexPersistentVolumeSource struct {
-	V *v1.FlexPersistentVolumeSource
+	V *core.FlexPersistentVolumeSource
 }
 
 var (
@@ -2794,12 +2969,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.FlexPersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.FlexPersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.FlexPersistentVolumeSource:
+		case *core.FlexPersistentVolumeSource:
 			return FlexPersistentVolumeSource{V: v}
-		case v1.FlexPersistentVolumeSource:
+		case core.FlexPersistentVolumeSource:
 			return FlexPersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -2810,23 +2985,28 @@ func init() {
 }
 
 func createFlexPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for FlexPersistentVolumeSource
+	box := FlexPersistentVolumeSource{V: &core.FlexPersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t FlexPersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t FlexPersistentVolumeSource) Package() util.Package   { return util.V1 }
-func (t FlexPersistentVolumeSource) Type() string            { return "k8s_v1_FlexPersistentVolumeSource" }
-func (t FlexPersistentVolumeSource) String() string          { return t.V.String() }
-func (t FlexPersistentVolumeSource) Freeze()                 {} // TODO
-func (t FlexPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
-func (t FlexPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t FlexPersistentVolumeSource) DeepCopy() boxed {
+	return FlexPersistentVolumeSource{V: t.V.DeepCopy()}
+}
+func (t FlexPersistentVolumeSource) Package() util.Package { return util.Core }
+func (t FlexPersistentVolumeSource) Type() string          { return "k8s_core_FlexPersistentVolumeSource" }
+func (t FlexPersistentVolumeSource) String() string        { return t.V.String() }
+func (t FlexPersistentVolumeSource) Freeze()               {} // TODO
+func (t FlexPersistentVolumeSource) Truth() skylark.Bool   { return skylark.True }
+func (t FlexPersistentVolumeSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t FlexPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*FlexPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t FlexPersistentVolumeSource) AttrNames() []string { return FlexPersistentVolumeSource_attrs }
 func (t FlexPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, FlexPersistentVolumeSource_fields, FlexPersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, FlexPersistentVolumeSource_fields, FlexPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2835,7 +3015,7 @@ func (t FlexPersistentVolumeSource) SetField(name string, value skylark.Value) e
 }
 
 type FlexVolumeSource struct {
-	V *v1.FlexVolumeSource
+	V *core.FlexVolumeSource
 }
 
 var (
@@ -2847,12 +3027,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.FlexVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.FlexVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.FlexVolumeSource:
+		case *core.FlexVolumeSource:
 			return FlexVolumeSource{V: v}
-		case v1.FlexVolumeSource:
+		case core.FlexVolumeSource:
 			return FlexVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -2863,11 +3043,14 @@ func init() {
 }
 
 func createFlexVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for FlexVolumeSource
+	box := FlexVolumeSource{V: &core.FlexVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t FlexVolumeSource) Underlying() interface{} { return t.V }
-func (t FlexVolumeSource) Package() util.Package   { return util.V1 }
-func (t FlexVolumeSource) Type() string            { return "k8s_v1_FlexVolumeSource" }
+func (t FlexVolumeSource) DeepCopy() boxed         { return FlexVolumeSource{V: t.V.DeepCopy()} }
+func (t FlexVolumeSource) Package() util.Package   { return util.Core }
+func (t FlexVolumeSource) Type() string            { return "k8s_core_FlexVolumeSource" }
 func (t FlexVolumeSource) String() string          { return t.V.String() }
 func (t FlexVolumeSource) Freeze()                 {} // TODO
 func (t FlexVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -2878,8 +3061,8 @@ func (t FlexVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t FlexVolumeSource) AttrNames() []string { return FlexVolumeSource_attrs }
 func (t FlexVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, FlexVolumeSource_fields, FlexVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, FlexVolumeSource_fields, FlexVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2888,7 +3071,7 @@ func (t FlexVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type FlockerVolumeSource struct {
-	V *v1.FlockerVolumeSource
+	V *core.FlockerVolumeSource
 }
 
 var (
@@ -2900,12 +3083,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.FlockerVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.FlockerVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.FlockerVolumeSource:
+		case *core.FlockerVolumeSource:
 			return FlockerVolumeSource{V: v}
-		case v1.FlockerVolumeSource:
+		case core.FlockerVolumeSource:
 			return FlockerVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -2916,11 +3099,14 @@ func init() {
 }
 
 func createFlockerVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for FlockerVolumeSource
+	box := FlockerVolumeSource{V: &core.FlockerVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t FlockerVolumeSource) Underlying() interface{} { return t.V }
-func (t FlockerVolumeSource) Package() util.Package   { return util.V1 }
-func (t FlockerVolumeSource) Type() string            { return "k8s_v1_FlockerVolumeSource" }
+func (t FlockerVolumeSource) DeepCopy() boxed         { return FlockerVolumeSource{V: t.V.DeepCopy()} }
+func (t FlockerVolumeSource) Package() util.Package   { return util.Core }
+func (t FlockerVolumeSource) Type() string            { return "k8s_core_FlockerVolumeSource" }
 func (t FlockerVolumeSource) String() string          { return t.V.String() }
 func (t FlockerVolumeSource) Freeze()                 {} // TODO
 func (t FlockerVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -2931,8 +3117,8 @@ func (t FlockerVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t FlockerVolumeSource) AttrNames() []string { return FlockerVolumeSource_attrs }
 func (t FlockerVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, FlockerVolumeSource_fields, FlockerVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, FlockerVolumeSource_fields, FlockerVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2941,7 +3127,7 @@ func (t FlockerVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type GCEPersistentDiskVolumeSource struct {
-	V *v1.GCEPersistentDiskVolumeSource
+	V *core.GCEPersistentDiskVolumeSource
 }
 
 var (
@@ -2953,12 +3139,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.GCEPersistentDiskVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.GCEPersistentDiskVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.GCEPersistentDiskVolumeSource:
+		case *core.GCEPersistentDiskVolumeSource:
 			return GCEPersistentDiskVolumeSource{V: v}
-		case v1.GCEPersistentDiskVolumeSource:
+		case core.GCEPersistentDiskVolumeSource:
 			return GCEPersistentDiskVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -2969,15 +3155,20 @@ func init() {
 }
 
 func createGCEPersistentDiskVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GCEPersistentDiskVolumeSource
+	box := GCEPersistentDiskVolumeSource{V: &core.GCEPersistentDiskVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GCEPersistentDiskVolumeSource) Underlying() interface{} { return t.V }
-func (t GCEPersistentDiskVolumeSource) Package() util.Package   { return util.V1 }
-func (t GCEPersistentDiskVolumeSource) Type() string            { return "k8s_v1_GCEPersistentDiskVolumeSource" }
-func (t GCEPersistentDiskVolumeSource) String() string          { return t.V.String() }
-func (t GCEPersistentDiskVolumeSource) Freeze()                 {} // TODO
-func (t GCEPersistentDiskVolumeSource) Truth() skylark.Bool     { return skylark.True }
-func (t GCEPersistentDiskVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t GCEPersistentDiskVolumeSource) DeepCopy() boxed {
+	return GCEPersistentDiskVolumeSource{V: t.V.DeepCopy()}
+}
+func (t GCEPersistentDiskVolumeSource) Package() util.Package { return util.Core }
+func (t GCEPersistentDiskVolumeSource) Type() string          { return "k8s_core_GCEPersistentDiskVolumeSource" }
+func (t GCEPersistentDiskVolumeSource) String() string        { return t.V.String() }
+func (t GCEPersistentDiskVolumeSource) Freeze()               {} // TODO
+func (t GCEPersistentDiskVolumeSource) Truth() skylark.Bool   { return skylark.True }
+func (t GCEPersistentDiskVolumeSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t GCEPersistentDiskVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*GCEPersistentDiskVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -2986,8 +3177,8 @@ func (t GCEPersistentDiskVolumeSource) AttrNames() []string {
 	return GCEPersistentDiskVolumeSource_attrs
 }
 func (t GCEPersistentDiskVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GCEPersistentDiskVolumeSource_fields, GCEPersistentDiskVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GCEPersistentDiskVolumeSource_fields, GCEPersistentDiskVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -2996,7 +3187,7 @@ func (t GCEPersistentDiskVolumeSource) SetField(name string, value skylark.Value
 }
 
 type GitRepoVolumeSource struct {
-	V *v1.GitRepoVolumeSource
+	V *core.GitRepoVolumeSource
 }
 
 var (
@@ -3008,12 +3199,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.GitRepoVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.GitRepoVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.GitRepoVolumeSource:
+		case *core.GitRepoVolumeSource:
 			return GitRepoVolumeSource{V: v}
-		case v1.GitRepoVolumeSource:
+		case core.GitRepoVolumeSource:
 			return GitRepoVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -3024,11 +3215,14 @@ func init() {
 }
 
 func createGitRepoVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GitRepoVolumeSource
+	box := GitRepoVolumeSource{V: &core.GitRepoVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GitRepoVolumeSource) Underlying() interface{} { return t.V }
-func (t GitRepoVolumeSource) Package() util.Package   { return util.V1 }
-func (t GitRepoVolumeSource) Type() string            { return "k8s_v1_GitRepoVolumeSource" }
+func (t GitRepoVolumeSource) DeepCopy() boxed         { return GitRepoVolumeSource{V: t.V.DeepCopy()} }
+func (t GitRepoVolumeSource) Package() util.Package   { return util.Core }
+func (t GitRepoVolumeSource) Type() string            { return "k8s_core_GitRepoVolumeSource" }
 func (t GitRepoVolumeSource) String() string          { return t.V.String() }
 func (t GitRepoVolumeSource) Freeze()                 {} // TODO
 func (t GitRepoVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -3039,8 +3233,8 @@ func (t GitRepoVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t GitRepoVolumeSource) AttrNames() []string { return GitRepoVolumeSource_attrs }
 func (t GitRepoVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GitRepoVolumeSource_fields, GitRepoVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GitRepoVolumeSource_fields, GitRepoVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3049,7 +3243,7 @@ func (t GitRepoVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type GlusterfsVolumeSource struct {
-	V *v1.GlusterfsVolumeSource
+	V *core.GlusterfsVolumeSource
 }
 
 var (
@@ -3061,12 +3255,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.GlusterfsVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.GlusterfsVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.GlusterfsVolumeSource:
+		case *core.GlusterfsVolumeSource:
 			return GlusterfsVolumeSource{V: v}
-		case v1.GlusterfsVolumeSource:
+		case core.GlusterfsVolumeSource:
 			return GlusterfsVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -3077,11 +3271,14 @@ func init() {
 }
 
 func createGlusterfsVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GlusterfsVolumeSource
+	box := GlusterfsVolumeSource{V: &core.GlusterfsVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GlusterfsVolumeSource) Underlying() interface{} { return t.V }
-func (t GlusterfsVolumeSource) Package() util.Package   { return util.V1 }
-func (t GlusterfsVolumeSource) Type() string            { return "k8s_v1_GlusterfsVolumeSource" }
+func (t GlusterfsVolumeSource) DeepCopy() boxed         { return GlusterfsVolumeSource{V: t.V.DeepCopy()} }
+func (t GlusterfsVolumeSource) Package() util.Package   { return util.Core }
+func (t GlusterfsVolumeSource) Type() string            { return "k8s_core_GlusterfsVolumeSource" }
 func (t GlusterfsVolumeSource) String() string          { return t.V.String() }
 func (t GlusterfsVolumeSource) Freeze()                 {} // TODO
 func (t GlusterfsVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -3092,8 +3289,8 @@ func (t GlusterfsVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t GlusterfsVolumeSource) AttrNames() []string { return GlusterfsVolumeSource_attrs }
 func (t GlusterfsVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GlusterfsVolumeSource_fields, GlusterfsVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GlusterfsVolumeSource_fields, GlusterfsVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3102,7 +3299,7 @@ func (t GlusterfsVolumeSource) SetField(name string, value skylark.Value) error 
 }
 
 type HTTPGetAction struct {
-	V *v1.HTTPGetAction
+	V *core.HTTPGetAction
 }
 
 var (
@@ -3114,12 +3311,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.HTTPGetAction)(nil)).Elem()
+	t := reflect.TypeOf((*core.HTTPGetAction)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.HTTPGetAction:
+		case *core.HTTPGetAction:
 			return HTTPGetAction{V: v}
-		case v1.HTTPGetAction:
+		case core.HTTPGetAction:
 			return HTTPGetAction{V: &v}
 		default:
 			return skylark.None
@@ -3130,11 +3327,14 @@ func init() {
 }
 
 func createHTTPGetAction(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for HTTPGetAction
+	box := HTTPGetAction{V: &core.HTTPGetAction{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t HTTPGetAction) Underlying() interface{} { return t.V }
-func (t HTTPGetAction) Package() util.Package   { return util.V1 }
-func (t HTTPGetAction) Type() string            { return "k8s_v1_HTTPGetAction" }
+func (t HTTPGetAction) DeepCopy() boxed         { return HTTPGetAction{V: t.V.DeepCopy()} }
+func (t HTTPGetAction) Package() util.Package   { return util.Core }
+func (t HTTPGetAction) Type() string            { return "k8s_core_HTTPGetAction" }
 func (t HTTPGetAction) String() string          { return t.V.String() }
 func (t HTTPGetAction) Freeze()                 {} // TODO
 func (t HTTPGetAction) Truth() skylark.Bool     { return skylark.True }
@@ -3145,8 +3345,8 @@ func (t HTTPGetAction) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t HTTPGetAction) AttrNames() []string { return HTTPGetAction_attrs }
 func (t HTTPGetAction) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, HTTPGetAction_fields, HTTPGetAction_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, HTTPGetAction_fields, HTTPGetAction_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3155,7 +3355,7 @@ func (t HTTPGetAction) SetField(name string, value skylark.Value) error {
 }
 
 type HTTPHeader struct {
-	V *v1.HTTPHeader
+	V *core.HTTPHeader
 }
 
 var (
@@ -3167,12 +3367,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.HTTPHeader)(nil)).Elem()
+	t := reflect.TypeOf((*core.HTTPHeader)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.HTTPHeader:
+		case *core.HTTPHeader:
 			return HTTPHeader{V: v}
-		case v1.HTTPHeader:
+		case core.HTTPHeader:
 			return HTTPHeader{V: &v}
 		default:
 			return skylark.None
@@ -3183,11 +3383,14 @@ func init() {
 }
 
 func createHTTPHeader(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for HTTPHeader
+	box := HTTPHeader{V: &core.HTTPHeader{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t HTTPHeader) Underlying() interface{} { return t.V }
-func (t HTTPHeader) Package() util.Package   { return util.V1 }
-func (t HTTPHeader) Type() string            { return "k8s_v1_HTTPHeader" }
+func (t HTTPHeader) DeepCopy() boxed         { return HTTPHeader{V: t.V.DeepCopy()} }
+func (t HTTPHeader) Package() util.Package   { return util.Core }
+func (t HTTPHeader) Type() string            { return "k8s_core_HTTPHeader" }
 func (t HTTPHeader) String() string          { return t.V.String() }
 func (t HTTPHeader) Freeze()                 {} // TODO
 func (t HTTPHeader) Truth() skylark.Bool     { return skylark.True }
@@ -3198,8 +3401,8 @@ func (t HTTPHeader) CompareSameType(op syntax.Token, y_ skylark.Value, depth int
 }
 func (t HTTPHeader) AttrNames() []string { return HTTPHeader_attrs }
 func (t HTTPHeader) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, HTTPHeader_fields, HTTPHeader_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, HTTPHeader_fields, HTTPHeader_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3208,7 +3411,7 @@ func (t HTTPHeader) SetField(name string, value skylark.Value) error {
 }
 
 type Handler struct {
-	V *v1.Handler
+	V *core.Handler
 }
 
 var (
@@ -3220,12 +3423,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Handler)(nil)).Elem()
+	t := reflect.TypeOf((*core.Handler)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Handler:
+		case *core.Handler:
 			return Handler{V: v}
-		case v1.Handler:
+		case core.Handler:
 			return Handler{V: &v}
 		default:
 			return skylark.None
@@ -3236,11 +3439,14 @@ func init() {
 }
 
 func createHandler(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Handler
+	box := Handler{V: &core.Handler{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Handler) Underlying() interface{} { return t.V }
-func (t Handler) Package() util.Package   { return util.V1 }
-func (t Handler) Type() string            { return "k8s_v1_Handler" }
+func (t Handler) DeepCopy() boxed         { return Handler{V: t.V.DeepCopy()} }
+func (t Handler) Package() util.Package   { return util.Core }
+func (t Handler) Type() string            { return "k8s_core_Handler" }
 func (t Handler) String() string          { return t.V.String() }
 func (t Handler) Freeze()                 {} // TODO
 func (t Handler) Truth() skylark.Bool     { return skylark.True }
@@ -3251,8 +3457,8 @@ func (t Handler) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (
 }
 func (t Handler) AttrNames() []string { return Handler_attrs }
 func (t Handler) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Handler_fields, Handler_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Handler_fields, Handler_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3261,7 +3467,7 @@ func (t Handler) SetField(name string, value skylark.Value) error {
 }
 
 type HostAlias struct {
-	V *v1.HostAlias
+	V *core.HostAlias
 }
 
 var (
@@ -3273,12 +3479,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.HostAlias)(nil)).Elem()
+	t := reflect.TypeOf((*core.HostAlias)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.HostAlias:
+		case *core.HostAlias:
 			return HostAlias{V: v}
-		case v1.HostAlias:
+		case core.HostAlias:
 			return HostAlias{V: &v}
 		default:
 			return skylark.None
@@ -3289,11 +3495,14 @@ func init() {
 }
 
 func createHostAlias(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for HostAlias
+	box := HostAlias{V: &core.HostAlias{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t HostAlias) Underlying() interface{} { return t.V }
-func (t HostAlias) Package() util.Package   { return util.V1 }
-func (t HostAlias) Type() string            { return "k8s_v1_HostAlias" }
+func (t HostAlias) DeepCopy() boxed         { return HostAlias{V: t.V.DeepCopy()} }
+func (t HostAlias) Package() util.Package   { return util.Core }
+func (t HostAlias) Type() string            { return "k8s_core_HostAlias" }
 func (t HostAlias) String() string          { return t.V.String() }
 func (t HostAlias) Freeze()                 {} // TODO
 func (t HostAlias) Truth() skylark.Bool     { return skylark.True }
@@ -3304,8 +3513,8 @@ func (t HostAlias) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t HostAlias) AttrNames() []string { return HostAlias_attrs }
 func (t HostAlias) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, HostAlias_fields, HostAlias_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, HostAlias_fields, HostAlias_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3314,7 +3523,7 @@ func (t HostAlias) SetField(name string, value skylark.Value) error {
 }
 
 type HostPathVolumeSource struct {
-	V *v1.HostPathVolumeSource
+	V *core.HostPathVolumeSource
 }
 
 var (
@@ -3326,12 +3535,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.HostPathVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.HostPathVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.HostPathVolumeSource:
+		case *core.HostPathVolumeSource:
 			return HostPathVolumeSource{V: v}
-		case v1.HostPathVolumeSource:
+		case core.HostPathVolumeSource:
 			return HostPathVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -3342,11 +3551,14 @@ func init() {
 }
 
 func createHostPathVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for HostPathVolumeSource
+	box := HostPathVolumeSource{V: &core.HostPathVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t HostPathVolumeSource) Underlying() interface{} { return t.V }
-func (t HostPathVolumeSource) Package() util.Package   { return util.V1 }
-func (t HostPathVolumeSource) Type() string            { return "k8s_v1_HostPathVolumeSource" }
+func (t HostPathVolumeSource) DeepCopy() boxed         { return HostPathVolumeSource{V: t.V.DeepCopy()} }
+func (t HostPathVolumeSource) Package() util.Package   { return util.Core }
+func (t HostPathVolumeSource) Type() string            { return "k8s_core_HostPathVolumeSource" }
 func (t HostPathVolumeSource) String() string          { return t.V.String() }
 func (t HostPathVolumeSource) Freeze()                 {} // TODO
 func (t HostPathVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -3357,8 +3569,8 @@ func (t HostPathVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t HostPathVolumeSource) AttrNames() []string { return HostPathVolumeSource_attrs }
 func (t HostPathVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, HostPathVolumeSource_fields, HostPathVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, HostPathVolumeSource_fields, HostPathVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3367,7 +3579,7 @@ func (t HostPathVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type ISCSIPersistentVolumeSource struct {
-	V *v1.ISCSIPersistentVolumeSource
+	V *core.ISCSIPersistentVolumeSource
 }
 
 var (
@@ -3379,12 +3591,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ISCSIPersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.ISCSIPersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ISCSIPersistentVolumeSource:
+		case *core.ISCSIPersistentVolumeSource:
 			return ISCSIPersistentVolumeSource{V: v}
-		case v1.ISCSIPersistentVolumeSource:
+		case core.ISCSIPersistentVolumeSource:
 			return ISCSIPersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -3395,23 +3607,28 @@ func init() {
 }
 
 func createISCSIPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ISCSIPersistentVolumeSource
+	box := ISCSIPersistentVolumeSource{V: &core.ISCSIPersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ISCSIPersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t ISCSIPersistentVolumeSource) Package() util.Package   { return util.V1 }
-func (t ISCSIPersistentVolumeSource) Type() string            { return "k8s_v1_ISCSIPersistentVolumeSource" }
-func (t ISCSIPersistentVolumeSource) String() string          { return t.V.String() }
-func (t ISCSIPersistentVolumeSource) Freeze()                 {} // TODO
-func (t ISCSIPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
-func (t ISCSIPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ISCSIPersistentVolumeSource) DeepCopy() boxed {
+	return ISCSIPersistentVolumeSource{V: t.V.DeepCopy()}
+}
+func (t ISCSIPersistentVolumeSource) Package() util.Package { return util.Core }
+func (t ISCSIPersistentVolumeSource) Type() string          { return "k8s_core_ISCSIPersistentVolumeSource" }
+func (t ISCSIPersistentVolumeSource) String() string        { return t.V.String() }
+func (t ISCSIPersistentVolumeSource) Freeze()               {} // TODO
+func (t ISCSIPersistentVolumeSource) Truth() skylark.Bool   { return skylark.True }
+func (t ISCSIPersistentVolumeSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t ISCSIPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ISCSIPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t ISCSIPersistentVolumeSource) AttrNames() []string { return ISCSIPersistentVolumeSource_attrs }
 func (t ISCSIPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ISCSIPersistentVolumeSource_fields, ISCSIPersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ISCSIPersistentVolumeSource_fields, ISCSIPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3420,7 +3637,7 @@ func (t ISCSIPersistentVolumeSource) SetField(name string, value skylark.Value) 
 }
 
 type ISCSIVolumeSource struct {
-	V *v1.ISCSIVolumeSource
+	V *core.ISCSIVolumeSource
 }
 
 var (
@@ -3432,12 +3649,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ISCSIVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.ISCSIVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ISCSIVolumeSource:
+		case *core.ISCSIVolumeSource:
 			return ISCSIVolumeSource{V: v}
-		case v1.ISCSIVolumeSource:
+		case core.ISCSIVolumeSource:
 			return ISCSIVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -3448,11 +3665,14 @@ func init() {
 }
 
 func createISCSIVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ISCSIVolumeSource
+	box := ISCSIVolumeSource{V: &core.ISCSIVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ISCSIVolumeSource) Underlying() interface{} { return t.V }
-func (t ISCSIVolumeSource) Package() util.Package   { return util.V1 }
-func (t ISCSIVolumeSource) Type() string            { return "k8s_v1_ISCSIVolumeSource" }
+func (t ISCSIVolumeSource) DeepCopy() boxed         { return ISCSIVolumeSource{V: t.V.DeepCopy()} }
+func (t ISCSIVolumeSource) Package() util.Package   { return util.Core }
+func (t ISCSIVolumeSource) Type() string            { return "k8s_core_ISCSIVolumeSource" }
 func (t ISCSIVolumeSource) String() string          { return t.V.String() }
 func (t ISCSIVolumeSource) Freeze()                 {} // TODO
 func (t ISCSIVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -3463,8 +3683,8 @@ func (t ISCSIVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, de
 }
 func (t ISCSIVolumeSource) AttrNames() []string { return ISCSIVolumeSource_attrs }
 func (t ISCSIVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ISCSIVolumeSource_fields, ISCSIVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ISCSIVolumeSource_fields, ISCSIVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3473,7 +3693,7 @@ func (t ISCSIVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type KeyToPath struct {
-	V *v1.KeyToPath
+	V *core.KeyToPath
 }
 
 var (
@@ -3485,12 +3705,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.KeyToPath)(nil)).Elem()
+	t := reflect.TypeOf((*core.KeyToPath)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.KeyToPath:
+		case *core.KeyToPath:
 			return KeyToPath{V: v}
-		case v1.KeyToPath:
+		case core.KeyToPath:
 			return KeyToPath{V: &v}
 		default:
 			return skylark.None
@@ -3501,11 +3721,14 @@ func init() {
 }
 
 func createKeyToPath(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for KeyToPath
+	box := KeyToPath{V: &core.KeyToPath{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t KeyToPath) Underlying() interface{} { return t.V }
-func (t KeyToPath) Package() util.Package   { return util.V1 }
-func (t KeyToPath) Type() string            { return "k8s_v1_KeyToPath" }
+func (t KeyToPath) DeepCopy() boxed         { return KeyToPath{V: t.V.DeepCopy()} }
+func (t KeyToPath) Package() util.Package   { return util.Core }
+func (t KeyToPath) Type() string            { return "k8s_core_KeyToPath" }
 func (t KeyToPath) String() string          { return t.V.String() }
 func (t KeyToPath) Freeze()                 {} // TODO
 func (t KeyToPath) Truth() skylark.Bool     { return skylark.True }
@@ -3516,8 +3739,8 @@ func (t KeyToPath) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t KeyToPath) AttrNames() []string { return KeyToPath_attrs }
 func (t KeyToPath) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, KeyToPath_fields, KeyToPath_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, KeyToPath_fields, KeyToPath_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3526,7 +3749,7 @@ func (t KeyToPath) SetField(name string, value skylark.Value) error {
 }
 
 type Lifecycle struct {
-	V *v1.Lifecycle
+	V *core.Lifecycle
 }
 
 var (
@@ -3538,12 +3761,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Lifecycle)(nil)).Elem()
+	t := reflect.TypeOf((*core.Lifecycle)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Lifecycle:
+		case *core.Lifecycle:
 			return Lifecycle{V: v}
-		case v1.Lifecycle:
+		case core.Lifecycle:
 			return Lifecycle{V: &v}
 		default:
 			return skylark.None
@@ -3554,11 +3777,14 @@ func init() {
 }
 
 func createLifecycle(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Lifecycle
+	box := Lifecycle{V: &core.Lifecycle{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Lifecycle) Underlying() interface{} { return t.V }
-func (t Lifecycle) Package() util.Package   { return util.V1 }
-func (t Lifecycle) Type() string            { return "k8s_v1_Lifecycle" }
+func (t Lifecycle) DeepCopy() boxed         { return Lifecycle{V: t.V.DeepCopy()} }
+func (t Lifecycle) Package() util.Package   { return util.Core }
+func (t Lifecycle) Type() string            { return "k8s_core_Lifecycle" }
 func (t Lifecycle) String() string          { return t.V.String() }
 func (t Lifecycle) Freeze()                 {} // TODO
 func (t Lifecycle) Truth() skylark.Bool     { return skylark.True }
@@ -3569,8 +3795,8 @@ func (t Lifecycle) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t Lifecycle) AttrNames() []string { return Lifecycle_attrs }
 func (t Lifecycle) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Lifecycle_fields, Lifecycle_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Lifecycle_fields, Lifecycle_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3579,7 +3805,7 @@ func (t Lifecycle) SetField(name string, value skylark.Value) error {
 }
 
 type LimitRange struct {
-	V *v1.LimitRange
+	V *core.LimitRange
 }
 
 var (
@@ -3591,12 +3817,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.LimitRange)(nil)).Elem()
+	t := reflect.TypeOf((*core.LimitRange)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.LimitRange:
+		case *core.LimitRange:
 			return LimitRange{V: v}
-		case v1.LimitRange:
+		case core.LimitRange:
 			return LimitRange{V: &v}
 		default:
 			return skylark.None
@@ -3607,11 +3833,14 @@ func init() {
 }
 
 func createLimitRange(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LimitRange
+	box := LimitRange{V: &core.LimitRange{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LimitRange) Underlying() interface{} { return t.V }
-func (t LimitRange) Package() util.Package   { return util.V1 }
-func (t LimitRange) Type() string            { return "k8s_v1_LimitRange" }
+func (t LimitRange) DeepCopy() boxed         { return LimitRange{V: t.V.DeepCopy()} }
+func (t LimitRange) Package() util.Package   { return util.Core }
+func (t LimitRange) Type() string            { return "k8s_core_LimitRange" }
 func (t LimitRange) String() string          { return t.V.String() }
 func (t LimitRange) Freeze()                 {} // TODO
 func (t LimitRange) Truth() skylark.Bool     { return skylark.True }
@@ -3622,8 +3851,8 @@ func (t LimitRange) CompareSameType(op syntax.Token, y_ skylark.Value, depth int
 }
 func (t LimitRange) AttrNames() []string { return LimitRange_attrs }
 func (t LimitRange) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LimitRange_fields, LimitRange_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LimitRange_fields, LimitRange_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3632,7 +3861,7 @@ func (t LimitRange) SetField(name string, value skylark.Value) error {
 }
 
 type LimitRangeItem struct {
-	V *v1.LimitRangeItem
+	V *core.LimitRangeItem
 }
 
 var (
@@ -3644,12 +3873,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.LimitRangeItem)(nil)).Elem()
+	t := reflect.TypeOf((*core.LimitRangeItem)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.LimitRangeItem:
+		case *core.LimitRangeItem:
 			return LimitRangeItem{V: v}
-		case v1.LimitRangeItem:
+		case core.LimitRangeItem:
 			return LimitRangeItem{V: &v}
 		default:
 			return skylark.None
@@ -3660,11 +3889,14 @@ func init() {
 }
 
 func createLimitRangeItem(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LimitRangeItem
+	box := LimitRangeItem{V: &core.LimitRangeItem{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LimitRangeItem) Underlying() interface{} { return t.V }
-func (t LimitRangeItem) Package() util.Package   { return util.V1 }
-func (t LimitRangeItem) Type() string            { return "k8s_v1_LimitRangeItem" }
+func (t LimitRangeItem) DeepCopy() boxed         { return LimitRangeItem{V: t.V.DeepCopy()} }
+func (t LimitRangeItem) Package() util.Package   { return util.Core }
+func (t LimitRangeItem) Type() string            { return "k8s_core_LimitRangeItem" }
 func (t LimitRangeItem) String() string          { return t.V.String() }
 func (t LimitRangeItem) Freeze()                 {} // TODO
 func (t LimitRangeItem) Truth() skylark.Bool     { return skylark.True }
@@ -3675,8 +3907,8 @@ func (t LimitRangeItem) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t LimitRangeItem) AttrNames() []string { return LimitRangeItem_attrs }
 func (t LimitRangeItem) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LimitRangeItem_fields, LimitRangeItem_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LimitRangeItem_fields, LimitRangeItem_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3685,7 +3917,7 @@ func (t LimitRangeItem) SetField(name string, value skylark.Value) error {
 }
 
 type LimitRangeList struct {
-	V *v1.LimitRangeList
+	V *core.LimitRangeList
 }
 
 var (
@@ -3697,12 +3929,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.LimitRangeList)(nil)).Elem()
+	t := reflect.TypeOf((*core.LimitRangeList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.LimitRangeList:
+		case *core.LimitRangeList:
 			return LimitRangeList{V: v}
-		case v1.LimitRangeList:
+		case core.LimitRangeList:
 			return LimitRangeList{V: &v}
 		default:
 			return skylark.None
@@ -3713,11 +3945,14 @@ func init() {
 }
 
 func createLimitRangeList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LimitRangeList
+	box := LimitRangeList{V: &core.LimitRangeList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LimitRangeList) Underlying() interface{} { return t.V }
-func (t LimitRangeList) Package() util.Package   { return util.V1 }
-func (t LimitRangeList) Type() string            { return "k8s_v1_LimitRangeList" }
+func (t LimitRangeList) DeepCopy() boxed         { return LimitRangeList{V: t.V.DeepCopy()} }
+func (t LimitRangeList) Package() util.Package   { return util.Core }
+func (t LimitRangeList) Type() string            { return "k8s_core_LimitRangeList" }
 func (t LimitRangeList) String() string          { return t.V.String() }
 func (t LimitRangeList) Freeze()                 {} // TODO
 func (t LimitRangeList) Truth() skylark.Bool     { return skylark.True }
@@ -3728,8 +3963,8 @@ func (t LimitRangeList) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t LimitRangeList) AttrNames() []string { return LimitRangeList_attrs }
 func (t LimitRangeList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LimitRangeList_fields, LimitRangeList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LimitRangeList_fields, LimitRangeList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3738,7 +3973,7 @@ func (t LimitRangeList) SetField(name string, value skylark.Value) error {
 }
 
 type LimitRangeSpec struct {
-	V *v1.LimitRangeSpec
+	V *core.LimitRangeSpec
 }
 
 var (
@@ -3750,12 +3985,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.LimitRangeSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.LimitRangeSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.LimitRangeSpec:
+		case *core.LimitRangeSpec:
 			return LimitRangeSpec{V: v}
-		case v1.LimitRangeSpec:
+		case core.LimitRangeSpec:
 			return LimitRangeSpec{V: &v}
 		default:
 			return skylark.None
@@ -3766,11 +4001,14 @@ func init() {
 }
 
 func createLimitRangeSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LimitRangeSpec
+	box := LimitRangeSpec{V: &core.LimitRangeSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LimitRangeSpec) Underlying() interface{} { return t.V }
-func (t LimitRangeSpec) Package() util.Package   { return util.V1 }
-func (t LimitRangeSpec) Type() string            { return "k8s_v1_LimitRangeSpec" }
+func (t LimitRangeSpec) DeepCopy() boxed         { return LimitRangeSpec{V: t.V.DeepCopy()} }
+func (t LimitRangeSpec) Package() util.Package   { return util.Core }
+func (t LimitRangeSpec) Type() string            { return "k8s_core_LimitRangeSpec" }
 func (t LimitRangeSpec) String() string          { return t.V.String() }
 func (t LimitRangeSpec) Freeze()                 {} // TODO
 func (t LimitRangeSpec) Truth() skylark.Bool     { return skylark.True }
@@ -3781,8 +4019,8 @@ func (t LimitRangeSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t LimitRangeSpec) AttrNames() []string { return LimitRangeSpec_attrs }
 func (t LimitRangeSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LimitRangeSpec_fields, LimitRangeSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LimitRangeSpec_fields, LimitRangeSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3791,7 +4029,7 @@ func (t LimitRangeSpec) SetField(name string, value skylark.Value) error {
 }
 
 type List struct {
-	V *v1.List
+	V *core.List
 }
 
 var (
@@ -3803,12 +4041,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.List)(nil)).Elem()
+	t := reflect.TypeOf((*core.List)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.List:
+		case *core.List:
 			return List{V: v}
-		case v1.List:
+		case core.List:
 			return List{V: &v}
 		default:
 			return skylark.None
@@ -3819,11 +4057,14 @@ func init() {
 }
 
 func createList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for List
+	box := List{V: &core.List{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t List) Underlying() interface{} { return t.V }
-func (t List) Package() util.Package   { return util.V1 }
-func (t List) Type() string            { return "k8s_v1_List" }
+func (t List) DeepCopy() boxed         { return List{V: t.V.DeepCopy()} }
+func (t List) Package() util.Package   { return util.Core }
+func (t List) Type() string            { return "k8s_core_List" }
 func (t List) String() string          { return t.V.String() }
 func (t List) Freeze()                 {} // TODO
 func (t List) Truth() skylark.Bool     { return skylark.True }
@@ -3834,8 +4075,8 @@ func (t List) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (boo
 }
 func (t List) AttrNames() []string { return List_attrs }
 func (t List) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, List_fields, List_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, List_fields, List_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3844,7 +4085,7 @@ func (t List) SetField(name string, value skylark.Value) error {
 }
 
 type LoadBalancerIngress struct {
-	V *v1.LoadBalancerIngress
+	V *core.LoadBalancerIngress
 }
 
 var (
@@ -3856,12 +4097,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.LoadBalancerIngress)(nil)).Elem()
+	t := reflect.TypeOf((*core.LoadBalancerIngress)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.LoadBalancerIngress:
+		case *core.LoadBalancerIngress:
 			return LoadBalancerIngress{V: v}
-		case v1.LoadBalancerIngress:
+		case core.LoadBalancerIngress:
 			return LoadBalancerIngress{V: &v}
 		default:
 			return skylark.None
@@ -3872,11 +4113,14 @@ func init() {
 }
 
 func createLoadBalancerIngress(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LoadBalancerIngress
+	box := LoadBalancerIngress{V: &core.LoadBalancerIngress{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LoadBalancerIngress) Underlying() interface{} { return t.V }
-func (t LoadBalancerIngress) Package() util.Package   { return util.V1 }
-func (t LoadBalancerIngress) Type() string            { return "k8s_v1_LoadBalancerIngress" }
+func (t LoadBalancerIngress) DeepCopy() boxed         { return LoadBalancerIngress{V: t.V.DeepCopy()} }
+func (t LoadBalancerIngress) Package() util.Package   { return util.Core }
+func (t LoadBalancerIngress) Type() string            { return "k8s_core_LoadBalancerIngress" }
 func (t LoadBalancerIngress) String() string          { return t.V.String() }
 func (t LoadBalancerIngress) Freeze()                 {} // TODO
 func (t LoadBalancerIngress) Truth() skylark.Bool     { return skylark.True }
@@ -3887,8 +4131,8 @@ func (t LoadBalancerIngress) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t LoadBalancerIngress) AttrNames() []string { return LoadBalancerIngress_attrs }
 func (t LoadBalancerIngress) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LoadBalancerIngress_fields, LoadBalancerIngress_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LoadBalancerIngress_fields, LoadBalancerIngress_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3897,7 +4141,7 @@ func (t LoadBalancerIngress) SetField(name string, value skylark.Value) error {
 }
 
 type LoadBalancerStatus struct {
-	V *v1.LoadBalancerStatus
+	V *core.LoadBalancerStatus
 }
 
 var (
@@ -3909,12 +4153,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.LoadBalancerStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.LoadBalancerStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.LoadBalancerStatus:
+		case *core.LoadBalancerStatus:
 			return LoadBalancerStatus{V: v}
-		case v1.LoadBalancerStatus:
+		case core.LoadBalancerStatus:
 			return LoadBalancerStatus{V: &v}
 		default:
 			return skylark.None
@@ -3925,11 +4169,14 @@ func init() {
 }
 
 func createLoadBalancerStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LoadBalancerStatus
+	box := LoadBalancerStatus{V: &core.LoadBalancerStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LoadBalancerStatus) Underlying() interface{} { return t.V }
-func (t LoadBalancerStatus) Package() util.Package   { return util.V1 }
-func (t LoadBalancerStatus) Type() string            { return "k8s_v1_LoadBalancerStatus" }
+func (t LoadBalancerStatus) DeepCopy() boxed         { return LoadBalancerStatus{V: t.V.DeepCopy()} }
+func (t LoadBalancerStatus) Package() util.Package   { return util.Core }
+func (t LoadBalancerStatus) Type() string            { return "k8s_core_LoadBalancerStatus" }
 func (t LoadBalancerStatus) String() string          { return t.V.String() }
 func (t LoadBalancerStatus) Freeze()                 {} // TODO
 func (t LoadBalancerStatus) Truth() skylark.Bool     { return skylark.True }
@@ -3940,8 +4187,8 @@ func (t LoadBalancerStatus) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t LoadBalancerStatus) AttrNames() []string { return LoadBalancerStatus_attrs }
 func (t LoadBalancerStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LoadBalancerStatus_fields, LoadBalancerStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LoadBalancerStatus_fields, LoadBalancerStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -3950,7 +4197,7 @@ func (t LoadBalancerStatus) SetField(name string, value skylark.Value) error {
 }
 
 type LocalObjectReference struct {
-	V *v1.LocalObjectReference
+	V *core.LocalObjectReference
 }
 
 var (
@@ -3962,12 +4209,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.LocalObjectReference)(nil)).Elem()
+	t := reflect.TypeOf((*core.LocalObjectReference)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.LocalObjectReference:
+		case *core.LocalObjectReference:
 			return LocalObjectReference{V: v}
-		case v1.LocalObjectReference:
+		case core.LocalObjectReference:
 			return LocalObjectReference{V: &v}
 		default:
 			return skylark.None
@@ -3978,11 +4225,14 @@ func init() {
 }
 
 func createLocalObjectReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LocalObjectReference
+	box := LocalObjectReference{V: &core.LocalObjectReference{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LocalObjectReference) Underlying() interface{} { return t.V }
-func (t LocalObjectReference) Package() util.Package   { return util.V1 }
-func (t LocalObjectReference) Type() string            { return "k8s_v1_LocalObjectReference" }
+func (t LocalObjectReference) DeepCopy() boxed         { return LocalObjectReference{V: t.V.DeepCopy()} }
+func (t LocalObjectReference) Package() util.Package   { return util.Core }
+func (t LocalObjectReference) Type() string            { return "k8s_core_LocalObjectReference" }
 func (t LocalObjectReference) String() string          { return t.V.String() }
 func (t LocalObjectReference) Freeze()                 {} // TODO
 func (t LocalObjectReference) Truth() skylark.Bool     { return skylark.True }
@@ -3993,8 +4243,8 @@ func (t LocalObjectReference) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t LocalObjectReference) AttrNames() []string { return LocalObjectReference_attrs }
 func (t LocalObjectReference) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LocalObjectReference_fields, LocalObjectReference_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LocalObjectReference_fields, LocalObjectReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4003,7 +4253,7 @@ func (t LocalObjectReference) SetField(name string, value skylark.Value) error {
 }
 
 type LocalVolumeSource struct {
-	V *v1.LocalVolumeSource
+	V *core.LocalVolumeSource
 }
 
 var (
@@ -4015,12 +4265,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.LocalVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.LocalVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.LocalVolumeSource:
+		case *core.LocalVolumeSource:
 			return LocalVolumeSource{V: v}
-		case v1.LocalVolumeSource:
+		case core.LocalVolumeSource:
 			return LocalVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -4031,11 +4281,14 @@ func init() {
 }
 
 func createLocalVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LocalVolumeSource
+	box := LocalVolumeSource{V: &core.LocalVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LocalVolumeSource) Underlying() interface{} { return t.V }
-func (t LocalVolumeSource) Package() util.Package   { return util.V1 }
-func (t LocalVolumeSource) Type() string            { return "k8s_v1_LocalVolumeSource" }
+func (t LocalVolumeSource) DeepCopy() boxed         { return LocalVolumeSource{V: t.V.DeepCopy()} }
+func (t LocalVolumeSource) Package() util.Package   { return util.Core }
+func (t LocalVolumeSource) Type() string            { return "k8s_core_LocalVolumeSource" }
 func (t LocalVolumeSource) String() string          { return t.V.String() }
 func (t LocalVolumeSource) Freeze()                 {} // TODO
 func (t LocalVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -4046,8 +4299,8 @@ func (t LocalVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, de
 }
 func (t LocalVolumeSource) AttrNames() []string { return LocalVolumeSource_attrs }
 func (t LocalVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LocalVolumeSource_fields, LocalVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LocalVolumeSource_fields, LocalVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4056,7 +4309,7 @@ func (t LocalVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type NFSVolumeSource struct {
-	V *v1.NFSVolumeSource
+	V *core.NFSVolumeSource
 }
 
 var (
@@ -4068,12 +4321,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NFSVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.NFSVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NFSVolumeSource:
+		case *core.NFSVolumeSource:
 			return NFSVolumeSource{V: v}
-		case v1.NFSVolumeSource:
+		case core.NFSVolumeSource:
 			return NFSVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -4084,11 +4337,14 @@ func init() {
 }
 
 func createNFSVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NFSVolumeSource
+	box := NFSVolumeSource{V: &core.NFSVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NFSVolumeSource) Underlying() interface{} { return t.V }
-func (t NFSVolumeSource) Package() util.Package   { return util.V1 }
-func (t NFSVolumeSource) Type() string            { return "k8s_v1_NFSVolumeSource" }
+func (t NFSVolumeSource) DeepCopy() boxed         { return NFSVolumeSource{V: t.V.DeepCopy()} }
+func (t NFSVolumeSource) Package() util.Package   { return util.Core }
+func (t NFSVolumeSource) Type() string            { return "k8s_core_NFSVolumeSource" }
 func (t NFSVolumeSource) String() string          { return t.V.String() }
 func (t NFSVolumeSource) Freeze()                 {} // TODO
 func (t NFSVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -4099,8 +4355,8 @@ func (t NFSVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t NFSVolumeSource) AttrNames() []string { return NFSVolumeSource_attrs }
 func (t NFSVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NFSVolumeSource_fields, NFSVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NFSVolumeSource_fields, NFSVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4109,7 +4365,7 @@ func (t NFSVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type Namespace struct {
-	V *v1.Namespace
+	V *core.Namespace
 }
 
 var (
@@ -4121,12 +4377,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Namespace)(nil)).Elem()
+	t := reflect.TypeOf((*core.Namespace)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Namespace:
+		case *core.Namespace:
 			return Namespace{V: v}
-		case v1.Namespace:
+		case core.Namespace:
 			return Namespace{V: &v}
 		default:
 			return skylark.None
@@ -4137,11 +4393,14 @@ func init() {
 }
 
 func createNamespace(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Namespace
+	box := Namespace{V: &core.Namespace{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Namespace) Underlying() interface{} { return t.V }
-func (t Namespace) Package() util.Package   { return util.V1 }
-func (t Namespace) Type() string            { return "k8s_v1_Namespace" }
+func (t Namespace) DeepCopy() boxed         { return Namespace{V: t.V.DeepCopy()} }
+func (t Namespace) Package() util.Package   { return util.Core }
+func (t Namespace) Type() string            { return "k8s_core_Namespace" }
 func (t Namespace) String() string          { return t.V.String() }
 func (t Namespace) Freeze()                 {} // TODO
 func (t Namespace) Truth() skylark.Bool     { return skylark.True }
@@ -4152,8 +4411,8 @@ func (t Namespace) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t Namespace) AttrNames() []string { return Namespace_attrs }
 func (t Namespace) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Namespace_fields, Namespace_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Namespace_fields, Namespace_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4162,7 +4421,7 @@ func (t Namespace) SetField(name string, value skylark.Value) error {
 }
 
 type NamespaceList struct {
-	V *v1.NamespaceList
+	V *core.NamespaceList
 }
 
 var (
@@ -4174,12 +4433,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NamespaceList)(nil)).Elem()
+	t := reflect.TypeOf((*core.NamespaceList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NamespaceList:
+		case *core.NamespaceList:
 			return NamespaceList{V: v}
-		case v1.NamespaceList:
+		case core.NamespaceList:
 			return NamespaceList{V: &v}
 		default:
 			return skylark.None
@@ -4190,11 +4449,14 @@ func init() {
 }
 
 func createNamespaceList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NamespaceList
+	box := NamespaceList{V: &core.NamespaceList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NamespaceList) Underlying() interface{} { return t.V }
-func (t NamespaceList) Package() util.Package   { return util.V1 }
-func (t NamespaceList) Type() string            { return "k8s_v1_NamespaceList" }
+func (t NamespaceList) DeepCopy() boxed         { return NamespaceList{V: t.V.DeepCopy()} }
+func (t NamespaceList) Package() util.Package   { return util.Core }
+func (t NamespaceList) Type() string            { return "k8s_core_NamespaceList" }
 func (t NamespaceList) String() string          { return t.V.String() }
 func (t NamespaceList) Freeze()                 {} // TODO
 func (t NamespaceList) Truth() skylark.Bool     { return skylark.True }
@@ -4205,8 +4467,8 @@ func (t NamespaceList) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t NamespaceList) AttrNames() []string { return NamespaceList_attrs }
 func (t NamespaceList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NamespaceList_fields, NamespaceList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NamespaceList_fields, NamespaceList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4215,7 +4477,7 @@ func (t NamespaceList) SetField(name string, value skylark.Value) error {
 }
 
 type NamespaceSpec struct {
-	V *v1.NamespaceSpec
+	V *core.NamespaceSpec
 }
 
 var (
@@ -4227,12 +4489,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NamespaceSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.NamespaceSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NamespaceSpec:
+		case *core.NamespaceSpec:
 			return NamespaceSpec{V: v}
-		case v1.NamespaceSpec:
+		case core.NamespaceSpec:
 			return NamespaceSpec{V: &v}
 		default:
 			return skylark.None
@@ -4243,11 +4505,14 @@ func init() {
 }
 
 func createNamespaceSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NamespaceSpec
+	box := NamespaceSpec{V: &core.NamespaceSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NamespaceSpec) Underlying() interface{} { return t.V }
-func (t NamespaceSpec) Package() util.Package   { return util.V1 }
-func (t NamespaceSpec) Type() string            { return "k8s_v1_NamespaceSpec" }
+func (t NamespaceSpec) DeepCopy() boxed         { return NamespaceSpec{V: t.V.DeepCopy()} }
+func (t NamespaceSpec) Package() util.Package   { return util.Core }
+func (t NamespaceSpec) Type() string            { return "k8s_core_NamespaceSpec" }
 func (t NamespaceSpec) String() string          { return t.V.String() }
 func (t NamespaceSpec) Freeze()                 {} // TODO
 func (t NamespaceSpec) Truth() skylark.Bool     { return skylark.True }
@@ -4258,8 +4523,8 @@ func (t NamespaceSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t NamespaceSpec) AttrNames() []string { return NamespaceSpec_attrs }
 func (t NamespaceSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NamespaceSpec_fields, NamespaceSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NamespaceSpec_fields, NamespaceSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4268,7 +4533,7 @@ func (t NamespaceSpec) SetField(name string, value skylark.Value) error {
 }
 
 type NamespaceStatus struct {
-	V *v1.NamespaceStatus
+	V *core.NamespaceStatus
 }
 
 var (
@@ -4280,12 +4545,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NamespaceStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.NamespaceStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NamespaceStatus:
+		case *core.NamespaceStatus:
 			return NamespaceStatus{V: v}
-		case v1.NamespaceStatus:
+		case core.NamespaceStatus:
 			return NamespaceStatus{V: &v}
 		default:
 			return skylark.None
@@ -4296,11 +4561,14 @@ func init() {
 }
 
 func createNamespaceStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NamespaceStatus
+	box := NamespaceStatus{V: &core.NamespaceStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NamespaceStatus) Underlying() interface{} { return t.V }
-func (t NamespaceStatus) Package() util.Package   { return util.V1 }
-func (t NamespaceStatus) Type() string            { return "k8s_v1_NamespaceStatus" }
+func (t NamespaceStatus) DeepCopy() boxed         { return NamespaceStatus{V: t.V.DeepCopy()} }
+func (t NamespaceStatus) Package() util.Package   { return util.Core }
+func (t NamespaceStatus) Type() string            { return "k8s_core_NamespaceStatus" }
 func (t NamespaceStatus) String() string          { return t.V.String() }
 func (t NamespaceStatus) Freeze()                 {} // TODO
 func (t NamespaceStatus) Truth() skylark.Bool     { return skylark.True }
@@ -4311,8 +4579,8 @@ func (t NamespaceStatus) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t NamespaceStatus) AttrNames() []string { return NamespaceStatus_attrs }
 func (t NamespaceStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NamespaceStatus_fields, NamespaceStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NamespaceStatus_fields, NamespaceStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4321,7 +4589,7 @@ func (t NamespaceStatus) SetField(name string, value skylark.Value) error {
 }
 
 type Node struct {
-	V *v1.Node
+	V *core.Node
 }
 
 var (
@@ -4333,12 +4601,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Node)(nil)).Elem()
+	t := reflect.TypeOf((*core.Node)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Node:
+		case *core.Node:
 			return Node{V: v}
-		case v1.Node:
+		case core.Node:
 			return Node{V: &v}
 		default:
 			return skylark.None
@@ -4349,11 +4617,14 @@ func init() {
 }
 
 func createNode(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Node
+	box := Node{V: &core.Node{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Node) Underlying() interface{} { return t.V }
-func (t Node) Package() util.Package   { return util.V1 }
-func (t Node) Type() string            { return "k8s_v1_Node" }
+func (t Node) DeepCopy() boxed         { return Node{V: t.V.DeepCopy()} }
+func (t Node) Package() util.Package   { return util.Core }
+func (t Node) Type() string            { return "k8s_core_Node" }
 func (t Node) String() string          { return t.V.String() }
 func (t Node) Freeze()                 {} // TODO
 func (t Node) Truth() skylark.Bool     { return skylark.True }
@@ -4364,8 +4635,8 @@ func (t Node) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (boo
 }
 func (t Node) AttrNames() []string { return Node_attrs }
 func (t Node) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Node_fields, Node_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Node_fields, Node_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4374,7 +4645,7 @@ func (t Node) SetField(name string, value skylark.Value) error {
 }
 
 type NodeAddress struct {
-	V *v1.NodeAddress
+	V *core.NodeAddress
 }
 
 var (
@@ -4386,12 +4657,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeAddress)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeAddress)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeAddress:
+		case *core.NodeAddress:
 			return NodeAddress{V: v}
-		case v1.NodeAddress:
+		case core.NodeAddress:
 			return NodeAddress{V: &v}
 		default:
 			return skylark.None
@@ -4402,11 +4673,14 @@ func init() {
 }
 
 func createNodeAddress(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeAddress
+	box := NodeAddress{V: &core.NodeAddress{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeAddress) Underlying() interface{} { return t.V }
-func (t NodeAddress) Package() util.Package   { return util.V1 }
-func (t NodeAddress) Type() string            { return "k8s_v1_NodeAddress" }
+func (t NodeAddress) DeepCopy() boxed         { return NodeAddress{V: t.V.DeepCopy()} }
+func (t NodeAddress) Package() util.Package   { return util.Core }
+func (t NodeAddress) Type() string            { return "k8s_core_NodeAddress" }
 func (t NodeAddress) String() string          { return t.V.String() }
 func (t NodeAddress) Freeze()                 {} // TODO
 func (t NodeAddress) Truth() skylark.Bool     { return skylark.True }
@@ -4417,8 +4691,8 @@ func (t NodeAddress) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t NodeAddress) AttrNames() []string { return NodeAddress_attrs }
 func (t NodeAddress) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeAddress_fields, NodeAddress_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeAddress_fields, NodeAddress_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4427,7 +4701,7 @@ func (t NodeAddress) SetField(name string, value skylark.Value) error {
 }
 
 type NodeAffinity struct {
-	V *v1.NodeAffinity
+	V *core.NodeAffinity
 }
 
 var (
@@ -4439,12 +4713,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeAffinity)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeAffinity)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeAffinity:
+		case *core.NodeAffinity:
 			return NodeAffinity{V: v}
-		case v1.NodeAffinity:
+		case core.NodeAffinity:
 			return NodeAffinity{V: &v}
 		default:
 			return skylark.None
@@ -4455,11 +4729,14 @@ func init() {
 }
 
 func createNodeAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeAffinity
+	box := NodeAffinity{V: &core.NodeAffinity{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeAffinity) Underlying() interface{} { return t.V }
-func (t NodeAffinity) Package() util.Package   { return util.V1 }
-func (t NodeAffinity) Type() string            { return "k8s_v1_NodeAffinity" }
+func (t NodeAffinity) DeepCopy() boxed         { return NodeAffinity{V: t.V.DeepCopy()} }
+func (t NodeAffinity) Package() util.Package   { return util.Core }
+func (t NodeAffinity) Type() string            { return "k8s_core_NodeAffinity" }
 func (t NodeAffinity) String() string          { return t.V.String() }
 func (t NodeAffinity) Freeze()                 {} // TODO
 func (t NodeAffinity) Truth() skylark.Bool     { return skylark.True }
@@ -4470,8 +4747,8 @@ func (t NodeAffinity) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t NodeAffinity) AttrNames() []string { return NodeAffinity_attrs }
 func (t NodeAffinity) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeAffinity_fields, NodeAffinity_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeAffinity_fields, NodeAffinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4480,7 +4757,7 @@ func (t NodeAffinity) SetField(name string, value skylark.Value) error {
 }
 
 type NodeCondition struct {
-	V *v1.NodeCondition
+	V *core.NodeCondition
 }
 
 var (
@@ -4492,12 +4769,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeCondition)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeCondition)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeCondition:
+		case *core.NodeCondition:
 			return NodeCondition{V: v}
-		case v1.NodeCondition:
+		case core.NodeCondition:
 			return NodeCondition{V: &v}
 		default:
 			return skylark.None
@@ -4508,11 +4785,14 @@ func init() {
 }
 
 func createNodeCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeCondition
+	box := NodeCondition{V: &core.NodeCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeCondition) Underlying() interface{} { return t.V }
-func (t NodeCondition) Package() util.Package   { return util.V1 }
-func (t NodeCondition) Type() string            { return "k8s_v1_NodeCondition" }
+func (t NodeCondition) DeepCopy() boxed         { return NodeCondition{V: t.V.DeepCopy()} }
+func (t NodeCondition) Package() util.Package   { return util.Core }
+func (t NodeCondition) Type() string            { return "k8s_core_NodeCondition" }
 func (t NodeCondition) String() string          { return t.V.String() }
 func (t NodeCondition) Freeze()                 {} // TODO
 func (t NodeCondition) Truth() skylark.Bool     { return skylark.True }
@@ -4523,8 +4803,8 @@ func (t NodeCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t NodeCondition) AttrNames() []string { return NodeCondition_attrs }
 func (t NodeCondition) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeCondition_fields, NodeCondition_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeCondition_fields, NodeCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4533,7 +4813,7 @@ func (t NodeCondition) SetField(name string, value skylark.Value) error {
 }
 
 type NodeConfigSource struct {
-	V *v1.NodeConfigSource
+	V *core.NodeConfigSource
 }
 
 var (
@@ -4545,12 +4825,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeConfigSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeConfigSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeConfigSource:
+		case *core.NodeConfigSource:
 			return NodeConfigSource{V: v}
-		case v1.NodeConfigSource:
+		case core.NodeConfigSource:
 			return NodeConfigSource{V: &v}
 		default:
 			return skylark.None
@@ -4561,11 +4841,14 @@ func init() {
 }
 
 func createNodeConfigSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeConfigSource
+	box := NodeConfigSource{V: &core.NodeConfigSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeConfigSource) Underlying() interface{} { return t.V }
-func (t NodeConfigSource) Package() util.Package   { return util.V1 }
-func (t NodeConfigSource) Type() string            { return "k8s_v1_NodeConfigSource" }
+func (t NodeConfigSource) DeepCopy() boxed         { return NodeConfigSource{V: t.V.DeepCopy()} }
+func (t NodeConfigSource) Package() util.Package   { return util.Core }
+func (t NodeConfigSource) Type() string            { return "k8s_core_NodeConfigSource" }
 func (t NodeConfigSource) String() string          { return t.V.String() }
 func (t NodeConfigSource) Freeze()                 {} // TODO
 func (t NodeConfigSource) Truth() skylark.Bool     { return skylark.True }
@@ -4576,8 +4859,8 @@ func (t NodeConfigSource) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t NodeConfigSource) AttrNames() []string { return NodeConfigSource_attrs }
 func (t NodeConfigSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeConfigSource_fields, NodeConfigSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeConfigSource_fields, NodeConfigSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4586,7 +4869,7 @@ func (t NodeConfigSource) SetField(name string, value skylark.Value) error {
 }
 
 type NodeConfigStatus struct {
-	V *v1.NodeConfigStatus
+	V *core.NodeConfigStatus
 }
 
 var (
@@ -4598,12 +4881,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeConfigStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeConfigStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeConfigStatus:
+		case *core.NodeConfigStatus:
 			return NodeConfigStatus{V: v}
-		case v1.NodeConfigStatus:
+		case core.NodeConfigStatus:
 			return NodeConfigStatus{V: &v}
 		default:
 			return skylark.None
@@ -4614,11 +4897,14 @@ func init() {
 }
 
 func createNodeConfigStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeConfigStatus
+	box := NodeConfigStatus{V: &core.NodeConfigStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeConfigStatus) Underlying() interface{} { return t.V }
-func (t NodeConfigStatus) Package() util.Package   { return util.V1 }
-func (t NodeConfigStatus) Type() string            { return "k8s_v1_NodeConfigStatus" }
+func (t NodeConfigStatus) DeepCopy() boxed         { return NodeConfigStatus{V: t.V.DeepCopy()} }
+func (t NodeConfigStatus) Package() util.Package   { return util.Core }
+func (t NodeConfigStatus) Type() string            { return "k8s_core_NodeConfigStatus" }
 func (t NodeConfigStatus) String() string          { return t.V.String() }
 func (t NodeConfigStatus) Freeze()                 {} // TODO
 func (t NodeConfigStatus) Truth() skylark.Bool     { return skylark.True }
@@ -4629,8 +4915,8 @@ func (t NodeConfigStatus) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t NodeConfigStatus) AttrNames() []string { return NodeConfigStatus_attrs }
 func (t NodeConfigStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeConfigStatus_fields, NodeConfigStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeConfigStatus_fields, NodeConfigStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4639,7 +4925,7 @@ func (t NodeConfigStatus) SetField(name string, value skylark.Value) error {
 }
 
 type NodeDaemonEndpoints struct {
-	V *v1.NodeDaemonEndpoints
+	V *core.NodeDaemonEndpoints
 }
 
 var (
@@ -4651,12 +4937,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeDaemonEndpoints)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeDaemonEndpoints)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeDaemonEndpoints:
+		case *core.NodeDaemonEndpoints:
 			return NodeDaemonEndpoints{V: v}
-		case v1.NodeDaemonEndpoints:
+		case core.NodeDaemonEndpoints:
 			return NodeDaemonEndpoints{V: &v}
 		default:
 			return skylark.None
@@ -4667,11 +4953,14 @@ func init() {
 }
 
 func createNodeDaemonEndpoints(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeDaemonEndpoints
+	box := NodeDaemonEndpoints{V: &core.NodeDaemonEndpoints{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeDaemonEndpoints) Underlying() interface{} { return t.V }
-func (t NodeDaemonEndpoints) Package() util.Package   { return util.V1 }
-func (t NodeDaemonEndpoints) Type() string            { return "k8s_v1_NodeDaemonEndpoints" }
+func (t NodeDaemonEndpoints) DeepCopy() boxed         { return NodeDaemonEndpoints{V: t.V.DeepCopy()} }
+func (t NodeDaemonEndpoints) Package() util.Package   { return util.Core }
+func (t NodeDaemonEndpoints) Type() string            { return "k8s_core_NodeDaemonEndpoints" }
 func (t NodeDaemonEndpoints) String() string          { return t.V.String() }
 func (t NodeDaemonEndpoints) Freeze()                 {} // TODO
 func (t NodeDaemonEndpoints) Truth() skylark.Bool     { return skylark.True }
@@ -4682,8 +4971,8 @@ func (t NodeDaemonEndpoints) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t NodeDaemonEndpoints) AttrNames() []string { return NodeDaemonEndpoints_attrs }
 func (t NodeDaemonEndpoints) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeDaemonEndpoints_fields, NodeDaemonEndpoints_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeDaemonEndpoints_fields, NodeDaemonEndpoints_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4692,7 +4981,7 @@ func (t NodeDaemonEndpoints) SetField(name string, value skylark.Value) error {
 }
 
 type NodeList struct {
-	V *v1.NodeList
+	V *core.NodeList
 }
 
 var (
@@ -4704,12 +4993,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeList)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeList:
+		case *core.NodeList:
 			return NodeList{V: v}
-		case v1.NodeList:
+		case core.NodeList:
 			return NodeList{V: &v}
 		default:
 			return skylark.None
@@ -4720,11 +5009,14 @@ func init() {
 }
 
 func createNodeList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeList
+	box := NodeList{V: &core.NodeList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeList) Underlying() interface{} { return t.V }
-func (t NodeList) Package() util.Package   { return util.V1 }
-func (t NodeList) Type() string            { return "k8s_v1_NodeList" }
+func (t NodeList) DeepCopy() boxed         { return NodeList{V: t.V.DeepCopy()} }
+func (t NodeList) Package() util.Package   { return util.Core }
+func (t NodeList) Type() string            { return "k8s_core_NodeList" }
 func (t NodeList) String() string          { return t.V.String() }
 func (t NodeList) Freeze()                 {} // TODO
 func (t NodeList) Truth() skylark.Bool     { return skylark.True }
@@ -4735,8 +5027,8 @@ func (t NodeList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) 
 }
 func (t NodeList) AttrNames() []string { return NodeList_attrs }
 func (t NodeList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeList_fields, NodeList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeList_fields, NodeList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4745,7 +5037,7 @@ func (t NodeList) SetField(name string, value skylark.Value) error {
 }
 
 type NodeProxyOptions struct {
-	V *v1.NodeProxyOptions
+	V *core.NodeProxyOptions
 }
 
 var (
@@ -4757,12 +5049,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeProxyOptions)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeProxyOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeProxyOptions:
+		case *core.NodeProxyOptions:
 			return NodeProxyOptions{V: v}
-		case v1.NodeProxyOptions:
+		case core.NodeProxyOptions:
 			return NodeProxyOptions{V: &v}
 		default:
 			return skylark.None
@@ -4773,11 +5065,14 @@ func init() {
 }
 
 func createNodeProxyOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeProxyOptions
+	box := NodeProxyOptions{V: &core.NodeProxyOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeProxyOptions) Underlying() interface{} { return t.V }
-func (t NodeProxyOptions) Package() util.Package   { return util.V1 }
-func (t NodeProxyOptions) Type() string            { return "k8s_v1_NodeProxyOptions" }
+func (t NodeProxyOptions) DeepCopy() boxed         { return NodeProxyOptions{V: t.V.DeepCopy()} }
+func (t NodeProxyOptions) Package() util.Package   { return util.Core }
+func (t NodeProxyOptions) Type() string            { return "k8s_core_NodeProxyOptions" }
 func (t NodeProxyOptions) String() string          { return t.V.String() }
 func (t NodeProxyOptions) Freeze()                 {} // TODO
 func (t NodeProxyOptions) Truth() skylark.Bool     { return skylark.True }
@@ -4788,8 +5083,8 @@ func (t NodeProxyOptions) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t NodeProxyOptions) AttrNames() []string { return NodeProxyOptions_attrs }
 func (t NodeProxyOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeProxyOptions_fields, NodeProxyOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeProxyOptions_fields, NodeProxyOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4798,7 +5093,7 @@ func (t NodeProxyOptions) SetField(name string, value skylark.Value) error {
 }
 
 type NodeResources struct {
-	V *v1.NodeResources
+	V *core.NodeResources
 }
 
 var (
@@ -4810,12 +5105,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeResources)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeResources)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeResources:
+		case *core.NodeResources:
 			return NodeResources{V: v}
-		case v1.NodeResources:
+		case core.NodeResources:
 			return NodeResources{V: &v}
 		default:
 			return skylark.None
@@ -4826,11 +5121,14 @@ func init() {
 }
 
 func createNodeResources(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeResources
+	box := NodeResources{V: &core.NodeResources{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeResources) Underlying() interface{} { return t.V }
-func (t NodeResources) Package() util.Package   { return util.V1 }
-func (t NodeResources) Type() string            { return "k8s_v1_NodeResources" }
+func (t NodeResources) DeepCopy() boxed         { return NodeResources{V: t.V.DeepCopy()} }
+func (t NodeResources) Package() util.Package   { return util.Core }
+func (t NodeResources) Type() string            { return "k8s_core_NodeResources" }
 func (t NodeResources) String() string          { return t.V.String() }
 func (t NodeResources) Freeze()                 {} // TODO
 func (t NodeResources) Truth() skylark.Bool     { return skylark.True }
@@ -4841,8 +5139,8 @@ func (t NodeResources) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t NodeResources) AttrNames() []string { return NodeResources_attrs }
 func (t NodeResources) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeResources_fields, NodeResources_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeResources_fields, NodeResources_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4851,7 +5149,7 @@ func (t NodeResources) SetField(name string, value skylark.Value) error {
 }
 
 type NodeSelector struct {
-	V *v1.NodeSelector
+	V *core.NodeSelector
 }
 
 var (
@@ -4863,12 +5161,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeSelector)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeSelector)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeSelector:
+		case *core.NodeSelector:
 			return NodeSelector{V: v}
-		case v1.NodeSelector:
+		case core.NodeSelector:
 			return NodeSelector{V: &v}
 		default:
 			return skylark.None
@@ -4879,11 +5177,14 @@ func init() {
 }
 
 func createNodeSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeSelector
+	box := NodeSelector{V: &core.NodeSelector{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeSelector) Underlying() interface{} { return t.V }
-func (t NodeSelector) Package() util.Package   { return util.V1 }
-func (t NodeSelector) Type() string            { return "k8s_v1_NodeSelector" }
+func (t NodeSelector) DeepCopy() boxed         { return NodeSelector{V: t.V.DeepCopy()} }
+func (t NodeSelector) Package() util.Package   { return util.Core }
+func (t NodeSelector) Type() string            { return "k8s_core_NodeSelector" }
 func (t NodeSelector) String() string          { return t.V.String() }
 func (t NodeSelector) Freeze()                 {} // TODO
 func (t NodeSelector) Truth() skylark.Bool     { return skylark.True }
@@ -4894,8 +5195,8 @@ func (t NodeSelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t NodeSelector) AttrNames() []string { return NodeSelector_attrs }
 func (t NodeSelector) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeSelector_fields, NodeSelector_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeSelector_fields, NodeSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4904,7 +5205,7 @@ func (t NodeSelector) SetField(name string, value skylark.Value) error {
 }
 
 type NodeSelectorRequirement struct {
-	V *v1.NodeSelectorRequirement
+	V *core.NodeSelectorRequirement
 }
 
 var (
@@ -4916,12 +5217,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeSelectorRequirement)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeSelectorRequirement)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeSelectorRequirement:
+		case *core.NodeSelectorRequirement:
 			return NodeSelectorRequirement{V: v}
-		case v1.NodeSelectorRequirement:
+		case core.NodeSelectorRequirement:
 			return NodeSelectorRequirement{V: &v}
 		default:
 			return skylark.None
@@ -4932,11 +5233,14 @@ func init() {
 }
 
 func createNodeSelectorRequirement(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeSelectorRequirement
+	box := NodeSelectorRequirement{V: &core.NodeSelectorRequirement{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeSelectorRequirement) Underlying() interface{} { return t.V }
-func (t NodeSelectorRequirement) Package() util.Package   { return util.V1 }
-func (t NodeSelectorRequirement) Type() string            { return "k8s_v1_NodeSelectorRequirement" }
+func (t NodeSelectorRequirement) DeepCopy() boxed         { return NodeSelectorRequirement{V: t.V.DeepCopy()} }
+func (t NodeSelectorRequirement) Package() util.Package   { return util.Core }
+func (t NodeSelectorRequirement) Type() string            { return "k8s_core_NodeSelectorRequirement" }
 func (t NodeSelectorRequirement) String() string          { return t.V.String() }
 func (t NodeSelectorRequirement) Freeze()                 {} // TODO
 func (t NodeSelectorRequirement) Truth() skylark.Bool     { return skylark.True }
@@ -4947,8 +5251,8 @@ func (t NodeSelectorRequirement) CompareSameType(op syntax.Token, y_ skylark.Val
 }
 func (t NodeSelectorRequirement) AttrNames() []string { return NodeSelectorRequirement_attrs }
 func (t NodeSelectorRequirement) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeSelectorRequirement_fields, NodeSelectorRequirement_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeSelectorRequirement_fields, NodeSelectorRequirement_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -4957,7 +5261,7 @@ func (t NodeSelectorRequirement) SetField(name string, value skylark.Value) erro
 }
 
 type NodeSelectorTerm struct {
-	V *v1.NodeSelectorTerm
+	V *core.NodeSelectorTerm
 }
 
 var (
@@ -4969,12 +5273,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeSelectorTerm)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeSelectorTerm)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeSelectorTerm:
+		case *core.NodeSelectorTerm:
 			return NodeSelectorTerm{V: v}
-		case v1.NodeSelectorTerm:
+		case core.NodeSelectorTerm:
 			return NodeSelectorTerm{V: &v}
 		default:
 			return skylark.None
@@ -4985,11 +5289,14 @@ func init() {
 }
 
 func createNodeSelectorTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeSelectorTerm
+	box := NodeSelectorTerm{V: &core.NodeSelectorTerm{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeSelectorTerm) Underlying() interface{} { return t.V }
-func (t NodeSelectorTerm) Package() util.Package   { return util.V1 }
-func (t NodeSelectorTerm) Type() string            { return "k8s_v1_NodeSelectorTerm" }
+func (t NodeSelectorTerm) DeepCopy() boxed         { return NodeSelectorTerm{V: t.V.DeepCopy()} }
+func (t NodeSelectorTerm) Package() util.Package   { return util.Core }
+func (t NodeSelectorTerm) Type() string            { return "k8s_core_NodeSelectorTerm" }
 func (t NodeSelectorTerm) String() string          { return t.V.String() }
 func (t NodeSelectorTerm) Freeze()                 {} // TODO
 func (t NodeSelectorTerm) Truth() skylark.Bool     { return skylark.True }
@@ -5000,8 +5307,8 @@ func (t NodeSelectorTerm) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t NodeSelectorTerm) AttrNames() []string { return NodeSelectorTerm_attrs }
 func (t NodeSelectorTerm) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeSelectorTerm_fields, NodeSelectorTerm_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeSelectorTerm_fields, NodeSelectorTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5010,7 +5317,7 @@ func (t NodeSelectorTerm) SetField(name string, value skylark.Value) error {
 }
 
 type NodeSpec struct {
-	V *v1.NodeSpec
+	V *core.NodeSpec
 }
 
 var (
@@ -5022,12 +5329,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeSpec:
+		case *core.NodeSpec:
 			return NodeSpec{V: v}
-		case v1.NodeSpec:
+		case core.NodeSpec:
 			return NodeSpec{V: &v}
 		default:
 			return skylark.None
@@ -5038,11 +5345,14 @@ func init() {
 }
 
 func createNodeSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeSpec
+	box := NodeSpec{V: &core.NodeSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeSpec) Underlying() interface{} { return t.V }
-func (t NodeSpec) Package() util.Package   { return util.V1 }
-func (t NodeSpec) Type() string            { return "k8s_v1_NodeSpec" }
+func (t NodeSpec) DeepCopy() boxed         { return NodeSpec{V: t.V.DeepCopy()} }
+func (t NodeSpec) Package() util.Package   { return util.Core }
+func (t NodeSpec) Type() string            { return "k8s_core_NodeSpec" }
 func (t NodeSpec) String() string          { return t.V.String() }
 func (t NodeSpec) Freeze()                 {} // TODO
 func (t NodeSpec) Truth() skylark.Bool     { return skylark.True }
@@ -5053,8 +5363,8 @@ func (t NodeSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) 
 }
 func (t NodeSpec) AttrNames() []string { return NodeSpec_attrs }
 func (t NodeSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeSpec_fields, NodeSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeSpec_fields, NodeSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5063,7 +5373,7 @@ func (t NodeSpec) SetField(name string, value skylark.Value) error {
 }
 
 type NodeStatus struct {
-	V *v1.NodeStatus
+	V *core.NodeStatus
 }
 
 var (
@@ -5075,12 +5385,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeStatus:
+		case *core.NodeStatus:
 			return NodeStatus{V: v}
-		case v1.NodeStatus:
+		case core.NodeStatus:
 			return NodeStatus{V: &v}
 		default:
 			return skylark.None
@@ -5091,11 +5401,14 @@ func init() {
 }
 
 func createNodeStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeStatus
+	box := NodeStatus{V: &core.NodeStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeStatus) Underlying() interface{} { return t.V }
-func (t NodeStatus) Package() util.Package   { return util.V1 }
-func (t NodeStatus) Type() string            { return "k8s_v1_NodeStatus" }
+func (t NodeStatus) DeepCopy() boxed         { return NodeStatus{V: t.V.DeepCopy()} }
+func (t NodeStatus) Package() util.Package   { return util.Core }
+func (t NodeStatus) Type() string            { return "k8s_core_NodeStatus" }
 func (t NodeStatus) String() string          { return t.V.String() }
 func (t NodeStatus) Freeze()                 {} // TODO
 func (t NodeStatus) Truth() skylark.Bool     { return skylark.True }
@@ -5106,8 +5419,8 @@ func (t NodeStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int
 }
 func (t NodeStatus) AttrNames() []string { return NodeStatus_attrs }
 func (t NodeStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeStatus_fields, NodeStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeStatus_fields, NodeStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5116,7 +5429,7 @@ func (t NodeStatus) SetField(name string, value skylark.Value) error {
 }
 
 type NodeSystemInfo struct {
-	V *v1.NodeSystemInfo
+	V *core.NodeSystemInfo
 }
 
 var (
@@ -5128,12 +5441,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.NodeSystemInfo)(nil)).Elem()
+	t := reflect.TypeOf((*core.NodeSystemInfo)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.NodeSystemInfo:
+		case *core.NodeSystemInfo:
 			return NodeSystemInfo{V: v}
-		case v1.NodeSystemInfo:
+		case core.NodeSystemInfo:
 			return NodeSystemInfo{V: &v}
 		default:
 			return skylark.None
@@ -5144,11 +5457,14 @@ func init() {
 }
 
 func createNodeSystemInfo(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for NodeSystemInfo
+	box := NodeSystemInfo{V: &core.NodeSystemInfo{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t NodeSystemInfo) Underlying() interface{} { return t.V }
-func (t NodeSystemInfo) Package() util.Package   { return util.V1 }
-func (t NodeSystemInfo) Type() string            { return "k8s_v1_NodeSystemInfo" }
+func (t NodeSystemInfo) DeepCopy() boxed         { return NodeSystemInfo{V: t.V.DeepCopy()} }
+func (t NodeSystemInfo) Package() util.Package   { return util.Core }
+func (t NodeSystemInfo) Type() string            { return "k8s_core_NodeSystemInfo" }
 func (t NodeSystemInfo) String() string          { return t.V.String() }
 func (t NodeSystemInfo) Freeze()                 {} // TODO
 func (t NodeSystemInfo) Truth() skylark.Bool     { return skylark.True }
@@ -5159,8 +5475,8 @@ func (t NodeSystemInfo) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t NodeSystemInfo) AttrNames() []string { return NodeSystemInfo_attrs }
 func (t NodeSystemInfo) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, NodeSystemInfo_fields, NodeSystemInfo_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NodeSystemInfo_fields, NodeSystemInfo_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5169,7 +5485,7 @@ func (t NodeSystemInfo) SetField(name string, value skylark.Value) error {
 }
 
 type ObjectFieldSelector struct {
-	V *v1.ObjectFieldSelector
+	V *core.ObjectFieldSelector
 }
 
 var (
@@ -5181,12 +5497,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ObjectFieldSelector)(nil)).Elem()
+	t := reflect.TypeOf((*core.ObjectFieldSelector)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ObjectFieldSelector:
+		case *core.ObjectFieldSelector:
 			return ObjectFieldSelector{V: v}
-		case v1.ObjectFieldSelector:
+		case core.ObjectFieldSelector:
 			return ObjectFieldSelector{V: &v}
 		default:
 			return skylark.None
@@ -5197,11 +5513,14 @@ func init() {
 }
 
 func createObjectFieldSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ObjectFieldSelector
+	box := ObjectFieldSelector{V: &core.ObjectFieldSelector{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ObjectFieldSelector) Underlying() interface{} { return t.V }
-func (t ObjectFieldSelector) Package() util.Package   { return util.V1 }
-func (t ObjectFieldSelector) Type() string            { return "k8s_v1_ObjectFieldSelector" }
+func (t ObjectFieldSelector) DeepCopy() boxed         { return ObjectFieldSelector{V: t.V.DeepCopy()} }
+func (t ObjectFieldSelector) Package() util.Package   { return util.Core }
+func (t ObjectFieldSelector) Type() string            { return "k8s_core_ObjectFieldSelector" }
 func (t ObjectFieldSelector) String() string          { return t.V.String() }
 func (t ObjectFieldSelector) Freeze()                 {} // TODO
 func (t ObjectFieldSelector) Truth() skylark.Bool     { return skylark.True }
@@ -5212,8 +5531,8 @@ func (t ObjectFieldSelector) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t ObjectFieldSelector) AttrNames() []string { return ObjectFieldSelector_attrs }
 func (t ObjectFieldSelector) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ObjectFieldSelector_fields, ObjectFieldSelector_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ObjectFieldSelector_fields, ObjectFieldSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5222,7 +5541,7 @@ func (t ObjectFieldSelector) SetField(name string, value skylark.Value) error {
 }
 
 type ObjectReference struct {
-	V *v1.ObjectReference
+	V *core.ObjectReference
 }
 
 var (
@@ -5234,12 +5553,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ObjectReference)(nil)).Elem()
+	t := reflect.TypeOf((*core.ObjectReference)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ObjectReference:
+		case *core.ObjectReference:
 			return ObjectReference{V: v}
-		case v1.ObjectReference:
+		case core.ObjectReference:
 			return ObjectReference{V: &v}
 		default:
 			return skylark.None
@@ -5250,11 +5569,14 @@ func init() {
 }
 
 func createObjectReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ObjectReference
+	box := ObjectReference{V: &core.ObjectReference{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ObjectReference) Underlying() interface{} { return t.V }
-func (t ObjectReference) Package() util.Package   { return util.V1 }
-func (t ObjectReference) Type() string            { return "k8s_v1_ObjectReference" }
+func (t ObjectReference) DeepCopy() boxed         { return ObjectReference{V: t.V.DeepCopy()} }
+func (t ObjectReference) Package() util.Package   { return util.Core }
+func (t ObjectReference) Type() string            { return "k8s_core_ObjectReference" }
 func (t ObjectReference) String() string          { return t.V.String() }
 func (t ObjectReference) Freeze()                 {} // TODO
 func (t ObjectReference) Truth() skylark.Bool     { return skylark.True }
@@ -5265,8 +5587,8 @@ func (t ObjectReference) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t ObjectReference) AttrNames() []string { return ObjectReference_attrs }
 func (t ObjectReference) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ObjectReference_fields, ObjectReference_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ObjectReference_fields, ObjectReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5275,7 +5597,7 @@ func (t ObjectReference) SetField(name string, value skylark.Value) error {
 }
 
 type PersistentVolume struct {
-	V *v1.PersistentVolume
+	V *core.PersistentVolume
 }
 
 var (
@@ -5287,12 +5609,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolume)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolume)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolume:
+		case *core.PersistentVolume:
 			return PersistentVolume{V: v}
-		case v1.PersistentVolume:
+		case core.PersistentVolume:
 			return PersistentVolume{V: &v}
 		default:
 			return skylark.None
@@ -5303,11 +5625,14 @@ func init() {
 }
 
 func createPersistentVolume(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolume
+	box := PersistentVolume{V: &core.PersistentVolume{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolume) Underlying() interface{} { return t.V }
-func (t PersistentVolume) Package() util.Package   { return util.V1 }
-func (t PersistentVolume) Type() string            { return "k8s_v1_PersistentVolume" }
+func (t PersistentVolume) DeepCopy() boxed         { return PersistentVolume{V: t.V.DeepCopy()} }
+func (t PersistentVolume) Package() util.Package   { return util.Core }
+func (t PersistentVolume) Type() string            { return "k8s_core_PersistentVolume" }
 func (t PersistentVolume) String() string          { return t.V.String() }
 func (t PersistentVolume) Freeze()                 {} // TODO
 func (t PersistentVolume) Truth() skylark.Bool     { return skylark.True }
@@ -5318,8 +5643,8 @@ func (t PersistentVolume) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t PersistentVolume) AttrNames() []string { return PersistentVolume_attrs }
 func (t PersistentVolume) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolume_fields, PersistentVolume_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolume_fields, PersistentVolume_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5328,7 +5653,7 @@ func (t PersistentVolume) SetField(name string, value skylark.Value) error {
 }
 
 type PersistentVolumeClaim struct {
-	V *v1.PersistentVolumeClaim
+	V *core.PersistentVolumeClaim
 }
 
 var (
@@ -5340,12 +5665,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeClaim)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeClaim)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeClaim:
+		case *core.PersistentVolumeClaim:
 			return PersistentVolumeClaim{V: v}
-		case v1.PersistentVolumeClaim:
+		case core.PersistentVolumeClaim:
 			return PersistentVolumeClaim{V: &v}
 		default:
 			return skylark.None
@@ -5356,11 +5681,14 @@ func init() {
 }
 
 func createPersistentVolumeClaim(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeClaim
+	box := PersistentVolumeClaim{V: &core.PersistentVolumeClaim{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeClaim) Underlying() interface{} { return t.V }
-func (t PersistentVolumeClaim) Package() util.Package   { return util.V1 }
-func (t PersistentVolumeClaim) Type() string            { return "k8s_v1_PersistentVolumeClaim" }
+func (t PersistentVolumeClaim) DeepCopy() boxed         { return PersistentVolumeClaim{V: t.V.DeepCopy()} }
+func (t PersistentVolumeClaim) Package() util.Package   { return util.Core }
+func (t PersistentVolumeClaim) Type() string            { return "k8s_core_PersistentVolumeClaim" }
 func (t PersistentVolumeClaim) String() string          { return t.V.String() }
 func (t PersistentVolumeClaim) Freeze()                 {} // TODO
 func (t PersistentVolumeClaim) Truth() skylark.Bool     { return skylark.True }
@@ -5371,8 +5699,8 @@ func (t PersistentVolumeClaim) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t PersistentVolumeClaim) AttrNames() []string { return PersistentVolumeClaim_attrs }
 func (t PersistentVolumeClaim) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaim_fields, PersistentVolumeClaim_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeClaim_fields, PersistentVolumeClaim_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5381,7 +5709,7 @@ func (t PersistentVolumeClaim) SetField(name string, value skylark.Value) error 
 }
 
 type PersistentVolumeClaimCondition struct {
-	V *v1.PersistentVolumeClaimCondition
+	V *core.PersistentVolumeClaimCondition
 }
 
 var (
@@ -5393,12 +5721,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeClaimCondition)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeClaimCondition)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeClaimCondition:
+		case *core.PersistentVolumeClaimCondition:
 			return PersistentVolumeClaimCondition{V: v}
-		case v1.PersistentVolumeClaimCondition:
+		case core.PersistentVolumeClaimCondition:
 			return PersistentVolumeClaimCondition{V: &v}
 		default:
 			return skylark.None
@@ -5409,15 +5737,22 @@ func init() {
 }
 
 func createPersistentVolumeClaimCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeClaimCondition
+	box := PersistentVolumeClaimCondition{V: &core.PersistentVolumeClaimCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeClaimCondition) Underlying() interface{} { return t.V }
-func (t PersistentVolumeClaimCondition) Package() util.Package   { return util.V1 }
-func (t PersistentVolumeClaimCondition) Type() string            { return "k8s_v1_PersistentVolumeClaimCondition" }
-func (t PersistentVolumeClaimCondition) String() string          { return t.V.String() }
-func (t PersistentVolumeClaimCondition) Freeze()                 {} // TODO
-func (t PersistentVolumeClaimCondition) Truth() skylark.Bool     { return skylark.True }
-func (t PersistentVolumeClaimCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeClaimCondition) DeepCopy() boxed {
+	return PersistentVolumeClaimCondition{V: t.V.DeepCopy()}
+}
+func (t PersistentVolumeClaimCondition) Package() util.Package { return util.Core }
+func (t PersistentVolumeClaimCondition) Type() string {
+	return "k8s_core_PersistentVolumeClaimCondition"
+}
+func (t PersistentVolumeClaimCondition) String() string        { return t.V.String() }
+func (t PersistentVolumeClaimCondition) Freeze()               {} // TODO
+func (t PersistentVolumeClaimCondition) Truth() skylark.Bool   { return skylark.True }
+func (t PersistentVolumeClaimCondition) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeClaimCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeClaimCondition)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -5426,8 +5761,8 @@ func (t PersistentVolumeClaimCondition) AttrNames() []string {
 	return PersistentVolumeClaimCondition_attrs
 }
 func (t PersistentVolumeClaimCondition) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimCondition_fields, PersistentVolumeClaimCondition_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeClaimCondition_fields, PersistentVolumeClaimCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5436,7 +5771,7 @@ func (t PersistentVolumeClaimCondition) SetField(name string, value skylark.Valu
 }
 
 type PersistentVolumeClaimList struct {
-	V *v1.PersistentVolumeClaimList
+	V *core.PersistentVolumeClaimList
 }
 
 var (
@@ -5448,12 +5783,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeClaimList)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeClaimList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeClaimList:
+		case *core.PersistentVolumeClaimList:
 			return PersistentVolumeClaimList{V: v}
-		case v1.PersistentVolumeClaimList:
+		case core.PersistentVolumeClaimList:
 			return PersistentVolumeClaimList{V: &v}
 		default:
 			return skylark.None
@@ -5464,23 +5799,28 @@ func init() {
 }
 
 func createPersistentVolumeClaimList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeClaimList
+	box := PersistentVolumeClaimList{V: &core.PersistentVolumeClaimList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeClaimList) Underlying() interface{} { return t.V }
-func (t PersistentVolumeClaimList) Package() util.Package   { return util.V1 }
-func (t PersistentVolumeClaimList) Type() string            { return "k8s_v1_PersistentVolumeClaimList" }
-func (t PersistentVolumeClaimList) String() string          { return t.V.String() }
-func (t PersistentVolumeClaimList) Freeze()                 {} // TODO
-func (t PersistentVolumeClaimList) Truth() skylark.Bool     { return skylark.True }
-func (t PersistentVolumeClaimList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeClaimList) DeepCopy() boxed {
+	return PersistentVolumeClaimList{V: t.V.DeepCopy()}
+}
+func (t PersistentVolumeClaimList) Package() util.Package { return util.Core }
+func (t PersistentVolumeClaimList) Type() string          { return "k8s_core_PersistentVolumeClaimList" }
+func (t PersistentVolumeClaimList) String() string        { return t.V.String() }
+func (t PersistentVolumeClaimList) Freeze()               {} // TODO
+func (t PersistentVolumeClaimList) Truth() skylark.Bool   { return skylark.True }
+func (t PersistentVolumeClaimList) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeClaimList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeClaimList)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t PersistentVolumeClaimList) AttrNames() []string { return PersistentVolumeClaimList_attrs }
 func (t PersistentVolumeClaimList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimList_fields, PersistentVolumeClaimList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeClaimList_fields, PersistentVolumeClaimList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5489,7 +5829,7 @@ func (t PersistentVolumeClaimList) SetField(name string, value skylark.Value) er
 }
 
 type PersistentVolumeClaimSpec struct {
-	V *v1.PersistentVolumeClaimSpec
+	V *core.PersistentVolumeClaimSpec
 }
 
 var (
@@ -5501,12 +5841,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeClaimSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeClaimSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeClaimSpec:
+		case *core.PersistentVolumeClaimSpec:
 			return PersistentVolumeClaimSpec{V: v}
-		case v1.PersistentVolumeClaimSpec:
+		case core.PersistentVolumeClaimSpec:
 			return PersistentVolumeClaimSpec{V: &v}
 		default:
 			return skylark.None
@@ -5517,23 +5857,28 @@ func init() {
 }
 
 func createPersistentVolumeClaimSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeClaimSpec
+	box := PersistentVolumeClaimSpec{V: &core.PersistentVolumeClaimSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeClaimSpec) Underlying() interface{} { return t.V }
-func (t PersistentVolumeClaimSpec) Package() util.Package   { return util.V1 }
-func (t PersistentVolumeClaimSpec) Type() string            { return "k8s_v1_PersistentVolumeClaimSpec" }
-func (t PersistentVolumeClaimSpec) String() string          { return t.V.String() }
-func (t PersistentVolumeClaimSpec) Freeze()                 {} // TODO
-func (t PersistentVolumeClaimSpec) Truth() skylark.Bool     { return skylark.True }
-func (t PersistentVolumeClaimSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeClaimSpec) DeepCopy() boxed {
+	return PersistentVolumeClaimSpec{V: t.V.DeepCopy()}
+}
+func (t PersistentVolumeClaimSpec) Package() util.Package { return util.Core }
+func (t PersistentVolumeClaimSpec) Type() string          { return "k8s_core_PersistentVolumeClaimSpec" }
+func (t PersistentVolumeClaimSpec) String() string        { return t.V.String() }
+func (t PersistentVolumeClaimSpec) Freeze()               {} // TODO
+func (t PersistentVolumeClaimSpec) Truth() skylark.Bool   { return skylark.True }
+func (t PersistentVolumeClaimSpec) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeClaimSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeClaimSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t PersistentVolumeClaimSpec) AttrNames() []string { return PersistentVolumeClaimSpec_attrs }
 func (t PersistentVolumeClaimSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimSpec_fields, PersistentVolumeClaimSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeClaimSpec_fields, PersistentVolumeClaimSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5542,7 +5887,7 @@ func (t PersistentVolumeClaimSpec) SetField(name string, value skylark.Value) er
 }
 
 type PersistentVolumeClaimStatus struct {
-	V *v1.PersistentVolumeClaimStatus
+	V *core.PersistentVolumeClaimStatus
 }
 
 var (
@@ -5554,12 +5899,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeClaimStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeClaimStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeClaimStatus:
+		case *core.PersistentVolumeClaimStatus:
 			return PersistentVolumeClaimStatus{V: v}
-		case v1.PersistentVolumeClaimStatus:
+		case core.PersistentVolumeClaimStatus:
 			return PersistentVolumeClaimStatus{V: &v}
 		default:
 			return skylark.None
@@ -5570,23 +5915,28 @@ func init() {
 }
 
 func createPersistentVolumeClaimStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeClaimStatus
+	box := PersistentVolumeClaimStatus{V: &core.PersistentVolumeClaimStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeClaimStatus) Underlying() interface{} { return t.V }
-func (t PersistentVolumeClaimStatus) Package() util.Package   { return util.V1 }
-func (t PersistentVolumeClaimStatus) Type() string            { return "k8s_v1_PersistentVolumeClaimStatus" }
-func (t PersistentVolumeClaimStatus) String() string          { return t.V.String() }
-func (t PersistentVolumeClaimStatus) Freeze()                 {} // TODO
-func (t PersistentVolumeClaimStatus) Truth() skylark.Bool     { return skylark.True }
-func (t PersistentVolumeClaimStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t PersistentVolumeClaimStatus) DeepCopy() boxed {
+	return PersistentVolumeClaimStatus{V: t.V.DeepCopy()}
+}
+func (t PersistentVolumeClaimStatus) Package() util.Package { return util.Core }
+func (t PersistentVolumeClaimStatus) Type() string          { return "k8s_core_PersistentVolumeClaimStatus" }
+func (t PersistentVolumeClaimStatus) String() string        { return t.V.String() }
+func (t PersistentVolumeClaimStatus) Freeze()               {} // TODO
+func (t PersistentVolumeClaimStatus) Truth() skylark.Bool   { return skylark.True }
+func (t PersistentVolumeClaimStatus) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t PersistentVolumeClaimStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*PersistentVolumeClaimStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t PersistentVolumeClaimStatus) AttrNames() []string { return PersistentVolumeClaimStatus_attrs }
 func (t PersistentVolumeClaimStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimStatus_fields, PersistentVolumeClaimStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeClaimStatus_fields, PersistentVolumeClaimStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5595,7 +5945,7 @@ func (t PersistentVolumeClaimStatus) SetField(name string, value skylark.Value) 
 }
 
 type PersistentVolumeClaimVolumeSource struct {
-	V *v1.PersistentVolumeClaimVolumeSource
+	V *core.PersistentVolumeClaimVolumeSource
 }
 
 var (
@@ -5607,12 +5957,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeClaimVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeClaimVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeClaimVolumeSource:
+		case *core.PersistentVolumeClaimVolumeSource:
 			return PersistentVolumeClaimVolumeSource{V: v}
-		case v1.PersistentVolumeClaimVolumeSource:
+		case core.PersistentVolumeClaimVolumeSource:
 			return PersistentVolumeClaimVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -5623,12 +5973,17 @@ func init() {
 }
 
 func createPersistentVolumeClaimVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeClaimVolumeSource
+	box := PersistentVolumeClaimVolumeSource{V: &core.PersistentVolumeClaimVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeClaimVolumeSource) Underlying() interface{} { return t.V }
-func (t PersistentVolumeClaimVolumeSource) Package() util.Package   { return util.V1 }
+func (t PersistentVolumeClaimVolumeSource) DeepCopy() boxed {
+	return PersistentVolumeClaimVolumeSource{V: t.V.DeepCopy()}
+}
+func (t PersistentVolumeClaimVolumeSource) Package() util.Package { return util.Core }
 func (t PersistentVolumeClaimVolumeSource) Type() string {
-	return "k8s_v1_PersistentVolumeClaimVolumeSource"
+	return "k8s_core_PersistentVolumeClaimVolumeSource"
 }
 func (t PersistentVolumeClaimVolumeSource) String() string        { return t.V.String() }
 func (t PersistentVolumeClaimVolumeSource) Freeze()               {} // TODO
@@ -5642,8 +5997,8 @@ func (t PersistentVolumeClaimVolumeSource) AttrNames() []string {
 	return PersistentVolumeClaimVolumeSource_attrs
 }
 func (t PersistentVolumeClaimVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeClaimVolumeSource_fields, PersistentVolumeClaimVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeClaimVolumeSource_fields, PersistentVolumeClaimVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5652,7 +6007,7 @@ func (t PersistentVolumeClaimVolumeSource) SetField(name string, value skylark.V
 }
 
 type PersistentVolumeList struct {
-	V *v1.PersistentVolumeList
+	V *core.PersistentVolumeList
 }
 
 var (
@@ -5664,12 +6019,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeList)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeList:
+		case *core.PersistentVolumeList:
 			return PersistentVolumeList{V: v}
-		case v1.PersistentVolumeList:
+		case core.PersistentVolumeList:
 			return PersistentVolumeList{V: &v}
 		default:
 			return skylark.None
@@ -5680,11 +6035,14 @@ func init() {
 }
 
 func createPersistentVolumeList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeList
+	box := PersistentVolumeList{V: &core.PersistentVolumeList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeList) Underlying() interface{} { return t.V }
-func (t PersistentVolumeList) Package() util.Package   { return util.V1 }
-func (t PersistentVolumeList) Type() string            { return "k8s_v1_PersistentVolumeList" }
+func (t PersistentVolumeList) DeepCopy() boxed         { return PersistentVolumeList{V: t.V.DeepCopy()} }
+func (t PersistentVolumeList) Package() util.Package   { return util.Core }
+func (t PersistentVolumeList) Type() string            { return "k8s_core_PersistentVolumeList" }
 func (t PersistentVolumeList) String() string          { return t.V.String() }
 func (t PersistentVolumeList) Freeze()                 {} // TODO
 func (t PersistentVolumeList) Truth() skylark.Bool     { return skylark.True }
@@ -5695,8 +6053,8 @@ func (t PersistentVolumeList) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t PersistentVolumeList) AttrNames() []string { return PersistentVolumeList_attrs }
 func (t PersistentVolumeList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeList_fields, PersistentVolumeList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeList_fields, PersistentVolumeList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5705,7 +6063,7 @@ func (t PersistentVolumeList) SetField(name string, value skylark.Value) error {
 }
 
 type PersistentVolumeSource struct {
-	V *v1.PersistentVolumeSource
+	V *core.PersistentVolumeSource
 }
 
 var (
@@ -5717,12 +6075,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeSource:
+		case *core.PersistentVolumeSource:
 			return PersistentVolumeSource{V: v}
-		case v1.PersistentVolumeSource:
+		case core.PersistentVolumeSource:
 			return PersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -5733,11 +6091,14 @@ func init() {
 }
 
 func createPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeSource
+	box := PersistentVolumeSource{V: &core.PersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t PersistentVolumeSource) Package() util.Package   { return util.V1 }
-func (t PersistentVolumeSource) Type() string            { return "k8s_v1_PersistentVolumeSource" }
+func (t PersistentVolumeSource) DeepCopy() boxed         { return PersistentVolumeSource{V: t.V.DeepCopy()} }
+func (t PersistentVolumeSource) Package() util.Package   { return util.Core }
+func (t PersistentVolumeSource) Type() string            { return "k8s_core_PersistentVolumeSource" }
 func (t PersistentVolumeSource) String() string          { return t.V.String() }
 func (t PersistentVolumeSource) Freeze()                 {} // TODO
 func (t PersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -5748,8 +6109,8 @@ func (t PersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Valu
 }
 func (t PersistentVolumeSource) AttrNames() []string { return PersistentVolumeSource_attrs }
 func (t PersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeSource_fields, PersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeSource_fields, PersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5758,7 +6119,7 @@ func (t PersistentVolumeSource) SetField(name string, value skylark.Value) error
 }
 
 type PersistentVolumeSpec struct {
-	V *v1.PersistentVolumeSpec
+	V *core.PersistentVolumeSpec
 }
 
 var (
@@ -5770,12 +6131,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeSpec:
+		case *core.PersistentVolumeSpec:
 			return PersistentVolumeSpec{V: v}
-		case v1.PersistentVolumeSpec:
+		case core.PersistentVolumeSpec:
 			return PersistentVolumeSpec{V: &v}
 		default:
 			return skylark.None
@@ -5786,11 +6147,14 @@ func init() {
 }
 
 func createPersistentVolumeSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeSpec
+	box := PersistentVolumeSpec{V: &core.PersistentVolumeSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeSpec) Underlying() interface{} { return t.V }
-func (t PersistentVolumeSpec) Package() util.Package   { return util.V1 }
-func (t PersistentVolumeSpec) Type() string            { return "k8s_v1_PersistentVolumeSpec" }
+func (t PersistentVolumeSpec) DeepCopy() boxed         { return PersistentVolumeSpec{V: t.V.DeepCopy()} }
+func (t PersistentVolumeSpec) Package() util.Package   { return util.Core }
+func (t PersistentVolumeSpec) Type() string            { return "k8s_core_PersistentVolumeSpec" }
 func (t PersistentVolumeSpec) String() string          { return t.V.String() }
 func (t PersistentVolumeSpec) Freeze()                 {} // TODO
 func (t PersistentVolumeSpec) Truth() skylark.Bool     { return skylark.True }
@@ -5801,8 +6165,8 @@ func (t PersistentVolumeSpec) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t PersistentVolumeSpec) AttrNames() []string { return PersistentVolumeSpec_attrs }
 func (t PersistentVolumeSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeSpec_fields, PersistentVolumeSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeSpec_fields, PersistentVolumeSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5811,7 +6175,7 @@ func (t PersistentVolumeSpec) SetField(name string, value skylark.Value) error {
 }
 
 type PersistentVolumeStatus struct {
-	V *v1.PersistentVolumeStatus
+	V *core.PersistentVolumeStatus
 }
 
 var (
@@ -5823,12 +6187,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PersistentVolumeStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.PersistentVolumeStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PersistentVolumeStatus:
+		case *core.PersistentVolumeStatus:
 			return PersistentVolumeStatus{V: v}
-		case v1.PersistentVolumeStatus:
+		case core.PersistentVolumeStatus:
 			return PersistentVolumeStatus{V: &v}
 		default:
 			return skylark.None
@@ -5839,11 +6203,14 @@ func init() {
 }
 
 func createPersistentVolumeStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PersistentVolumeStatus
+	box := PersistentVolumeStatus{V: &core.PersistentVolumeStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PersistentVolumeStatus) Underlying() interface{} { return t.V }
-func (t PersistentVolumeStatus) Package() util.Package   { return util.V1 }
-func (t PersistentVolumeStatus) Type() string            { return "k8s_v1_PersistentVolumeStatus" }
+func (t PersistentVolumeStatus) DeepCopy() boxed         { return PersistentVolumeStatus{V: t.V.DeepCopy()} }
+func (t PersistentVolumeStatus) Package() util.Package   { return util.Core }
+func (t PersistentVolumeStatus) Type() string            { return "k8s_core_PersistentVolumeStatus" }
 func (t PersistentVolumeStatus) String() string          { return t.V.String() }
 func (t PersistentVolumeStatus) Freeze()                 {} // TODO
 func (t PersistentVolumeStatus) Truth() skylark.Bool     { return skylark.True }
@@ -5854,8 +6221,8 @@ func (t PersistentVolumeStatus) CompareSameType(op syntax.Token, y_ skylark.Valu
 }
 func (t PersistentVolumeStatus) AttrNames() []string { return PersistentVolumeStatus_attrs }
 func (t PersistentVolumeStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PersistentVolumeStatus_fields, PersistentVolumeStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PersistentVolumeStatus_fields, PersistentVolumeStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5864,7 +6231,7 @@ func (t PersistentVolumeStatus) SetField(name string, value skylark.Value) error
 }
 
 type PhotonPersistentDiskVolumeSource struct {
-	V *v1.PhotonPersistentDiskVolumeSource
+	V *core.PhotonPersistentDiskVolumeSource
 }
 
 var (
@@ -5876,12 +6243,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PhotonPersistentDiskVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.PhotonPersistentDiskVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PhotonPersistentDiskVolumeSource:
+		case *core.PhotonPersistentDiskVolumeSource:
 			return PhotonPersistentDiskVolumeSource{V: v}
-		case v1.PhotonPersistentDiskVolumeSource:
+		case core.PhotonPersistentDiskVolumeSource:
 			return PhotonPersistentDiskVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -5892,12 +6259,17 @@ func init() {
 }
 
 func createPhotonPersistentDiskVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PhotonPersistentDiskVolumeSource
+	box := PhotonPersistentDiskVolumeSource{V: &core.PhotonPersistentDiskVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PhotonPersistentDiskVolumeSource) Underlying() interface{} { return t.V }
-func (t PhotonPersistentDiskVolumeSource) Package() util.Package   { return util.V1 }
+func (t PhotonPersistentDiskVolumeSource) DeepCopy() boxed {
+	return PhotonPersistentDiskVolumeSource{V: t.V.DeepCopy()}
+}
+func (t PhotonPersistentDiskVolumeSource) Package() util.Package { return util.Core }
 func (t PhotonPersistentDiskVolumeSource) Type() string {
-	return "k8s_v1_PhotonPersistentDiskVolumeSource"
+	return "k8s_core_PhotonPersistentDiskVolumeSource"
 }
 func (t PhotonPersistentDiskVolumeSource) String() string        { return t.V.String() }
 func (t PhotonPersistentDiskVolumeSource) Freeze()               {} // TODO
@@ -5911,8 +6283,8 @@ func (t PhotonPersistentDiskVolumeSource) AttrNames() []string {
 	return PhotonPersistentDiskVolumeSource_attrs
 }
 func (t PhotonPersistentDiskVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PhotonPersistentDiskVolumeSource_fields, PhotonPersistentDiskVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PhotonPersistentDiskVolumeSource_fields, PhotonPersistentDiskVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5921,7 +6293,7 @@ func (t PhotonPersistentDiskVolumeSource) SetField(name string, value skylark.Va
 }
 
 type Pod struct {
-	V *v1.Pod
+	V *core.Pod
 }
 
 var (
@@ -5933,12 +6305,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Pod)(nil)).Elem()
+	t := reflect.TypeOf((*core.Pod)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Pod:
+		case *core.Pod:
 			return Pod{V: v}
-		case v1.Pod:
+		case core.Pod:
 			return Pod{V: &v}
 		default:
 			return skylark.None
@@ -5949,11 +6321,14 @@ func init() {
 }
 
 func createPod(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Pod
+	box := Pod{V: &core.Pod{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Pod) Underlying() interface{} { return t.V }
-func (t Pod) Package() util.Package   { return util.V1 }
-func (t Pod) Type() string            { return "k8s_v1_Pod" }
+func (t Pod) DeepCopy() boxed         { return Pod{V: t.V.DeepCopy()} }
+func (t Pod) Package() util.Package   { return util.Core }
+func (t Pod) Type() string            { return "k8s_core_Pod" }
 func (t Pod) String() string          { return t.V.String() }
 func (t Pod) Freeze()                 {} // TODO
 func (t Pod) Truth() skylark.Bool     { return skylark.True }
@@ -5964,8 +6339,8 @@ func (t Pod) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool
 }
 func (t Pod) AttrNames() []string { return Pod_attrs }
 func (t Pod) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Pod_fields, Pod_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Pod_fields, Pod_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -5974,7 +6349,7 @@ func (t Pod) SetField(name string, value skylark.Value) error {
 }
 
 type PodAffinity struct {
-	V *v1.PodAffinity
+	V *core.PodAffinity
 }
 
 var (
@@ -5986,12 +6361,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodAffinity)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodAffinity)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodAffinity:
+		case *core.PodAffinity:
 			return PodAffinity{V: v}
-		case v1.PodAffinity:
+		case core.PodAffinity:
 			return PodAffinity{V: &v}
 		default:
 			return skylark.None
@@ -6002,11 +6377,14 @@ func init() {
 }
 
 func createPodAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodAffinity
+	box := PodAffinity{V: &core.PodAffinity{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodAffinity) Underlying() interface{} { return t.V }
-func (t PodAffinity) Package() util.Package   { return util.V1 }
-func (t PodAffinity) Type() string            { return "k8s_v1_PodAffinity" }
+func (t PodAffinity) DeepCopy() boxed         { return PodAffinity{V: t.V.DeepCopy()} }
+func (t PodAffinity) Package() util.Package   { return util.Core }
+func (t PodAffinity) Type() string            { return "k8s_core_PodAffinity" }
 func (t PodAffinity) String() string          { return t.V.String() }
 func (t PodAffinity) Freeze()                 {} // TODO
 func (t PodAffinity) Truth() skylark.Bool     { return skylark.True }
@@ -6017,8 +6395,8 @@ func (t PodAffinity) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t PodAffinity) AttrNames() []string { return PodAffinity_attrs }
 func (t PodAffinity) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodAffinity_fields, PodAffinity_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodAffinity_fields, PodAffinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6027,7 +6405,7 @@ func (t PodAffinity) SetField(name string, value skylark.Value) error {
 }
 
 type PodAffinityTerm struct {
-	V *v1.PodAffinityTerm
+	V *core.PodAffinityTerm
 }
 
 var (
@@ -6039,12 +6417,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodAffinityTerm)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodAffinityTerm)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodAffinityTerm:
+		case *core.PodAffinityTerm:
 			return PodAffinityTerm{V: v}
-		case v1.PodAffinityTerm:
+		case core.PodAffinityTerm:
 			return PodAffinityTerm{V: &v}
 		default:
 			return skylark.None
@@ -6055,11 +6433,14 @@ func init() {
 }
 
 func createPodAffinityTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodAffinityTerm
+	box := PodAffinityTerm{V: &core.PodAffinityTerm{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodAffinityTerm) Underlying() interface{} { return t.V }
-func (t PodAffinityTerm) Package() util.Package   { return util.V1 }
-func (t PodAffinityTerm) Type() string            { return "k8s_v1_PodAffinityTerm" }
+func (t PodAffinityTerm) DeepCopy() boxed         { return PodAffinityTerm{V: t.V.DeepCopy()} }
+func (t PodAffinityTerm) Package() util.Package   { return util.Core }
+func (t PodAffinityTerm) Type() string            { return "k8s_core_PodAffinityTerm" }
 func (t PodAffinityTerm) String() string          { return t.V.String() }
 func (t PodAffinityTerm) Freeze()                 {} // TODO
 func (t PodAffinityTerm) Truth() skylark.Bool     { return skylark.True }
@@ -6070,8 +6451,8 @@ func (t PodAffinityTerm) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t PodAffinityTerm) AttrNames() []string { return PodAffinityTerm_attrs }
 func (t PodAffinityTerm) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodAffinityTerm_fields, PodAffinityTerm_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodAffinityTerm_fields, PodAffinityTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6080,7 +6461,7 @@ func (t PodAffinityTerm) SetField(name string, value skylark.Value) error {
 }
 
 type PodAntiAffinity struct {
-	V *v1.PodAntiAffinity
+	V *core.PodAntiAffinity
 }
 
 var (
@@ -6092,12 +6473,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodAntiAffinity)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodAntiAffinity)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodAntiAffinity:
+		case *core.PodAntiAffinity:
 			return PodAntiAffinity{V: v}
-		case v1.PodAntiAffinity:
+		case core.PodAntiAffinity:
 			return PodAntiAffinity{V: &v}
 		default:
 			return skylark.None
@@ -6108,11 +6489,14 @@ func init() {
 }
 
 func createPodAntiAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodAntiAffinity
+	box := PodAntiAffinity{V: &core.PodAntiAffinity{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodAntiAffinity) Underlying() interface{} { return t.V }
-func (t PodAntiAffinity) Package() util.Package   { return util.V1 }
-func (t PodAntiAffinity) Type() string            { return "k8s_v1_PodAntiAffinity" }
+func (t PodAntiAffinity) DeepCopy() boxed         { return PodAntiAffinity{V: t.V.DeepCopy()} }
+func (t PodAntiAffinity) Package() util.Package   { return util.Core }
+func (t PodAntiAffinity) Type() string            { return "k8s_core_PodAntiAffinity" }
 func (t PodAntiAffinity) String() string          { return t.V.String() }
 func (t PodAntiAffinity) Freeze()                 {} // TODO
 func (t PodAntiAffinity) Truth() skylark.Bool     { return skylark.True }
@@ -6123,8 +6507,8 @@ func (t PodAntiAffinity) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t PodAntiAffinity) AttrNames() []string { return PodAntiAffinity_attrs }
 func (t PodAntiAffinity) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodAntiAffinity_fields, PodAntiAffinity_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodAntiAffinity_fields, PodAntiAffinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6133,7 +6517,7 @@ func (t PodAntiAffinity) SetField(name string, value skylark.Value) error {
 }
 
 type PodAttachOptions struct {
-	V *v1.PodAttachOptions
+	V *core.PodAttachOptions
 }
 
 var (
@@ -6145,12 +6529,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodAttachOptions)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodAttachOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodAttachOptions:
+		case *core.PodAttachOptions:
 			return PodAttachOptions{V: v}
-		case v1.PodAttachOptions:
+		case core.PodAttachOptions:
 			return PodAttachOptions{V: &v}
 		default:
 			return skylark.None
@@ -6161,11 +6545,14 @@ func init() {
 }
 
 func createPodAttachOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodAttachOptions
+	box := PodAttachOptions{V: &core.PodAttachOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodAttachOptions) Underlying() interface{} { return t.V }
-func (t PodAttachOptions) Package() util.Package   { return util.V1 }
-func (t PodAttachOptions) Type() string            { return "k8s_v1_PodAttachOptions" }
+func (t PodAttachOptions) DeepCopy() boxed         { return PodAttachOptions{V: t.V.DeepCopy()} }
+func (t PodAttachOptions) Package() util.Package   { return util.Core }
+func (t PodAttachOptions) Type() string            { return "k8s_core_PodAttachOptions" }
 func (t PodAttachOptions) String() string          { return t.V.String() }
 func (t PodAttachOptions) Freeze()                 {} // TODO
 func (t PodAttachOptions) Truth() skylark.Bool     { return skylark.True }
@@ -6176,8 +6563,8 @@ func (t PodAttachOptions) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t PodAttachOptions) AttrNames() []string { return PodAttachOptions_attrs }
 func (t PodAttachOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodAttachOptions_fields, PodAttachOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodAttachOptions_fields, PodAttachOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6186,7 +6573,7 @@ func (t PodAttachOptions) SetField(name string, value skylark.Value) error {
 }
 
 type PodCondition struct {
-	V *v1.PodCondition
+	V *core.PodCondition
 }
 
 var (
@@ -6198,12 +6585,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodCondition)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodCondition)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodCondition:
+		case *core.PodCondition:
 			return PodCondition{V: v}
-		case v1.PodCondition:
+		case core.PodCondition:
 			return PodCondition{V: &v}
 		default:
 			return skylark.None
@@ -6214,11 +6601,14 @@ func init() {
 }
 
 func createPodCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodCondition
+	box := PodCondition{V: &core.PodCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodCondition) Underlying() interface{} { return t.V }
-func (t PodCondition) Package() util.Package   { return util.V1 }
-func (t PodCondition) Type() string            { return "k8s_v1_PodCondition" }
+func (t PodCondition) DeepCopy() boxed         { return PodCondition{V: t.V.DeepCopy()} }
+func (t PodCondition) Package() util.Package   { return util.Core }
+func (t PodCondition) Type() string            { return "k8s_core_PodCondition" }
 func (t PodCondition) String() string          { return t.V.String() }
 func (t PodCondition) Freeze()                 {} // TODO
 func (t PodCondition) Truth() skylark.Bool     { return skylark.True }
@@ -6229,8 +6619,8 @@ func (t PodCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t PodCondition) AttrNames() []string { return PodCondition_attrs }
 func (t PodCondition) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodCondition_fields, PodCondition_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodCondition_fields, PodCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6239,7 +6629,7 @@ func (t PodCondition) SetField(name string, value skylark.Value) error {
 }
 
 type PodDNSConfig struct {
-	V *v1.PodDNSConfig
+	V *core.PodDNSConfig
 }
 
 var (
@@ -6251,12 +6641,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodDNSConfig)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodDNSConfig)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodDNSConfig:
+		case *core.PodDNSConfig:
 			return PodDNSConfig{V: v}
-		case v1.PodDNSConfig:
+		case core.PodDNSConfig:
 			return PodDNSConfig{V: &v}
 		default:
 			return skylark.None
@@ -6267,11 +6657,14 @@ func init() {
 }
 
 func createPodDNSConfig(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodDNSConfig
+	box := PodDNSConfig{V: &core.PodDNSConfig{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodDNSConfig) Underlying() interface{} { return t.V }
-func (t PodDNSConfig) Package() util.Package   { return util.V1 }
-func (t PodDNSConfig) Type() string            { return "k8s_v1_PodDNSConfig" }
+func (t PodDNSConfig) DeepCopy() boxed         { return PodDNSConfig{V: t.V.DeepCopy()} }
+func (t PodDNSConfig) Package() util.Package   { return util.Core }
+func (t PodDNSConfig) Type() string            { return "k8s_core_PodDNSConfig" }
 func (t PodDNSConfig) String() string          { return t.V.String() }
 func (t PodDNSConfig) Freeze()                 {} // TODO
 func (t PodDNSConfig) Truth() skylark.Bool     { return skylark.True }
@@ -6282,8 +6675,8 @@ func (t PodDNSConfig) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t PodDNSConfig) AttrNames() []string { return PodDNSConfig_attrs }
 func (t PodDNSConfig) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodDNSConfig_fields, PodDNSConfig_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodDNSConfig_fields, PodDNSConfig_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6292,7 +6685,7 @@ func (t PodDNSConfig) SetField(name string, value skylark.Value) error {
 }
 
 type PodDNSConfigOption struct {
-	V *v1.PodDNSConfigOption
+	V *core.PodDNSConfigOption
 }
 
 var (
@@ -6304,12 +6697,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodDNSConfigOption)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodDNSConfigOption)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodDNSConfigOption:
+		case *core.PodDNSConfigOption:
 			return PodDNSConfigOption{V: v}
-		case v1.PodDNSConfigOption:
+		case core.PodDNSConfigOption:
 			return PodDNSConfigOption{V: &v}
 		default:
 			return skylark.None
@@ -6320,11 +6713,14 @@ func init() {
 }
 
 func createPodDNSConfigOption(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodDNSConfigOption
+	box := PodDNSConfigOption{V: &core.PodDNSConfigOption{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodDNSConfigOption) Underlying() interface{} { return t.V }
-func (t PodDNSConfigOption) Package() util.Package   { return util.V1 }
-func (t PodDNSConfigOption) Type() string            { return "k8s_v1_PodDNSConfigOption" }
+func (t PodDNSConfigOption) DeepCopy() boxed         { return PodDNSConfigOption{V: t.V.DeepCopy()} }
+func (t PodDNSConfigOption) Package() util.Package   { return util.Core }
+func (t PodDNSConfigOption) Type() string            { return "k8s_core_PodDNSConfigOption" }
 func (t PodDNSConfigOption) String() string          { return t.V.String() }
 func (t PodDNSConfigOption) Freeze()                 {} // TODO
 func (t PodDNSConfigOption) Truth() skylark.Bool     { return skylark.True }
@@ -6335,8 +6731,8 @@ func (t PodDNSConfigOption) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t PodDNSConfigOption) AttrNames() []string { return PodDNSConfigOption_attrs }
 func (t PodDNSConfigOption) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodDNSConfigOption_fields, PodDNSConfigOption_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodDNSConfigOption_fields, PodDNSConfigOption_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6345,7 +6741,7 @@ func (t PodDNSConfigOption) SetField(name string, value skylark.Value) error {
 }
 
 type PodExecOptions struct {
-	V *v1.PodExecOptions
+	V *core.PodExecOptions
 }
 
 var (
@@ -6357,12 +6753,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodExecOptions)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodExecOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodExecOptions:
+		case *core.PodExecOptions:
 			return PodExecOptions{V: v}
-		case v1.PodExecOptions:
+		case core.PodExecOptions:
 			return PodExecOptions{V: &v}
 		default:
 			return skylark.None
@@ -6373,11 +6769,14 @@ func init() {
 }
 
 func createPodExecOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodExecOptions
+	box := PodExecOptions{V: &core.PodExecOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodExecOptions) Underlying() interface{} { return t.V }
-func (t PodExecOptions) Package() util.Package   { return util.V1 }
-func (t PodExecOptions) Type() string            { return "k8s_v1_PodExecOptions" }
+func (t PodExecOptions) DeepCopy() boxed         { return PodExecOptions{V: t.V.DeepCopy()} }
+func (t PodExecOptions) Package() util.Package   { return util.Core }
+func (t PodExecOptions) Type() string            { return "k8s_core_PodExecOptions" }
 func (t PodExecOptions) String() string          { return t.V.String() }
 func (t PodExecOptions) Freeze()                 {} // TODO
 func (t PodExecOptions) Truth() skylark.Bool     { return skylark.True }
@@ -6388,8 +6787,8 @@ func (t PodExecOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t PodExecOptions) AttrNames() []string { return PodExecOptions_attrs }
 func (t PodExecOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodExecOptions_fields, PodExecOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodExecOptions_fields, PodExecOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6398,7 +6797,7 @@ func (t PodExecOptions) SetField(name string, value skylark.Value) error {
 }
 
 type PodList struct {
-	V *v1.PodList
+	V *core.PodList
 }
 
 var (
@@ -6410,12 +6809,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodList)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodList:
+		case *core.PodList:
 			return PodList{V: v}
-		case v1.PodList:
+		case core.PodList:
 			return PodList{V: &v}
 		default:
 			return skylark.None
@@ -6426,11 +6825,14 @@ func init() {
 }
 
 func createPodList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodList
+	box := PodList{V: &core.PodList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodList) Underlying() interface{} { return t.V }
-func (t PodList) Package() util.Package   { return util.V1 }
-func (t PodList) Type() string            { return "k8s_v1_PodList" }
+func (t PodList) DeepCopy() boxed         { return PodList{V: t.V.DeepCopy()} }
+func (t PodList) Package() util.Package   { return util.Core }
+func (t PodList) Type() string            { return "k8s_core_PodList" }
 func (t PodList) String() string          { return t.V.String() }
 func (t PodList) Freeze()                 {} // TODO
 func (t PodList) Truth() skylark.Bool     { return skylark.True }
@@ -6441,8 +6843,8 @@ func (t PodList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (
 }
 func (t PodList) AttrNames() []string { return PodList_attrs }
 func (t PodList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodList_fields, PodList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodList_fields, PodList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6451,7 +6853,7 @@ func (t PodList) SetField(name string, value skylark.Value) error {
 }
 
 type PodLogOptions struct {
-	V *v1.PodLogOptions
+	V *core.PodLogOptions
 }
 
 var (
@@ -6463,12 +6865,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodLogOptions)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodLogOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodLogOptions:
+		case *core.PodLogOptions:
 			return PodLogOptions{V: v}
-		case v1.PodLogOptions:
+		case core.PodLogOptions:
 			return PodLogOptions{V: &v}
 		default:
 			return skylark.None
@@ -6479,11 +6881,14 @@ func init() {
 }
 
 func createPodLogOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodLogOptions
+	box := PodLogOptions{V: &core.PodLogOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodLogOptions) Underlying() interface{} { return t.V }
-func (t PodLogOptions) Package() util.Package   { return util.V1 }
-func (t PodLogOptions) Type() string            { return "k8s_v1_PodLogOptions" }
+func (t PodLogOptions) DeepCopy() boxed         { return PodLogOptions{V: t.V.DeepCopy()} }
+func (t PodLogOptions) Package() util.Package   { return util.Core }
+func (t PodLogOptions) Type() string            { return "k8s_core_PodLogOptions" }
 func (t PodLogOptions) String() string          { return t.V.String() }
 func (t PodLogOptions) Freeze()                 {} // TODO
 func (t PodLogOptions) Truth() skylark.Bool     { return skylark.True }
@@ -6494,8 +6899,8 @@ func (t PodLogOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t PodLogOptions) AttrNames() []string { return PodLogOptions_attrs }
 func (t PodLogOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodLogOptions_fields, PodLogOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodLogOptions_fields, PodLogOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6504,7 +6909,7 @@ func (t PodLogOptions) SetField(name string, value skylark.Value) error {
 }
 
 type PodPortForwardOptions struct {
-	V *v1.PodPortForwardOptions
+	V *core.PodPortForwardOptions
 }
 
 var (
@@ -6516,12 +6921,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodPortForwardOptions)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodPortForwardOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodPortForwardOptions:
+		case *core.PodPortForwardOptions:
 			return PodPortForwardOptions{V: v}
-		case v1.PodPortForwardOptions:
+		case core.PodPortForwardOptions:
 			return PodPortForwardOptions{V: &v}
 		default:
 			return skylark.None
@@ -6532,11 +6937,14 @@ func init() {
 }
 
 func createPodPortForwardOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodPortForwardOptions
+	box := PodPortForwardOptions{V: &core.PodPortForwardOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodPortForwardOptions) Underlying() interface{} { return t.V }
-func (t PodPortForwardOptions) Package() util.Package   { return util.V1 }
-func (t PodPortForwardOptions) Type() string            { return "k8s_v1_PodPortForwardOptions" }
+func (t PodPortForwardOptions) DeepCopy() boxed         { return PodPortForwardOptions{V: t.V.DeepCopy()} }
+func (t PodPortForwardOptions) Package() util.Package   { return util.Core }
+func (t PodPortForwardOptions) Type() string            { return "k8s_core_PodPortForwardOptions" }
 func (t PodPortForwardOptions) String() string          { return t.V.String() }
 func (t PodPortForwardOptions) Freeze()                 {} // TODO
 func (t PodPortForwardOptions) Truth() skylark.Bool     { return skylark.True }
@@ -6547,8 +6955,8 @@ func (t PodPortForwardOptions) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t PodPortForwardOptions) AttrNames() []string { return PodPortForwardOptions_attrs }
 func (t PodPortForwardOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodPortForwardOptions_fields, PodPortForwardOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodPortForwardOptions_fields, PodPortForwardOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6557,7 +6965,7 @@ func (t PodPortForwardOptions) SetField(name string, value skylark.Value) error 
 }
 
 type PodProxyOptions struct {
-	V *v1.PodProxyOptions
+	V *core.PodProxyOptions
 }
 
 var (
@@ -6569,12 +6977,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodProxyOptions)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodProxyOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodProxyOptions:
+		case *core.PodProxyOptions:
 			return PodProxyOptions{V: v}
-		case v1.PodProxyOptions:
+		case core.PodProxyOptions:
 			return PodProxyOptions{V: &v}
 		default:
 			return skylark.None
@@ -6585,11 +6993,14 @@ func init() {
 }
 
 func createPodProxyOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodProxyOptions
+	box := PodProxyOptions{V: &core.PodProxyOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodProxyOptions) Underlying() interface{} { return t.V }
-func (t PodProxyOptions) Package() util.Package   { return util.V1 }
-func (t PodProxyOptions) Type() string            { return "k8s_v1_PodProxyOptions" }
+func (t PodProxyOptions) DeepCopy() boxed         { return PodProxyOptions{V: t.V.DeepCopy()} }
+func (t PodProxyOptions) Package() util.Package   { return util.Core }
+func (t PodProxyOptions) Type() string            { return "k8s_core_PodProxyOptions" }
 func (t PodProxyOptions) String() string          { return t.V.String() }
 func (t PodProxyOptions) Freeze()                 {} // TODO
 func (t PodProxyOptions) Truth() skylark.Bool     { return skylark.True }
@@ -6600,8 +7011,8 @@ func (t PodProxyOptions) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t PodProxyOptions) AttrNames() []string { return PodProxyOptions_attrs }
 func (t PodProxyOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodProxyOptions_fields, PodProxyOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodProxyOptions_fields, PodProxyOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6610,7 +7021,7 @@ func (t PodProxyOptions) SetField(name string, value skylark.Value) error {
 }
 
 type PodReadinessGate struct {
-	V *v1.PodReadinessGate
+	V *core.PodReadinessGate
 }
 
 var (
@@ -6622,12 +7033,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodReadinessGate)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodReadinessGate)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodReadinessGate:
+		case *core.PodReadinessGate:
 			return PodReadinessGate{V: v}
-		case v1.PodReadinessGate:
+		case core.PodReadinessGate:
 			return PodReadinessGate{V: &v}
 		default:
 			return skylark.None
@@ -6638,11 +7049,14 @@ func init() {
 }
 
 func createPodReadinessGate(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodReadinessGate
+	box := PodReadinessGate{V: &core.PodReadinessGate{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodReadinessGate) Underlying() interface{} { return t.V }
-func (t PodReadinessGate) Package() util.Package   { return util.V1 }
-func (t PodReadinessGate) Type() string            { return "k8s_v1_PodReadinessGate" }
+func (t PodReadinessGate) DeepCopy() boxed         { return PodReadinessGate{V: t.V.DeepCopy()} }
+func (t PodReadinessGate) Package() util.Package   { return util.Core }
+func (t PodReadinessGate) Type() string            { return "k8s_core_PodReadinessGate" }
 func (t PodReadinessGate) String() string          { return t.V.String() }
 func (t PodReadinessGate) Freeze()                 {} // TODO
 func (t PodReadinessGate) Truth() skylark.Bool     { return skylark.True }
@@ -6653,8 +7067,8 @@ func (t PodReadinessGate) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t PodReadinessGate) AttrNames() []string { return PodReadinessGate_attrs }
 func (t PodReadinessGate) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodReadinessGate_fields, PodReadinessGate_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodReadinessGate_fields, PodReadinessGate_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6663,7 +7077,7 @@ func (t PodReadinessGate) SetField(name string, value skylark.Value) error {
 }
 
 type PodSecurityContext struct {
-	V *v1.PodSecurityContext
+	V *core.PodSecurityContext
 }
 
 var (
@@ -6675,12 +7089,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodSecurityContext)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodSecurityContext)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodSecurityContext:
+		case *core.PodSecurityContext:
 			return PodSecurityContext{V: v}
-		case v1.PodSecurityContext:
+		case core.PodSecurityContext:
 			return PodSecurityContext{V: &v}
 		default:
 			return skylark.None
@@ -6691,11 +7105,14 @@ func init() {
 }
 
 func createPodSecurityContext(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodSecurityContext
+	box := PodSecurityContext{V: &core.PodSecurityContext{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodSecurityContext) Underlying() interface{} { return t.V }
-func (t PodSecurityContext) Package() util.Package   { return util.V1 }
-func (t PodSecurityContext) Type() string            { return "k8s_v1_PodSecurityContext" }
+func (t PodSecurityContext) DeepCopy() boxed         { return PodSecurityContext{V: t.V.DeepCopy()} }
+func (t PodSecurityContext) Package() util.Package   { return util.Core }
+func (t PodSecurityContext) Type() string            { return "k8s_core_PodSecurityContext" }
 func (t PodSecurityContext) String() string          { return t.V.String() }
 func (t PodSecurityContext) Freeze()                 {} // TODO
 func (t PodSecurityContext) Truth() skylark.Bool     { return skylark.True }
@@ -6706,8 +7123,8 @@ func (t PodSecurityContext) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t PodSecurityContext) AttrNames() []string { return PodSecurityContext_attrs }
 func (t PodSecurityContext) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodSecurityContext_fields, PodSecurityContext_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodSecurityContext_fields, PodSecurityContext_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6716,7 +7133,7 @@ func (t PodSecurityContext) SetField(name string, value skylark.Value) error {
 }
 
 type PodSignature struct {
-	V *v1.PodSignature
+	V *core.PodSignature
 }
 
 var (
@@ -6728,12 +7145,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodSignature)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodSignature)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodSignature:
+		case *core.PodSignature:
 			return PodSignature{V: v}
-		case v1.PodSignature:
+		case core.PodSignature:
 			return PodSignature{V: &v}
 		default:
 			return skylark.None
@@ -6744,11 +7161,14 @@ func init() {
 }
 
 func createPodSignature(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodSignature
+	box := PodSignature{V: &core.PodSignature{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodSignature) Underlying() interface{} { return t.V }
-func (t PodSignature) Package() util.Package   { return util.V1 }
-func (t PodSignature) Type() string            { return "k8s_v1_PodSignature" }
+func (t PodSignature) DeepCopy() boxed         { return PodSignature{V: t.V.DeepCopy()} }
+func (t PodSignature) Package() util.Package   { return util.Core }
+func (t PodSignature) Type() string            { return "k8s_core_PodSignature" }
 func (t PodSignature) String() string          { return t.V.String() }
 func (t PodSignature) Freeze()                 {} // TODO
 func (t PodSignature) Truth() skylark.Bool     { return skylark.True }
@@ -6759,8 +7179,8 @@ func (t PodSignature) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t PodSignature) AttrNames() []string { return PodSignature_attrs }
 func (t PodSignature) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodSignature_fields, PodSignature_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodSignature_fields, PodSignature_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6769,7 +7189,7 @@ func (t PodSignature) SetField(name string, value skylark.Value) error {
 }
 
 type PodSpec struct {
-	V *v1.PodSpec
+	V *core.PodSpec
 }
 
 var (
@@ -6781,12 +7201,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodSpec:
+		case *core.PodSpec:
 			return PodSpec{V: v}
-		case v1.PodSpec:
+		case core.PodSpec:
 			return PodSpec{V: &v}
 		default:
 			return skylark.None
@@ -6797,11 +7217,14 @@ func init() {
 }
 
 func createPodSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodSpec
+	box := PodSpec{V: &core.PodSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodSpec) Underlying() interface{} { return t.V }
-func (t PodSpec) Package() util.Package   { return util.V1 }
-func (t PodSpec) Type() string            { return "k8s_v1_PodSpec" }
+func (t PodSpec) DeepCopy() boxed         { return PodSpec{V: t.V.DeepCopy()} }
+func (t PodSpec) Package() util.Package   { return util.Core }
+func (t PodSpec) Type() string            { return "k8s_core_PodSpec" }
 func (t PodSpec) String() string          { return t.V.String() }
 func (t PodSpec) Freeze()                 {} // TODO
 func (t PodSpec) Truth() skylark.Bool     { return skylark.True }
@@ -6812,8 +7235,8 @@ func (t PodSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (
 }
 func (t PodSpec) AttrNames() []string { return PodSpec_attrs }
 func (t PodSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodSpec_fields, PodSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodSpec_fields, PodSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6822,7 +7245,7 @@ func (t PodSpec) SetField(name string, value skylark.Value) error {
 }
 
 type PodStatus struct {
-	V *v1.PodStatus
+	V *core.PodStatus
 }
 
 var (
@@ -6834,12 +7257,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodStatus:
+		case *core.PodStatus:
 			return PodStatus{V: v}
-		case v1.PodStatus:
+		case core.PodStatus:
 			return PodStatus{V: &v}
 		default:
 			return skylark.None
@@ -6850,11 +7273,14 @@ func init() {
 }
 
 func createPodStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodStatus
+	box := PodStatus{V: &core.PodStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodStatus) Underlying() interface{} { return t.V }
-func (t PodStatus) Package() util.Package   { return util.V1 }
-func (t PodStatus) Type() string            { return "k8s_v1_PodStatus" }
+func (t PodStatus) DeepCopy() boxed         { return PodStatus{V: t.V.DeepCopy()} }
+func (t PodStatus) Package() util.Package   { return util.Core }
+func (t PodStatus) Type() string            { return "k8s_core_PodStatus" }
 func (t PodStatus) String() string          { return t.V.String() }
 func (t PodStatus) Freeze()                 {} // TODO
 func (t PodStatus) Truth() skylark.Bool     { return skylark.True }
@@ -6865,8 +7291,8 @@ func (t PodStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t PodStatus) AttrNames() []string { return PodStatus_attrs }
 func (t PodStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodStatus_fields, PodStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodStatus_fields, PodStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6875,7 +7301,7 @@ func (t PodStatus) SetField(name string, value skylark.Value) error {
 }
 
 type PodStatusResult struct {
-	V *v1.PodStatusResult
+	V *core.PodStatusResult
 }
 
 var (
@@ -6887,12 +7313,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodStatusResult)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodStatusResult)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodStatusResult:
+		case *core.PodStatusResult:
 			return PodStatusResult{V: v}
-		case v1.PodStatusResult:
+		case core.PodStatusResult:
 			return PodStatusResult{V: &v}
 		default:
 			return skylark.None
@@ -6903,11 +7329,14 @@ func init() {
 }
 
 func createPodStatusResult(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodStatusResult
+	box := PodStatusResult{V: &core.PodStatusResult{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodStatusResult) Underlying() interface{} { return t.V }
-func (t PodStatusResult) Package() util.Package   { return util.V1 }
-func (t PodStatusResult) Type() string            { return "k8s_v1_PodStatusResult" }
+func (t PodStatusResult) DeepCopy() boxed         { return PodStatusResult{V: t.V.DeepCopy()} }
+func (t PodStatusResult) Package() util.Package   { return util.Core }
+func (t PodStatusResult) Type() string            { return "k8s_core_PodStatusResult" }
 func (t PodStatusResult) String() string          { return t.V.String() }
 func (t PodStatusResult) Freeze()                 {} // TODO
 func (t PodStatusResult) Truth() skylark.Bool     { return skylark.True }
@@ -6918,8 +7347,8 @@ func (t PodStatusResult) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t PodStatusResult) AttrNames() []string { return PodStatusResult_attrs }
 func (t PodStatusResult) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodStatusResult_fields, PodStatusResult_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodStatusResult_fields, PodStatusResult_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6928,7 +7357,7 @@ func (t PodStatusResult) SetField(name string, value skylark.Value) error {
 }
 
 type PodTemplate struct {
-	V *v1.PodTemplate
+	V *core.PodTemplate
 }
 
 var (
@@ -6940,12 +7369,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodTemplate)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodTemplate)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodTemplate:
+		case *core.PodTemplate:
 			return PodTemplate{V: v}
-		case v1.PodTemplate:
+		case core.PodTemplate:
 			return PodTemplate{V: &v}
 		default:
 			return skylark.None
@@ -6956,11 +7385,14 @@ func init() {
 }
 
 func createPodTemplate(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodTemplate
+	box := PodTemplate{V: &core.PodTemplate{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodTemplate) Underlying() interface{} { return t.V }
-func (t PodTemplate) Package() util.Package   { return util.V1 }
-func (t PodTemplate) Type() string            { return "k8s_v1_PodTemplate" }
+func (t PodTemplate) DeepCopy() boxed         { return PodTemplate{V: t.V.DeepCopy()} }
+func (t PodTemplate) Package() util.Package   { return util.Core }
+func (t PodTemplate) Type() string            { return "k8s_core_PodTemplate" }
 func (t PodTemplate) String() string          { return t.V.String() }
 func (t PodTemplate) Freeze()                 {} // TODO
 func (t PodTemplate) Truth() skylark.Bool     { return skylark.True }
@@ -6971,8 +7403,8 @@ func (t PodTemplate) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t PodTemplate) AttrNames() []string { return PodTemplate_attrs }
 func (t PodTemplate) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodTemplate_fields, PodTemplate_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodTemplate_fields, PodTemplate_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -6981,7 +7413,7 @@ func (t PodTemplate) SetField(name string, value skylark.Value) error {
 }
 
 type PodTemplateList struct {
-	V *v1.PodTemplateList
+	V *core.PodTemplateList
 }
 
 var (
@@ -6993,12 +7425,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodTemplateList)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodTemplateList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodTemplateList:
+		case *core.PodTemplateList:
 			return PodTemplateList{V: v}
-		case v1.PodTemplateList:
+		case core.PodTemplateList:
 			return PodTemplateList{V: &v}
 		default:
 			return skylark.None
@@ -7009,11 +7441,14 @@ func init() {
 }
 
 func createPodTemplateList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodTemplateList
+	box := PodTemplateList{V: &core.PodTemplateList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodTemplateList) Underlying() interface{} { return t.V }
-func (t PodTemplateList) Package() util.Package   { return util.V1 }
-func (t PodTemplateList) Type() string            { return "k8s_v1_PodTemplateList" }
+func (t PodTemplateList) DeepCopy() boxed         { return PodTemplateList{V: t.V.DeepCopy()} }
+func (t PodTemplateList) Package() util.Package   { return util.Core }
+func (t PodTemplateList) Type() string            { return "k8s_core_PodTemplateList" }
 func (t PodTemplateList) String() string          { return t.V.String() }
 func (t PodTemplateList) Freeze()                 {} // TODO
 func (t PodTemplateList) Truth() skylark.Bool     { return skylark.True }
@@ -7024,8 +7459,8 @@ func (t PodTemplateList) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t PodTemplateList) AttrNames() []string { return PodTemplateList_attrs }
 func (t PodTemplateList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodTemplateList_fields, PodTemplateList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodTemplateList_fields, PodTemplateList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7034,7 +7469,7 @@ func (t PodTemplateList) SetField(name string, value skylark.Value) error {
 }
 
 type PodTemplateSpec struct {
-	V *v1.PodTemplateSpec
+	V *core.PodTemplateSpec
 }
 
 var (
@@ -7046,12 +7481,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PodTemplateSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.PodTemplateSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PodTemplateSpec:
+		case *core.PodTemplateSpec:
 			return PodTemplateSpec{V: v}
-		case v1.PodTemplateSpec:
+		case core.PodTemplateSpec:
 			return PodTemplateSpec{V: &v}
 		default:
 			return skylark.None
@@ -7062,11 +7497,14 @@ func init() {
 }
 
 func createPodTemplateSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PodTemplateSpec
+	box := PodTemplateSpec{V: &core.PodTemplateSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PodTemplateSpec) Underlying() interface{} { return t.V }
-func (t PodTemplateSpec) Package() util.Package   { return util.V1 }
-func (t PodTemplateSpec) Type() string            { return "k8s_v1_PodTemplateSpec" }
+func (t PodTemplateSpec) DeepCopy() boxed         { return PodTemplateSpec{V: t.V.DeepCopy()} }
+func (t PodTemplateSpec) Package() util.Package   { return util.Core }
+func (t PodTemplateSpec) Type() string            { return "k8s_core_PodTemplateSpec" }
 func (t PodTemplateSpec) String() string          { return t.V.String() }
 func (t PodTemplateSpec) Freeze()                 {} // TODO
 func (t PodTemplateSpec) Truth() skylark.Bool     { return skylark.True }
@@ -7077,8 +7515,8 @@ func (t PodTemplateSpec) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t PodTemplateSpec) AttrNames() []string { return PodTemplateSpec_attrs }
 func (t PodTemplateSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PodTemplateSpec_fields, PodTemplateSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodTemplateSpec_fields, PodTemplateSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7087,7 +7525,7 @@ func (t PodTemplateSpec) SetField(name string, value skylark.Value) error {
 }
 
 type PortworxVolumeSource struct {
-	V *v1.PortworxVolumeSource
+	V *core.PortworxVolumeSource
 }
 
 var (
@@ -7099,12 +7537,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PortworxVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.PortworxVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PortworxVolumeSource:
+		case *core.PortworxVolumeSource:
 			return PortworxVolumeSource{V: v}
-		case v1.PortworxVolumeSource:
+		case core.PortworxVolumeSource:
 			return PortworxVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -7115,11 +7553,14 @@ func init() {
 }
 
 func createPortworxVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PortworxVolumeSource
+	box := PortworxVolumeSource{V: &core.PortworxVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PortworxVolumeSource) Underlying() interface{} { return t.V }
-func (t PortworxVolumeSource) Package() util.Package   { return util.V1 }
-func (t PortworxVolumeSource) Type() string            { return "k8s_v1_PortworxVolumeSource" }
+func (t PortworxVolumeSource) DeepCopy() boxed         { return PortworxVolumeSource{V: t.V.DeepCopy()} }
+func (t PortworxVolumeSource) Package() util.Package   { return util.Core }
+func (t PortworxVolumeSource) Type() string            { return "k8s_core_PortworxVolumeSource" }
 func (t PortworxVolumeSource) String() string          { return t.V.String() }
 func (t PortworxVolumeSource) Freeze()                 {} // TODO
 func (t PortworxVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -7130,8 +7571,8 @@ func (t PortworxVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t PortworxVolumeSource) AttrNames() []string { return PortworxVolumeSource_attrs }
 func (t PortworxVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PortworxVolumeSource_fields, PortworxVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PortworxVolumeSource_fields, PortworxVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7140,7 +7581,7 @@ func (t PortworxVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type Preconditions struct {
-	V *v1.Preconditions
+	V *core.Preconditions
 }
 
 var (
@@ -7152,12 +7593,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Preconditions)(nil)).Elem()
+	t := reflect.TypeOf((*core.Preconditions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Preconditions:
+		case *core.Preconditions:
 			return Preconditions{V: v}
-		case v1.Preconditions:
+		case core.Preconditions:
 			return Preconditions{V: &v}
 		default:
 			return skylark.None
@@ -7168,11 +7609,14 @@ func init() {
 }
 
 func createPreconditions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Preconditions
+	box := Preconditions{V: &core.Preconditions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Preconditions) Underlying() interface{} { return t.V }
-func (t Preconditions) Package() util.Package   { return util.V1 }
-func (t Preconditions) Type() string            { return "k8s_v1_Preconditions" }
+func (t Preconditions) DeepCopy() boxed         { return Preconditions{V: t.V.DeepCopy()} }
+func (t Preconditions) Package() util.Package   { return util.Core }
+func (t Preconditions) Type() string            { return "k8s_core_Preconditions" }
 func (t Preconditions) String() string          { return t.V.String() }
 func (t Preconditions) Freeze()                 {} // TODO
 func (t Preconditions) Truth() skylark.Bool     { return skylark.True }
@@ -7183,8 +7627,8 @@ func (t Preconditions) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t Preconditions) AttrNames() []string { return Preconditions_attrs }
 func (t Preconditions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Preconditions_fields, Preconditions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Preconditions_fields, Preconditions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7193,7 +7637,7 @@ func (t Preconditions) SetField(name string, value skylark.Value) error {
 }
 
 type PreferAvoidPodsEntry struct {
-	V *v1.PreferAvoidPodsEntry
+	V *core.PreferAvoidPodsEntry
 }
 
 var (
@@ -7205,12 +7649,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PreferAvoidPodsEntry)(nil)).Elem()
+	t := reflect.TypeOf((*core.PreferAvoidPodsEntry)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PreferAvoidPodsEntry:
+		case *core.PreferAvoidPodsEntry:
 			return PreferAvoidPodsEntry{V: v}
-		case v1.PreferAvoidPodsEntry:
+		case core.PreferAvoidPodsEntry:
 			return PreferAvoidPodsEntry{V: &v}
 		default:
 			return skylark.None
@@ -7221,11 +7665,14 @@ func init() {
 }
 
 func createPreferAvoidPodsEntry(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PreferAvoidPodsEntry
+	box := PreferAvoidPodsEntry{V: &core.PreferAvoidPodsEntry{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PreferAvoidPodsEntry) Underlying() interface{} { return t.V }
-func (t PreferAvoidPodsEntry) Package() util.Package   { return util.V1 }
-func (t PreferAvoidPodsEntry) Type() string            { return "k8s_v1_PreferAvoidPodsEntry" }
+func (t PreferAvoidPodsEntry) DeepCopy() boxed         { return PreferAvoidPodsEntry{V: t.V.DeepCopy()} }
+func (t PreferAvoidPodsEntry) Package() util.Package   { return util.Core }
+func (t PreferAvoidPodsEntry) Type() string            { return "k8s_core_PreferAvoidPodsEntry" }
 func (t PreferAvoidPodsEntry) String() string          { return t.V.String() }
 func (t PreferAvoidPodsEntry) Freeze()                 {} // TODO
 func (t PreferAvoidPodsEntry) Truth() skylark.Bool     { return skylark.True }
@@ -7236,8 +7683,8 @@ func (t PreferAvoidPodsEntry) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t PreferAvoidPodsEntry) AttrNames() []string { return PreferAvoidPodsEntry_attrs }
 func (t PreferAvoidPodsEntry) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PreferAvoidPodsEntry_fields, PreferAvoidPodsEntry_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PreferAvoidPodsEntry_fields, PreferAvoidPodsEntry_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7246,7 +7693,7 @@ func (t PreferAvoidPodsEntry) SetField(name string, value skylark.Value) error {
 }
 
 type PreferredSchedulingTerm struct {
-	V *v1.PreferredSchedulingTerm
+	V *core.PreferredSchedulingTerm
 }
 
 var (
@@ -7258,12 +7705,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.PreferredSchedulingTerm)(nil)).Elem()
+	t := reflect.TypeOf((*core.PreferredSchedulingTerm)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.PreferredSchedulingTerm:
+		case *core.PreferredSchedulingTerm:
 			return PreferredSchedulingTerm{V: v}
-		case v1.PreferredSchedulingTerm:
+		case core.PreferredSchedulingTerm:
 			return PreferredSchedulingTerm{V: &v}
 		default:
 			return skylark.None
@@ -7274,11 +7721,14 @@ func init() {
 }
 
 func createPreferredSchedulingTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for PreferredSchedulingTerm
+	box := PreferredSchedulingTerm{V: &core.PreferredSchedulingTerm{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t PreferredSchedulingTerm) Underlying() interface{} { return t.V }
-func (t PreferredSchedulingTerm) Package() util.Package   { return util.V1 }
-func (t PreferredSchedulingTerm) Type() string            { return "k8s_v1_PreferredSchedulingTerm" }
+func (t PreferredSchedulingTerm) DeepCopy() boxed         { return PreferredSchedulingTerm{V: t.V.DeepCopy()} }
+func (t PreferredSchedulingTerm) Package() util.Package   { return util.Core }
+func (t PreferredSchedulingTerm) Type() string            { return "k8s_core_PreferredSchedulingTerm" }
 func (t PreferredSchedulingTerm) String() string          { return t.V.String() }
 func (t PreferredSchedulingTerm) Freeze()                 {} // TODO
 func (t PreferredSchedulingTerm) Truth() skylark.Bool     { return skylark.True }
@@ -7289,8 +7739,8 @@ func (t PreferredSchedulingTerm) CompareSameType(op syntax.Token, y_ skylark.Val
 }
 func (t PreferredSchedulingTerm) AttrNames() []string { return PreferredSchedulingTerm_attrs }
 func (t PreferredSchedulingTerm) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, PreferredSchedulingTerm_fields, PreferredSchedulingTerm_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PreferredSchedulingTerm_fields, PreferredSchedulingTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7299,7 +7749,7 @@ func (t PreferredSchedulingTerm) SetField(name string, value skylark.Value) erro
 }
 
 type Probe struct {
-	V *v1.Probe
+	V *core.Probe
 }
 
 var (
@@ -7311,12 +7761,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Probe)(nil)).Elem()
+	t := reflect.TypeOf((*core.Probe)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Probe:
+		case *core.Probe:
 			return Probe{V: v}
-		case v1.Probe:
+		case core.Probe:
 			return Probe{V: &v}
 		default:
 			return skylark.None
@@ -7327,11 +7777,14 @@ func init() {
 }
 
 func createProbe(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Probe
+	box := Probe{V: &core.Probe{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Probe) Underlying() interface{} { return t.V }
-func (t Probe) Package() util.Package   { return util.V1 }
-func (t Probe) Type() string            { return "k8s_v1_Probe" }
+func (t Probe) DeepCopy() boxed         { return Probe{V: t.V.DeepCopy()} }
+func (t Probe) Package() util.Package   { return util.Core }
+func (t Probe) Type() string            { return "k8s_core_Probe" }
 func (t Probe) String() string          { return t.V.String() }
 func (t Probe) Freeze()                 {} // TODO
 func (t Probe) Truth() skylark.Bool     { return skylark.True }
@@ -7342,8 +7795,8 @@ func (t Probe) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bo
 }
 func (t Probe) AttrNames() []string { return Probe_attrs }
 func (t Probe) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Probe_fields, Probe_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Probe_fields, Probe_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7352,7 +7805,7 @@ func (t Probe) SetField(name string, value skylark.Value) error {
 }
 
 type ProjectedVolumeSource struct {
-	V *v1.ProjectedVolumeSource
+	V *core.ProjectedVolumeSource
 }
 
 var (
@@ -7364,12 +7817,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ProjectedVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.ProjectedVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ProjectedVolumeSource:
+		case *core.ProjectedVolumeSource:
 			return ProjectedVolumeSource{V: v}
-		case v1.ProjectedVolumeSource:
+		case core.ProjectedVolumeSource:
 			return ProjectedVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -7380,11 +7833,14 @@ func init() {
 }
 
 func createProjectedVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ProjectedVolumeSource
+	box := ProjectedVolumeSource{V: &core.ProjectedVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ProjectedVolumeSource) Underlying() interface{} { return t.V }
-func (t ProjectedVolumeSource) Package() util.Package   { return util.V1 }
-func (t ProjectedVolumeSource) Type() string            { return "k8s_v1_ProjectedVolumeSource" }
+func (t ProjectedVolumeSource) DeepCopy() boxed         { return ProjectedVolumeSource{V: t.V.DeepCopy()} }
+func (t ProjectedVolumeSource) Package() util.Package   { return util.Core }
+func (t ProjectedVolumeSource) Type() string            { return "k8s_core_ProjectedVolumeSource" }
 func (t ProjectedVolumeSource) String() string          { return t.V.String() }
 func (t ProjectedVolumeSource) Freeze()                 {} // TODO
 func (t ProjectedVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -7395,8 +7851,8 @@ func (t ProjectedVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t ProjectedVolumeSource) AttrNames() []string { return ProjectedVolumeSource_attrs }
 func (t ProjectedVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ProjectedVolumeSource_fields, ProjectedVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ProjectedVolumeSource_fields, ProjectedVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7405,7 +7861,7 @@ func (t ProjectedVolumeSource) SetField(name string, value skylark.Value) error 
 }
 
 type QuobyteVolumeSource struct {
-	V *v1.QuobyteVolumeSource
+	V *core.QuobyteVolumeSource
 }
 
 var (
@@ -7417,12 +7873,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.QuobyteVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.QuobyteVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.QuobyteVolumeSource:
+		case *core.QuobyteVolumeSource:
 			return QuobyteVolumeSource{V: v}
-		case v1.QuobyteVolumeSource:
+		case core.QuobyteVolumeSource:
 			return QuobyteVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -7433,11 +7889,14 @@ func init() {
 }
 
 func createQuobyteVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for QuobyteVolumeSource
+	box := QuobyteVolumeSource{V: &core.QuobyteVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t QuobyteVolumeSource) Underlying() interface{} { return t.V }
-func (t QuobyteVolumeSource) Package() util.Package   { return util.V1 }
-func (t QuobyteVolumeSource) Type() string            { return "k8s_v1_QuobyteVolumeSource" }
+func (t QuobyteVolumeSource) DeepCopy() boxed         { return QuobyteVolumeSource{V: t.V.DeepCopy()} }
+func (t QuobyteVolumeSource) Package() util.Package   { return util.Core }
+func (t QuobyteVolumeSource) Type() string            { return "k8s_core_QuobyteVolumeSource" }
 func (t QuobyteVolumeSource) String() string          { return t.V.String() }
 func (t QuobyteVolumeSource) Freeze()                 {} // TODO
 func (t QuobyteVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -7448,8 +7907,8 @@ func (t QuobyteVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t QuobyteVolumeSource) AttrNames() []string { return QuobyteVolumeSource_attrs }
 func (t QuobyteVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, QuobyteVolumeSource_fields, QuobyteVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, QuobyteVolumeSource_fields, QuobyteVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7458,7 +7917,7 @@ func (t QuobyteVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type RBDPersistentVolumeSource struct {
-	V *v1.RBDPersistentVolumeSource
+	V *core.RBDPersistentVolumeSource
 }
 
 var (
@@ -7470,12 +7929,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.RBDPersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.RBDPersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.RBDPersistentVolumeSource:
+		case *core.RBDPersistentVolumeSource:
 			return RBDPersistentVolumeSource{V: v}
-		case v1.RBDPersistentVolumeSource:
+		case core.RBDPersistentVolumeSource:
 			return RBDPersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -7486,23 +7945,28 @@ func init() {
 }
 
 func createRBDPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for RBDPersistentVolumeSource
+	box := RBDPersistentVolumeSource{V: &core.RBDPersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t RBDPersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t RBDPersistentVolumeSource) Package() util.Package   { return util.V1 }
-func (t RBDPersistentVolumeSource) Type() string            { return "k8s_v1_RBDPersistentVolumeSource" }
-func (t RBDPersistentVolumeSource) String() string          { return t.V.String() }
-func (t RBDPersistentVolumeSource) Freeze()                 {} // TODO
-func (t RBDPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
-func (t RBDPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t RBDPersistentVolumeSource) DeepCopy() boxed {
+	return RBDPersistentVolumeSource{V: t.V.DeepCopy()}
+}
+func (t RBDPersistentVolumeSource) Package() util.Package { return util.Core }
+func (t RBDPersistentVolumeSource) Type() string          { return "k8s_core_RBDPersistentVolumeSource" }
+func (t RBDPersistentVolumeSource) String() string        { return t.V.String() }
+func (t RBDPersistentVolumeSource) Freeze()               {} // TODO
+func (t RBDPersistentVolumeSource) Truth() skylark.Bool   { return skylark.True }
+func (t RBDPersistentVolumeSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t RBDPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*RBDPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t RBDPersistentVolumeSource) AttrNames() []string { return RBDPersistentVolumeSource_attrs }
 func (t RBDPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, RBDPersistentVolumeSource_fields, RBDPersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RBDPersistentVolumeSource_fields, RBDPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7511,7 +7975,7 @@ func (t RBDPersistentVolumeSource) SetField(name string, value skylark.Value) er
 }
 
 type RBDVolumeSource struct {
-	V *v1.RBDVolumeSource
+	V *core.RBDVolumeSource
 }
 
 var (
@@ -7523,12 +7987,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.RBDVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.RBDVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.RBDVolumeSource:
+		case *core.RBDVolumeSource:
 			return RBDVolumeSource{V: v}
-		case v1.RBDVolumeSource:
+		case core.RBDVolumeSource:
 			return RBDVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -7539,11 +8003,14 @@ func init() {
 }
 
 func createRBDVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for RBDVolumeSource
+	box := RBDVolumeSource{V: &core.RBDVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t RBDVolumeSource) Underlying() interface{} { return t.V }
-func (t RBDVolumeSource) Package() util.Package   { return util.V1 }
-func (t RBDVolumeSource) Type() string            { return "k8s_v1_RBDVolumeSource" }
+func (t RBDVolumeSource) DeepCopy() boxed         { return RBDVolumeSource{V: t.V.DeepCopy()} }
+func (t RBDVolumeSource) Package() util.Package   { return util.Core }
+func (t RBDVolumeSource) Type() string            { return "k8s_core_RBDVolumeSource" }
 func (t RBDVolumeSource) String() string          { return t.V.String() }
 func (t RBDVolumeSource) Freeze()                 {} // TODO
 func (t RBDVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -7554,8 +8021,8 @@ func (t RBDVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t RBDVolumeSource) AttrNames() []string { return RBDVolumeSource_attrs }
 func (t RBDVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, RBDVolumeSource_fields, RBDVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RBDVolumeSource_fields, RBDVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7564,7 +8031,7 @@ func (t RBDVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type RangeAllocation struct {
-	V *v1.RangeAllocation
+	V *core.RangeAllocation
 }
 
 var (
@@ -7576,12 +8043,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.RangeAllocation)(nil)).Elem()
+	t := reflect.TypeOf((*core.RangeAllocation)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.RangeAllocation:
+		case *core.RangeAllocation:
 			return RangeAllocation{V: v}
-		case v1.RangeAllocation:
+		case core.RangeAllocation:
 			return RangeAllocation{V: &v}
 		default:
 			return skylark.None
@@ -7592,11 +8059,14 @@ func init() {
 }
 
 func createRangeAllocation(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for RangeAllocation
+	box := RangeAllocation{V: &core.RangeAllocation{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t RangeAllocation) Underlying() interface{} { return t.V }
-func (t RangeAllocation) Package() util.Package   { return util.V1 }
-func (t RangeAllocation) Type() string            { return "k8s_v1_RangeAllocation" }
+func (t RangeAllocation) DeepCopy() boxed         { return RangeAllocation{V: t.V.DeepCopy()} }
+func (t RangeAllocation) Package() util.Package   { return util.Core }
+func (t RangeAllocation) Type() string            { return "k8s_core_RangeAllocation" }
 func (t RangeAllocation) String() string          { return t.V.String() }
 func (t RangeAllocation) Freeze()                 {} // TODO
 func (t RangeAllocation) Truth() skylark.Bool     { return skylark.True }
@@ -7607,8 +8077,8 @@ func (t RangeAllocation) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t RangeAllocation) AttrNames() []string { return RangeAllocation_attrs }
 func (t RangeAllocation) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, RangeAllocation_fields, RangeAllocation_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RangeAllocation_fields, RangeAllocation_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7617,7 +8087,7 @@ func (t RangeAllocation) SetField(name string, value skylark.Value) error {
 }
 
 type ReplicationController struct {
-	V *v1.ReplicationController
+	V *core.ReplicationController
 }
 
 var (
@@ -7629,12 +8099,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ReplicationController)(nil)).Elem()
+	t := reflect.TypeOf((*core.ReplicationController)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ReplicationController:
+		case *core.ReplicationController:
 			return ReplicationController{V: v}
-		case v1.ReplicationController:
+		case core.ReplicationController:
 			return ReplicationController{V: &v}
 		default:
 			return skylark.None
@@ -7645,11 +8115,14 @@ func init() {
 }
 
 func createReplicationController(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ReplicationController
+	box := ReplicationController{V: &core.ReplicationController{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ReplicationController) Underlying() interface{} { return t.V }
-func (t ReplicationController) Package() util.Package   { return util.V1 }
-func (t ReplicationController) Type() string            { return "k8s_v1_ReplicationController" }
+func (t ReplicationController) DeepCopy() boxed         { return ReplicationController{V: t.V.DeepCopy()} }
+func (t ReplicationController) Package() util.Package   { return util.Core }
+func (t ReplicationController) Type() string            { return "k8s_core_ReplicationController" }
 func (t ReplicationController) String() string          { return t.V.String() }
 func (t ReplicationController) Freeze()                 {} // TODO
 func (t ReplicationController) Truth() skylark.Bool     { return skylark.True }
@@ -7660,8 +8133,8 @@ func (t ReplicationController) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t ReplicationController) AttrNames() []string { return ReplicationController_attrs }
 func (t ReplicationController) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ReplicationController_fields, ReplicationController_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicationController_fields, ReplicationController_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7670,7 +8143,7 @@ func (t ReplicationController) SetField(name string, value skylark.Value) error 
 }
 
 type ReplicationControllerCondition struct {
-	V *v1.ReplicationControllerCondition
+	V *core.ReplicationControllerCondition
 }
 
 var (
@@ -7682,12 +8155,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ReplicationControllerCondition)(nil)).Elem()
+	t := reflect.TypeOf((*core.ReplicationControllerCondition)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ReplicationControllerCondition:
+		case *core.ReplicationControllerCondition:
 			return ReplicationControllerCondition{V: v}
-		case v1.ReplicationControllerCondition:
+		case core.ReplicationControllerCondition:
 			return ReplicationControllerCondition{V: &v}
 		default:
 			return skylark.None
@@ -7698,15 +8171,22 @@ func init() {
 }
 
 func createReplicationControllerCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ReplicationControllerCondition
+	box := ReplicationControllerCondition{V: &core.ReplicationControllerCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ReplicationControllerCondition) Underlying() interface{} { return t.V }
-func (t ReplicationControllerCondition) Package() util.Package   { return util.V1 }
-func (t ReplicationControllerCondition) Type() string            { return "k8s_v1_ReplicationControllerCondition" }
-func (t ReplicationControllerCondition) String() string          { return t.V.String() }
-func (t ReplicationControllerCondition) Freeze()                 {} // TODO
-func (t ReplicationControllerCondition) Truth() skylark.Bool     { return skylark.True }
-func (t ReplicationControllerCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ReplicationControllerCondition) DeepCopy() boxed {
+	return ReplicationControllerCondition{V: t.V.DeepCopy()}
+}
+func (t ReplicationControllerCondition) Package() util.Package { return util.Core }
+func (t ReplicationControllerCondition) Type() string {
+	return "k8s_core_ReplicationControllerCondition"
+}
+func (t ReplicationControllerCondition) String() string        { return t.V.String() }
+func (t ReplicationControllerCondition) Freeze()               {} // TODO
+func (t ReplicationControllerCondition) Truth() skylark.Bool   { return skylark.True }
+func (t ReplicationControllerCondition) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t ReplicationControllerCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ReplicationControllerCondition)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -7715,8 +8195,8 @@ func (t ReplicationControllerCondition) AttrNames() []string {
 	return ReplicationControllerCondition_attrs
 }
 func (t ReplicationControllerCondition) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ReplicationControllerCondition_fields, ReplicationControllerCondition_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicationControllerCondition_fields, ReplicationControllerCondition_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7725,7 +8205,7 @@ func (t ReplicationControllerCondition) SetField(name string, value skylark.Valu
 }
 
 type ReplicationControllerList struct {
-	V *v1.ReplicationControllerList
+	V *core.ReplicationControllerList
 }
 
 var (
@@ -7737,12 +8217,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ReplicationControllerList)(nil)).Elem()
+	t := reflect.TypeOf((*core.ReplicationControllerList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ReplicationControllerList:
+		case *core.ReplicationControllerList:
 			return ReplicationControllerList{V: v}
-		case v1.ReplicationControllerList:
+		case core.ReplicationControllerList:
 			return ReplicationControllerList{V: &v}
 		default:
 			return skylark.None
@@ -7753,23 +8233,28 @@ func init() {
 }
 
 func createReplicationControllerList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ReplicationControllerList
+	box := ReplicationControllerList{V: &core.ReplicationControllerList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ReplicationControllerList) Underlying() interface{} { return t.V }
-func (t ReplicationControllerList) Package() util.Package   { return util.V1 }
-func (t ReplicationControllerList) Type() string            { return "k8s_v1_ReplicationControllerList" }
-func (t ReplicationControllerList) String() string          { return t.V.String() }
-func (t ReplicationControllerList) Freeze()                 {} // TODO
-func (t ReplicationControllerList) Truth() skylark.Bool     { return skylark.True }
-func (t ReplicationControllerList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ReplicationControllerList) DeepCopy() boxed {
+	return ReplicationControllerList{V: t.V.DeepCopy()}
+}
+func (t ReplicationControllerList) Package() util.Package { return util.Core }
+func (t ReplicationControllerList) Type() string          { return "k8s_core_ReplicationControllerList" }
+func (t ReplicationControllerList) String() string        { return t.V.String() }
+func (t ReplicationControllerList) Freeze()               {} // TODO
+func (t ReplicationControllerList) Truth() skylark.Bool   { return skylark.True }
+func (t ReplicationControllerList) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t ReplicationControllerList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ReplicationControllerList)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t ReplicationControllerList) AttrNames() []string { return ReplicationControllerList_attrs }
 func (t ReplicationControllerList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ReplicationControllerList_fields, ReplicationControllerList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicationControllerList_fields, ReplicationControllerList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7778,7 +8263,7 @@ func (t ReplicationControllerList) SetField(name string, value skylark.Value) er
 }
 
 type ReplicationControllerSpec struct {
-	V *v1.ReplicationControllerSpec
+	V *core.ReplicationControllerSpec
 }
 
 var (
@@ -7790,12 +8275,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ReplicationControllerSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.ReplicationControllerSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ReplicationControllerSpec:
+		case *core.ReplicationControllerSpec:
 			return ReplicationControllerSpec{V: v}
-		case v1.ReplicationControllerSpec:
+		case core.ReplicationControllerSpec:
 			return ReplicationControllerSpec{V: &v}
 		default:
 			return skylark.None
@@ -7806,23 +8291,28 @@ func init() {
 }
 
 func createReplicationControllerSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ReplicationControllerSpec
+	box := ReplicationControllerSpec{V: &core.ReplicationControllerSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ReplicationControllerSpec) Underlying() interface{} { return t.V }
-func (t ReplicationControllerSpec) Package() util.Package   { return util.V1 }
-func (t ReplicationControllerSpec) Type() string            { return "k8s_v1_ReplicationControllerSpec" }
-func (t ReplicationControllerSpec) String() string          { return t.V.String() }
-func (t ReplicationControllerSpec) Freeze()                 {} // TODO
-func (t ReplicationControllerSpec) Truth() skylark.Bool     { return skylark.True }
-func (t ReplicationControllerSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ReplicationControllerSpec) DeepCopy() boxed {
+	return ReplicationControllerSpec{V: t.V.DeepCopy()}
+}
+func (t ReplicationControllerSpec) Package() util.Package { return util.Core }
+func (t ReplicationControllerSpec) Type() string          { return "k8s_core_ReplicationControllerSpec" }
+func (t ReplicationControllerSpec) String() string        { return t.V.String() }
+func (t ReplicationControllerSpec) Freeze()               {} // TODO
+func (t ReplicationControllerSpec) Truth() skylark.Bool   { return skylark.True }
+func (t ReplicationControllerSpec) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t ReplicationControllerSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ReplicationControllerSpec)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t ReplicationControllerSpec) AttrNames() []string { return ReplicationControllerSpec_attrs }
 func (t ReplicationControllerSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ReplicationControllerSpec_fields, ReplicationControllerSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicationControllerSpec_fields, ReplicationControllerSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7831,7 +8321,7 @@ func (t ReplicationControllerSpec) SetField(name string, value skylark.Value) er
 }
 
 type ReplicationControllerStatus struct {
-	V *v1.ReplicationControllerStatus
+	V *core.ReplicationControllerStatus
 }
 
 var (
@@ -7843,12 +8333,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ReplicationControllerStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.ReplicationControllerStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ReplicationControllerStatus:
+		case *core.ReplicationControllerStatus:
 			return ReplicationControllerStatus{V: v}
-		case v1.ReplicationControllerStatus:
+		case core.ReplicationControllerStatus:
 			return ReplicationControllerStatus{V: &v}
 		default:
 			return skylark.None
@@ -7859,23 +8349,28 @@ func init() {
 }
 
 func createReplicationControllerStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ReplicationControllerStatus
+	box := ReplicationControllerStatus{V: &core.ReplicationControllerStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ReplicationControllerStatus) Underlying() interface{} { return t.V }
-func (t ReplicationControllerStatus) Package() util.Package   { return util.V1 }
-func (t ReplicationControllerStatus) Type() string            { return "k8s_v1_ReplicationControllerStatus" }
-func (t ReplicationControllerStatus) String() string          { return t.V.String() }
-func (t ReplicationControllerStatus) Freeze()                 {} // TODO
-func (t ReplicationControllerStatus) Truth() skylark.Bool     { return skylark.True }
-func (t ReplicationControllerStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ReplicationControllerStatus) DeepCopy() boxed {
+	return ReplicationControllerStatus{V: t.V.DeepCopy()}
+}
+func (t ReplicationControllerStatus) Package() util.Package { return util.Core }
+func (t ReplicationControllerStatus) Type() string          { return "k8s_core_ReplicationControllerStatus" }
+func (t ReplicationControllerStatus) String() string        { return t.V.String() }
+func (t ReplicationControllerStatus) Freeze()               {} // TODO
+func (t ReplicationControllerStatus) Truth() skylark.Bool   { return skylark.True }
+func (t ReplicationControllerStatus) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t ReplicationControllerStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ReplicationControllerStatus)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t ReplicationControllerStatus) AttrNames() []string { return ReplicationControllerStatus_attrs }
 func (t ReplicationControllerStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ReplicationControllerStatus_fields, ReplicationControllerStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicationControllerStatus_fields, ReplicationControllerStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7884,7 +8379,7 @@ func (t ReplicationControllerStatus) SetField(name string, value skylark.Value) 
 }
 
 type ResourceFieldSelector struct {
-	V *v1.ResourceFieldSelector
+	V *core.ResourceFieldSelector
 }
 
 var (
@@ -7896,12 +8391,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ResourceFieldSelector)(nil)).Elem()
+	t := reflect.TypeOf((*core.ResourceFieldSelector)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ResourceFieldSelector:
+		case *core.ResourceFieldSelector:
 			return ResourceFieldSelector{V: v}
-		case v1.ResourceFieldSelector:
+		case core.ResourceFieldSelector:
 			return ResourceFieldSelector{V: &v}
 		default:
 			return skylark.None
@@ -7912,11 +8407,14 @@ func init() {
 }
 
 func createResourceFieldSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ResourceFieldSelector
+	box := ResourceFieldSelector{V: &core.ResourceFieldSelector{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ResourceFieldSelector) Underlying() interface{} { return t.V }
-func (t ResourceFieldSelector) Package() util.Package   { return util.V1 }
-func (t ResourceFieldSelector) Type() string            { return "k8s_v1_ResourceFieldSelector" }
+func (t ResourceFieldSelector) DeepCopy() boxed         { return ResourceFieldSelector{V: t.V.DeepCopy()} }
+func (t ResourceFieldSelector) Package() util.Package   { return util.Core }
+func (t ResourceFieldSelector) Type() string            { return "k8s_core_ResourceFieldSelector" }
 func (t ResourceFieldSelector) String() string          { return t.V.String() }
 func (t ResourceFieldSelector) Freeze()                 {} // TODO
 func (t ResourceFieldSelector) Truth() skylark.Bool     { return skylark.True }
@@ -7927,8 +8425,8 @@ func (t ResourceFieldSelector) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t ResourceFieldSelector) AttrNames() []string { return ResourceFieldSelector_attrs }
 func (t ResourceFieldSelector) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ResourceFieldSelector_fields, ResourceFieldSelector_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceFieldSelector_fields, ResourceFieldSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7937,7 +8435,7 @@ func (t ResourceFieldSelector) SetField(name string, value skylark.Value) error 
 }
 
 type ResourceQuota struct {
-	V *v1.ResourceQuota
+	V *core.ResourceQuota
 }
 
 var (
@@ -7949,12 +8447,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ResourceQuota)(nil)).Elem()
+	t := reflect.TypeOf((*core.ResourceQuota)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ResourceQuota:
+		case *core.ResourceQuota:
 			return ResourceQuota{V: v}
-		case v1.ResourceQuota:
+		case core.ResourceQuota:
 			return ResourceQuota{V: &v}
 		default:
 			return skylark.None
@@ -7965,11 +8463,14 @@ func init() {
 }
 
 func createResourceQuota(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ResourceQuota
+	box := ResourceQuota{V: &core.ResourceQuota{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ResourceQuota) Underlying() interface{} { return t.V }
-func (t ResourceQuota) Package() util.Package   { return util.V1 }
-func (t ResourceQuota) Type() string            { return "k8s_v1_ResourceQuota" }
+func (t ResourceQuota) DeepCopy() boxed         { return ResourceQuota{V: t.V.DeepCopy()} }
+func (t ResourceQuota) Package() util.Package   { return util.Core }
+func (t ResourceQuota) Type() string            { return "k8s_core_ResourceQuota" }
 func (t ResourceQuota) String() string          { return t.V.String() }
 func (t ResourceQuota) Freeze()                 {} // TODO
 func (t ResourceQuota) Truth() skylark.Bool     { return skylark.True }
@@ -7980,8 +8481,8 @@ func (t ResourceQuota) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t ResourceQuota) AttrNames() []string { return ResourceQuota_attrs }
 func (t ResourceQuota) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ResourceQuota_fields, ResourceQuota_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceQuota_fields, ResourceQuota_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -7990,7 +8491,7 @@ func (t ResourceQuota) SetField(name string, value skylark.Value) error {
 }
 
 type ResourceQuotaList struct {
-	V *v1.ResourceQuotaList
+	V *core.ResourceQuotaList
 }
 
 var (
@@ -8002,12 +8503,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ResourceQuotaList)(nil)).Elem()
+	t := reflect.TypeOf((*core.ResourceQuotaList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ResourceQuotaList:
+		case *core.ResourceQuotaList:
 			return ResourceQuotaList{V: v}
-		case v1.ResourceQuotaList:
+		case core.ResourceQuotaList:
 			return ResourceQuotaList{V: &v}
 		default:
 			return skylark.None
@@ -8018,11 +8519,14 @@ func init() {
 }
 
 func createResourceQuotaList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ResourceQuotaList
+	box := ResourceQuotaList{V: &core.ResourceQuotaList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ResourceQuotaList) Underlying() interface{} { return t.V }
-func (t ResourceQuotaList) Package() util.Package   { return util.V1 }
-func (t ResourceQuotaList) Type() string            { return "k8s_v1_ResourceQuotaList" }
+func (t ResourceQuotaList) DeepCopy() boxed         { return ResourceQuotaList{V: t.V.DeepCopy()} }
+func (t ResourceQuotaList) Package() util.Package   { return util.Core }
+func (t ResourceQuotaList) Type() string            { return "k8s_core_ResourceQuotaList" }
 func (t ResourceQuotaList) String() string          { return t.V.String() }
 func (t ResourceQuotaList) Freeze()                 {} // TODO
 func (t ResourceQuotaList) Truth() skylark.Bool     { return skylark.True }
@@ -8033,8 +8537,8 @@ func (t ResourceQuotaList) CompareSameType(op syntax.Token, y_ skylark.Value, de
 }
 func (t ResourceQuotaList) AttrNames() []string { return ResourceQuotaList_attrs }
 func (t ResourceQuotaList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ResourceQuotaList_fields, ResourceQuotaList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceQuotaList_fields, ResourceQuotaList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8043,7 +8547,7 @@ func (t ResourceQuotaList) SetField(name string, value skylark.Value) error {
 }
 
 type ResourceQuotaSpec struct {
-	V *v1.ResourceQuotaSpec
+	V *core.ResourceQuotaSpec
 }
 
 var (
@@ -8055,12 +8559,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ResourceQuotaSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.ResourceQuotaSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ResourceQuotaSpec:
+		case *core.ResourceQuotaSpec:
 			return ResourceQuotaSpec{V: v}
-		case v1.ResourceQuotaSpec:
+		case core.ResourceQuotaSpec:
 			return ResourceQuotaSpec{V: &v}
 		default:
 			return skylark.None
@@ -8071,11 +8575,14 @@ func init() {
 }
 
 func createResourceQuotaSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ResourceQuotaSpec
+	box := ResourceQuotaSpec{V: &core.ResourceQuotaSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ResourceQuotaSpec) Underlying() interface{} { return t.V }
-func (t ResourceQuotaSpec) Package() util.Package   { return util.V1 }
-func (t ResourceQuotaSpec) Type() string            { return "k8s_v1_ResourceQuotaSpec" }
+func (t ResourceQuotaSpec) DeepCopy() boxed         { return ResourceQuotaSpec{V: t.V.DeepCopy()} }
+func (t ResourceQuotaSpec) Package() util.Package   { return util.Core }
+func (t ResourceQuotaSpec) Type() string            { return "k8s_core_ResourceQuotaSpec" }
 func (t ResourceQuotaSpec) String() string          { return t.V.String() }
 func (t ResourceQuotaSpec) Freeze()                 {} // TODO
 func (t ResourceQuotaSpec) Truth() skylark.Bool     { return skylark.True }
@@ -8086,8 +8593,8 @@ func (t ResourceQuotaSpec) CompareSameType(op syntax.Token, y_ skylark.Value, de
 }
 func (t ResourceQuotaSpec) AttrNames() []string { return ResourceQuotaSpec_attrs }
 func (t ResourceQuotaSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ResourceQuotaSpec_fields, ResourceQuotaSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceQuotaSpec_fields, ResourceQuotaSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8096,7 +8603,7 @@ func (t ResourceQuotaSpec) SetField(name string, value skylark.Value) error {
 }
 
 type ResourceQuotaStatus struct {
-	V *v1.ResourceQuotaStatus
+	V *core.ResourceQuotaStatus
 }
 
 var (
@@ -8108,12 +8615,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ResourceQuotaStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.ResourceQuotaStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ResourceQuotaStatus:
+		case *core.ResourceQuotaStatus:
 			return ResourceQuotaStatus{V: v}
-		case v1.ResourceQuotaStatus:
+		case core.ResourceQuotaStatus:
 			return ResourceQuotaStatus{V: &v}
 		default:
 			return skylark.None
@@ -8124,11 +8631,14 @@ func init() {
 }
 
 func createResourceQuotaStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ResourceQuotaStatus
+	box := ResourceQuotaStatus{V: &core.ResourceQuotaStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ResourceQuotaStatus) Underlying() interface{} { return t.V }
-func (t ResourceQuotaStatus) Package() util.Package   { return util.V1 }
-func (t ResourceQuotaStatus) Type() string            { return "k8s_v1_ResourceQuotaStatus" }
+func (t ResourceQuotaStatus) DeepCopy() boxed         { return ResourceQuotaStatus{V: t.V.DeepCopy()} }
+func (t ResourceQuotaStatus) Package() util.Package   { return util.Core }
+func (t ResourceQuotaStatus) Type() string            { return "k8s_core_ResourceQuotaStatus" }
 func (t ResourceQuotaStatus) String() string          { return t.V.String() }
 func (t ResourceQuotaStatus) Freeze()                 {} // TODO
 func (t ResourceQuotaStatus) Truth() skylark.Bool     { return skylark.True }
@@ -8139,8 +8649,8 @@ func (t ResourceQuotaStatus) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t ResourceQuotaStatus) AttrNames() []string { return ResourceQuotaStatus_attrs }
 func (t ResourceQuotaStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ResourceQuotaStatus_fields, ResourceQuotaStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceQuotaStatus_fields, ResourceQuotaStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8149,7 +8659,7 @@ func (t ResourceQuotaStatus) SetField(name string, value skylark.Value) error {
 }
 
 type ResourceRequirements struct {
-	V *v1.ResourceRequirements
+	V *core.ResourceRequirements
 }
 
 var (
@@ -8161,12 +8671,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ResourceRequirements)(nil)).Elem()
+	t := reflect.TypeOf((*core.ResourceRequirements)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ResourceRequirements:
+		case *core.ResourceRequirements:
 			return ResourceRequirements{V: v}
-		case v1.ResourceRequirements:
+		case core.ResourceRequirements:
 			return ResourceRequirements{V: &v}
 		default:
 			return skylark.None
@@ -8177,11 +8687,14 @@ func init() {
 }
 
 func createResourceRequirements(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ResourceRequirements
+	box := ResourceRequirements{V: &core.ResourceRequirements{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ResourceRequirements) Underlying() interface{} { return t.V }
-func (t ResourceRequirements) Package() util.Package   { return util.V1 }
-func (t ResourceRequirements) Type() string            { return "k8s_v1_ResourceRequirements" }
+func (t ResourceRequirements) DeepCopy() boxed         { return ResourceRequirements{V: t.V.DeepCopy()} }
+func (t ResourceRequirements) Package() util.Package   { return util.Core }
+func (t ResourceRequirements) Type() string            { return "k8s_core_ResourceRequirements" }
 func (t ResourceRequirements) String() string          { return t.V.String() }
 func (t ResourceRequirements) Freeze()                 {} // TODO
 func (t ResourceRequirements) Truth() skylark.Bool     { return skylark.True }
@@ -8192,8 +8705,8 @@ func (t ResourceRequirements) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t ResourceRequirements) AttrNames() []string { return ResourceRequirements_attrs }
 func (t ResourceRequirements) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ResourceRequirements_fields, ResourceRequirements_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceRequirements_fields, ResourceRequirements_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8202,7 +8715,7 @@ func (t ResourceRequirements) SetField(name string, value skylark.Value) error {
 }
 
 type SELinuxOptions struct {
-	V *v1.SELinuxOptions
+	V *core.SELinuxOptions
 }
 
 var (
@@ -8214,12 +8727,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SELinuxOptions)(nil)).Elem()
+	t := reflect.TypeOf((*core.SELinuxOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SELinuxOptions:
+		case *core.SELinuxOptions:
 			return SELinuxOptions{V: v}
-		case v1.SELinuxOptions:
+		case core.SELinuxOptions:
 			return SELinuxOptions{V: &v}
 		default:
 			return skylark.None
@@ -8230,11 +8743,14 @@ func init() {
 }
 
 func createSELinuxOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SELinuxOptions
+	box := SELinuxOptions{V: &core.SELinuxOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SELinuxOptions) Underlying() interface{} { return t.V }
-func (t SELinuxOptions) Package() util.Package   { return util.V1 }
-func (t SELinuxOptions) Type() string            { return "k8s_v1_SELinuxOptions" }
+func (t SELinuxOptions) DeepCopy() boxed         { return SELinuxOptions{V: t.V.DeepCopy()} }
+func (t SELinuxOptions) Package() util.Package   { return util.Core }
+func (t SELinuxOptions) Type() string            { return "k8s_core_SELinuxOptions" }
 func (t SELinuxOptions) String() string          { return t.V.String() }
 func (t SELinuxOptions) Freeze()                 {} // TODO
 func (t SELinuxOptions) Truth() skylark.Bool     { return skylark.True }
@@ -8245,8 +8761,8 @@ func (t SELinuxOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t SELinuxOptions) AttrNames() []string { return SELinuxOptions_attrs }
 func (t SELinuxOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SELinuxOptions_fields, SELinuxOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SELinuxOptions_fields, SELinuxOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8255,7 +8771,7 @@ func (t SELinuxOptions) SetField(name string, value skylark.Value) error {
 }
 
 type ScaleIOPersistentVolumeSource struct {
-	V *v1.ScaleIOPersistentVolumeSource
+	V *core.ScaleIOPersistentVolumeSource
 }
 
 var (
@@ -8267,12 +8783,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ScaleIOPersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.ScaleIOPersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ScaleIOPersistentVolumeSource:
+		case *core.ScaleIOPersistentVolumeSource:
 			return ScaleIOPersistentVolumeSource{V: v}
-		case v1.ScaleIOPersistentVolumeSource:
+		case core.ScaleIOPersistentVolumeSource:
 			return ScaleIOPersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -8283,15 +8799,20 @@ func init() {
 }
 
 func createScaleIOPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ScaleIOPersistentVolumeSource
+	box := ScaleIOPersistentVolumeSource{V: &core.ScaleIOPersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ScaleIOPersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t ScaleIOPersistentVolumeSource) Package() util.Package   { return util.V1 }
-func (t ScaleIOPersistentVolumeSource) Type() string            { return "k8s_v1_ScaleIOPersistentVolumeSource" }
-func (t ScaleIOPersistentVolumeSource) String() string          { return t.V.String() }
-func (t ScaleIOPersistentVolumeSource) Freeze()                 {} // TODO
-func (t ScaleIOPersistentVolumeSource) Truth() skylark.Bool     { return skylark.True }
-func (t ScaleIOPersistentVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ScaleIOPersistentVolumeSource) DeepCopy() boxed {
+	return ScaleIOPersistentVolumeSource{V: t.V.DeepCopy()}
+}
+func (t ScaleIOPersistentVolumeSource) Package() util.Package { return util.Core }
+func (t ScaleIOPersistentVolumeSource) Type() string          { return "k8s_core_ScaleIOPersistentVolumeSource" }
+func (t ScaleIOPersistentVolumeSource) String() string        { return t.V.String() }
+func (t ScaleIOPersistentVolumeSource) Freeze()               {} // TODO
+func (t ScaleIOPersistentVolumeSource) Truth() skylark.Bool   { return skylark.True }
+func (t ScaleIOPersistentVolumeSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t ScaleIOPersistentVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ScaleIOPersistentVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -8300,8 +8821,8 @@ func (t ScaleIOPersistentVolumeSource) AttrNames() []string {
 	return ScaleIOPersistentVolumeSource_attrs
 }
 func (t ScaleIOPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ScaleIOPersistentVolumeSource_fields, ScaleIOPersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ScaleIOPersistentVolumeSource_fields, ScaleIOPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8310,7 +8831,7 @@ func (t ScaleIOPersistentVolumeSource) SetField(name string, value skylark.Value
 }
 
 type ScaleIOVolumeSource struct {
-	V *v1.ScaleIOVolumeSource
+	V *core.ScaleIOVolumeSource
 }
 
 var (
@@ -8322,12 +8843,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ScaleIOVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.ScaleIOVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ScaleIOVolumeSource:
+		case *core.ScaleIOVolumeSource:
 			return ScaleIOVolumeSource{V: v}
-		case v1.ScaleIOVolumeSource:
+		case core.ScaleIOVolumeSource:
 			return ScaleIOVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -8338,11 +8859,14 @@ func init() {
 }
 
 func createScaleIOVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ScaleIOVolumeSource
+	box := ScaleIOVolumeSource{V: &core.ScaleIOVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ScaleIOVolumeSource) Underlying() interface{} { return t.V }
-func (t ScaleIOVolumeSource) Package() util.Package   { return util.V1 }
-func (t ScaleIOVolumeSource) Type() string            { return "k8s_v1_ScaleIOVolumeSource" }
+func (t ScaleIOVolumeSource) DeepCopy() boxed         { return ScaleIOVolumeSource{V: t.V.DeepCopy()} }
+func (t ScaleIOVolumeSource) Package() util.Package   { return util.Core }
+func (t ScaleIOVolumeSource) Type() string            { return "k8s_core_ScaleIOVolumeSource" }
 func (t ScaleIOVolumeSource) String() string          { return t.V.String() }
 func (t ScaleIOVolumeSource) Freeze()                 {} // TODO
 func (t ScaleIOVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -8353,8 +8877,8 @@ func (t ScaleIOVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t ScaleIOVolumeSource) AttrNames() []string { return ScaleIOVolumeSource_attrs }
 func (t ScaleIOVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ScaleIOVolumeSource_fields, ScaleIOVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ScaleIOVolumeSource_fields, ScaleIOVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8363,7 +8887,7 @@ func (t ScaleIOVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type ScopeSelector struct {
-	V *v1.ScopeSelector
+	V *core.ScopeSelector
 }
 
 var (
@@ -8375,12 +8899,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ScopeSelector)(nil)).Elem()
+	t := reflect.TypeOf((*core.ScopeSelector)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ScopeSelector:
+		case *core.ScopeSelector:
 			return ScopeSelector{V: v}
-		case v1.ScopeSelector:
+		case core.ScopeSelector:
 			return ScopeSelector{V: &v}
 		default:
 			return skylark.None
@@ -8391,11 +8915,14 @@ func init() {
 }
 
 func createScopeSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ScopeSelector
+	box := ScopeSelector{V: &core.ScopeSelector{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ScopeSelector) Underlying() interface{} { return t.V }
-func (t ScopeSelector) Package() util.Package   { return util.V1 }
-func (t ScopeSelector) Type() string            { return "k8s_v1_ScopeSelector" }
+func (t ScopeSelector) DeepCopy() boxed         { return ScopeSelector{V: t.V.DeepCopy()} }
+func (t ScopeSelector) Package() util.Package   { return util.Core }
+func (t ScopeSelector) Type() string            { return "k8s_core_ScopeSelector" }
 func (t ScopeSelector) String() string          { return t.V.String() }
 func (t ScopeSelector) Freeze()                 {} // TODO
 func (t ScopeSelector) Truth() skylark.Bool     { return skylark.True }
@@ -8406,8 +8933,8 @@ func (t ScopeSelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t ScopeSelector) AttrNames() []string { return ScopeSelector_attrs }
 func (t ScopeSelector) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ScopeSelector_fields, ScopeSelector_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ScopeSelector_fields, ScopeSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8416,7 +8943,7 @@ func (t ScopeSelector) SetField(name string, value skylark.Value) error {
 }
 
 type ScopedResourceSelectorRequirement struct {
-	V *v1.ScopedResourceSelectorRequirement
+	V *core.ScopedResourceSelectorRequirement
 }
 
 var (
@@ -8428,12 +8955,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ScopedResourceSelectorRequirement)(nil)).Elem()
+	t := reflect.TypeOf((*core.ScopedResourceSelectorRequirement)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ScopedResourceSelectorRequirement:
+		case *core.ScopedResourceSelectorRequirement:
 			return ScopedResourceSelectorRequirement{V: v}
-		case v1.ScopedResourceSelectorRequirement:
+		case core.ScopedResourceSelectorRequirement:
 			return ScopedResourceSelectorRequirement{V: &v}
 		default:
 			return skylark.None
@@ -8444,12 +8971,17 @@ func init() {
 }
 
 func createScopedResourceSelectorRequirement(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ScopedResourceSelectorRequirement
+	box := ScopedResourceSelectorRequirement{V: &core.ScopedResourceSelectorRequirement{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ScopedResourceSelectorRequirement) Underlying() interface{} { return t.V }
-func (t ScopedResourceSelectorRequirement) Package() util.Package   { return util.V1 }
+func (t ScopedResourceSelectorRequirement) DeepCopy() boxed {
+	return ScopedResourceSelectorRequirement{V: t.V.DeepCopy()}
+}
+func (t ScopedResourceSelectorRequirement) Package() util.Package { return util.Core }
 func (t ScopedResourceSelectorRequirement) Type() string {
-	return "k8s_v1_ScopedResourceSelectorRequirement"
+	return "k8s_core_ScopedResourceSelectorRequirement"
 }
 func (t ScopedResourceSelectorRequirement) String() string        { return t.V.String() }
 func (t ScopedResourceSelectorRequirement) Freeze()               {} // TODO
@@ -8463,8 +8995,8 @@ func (t ScopedResourceSelectorRequirement) AttrNames() []string {
 	return ScopedResourceSelectorRequirement_attrs
 }
 func (t ScopedResourceSelectorRequirement) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ScopedResourceSelectorRequirement_fields, ScopedResourceSelectorRequirement_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ScopedResourceSelectorRequirement_fields, ScopedResourceSelectorRequirement_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8473,7 +9005,7 @@ func (t ScopedResourceSelectorRequirement) SetField(name string, value skylark.V
 }
 
 type Secret struct {
-	V *v1.Secret
+	V *core.Secret
 }
 
 var (
@@ -8485,12 +9017,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Secret)(nil)).Elem()
+	t := reflect.TypeOf((*core.Secret)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Secret:
+		case *core.Secret:
 			return Secret{V: v}
-		case v1.Secret:
+		case core.Secret:
 			return Secret{V: &v}
 		default:
 			return skylark.None
@@ -8501,11 +9033,14 @@ func init() {
 }
 
 func createSecret(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Secret
+	box := Secret{V: &core.Secret{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Secret) Underlying() interface{} { return t.V }
-func (t Secret) Package() util.Package   { return util.V1 }
-func (t Secret) Type() string            { return "k8s_v1_Secret" }
+func (t Secret) DeepCopy() boxed         { return Secret{V: t.V.DeepCopy()} }
+func (t Secret) Package() util.Package   { return util.Core }
+func (t Secret) Type() string            { return "k8s_core_Secret" }
 func (t Secret) String() string          { return t.V.String() }
 func (t Secret) Freeze()                 {} // TODO
 func (t Secret) Truth() skylark.Bool     { return skylark.True }
@@ -8516,8 +9051,8 @@ func (t Secret) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (b
 }
 func (t Secret) AttrNames() []string { return Secret_attrs }
 func (t Secret) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Secret_fields, Secret_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Secret_fields, Secret_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8526,7 +9061,7 @@ func (t Secret) SetField(name string, value skylark.Value) error {
 }
 
 type SecretEnvSource struct {
-	V *v1.SecretEnvSource
+	V *core.SecretEnvSource
 }
 
 var (
@@ -8538,12 +9073,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SecretEnvSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.SecretEnvSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SecretEnvSource:
+		case *core.SecretEnvSource:
 			return SecretEnvSource{V: v}
-		case v1.SecretEnvSource:
+		case core.SecretEnvSource:
 			return SecretEnvSource{V: &v}
 		default:
 			return skylark.None
@@ -8554,11 +9089,14 @@ func init() {
 }
 
 func createSecretEnvSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SecretEnvSource
+	box := SecretEnvSource{V: &core.SecretEnvSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SecretEnvSource) Underlying() interface{} { return t.V }
-func (t SecretEnvSource) Package() util.Package   { return util.V1 }
-func (t SecretEnvSource) Type() string            { return "k8s_v1_SecretEnvSource" }
+func (t SecretEnvSource) DeepCopy() boxed         { return SecretEnvSource{V: t.V.DeepCopy()} }
+func (t SecretEnvSource) Package() util.Package   { return util.Core }
+func (t SecretEnvSource) Type() string            { return "k8s_core_SecretEnvSource" }
 func (t SecretEnvSource) String() string          { return t.V.String() }
 func (t SecretEnvSource) Freeze()                 {} // TODO
 func (t SecretEnvSource) Truth() skylark.Bool     { return skylark.True }
@@ -8569,8 +9107,8 @@ func (t SecretEnvSource) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t SecretEnvSource) AttrNames() []string { return SecretEnvSource_attrs }
 func (t SecretEnvSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SecretEnvSource_fields, SecretEnvSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SecretEnvSource_fields, SecretEnvSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8579,7 +9117,7 @@ func (t SecretEnvSource) SetField(name string, value skylark.Value) error {
 }
 
 type SecretKeySelector struct {
-	V *v1.SecretKeySelector
+	V *core.SecretKeySelector
 }
 
 var (
@@ -8591,12 +9129,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SecretKeySelector)(nil)).Elem()
+	t := reflect.TypeOf((*core.SecretKeySelector)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SecretKeySelector:
+		case *core.SecretKeySelector:
 			return SecretKeySelector{V: v}
-		case v1.SecretKeySelector:
+		case core.SecretKeySelector:
 			return SecretKeySelector{V: &v}
 		default:
 			return skylark.None
@@ -8607,11 +9145,14 @@ func init() {
 }
 
 func createSecretKeySelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SecretKeySelector
+	box := SecretKeySelector{V: &core.SecretKeySelector{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SecretKeySelector) Underlying() interface{} { return t.V }
-func (t SecretKeySelector) Package() util.Package   { return util.V1 }
-func (t SecretKeySelector) Type() string            { return "k8s_v1_SecretKeySelector" }
+func (t SecretKeySelector) DeepCopy() boxed         { return SecretKeySelector{V: t.V.DeepCopy()} }
+func (t SecretKeySelector) Package() util.Package   { return util.Core }
+func (t SecretKeySelector) Type() string            { return "k8s_core_SecretKeySelector" }
 func (t SecretKeySelector) String() string          { return t.V.String() }
 func (t SecretKeySelector) Freeze()                 {} // TODO
 func (t SecretKeySelector) Truth() skylark.Bool     { return skylark.True }
@@ -8622,8 +9163,8 @@ func (t SecretKeySelector) CompareSameType(op syntax.Token, y_ skylark.Value, de
 }
 func (t SecretKeySelector) AttrNames() []string { return SecretKeySelector_attrs }
 func (t SecretKeySelector) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SecretKeySelector_fields, SecretKeySelector_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SecretKeySelector_fields, SecretKeySelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8632,7 +9173,7 @@ func (t SecretKeySelector) SetField(name string, value skylark.Value) error {
 }
 
 type SecretList struct {
-	V *v1.SecretList
+	V *core.SecretList
 }
 
 var (
@@ -8644,12 +9185,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SecretList)(nil)).Elem()
+	t := reflect.TypeOf((*core.SecretList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SecretList:
+		case *core.SecretList:
 			return SecretList{V: v}
-		case v1.SecretList:
+		case core.SecretList:
 			return SecretList{V: &v}
 		default:
 			return skylark.None
@@ -8660,11 +9201,14 @@ func init() {
 }
 
 func createSecretList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SecretList
+	box := SecretList{V: &core.SecretList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SecretList) Underlying() interface{} { return t.V }
-func (t SecretList) Package() util.Package   { return util.V1 }
-func (t SecretList) Type() string            { return "k8s_v1_SecretList" }
+func (t SecretList) DeepCopy() boxed         { return SecretList{V: t.V.DeepCopy()} }
+func (t SecretList) Package() util.Package   { return util.Core }
+func (t SecretList) Type() string            { return "k8s_core_SecretList" }
 func (t SecretList) String() string          { return t.V.String() }
 func (t SecretList) Freeze()                 {} // TODO
 func (t SecretList) Truth() skylark.Bool     { return skylark.True }
@@ -8675,8 +9219,8 @@ func (t SecretList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int
 }
 func (t SecretList) AttrNames() []string { return SecretList_attrs }
 func (t SecretList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SecretList_fields, SecretList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SecretList_fields, SecretList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8685,7 +9229,7 @@ func (t SecretList) SetField(name string, value skylark.Value) error {
 }
 
 type SecretProjection struct {
-	V *v1.SecretProjection
+	V *core.SecretProjection
 }
 
 var (
@@ -8697,12 +9241,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SecretProjection)(nil)).Elem()
+	t := reflect.TypeOf((*core.SecretProjection)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SecretProjection:
+		case *core.SecretProjection:
 			return SecretProjection{V: v}
-		case v1.SecretProjection:
+		case core.SecretProjection:
 			return SecretProjection{V: &v}
 		default:
 			return skylark.None
@@ -8713,11 +9257,14 @@ func init() {
 }
 
 func createSecretProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SecretProjection
+	box := SecretProjection{V: &core.SecretProjection{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SecretProjection) Underlying() interface{} { return t.V }
-func (t SecretProjection) Package() util.Package   { return util.V1 }
-func (t SecretProjection) Type() string            { return "k8s_v1_SecretProjection" }
+func (t SecretProjection) DeepCopy() boxed         { return SecretProjection{V: t.V.DeepCopy()} }
+func (t SecretProjection) Package() util.Package   { return util.Core }
+func (t SecretProjection) Type() string            { return "k8s_core_SecretProjection" }
 func (t SecretProjection) String() string          { return t.V.String() }
 func (t SecretProjection) Freeze()                 {} // TODO
 func (t SecretProjection) Truth() skylark.Bool     { return skylark.True }
@@ -8728,8 +9275,8 @@ func (t SecretProjection) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t SecretProjection) AttrNames() []string { return SecretProjection_attrs }
 func (t SecretProjection) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SecretProjection_fields, SecretProjection_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SecretProjection_fields, SecretProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8738,7 +9285,7 @@ func (t SecretProjection) SetField(name string, value skylark.Value) error {
 }
 
 type SecretReference struct {
-	V *v1.SecretReference
+	V *core.SecretReference
 }
 
 var (
@@ -8750,12 +9297,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SecretReference)(nil)).Elem()
+	t := reflect.TypeOf((*core.SecretReference)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SecretReference:
+		case *core.SecretReference:
 			return SecretReference{V: v}
-		case v1.SecretReference:
+		case core.SecretReference:
 			return SecretReference{V: &v}
 		default:
 			return skylark.None
@@ -8766,11 +9313,14 @@ func init() {
 }
 
 func createSecretReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SecretReference
+	box := SecretReference{V: &core.SecretReference{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SecretReference) Underlying() interface{} { return t.V }
-func (t SecretReference) Package() util.Package   { return util.V1 }
-func (t SecretReference) Type() string            { return "k8s_v1_SecretReference" }
+func (t SecretReference) DeepCopy() boxed         { return SecretReference{V: t.V.DeepCopy()} }
+func (t SecretReference) Package() util.Package   { return util.Core }
+func (t SecretReference) Type() string            { return "k8s_core_SecretReference" }
 func (t SecretReference) String() string          { return t.V.String() }
 func (t SecretReference) Freeze()                 {} // TODO
 func (t SecretReference) Truth() skylark.Bool     { return skylark.True }
@@ -8781,8 +9331,8 @@ func (t SecretReference) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t SecretReference) AttrNames() []string { return SecretReference_attrs }
 func (t SecretReference) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SecretReference_fields, SecretReference_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SecretReference_fields, SecretReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8791,7 +9341,7 @@ func (t SecretReference) SetField(name string, value skylark.Value) error {
 }
 
 type SecretVolumeSource struct {
-	V *v1.SecretVolumeSource
+	V *core.SecretVolumeSource
 }
 
 var (
@@ -8803,12 +9353,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SecretVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.SecretVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SecretVolumeSource:
+		case *core.SecretVolumeSource:
 			return SecretVolumeSource{V: v}
-		case v1.SecretVolumeSource:
+		case core.SecretVolumeSource:
 			return SecretVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -8819,11 +9369,14 @@ func init() {
 }
 
 func createSecretVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SecretVolumeSource
+	box := SecretVolumeSource{V: &core.SecretVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SecretVolumeSource) Underlying() interface{} { return t.V }
-func (t SecretVolumeSource) Package() util.Package   { return util.V1 }
-func (t SecretVolumeSource) Type() string            { return "k8s_v1_SecretVolumeSource" }
+func (t SecretVolumeSource) DeepCopy() boxed         { return SecretVolumeSource{V: t.V.DeepCopy()} }
+func (t SecretVolumeSource) Package() util.Package   { return util.Core }
+func (t SecretVolumeSource) Type() string            { return "k8s_core_SecretVolumeSource" }
 func (t SecretVolumeSource) String() string          { return t.V.String() }
 func (t SecretVolumeSource) Freeze()                 {} // TODO
 func (t SecretVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -8834,8 +9387,8 @@ func (t SecretVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t SecretVolumeSource) AttrNames() []string { return SecretVolumeSource_attrs }
 func (t SecretVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SecretVolumeSource_fields, SecretVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SecretVolumeSource_fields, SecretVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8844,7 +9397,7 @@ func (t SecretVolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type SecurityContext struct {
-	V *v1.SecurityContext
+	V *core.SecurityContext
 }
 
 var (
@@ -8856,12 +9409,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SecurityContext)(nil)).Elem()
+	t := reflect.TypeOf((*core.SecurityContext)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SecurityContext:
+		case *core.SecurityContext:
 			return SecurityContext{V: v}
-		case v1.SecurityContext:
+		case core.SecurityContext:
 			return SecurityContext{V: &v}
 		default:
 			return skylark.None
@@ -8872,11 +9425,14 @@ func init() {
 }
 
 func createSecurityContext(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SecurityContext
+	box := SecurityContext{V: &core.SecurityContext{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SecurityContext) Underlying() interface{} { return t.V }
-func (t SecurityContext) Package() util.Package   { return util.V1 }
-func (t SecurityContext) Type() string            { return "k8s_v1_SecurityContext" }
+func (t SecurityContext) DeepCopy() boxed         { return SecurityContext{V: t.V.DeepCopy()} }
+func (t SecurityContext) Package() util.Package   { return util.Core }
+func (t SecurityContext) Type() string            { return "k8s_core_SecurityContext" }
 func (t SecurityContext) String() string          { return t.V.String() }
 func (t SecurityContext) Freeze()                 {} // TODO
 func (t SecurityContext) Truth() skylark.Bool     { return skylark.True }
@@ -8887,8 +9443,8 @@ func (t SecurityContext) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t SecurityContext) AttrNames() []string { return SecurityContext_attrs }
 func (t SecurityContext) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SecurityContext_fields, SecurityContext_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SecurityContext_fields, SecurityContext_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8897,7 +9453,7 @@ func (t SecurityContext) SetField(name string, value skylark.Value) error {
 }
 
 type SerializedReference struct {
-	V *v1.SerializedReference
+	V *core.SerializedReference
 }
 
 var (
@@ -8909,12 +9465,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SerializedReference)(nil)).Elem()
+	t := reflect.TypeOf((*core.SerializedReference)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SerializedReference:
+		case *core.SerializedReference:
 			return SerializedReference{V: v}
-		case v1.SerializedReference:
+		case core.SerializedReference:
 			return SerializedReference{V: &v}
 		default:
 			return skylark.None
@@ -8925,11 +9481,14 @@ func init() {
 }
 
 func createSerializedReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SerializedReference
+	box := SerializedReference{V: &core.SerializedReference{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SerializedReference) Underlying() interface{} { return t.V }
-func (t SerializedReference) Package() util.Package   { return util.V1 }
-func (t SerializedReference) Type() string            { return "k8s_v1_SerializedReference" }
+func (t SerializedReference) DeepCopy() boxed         { return SerializedReference{V: t.V.DeepCopy()} }
+func (t SerializedReference) Package() util.Package   { return util.Core }
+func (t SerializedReference) Type() string            { return "k8s_core_SerializedReference" }
 func (t SerializedReference) String() string          { return t.V.String() }
 func (t SerializedReference) Freeze()                 {} // TODO
 func (t SerializedReference) Truth() skylark.Bool     { return skylark.True }
@@ -8940,8 +9499,8 @@ func (t SerializedReference) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t SerializedReference) AttrNames() []string { return SerializedReference_attrs }
 func (t SerializedReference) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SerializedReference_fields, SerializedReference_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SerializedReference_fields, SerializedReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -8950,7 +9509,7 @@ func (t SerializedReference) SetField(name string, value skylark.Value) error {
 }
 
 type Service struct {
-	V *v1.Service
+	V *core.Service
 }
 
 var (
@@ -8962,12 +9521,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Service)(nil)).Elem()
+	t := reflect.TypeOf((*core.Service)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Service:
+		case *core.Service:
 			return Service{V: v}
-		case v1.Service:
+		case core.Service:
 			return Service{V: &v}
 		default:
 			return skylark.None
@@ -8978,11 +9537,14 @@ func init() {
 }
 
 func createService(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Service
+	box := Service{V: &core.Service{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Service) Underlying() interface{} { return t.V }
-func (t Service) Package() util.Package   { return util.V1 }
-func (t Service) Type() string            { return "k8s_v1_Service" }
+func (t Service) DeepCopy() boxed         { return Service{V: t.V.DeepCopy()} }
+func (t Service) Package() util.Package   { return util.Core }
+func (t Service) Type() string            { return "k8s_core_Service" }
 func (t Service) String() string          { return t.V.String() }
 func (t Service) Freeze()                 {} // TODO
 func (t Service) Truth() skylark.Bool     { return skylark.True }
@@ -8993,8 +9555,8 @@ func (t Service) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (
 }
 func (t Service) AttrNames() []string { return Service_attrs }
 func (t Service) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Service_fields, Service_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Service_fields, Service_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9003,7 +9565,7 @@ func (t Service) SetField(name string, value skylark.Value) error {
 }
 
 type ServiceAccount struct {
-	V *v1.ServiceAccount
+	V *core.ServiceAccount
 }
 
 var (
@@ -9015,12 +9577,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ServiceAccount)(nil)).Elem()
+	t := reflect.TypeOf((*core.ServiceAccount)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ServiceAccount:
+		case *core.ServiceAccount:
 			return ServiceAccount{V: v}
-		case v1.ServiceAccount:
+		case core.ServiceAccount:
 			return ServiceAccount{V: &v}
 		default:
 			return skylark.None
@@ -9031,11 +9593,14 @@ func init() {
 }
 
 func createServiceAccount(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ServiceAccount
+	box := ServiceAccount{V: &core.ServiceAccount{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ServiceAccount) Underlying() interface{} { return t.V }
-func (t ServiceAccount) Package() util.Package   { return util.V1 }
-func (t ServiceAccount) Type() string            { return "k8s_v1_ServiceAccount" }
+func (t ServiceAccount) DeepCopy() boxed         { return ServiceAccount{V: t.V.DeepCopy()} }
+func (t ServiceAccount) Package() util.Package   { return util.Core }
+func (t ServiceAccount) Type() string            { return "k8s_core_ServiceAccount" }
 func (t ServiceAccount) String() string          { return t.V.String() }
 func (t ServiceAccount) Freeze()                 {} // TODO
 func (t ServiceAccount) Truth() skylark.Bool     { return skylark.True }
@@ -9046,8 +9611,8 @@ func (t ServiceAccount) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t ServiceAccount) AttrNames() []string { return ServiceAccount_attrs }
 func (t ServiceAccount) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ServiceAccount_fields, ServiceAccount_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ServiceAccount_fields, ServiceAccount_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9056,7 +9621,7 @@ func (t ServiceAccount) SetField(name string, value skylark.Value) error {
 }
 
 type ServiceAccountList struct {
-	V *v1.ServiceAccountList
+	V *core.ServiceAccountList
 }
 
 var (
@@ -9068,12 +9633,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ServiceAccountList)(nil)).Elem()
+	t := reflect.TypeOf((*core.ServiceAccountList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ServiceAccountList:
+		case *core.ServiceAccountList:
 			return ServiceAccountList{V: v}
-		case v1.ServiceAccountList:
+		case core.ServiceAccountList:
 			return ServiceAccountList{V: &v}
 		default:
 			return skylark.None
@@ -9084,11 +9649,14 @@ func init() {
 }
 
 func createServiceAccountList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ServiceAccountList
+	box := ServiceAccountList{V: &core.ServiceAccountList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ServiceAccountList) Underlying() interface{} { return t.V }
-func (t ServiceAccountList) Package() util.Package   { return util.V1 }
-func (t ServiceAccountList) Type() string            { return "k8s_v1_ServiceAccountList" }
+func (t ServiceAccountList) DeepCopy() boxed         { return ServiceAccountList{V: t.V.DeepCopy()} }
+func (t ServiceAccountList) Package() util.Package   { return util.Core }
+func (t ServiceAccountList) Type() string            { return "k8s_core_ServiceAccountList" }
 func (t ServiceAccountList) String() string          { return t.V.String() }
 func (t ServiceAccountList) Freeze()                 {} // TODO
 func (t ServiceAccountList) Truth() skylark.Bool     { return skylark.True }
@@ -9099,8 +9667,8 @@ func (t ServiceAccountList) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t ServiceAccountList) AttrNames() []string { return ServiceAccountList_attrs }
 func (t ServiceAccountList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ServiceAccountList_fields, ServiceAccountList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ServiceAccountList_fields, ServiceAccountList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9109,7 +9677,7 @@ func (t ServiceAccountList) SetField(name string, value skylark.Value) error {
 }
 
 type ServiceAccountTokenProjection struct {
-	V *v1.ServiceAccountTokenProjection
+	V *core.ServiceAccountTokenProjection
 }
 
 var (
@@ -9121,12 +9689,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ServiceAccountTokenProjection)(nil)).Elem()
+	t := reflect.TypeOf((*core.ServiceAccountTokenProjection)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ServiceAccountTokenProjection:
+		case *core.ServiceAccountTokenProjection:
 			return ServiceAccountTokenProjection{V: v}
-		case v1.ServiceAccountTokenProjection:
+		case core.ServiceAccountTokenProjection:
 			return ServiceAccountTokenProjection{V: &v}
 		default:
 			return skylark.None
@@ -9137,15 +9705,20 @@ func init() {
 }
 
 func createServiceAccountTokenProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ServiceAccountTokenProjection
+	box := ServiceAccountTokenProjection{V: &core.ServiceAccountTokenProjection{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ServiceAccountTokenProjection) Underlying() interface{} { return t.V }
-func (t ServiceAccountTokenProjection) Package() util.Package   { return util.V1 }
-func (t ServiceAccountTokenProjection) Type() string            { return "k8s_v1_ServiceAccountTokenProjection" }
-func (t ServiceAccountTokenProjection) String() string          { return t.V.String() }
-func (t ServiceAccountTokenProjection) Freeze()                 {} // TODO
-func (t ServiceAccountTokenProjection) Truth() skylark.Bool     { return skylark.True }
-func (t ServiceAccountTokenProjection) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ServiceAccountTokenProjection) DeepCopy() boxed {
+	return ServiceAccountTokenProjection{V: t.V.DeepCopy()}
+}
+func (t ServiceAccountTokenProjection) Package() util.Package { return util.Core }
+func (t ServiceAccountTokenProjection) Type() string          { return "k8s_core_ServiceAccountTokenProjection" }
+func (t ServiceAccountTokenProjection) String() string        { return t.V.String() }
+func (t ServiceAccountTokenProjection) Freeze()               {} // TODO
+func (t ServiceAccountTokenProjection) Truth() skylark.Bool   { return skylark.True }
+func (t ServiceAccountTokenProjection) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t ServiceAccountTokenProjection) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServiceAccountTokenProjection)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -9154,8 +9727,8 @@ func (t ServiceAccountTokenProjection) AttrNames() []string {
 	return ServiceAccountTokenProjection_attrs
 }
 func (t ServiceAccountTokenProjection) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ServiceAccountTokenProjection_fields, ServiceAccountTokenProjection_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ServiceAccountTokenProjection_fields, ServiceAccountTokenProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9164,7 +9737,7 @@ func (t ServiceAccountTokenProjection) SetField(name string, value skylark.Value
 }
 
 type ServiceList struct {
-	V *v1.ServiceList
+	V *core.ServiceList
 }
 
 var (
@@ -9176,12 +9749,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ServiceList)(nil)).Elem()
+	t := reflect.TypeOf((*core.ServiceList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ServiceList:
+		case *core.ServiceList:
 			return ServiceList{V: v}
-		case v1.ServiceList:
+		case core.ServiceList:
 			return ServiceList{V: &v}
 		default:
 			return skylark.None
@@ -9192,11 +9765,14 @@ func init() {
 }
 
 func createServiceList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ServiceList
+	box := ServiceList{V: &core.ServiceList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ServiceList) Underlying() interface{} { return t.V }
-func (t ServiceList) Package() util.Package   { return util.V1 }
-func (t ServiceList) Type() string            { return "k8s_v1_ServiceList" }
+func (t ServiceList) DeepCopy() boxed         { return ServiceList{V: t.V.DeepCopy()} }
+func (t ServiceList) Package() util.Package   { return util.Core }
+func (t ServiceList) Type() string            { return "k8s_core_ServiceList" }
 func (t ServiceList) String() string          { return t.V.String() }
 func (t ServiceList) Freeze()                 {} // TODO
 func (t ServiceList) Truth() skylark.Bool     { return skylark.True }
@@ -9207,8 +9783,8 @@ func (t ServiceList) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t ServiceList) AttrNames() []string { return ServiceList_attrs }
 func (t ServiceList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ServiceList_fields, ServiceList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ServiceList_fields, ServiceList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9217,7 +9793,7 @@ func (t ServiceList) SetField(name string, value skylark.Value) error {
 }
 
 type ServicePort struct {
-	V *v1.ServicePort
+	V *core.ServicePort
 }
 
 var (
@@ -9229,12 +9805,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ServicePort)(nil)).Elem()
+	t := reflect.TypeOf((*core.ServicePort)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ServicePort:
+		case *core.ServicePort:
 			return ServicePort{V: v}
-		case v1.ServicePort:
+		case core.ServicePort:
 			return ServicePort{V: &v}
 		default:
 			return skylark.None
@@ -9245,11 +9821,14 @@ func init() {
 }
 
 func createServicePort(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ServicePort
+	box := ServicePort{V: &core.ServicePort{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ServicePort) Underlying() interface{} { return t.V }
-func (t ServicePort) Package() util.Package   { return util.V1 }
-func (t ServicePort) Type() string            { return "k8s_v1_ServicePort" }
+func (t ServicePort) DeepCopy() boxed         { return ServicePort{V: t.V.DeepCopy()} }
+func (t ServicePort) Package() util.Package   { return util.Core }
+func (t ServicePort) Type() string            { return "k8s_core_ServicePort" }
 func (t ServicePort) String() string          { return t.V.String() }
 func (t ServicePort) Freeze()                 {} // TODO
 func (t ServicePort) Truth() skylark.Bool     { return skylark.True }
@@ -9260,8 +9839,8 @@ func (t ServicePort) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t ServicePort) AttrNames() []string { return ServicePort_attrs }
 func (t ServicePort) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ServicePort_fields, ServicePort_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ServicePort_fields, ServicePort_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9270,7 +9849,7 @@ func (t ServicePort) SetField(name string, value skylark.Value) error {
 }
 
 type ServiceProxyOptions struct {
-	V *v1.ServiceProxyOptions
+	V *core.ServiceProxyOptions
 }
 
 var (
@@ -9282,12 +9861,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ServiceProxyOptions)(nil)).Elem()
+	t := reflect.TypeOf((*core.ServiceProxyOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ServiceProxyOptions:
+		case *core.ServiceProxyOptions:
 			return ServiceProxyOptions{V: v}
-		case v1.ServiceProxyOptions:
+		case core.ServiceProxyOptions:
 			return ServiceProxyOptions{V: &v}
 		default:
 			return skylark.None
@@ -9298,11 +9877,14 @@ func init() {
 }
 
 func createServiceProxyOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ServiceProxyOptions
+	box := ServiceProxyOptions{V: &core.ServiceProxyOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ServiceProxyOptions) Underlying() interface{} { return t.V }
-func (t ServiceProxyOptions) Package() util.Package   { return util.V1 }
-func (t ServiceProxyOptions) Type() string            { return "k8s_v1_ServiceProxyOptions" }
+func (t ServiceProxyOptions) DeepCopy() boxed         { return ServiceProxyOptions{V: t.V.DeepCopy()} }
+func (t ServiceProxyOptions) Package() util.Package   { return util.Core }
+func (t ServiceProxyOptions) Type() string            { return "k8s_core_ServiceProxyOptions" }
 func (t ServiceProxyOptions) String() string          { return t.V.String() }
 func (t ServiceProxyOptions) Freeze()                 {} // TODO
 func (t ServiceProxyOptions) Truth() skylark.Bool     { return skylark.True }
@@ -9313,8 +9895,8 @@ func (t ServiceProxyOptions) CompareSameType(op syntax.Token, y_ skylark.Value, 
 }
 func (t ServiceProxyOptions) AttrNames() []string { return ServiceProxyOptions_attrs }
 func (t ServiceProxyOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ServiceProxyOptions_fields, ServiceProxyOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ServiceProxyOptions_fields, ServiceProxyOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9323,7 +9905,7 @@ func (t ServiceProxyOptions) SetField(name string, value skylark.Value) error {
 }
 
 type ServiceSpec struct {
-	V *v1.ServiceSpec
+	V *core.ServiceSpec
 }
 
 var (
@@ -9335,12 +9917,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ServiceSpec)(nil)).Elem()
+	t := reflect.TypeOf((*core.ServiceSpec)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ServiceSpec:
+		case *core.ServiceSpec:
 			return ServiceSpec{V: v}
-		case v1.ServiceSpec:
+		case core.ServiceSpec:
 			return ServiceSpec{V: &v}
 		default:
 			return skylark.None
@@ -9351,11 +9933,14 @@ func init() {
 }
 
 func createServiceSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ServiceSpec
+	box := ServiceSpec{V: &core.ServiceSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ServiceSpec) Underlying() interface{} { return t.V }
-func (t ServiceSpec) Package() util.Package   { return util.V1 }
-func (t ServiceSpec) Type() string            { return "k8s_v1_ServiceSpec" }
+func (t ServiceSpec) DeepCopy() boxed         { return ServiceSpec{V: t.V.DeepCopy()} }
+func (t ServiceSpec) Package() util.Package   { return util.Core }
+func (t ServiceSpec) Type() string            { return "k8s_core_ServiceSpec" }
 func (t ServiceSpec) String() string          { return t.V.String() }
 func (t ServiceSpec) Freeze()                 {} // TODO
 func (t ServiceSpec) Truth() skylark.Bool     { return skylark.True }
@@ -9366,8 +9951,8 @@ func (t ServiceSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t ServiceSpec) AttrNames() []string { return ServiceSpec_attrs }
 func (t ServiceSpec) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ServiceSpec_fields, ServiceSpec_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ServiceSpec_fields, ServiceSpec_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9376,7 +9961,7 @@ func (t ServiceSpec) SetField(name string, value skylark.Value) error {
 }
 
 type ServiceStatus struct {
-	V *v1.ServiceStatus
+	V *core.ServiceStatus
 }
 
 var (
@@ -9388,12 +9973,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.ServiceStatus)(nil)).Elem()
+	t := reflect.TypeOf((*core.ServiceStatus)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.ServiceStatus:
+		case *core.ServiceStatus:
 			return ServiceStatus{V: v}
-		case v1.ServiceStatus:
+		case core.ServiceStatus:
 			return ServiceStatus{V: &v}
 		default:
 			return skylark.None
@@ -9404,11 +9989,14 @@ func init() {
 }
 
 func createServiceStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ServiceStatus
+	box := ServiceStatus{V: &core.ServiceStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ServiceStatus) Underlying() interface{} { return t.V }
-func (t ServiceStatus) Package() util.Package   { return util.V1 }
-func (t ServiceStatus) Type() string            { return "k8s_v1_ServiceStatus" }
+func (t ServiceStatus) DeepCopy() boxed         { return ServiceStatus{V: t.V.DeepCopy()} }
+func (t ServiceStatus) Package() util.Package   { return util.Core }
+func (t ServiceStatus) Type() string            { return "k8s_core_ServiceStatus" }
 func (t ServiceStatus) String() string          { return t.V.String() }
 func (t ServiceStatus) Freeze()                 {} // TODO
 func (t ServiceStatus) Truth() skylark.Bool     { return skylark.True }
@@ -9419,8 +10007,8 @@ func (t ServiceStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t ServiceStatus) AttrNames() []string { return ServiceStatus_attrs }
 func (t ServiceStatus) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ServiceStatus_fields, ServiceStatus_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ServiceStatus_fields, ServiceStatus_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9429,7 +10017,7 @@ func (t ServiceStatus) SetField(name string, value skylark.Value) error {
 }
 
 type SessionAffinityConfig struct {
-	V *v1.SessionAffinityConfig
+	V *core.SessionAffinityConfig
 }
 
 var (
@@ -9441,12 +10029,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.SessionAffinityConfig)(nil)).Elem()
+	t := reflect.TypeOf((*core.SessionAffinityConfig)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.SessionAffinityConfig:
+		case *core.SessionAffinityConfig:
 			return SessionAffinityConfig{V: v}
-		case v1.SessionAffinityConfig:
+		case core.SessionAffinityConfig:
 			return SessionAffinityConfig{V: &v}
 		default:
 			return skylark.None
@@ -9457,11 +10045,14 @@ func init() {
 }
 
 func createSessionAffinityConfig(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for SessionAffinityConfig
+	box := SessionAffinityConfig{V: &core.SessionAffinityConfig{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t SessionAffinityConfig) Underlying() interface{} { return t.V }
-func (t SessionAffinityConfig) Package() util.Package   { return util.V1 }
-func (t SessionAffinityConfig) Type() string            { return "k8s_v1_SessionAffinityConfig" }
+func (t SessionAffinityConfig) DeepCopy() boxed         { return SessionAffinityConfig{V: t.V.DeepCopy()} }
+func (t SessionAffinityConfig) Package() util.Package   { return util.Core }
+func (t SessionAffinityConfig) Type() string            { return "k8s_core_SessionAffinityConfig" }
 func (t SessionAffinityConfig) String() string          { return t.V.String() }
 func (t SessionAffinityConfig) Freeze()                 {} // TODO
 func (t SessionAffinityConfig) Truth() skylark.Bool     { return skylark.True }
@@ -9472,8 +10063,8 @@ func (t SessionAffinityConfig) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t SessionAffinityConfig) AttrNames() []string { return SessionAffinityConfig_attrs }
 func (t SessionAffinityConfig) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, SessionAffinityConfig_fields, SessionAffinityConfig_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SessionAffinityConfig_fields, SessionAffinityConfig_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9482,7 +10073,7 @@ func (t SessionAffinityConfig) SetField(name string, value skylark.Value) error 
 }
 
 type StorageOSPersistentVolumeSource struct {
-	V *v1.StorageOSPersistentVolumeSource
+	V *core.StorageOSPersistentVolumeSource
 }
 
 var (
@@ -9494,12 +10085,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.StorageOSPersistentVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.StorageOSPersistentVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.StorageOSPersistentVolumeSource:
+		case *core.StorageOSPersistentVolumeSource:
 			return StorageOSPersistentVolumeSource{V: v}
-		case v1.StorageOSPersistentVolumeSource:
+		case core.StorageOSPersistentVolumeSource:
 			return StorageOSPersistentVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -9510,12 +10101,17 @@ func init() {
 }
 
 func createStorageOSPersistentVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for StorageOSPersistentVolumeSource
+	box := StorageOSPersistentVolumeSource{V: &core.StorageOSPersistentVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t StorageOSPersistentVolumeSource) Underlying() interface{} { return t.V }
-func (t StorageOSPersistentVolumeSource) Package() util.Package   { return util.V1 }
+func (t StorageOSPersistentVolumeSource) DeepCopy() boxed {
+	return StorageOSPersistentVolumeSource{V: t.V.DeepCopy()}
+}
+func (t StorageOSPersistentVolumeSource) Package() util.Package { return util.Core }
 func (t StorageOSPersistentVolumeSource) Type() string {
-	return "k8s_v1_StorageOSPersistentVolumeSource"
+	return "k8s_core_StorageOSPersistentVolumeSource"
 }
 func (t StorageOSPersistentVolumeSource) String() string        { return t.V.String() }
 func (t StorageOSPersistentVolumeSource) Freeze()               {} // TODO
@@ -9529,8 +10125,8 @@ func (t StorageOSPersistentVolumeSource) AttrNames() []string {
 	return StorageOSPersistentVolumeSource_attrs
 }
 func (t StorageOSPersistentVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, StorageOSPersistentVolumeSource_fields, StorageOSPersistentVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StorageOSPersistentVolumeSource_fields, StorageOSPersistentVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9539,7 +10135,7 @@ func (t StorageOSPersistentVolumeSource) SetField(name string, value skylark.Val
 }
 
 type StorageOSVolumeSource struct {
-	V *v1.StorageOSVolumeSource
+	V *core.StorageOSVolumeSource
 }
 
 var (
@@ -9551,12 +10147,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.StorageOSVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.StorageOSVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.StorageOSVolumeSource:
+		case *core.StorageOSVolumeSource:
 			return StorageOSVolumeSource{V: v}
-		case v1.StorageOSVolumeSource:
+		case core.StorageOSVolumeSource:
 			return StorageOSVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -9567,11 +10163,14 @@ func init() {
 }
 
 func createStorageOSVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for StorageOSVolumeSource
+	box := StorageOSVolumeSource{V: &core.StorageOSVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t StorageOSVolumeSource) Underlying() interface{} { return t.V }
-func (t StorageOSVolumeSource) Package() util.Package   { return util.V1 }
-func (t StorageOSVolumeSource) Type() string            { return "k8s_v1_StorageOSVolumeSource" }
+func (t StorageOSVolumeSource) DeepCopy() boxed         { return StorageOSVolumeSource{V: t.V.DeepCopy()} }
+func (t StorageOSVolumeSource) Package() util.Package   { return util.Core }
+func (t StorageOSVolumeSource) Type() string            { return "k8s_core_StorageOSVolumeSource" }
 func (t StorageOSVolumeSource) String() string          { return t.V.String() }
 func (t StorageOSVolumeSource) Freeze()                 {} // TODO
 func (t StorageOSVolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -9582,8 +10181,8 @@ func (t StorageOSVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value
 }
 func (t StorageOSVolumeSource) AttrNames() []string { return StorageOSVolumeSource_attrs }
 func (t StorageOSVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, StorageOSVolumeSource_fields, StorageOSVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StorageOSVolumeSource_fields, StorageOSVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9592,7 +10191,7 @@ func (t StorageOSVolumeSource) SetField(name string, value skylark.Value) error 
 }
 
 type Sysctl struct {
-	V *v1.Sysctl
+	V *core.Sysctl
 }
 
 var (
@@ -9604,12 +10203,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Sysctl)(nil)).Elem()
+	t := reflect.TypeOf((*core.Sysctl)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Sysctl:
+		case *core.Sysctl:
 			return Sysctl{V: v}
-		case v1.Sysctl:
+		case core.Sysctl:
 			return Sysctl{V: &v}
 		default:
 			return skylark.None
@@ -9620,11 +10219,14 @@ func init() {
 }
 
 func createSysctl(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Sysctl
+	box := Sysctl{V: &core.Sysctl{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Sysctl) Underlying() interface{} { return t.V }
-func (t Sysctl) Package() util.Package   { return util.V1 }
-func (t Sysctl) Type() string            { return "k8s_v1_Sysctl" }
+func (t Sysctl) DeepCopy() boxed         { return Sysctl{V: t.V.DeepCopy()} }
+func (t Sysctl) Package() util.Package   { return util.Core }
+func (t Sysctl) Type() string            { return "k8s_core_Sysctl" }
 func (t Sysctl) String() string          { return t.V.String() }
 func (t Sysctl) Freeze()                 {} // TODO
 func (t Sysctl) Truth() skylark.Bool     { return skylark.True }
@@ -9635,8 +10237,8 @@ func (t Sysctl) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (b
 }
 func (t Sysctl) AttrNames() []string { return Sysctl_attrs }
 func (t Sysctl) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Sysctl_fields, Sysctl_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Sysctl_fields, Sysctl_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9645,7 +10247,7 @@ func (t Sysctl) SetField(name string, value skylark.Value) error {
 }
 
 type TCPSocketAction struct {
-	V *v1.TCPSocketAction
+	V *core.TCPSocketAction
 }
 
 var (
@@ -9657,12 +10259,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.TCPSocketAction)(nil)).Elem()
+	t := reflect.TypeOf((*core.TCPSocketAction)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.TCPSocketAction:
+		case *core.TCPSocketAction:
 			return TCPSocketAction{V: v}
-		case v1.TCPSocketAction:
+		case core.TCPSocketAction:
 			return TCPSocketAction{V: &v}
 		default:
 			return skylark.None
@@ -9673,11 +10275,14 @@ func init() {
 }
 
 func createTCPSocketAction(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for TCPSocketAction
+	box := TCPSocketAction{V: &core.TCPSocketAction{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t TCPSocketAction) Underlying() interface{} { return t.V }
-func (t TCPSocketAction) Package() util.Package   { return util.V1 }
-func (t TCPSocketAction) Type() string            { return "k8s_v1_TCPSocketAction" }
+func (t TCPSocketAction) DeepCopy() boxed         { return TCPSocketAction{V: t.V.DeepCopy()} }
+func (t TCPSocketAction) Package() util.Package   { return util.Core }
+func (t TCPSocketAction) Type() string            { return "k8s_core_TCPSocketAction" }
 func (t TCPSocketAction) String() string          { return t.V.String() }
 func (t TCPSocketAction) Freeze()                 {} // TODO
 func (t TCPSocketAction) Truth() skylark.Bool     { return skylark.True }
@@ -9688,8 +10293,8 @@ func (t TCPSocketAction) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t TCPSocketAction) AttrNames() []string { return TCPSocketAction_attrs }
 func (t TCPSocketAction) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, TCPSocketAction_fields, TCPSocketAction_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TCPSocketAction_fields, TCPSocketAction_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9698,7 +10303,7 @@ func (t TCPSocketAction) SetField(name string, value skylark.Value) error {
 }
 
 type Taint struct {
-	V *v1.Taint
+	V *core.Taint
 }
 
 var (
@@ -9710,12 +10315,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Taint)(nil)).Elem()
+	t := reflect.TypeOf((*core.Taint)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Taint:
+		case *core.Taint:
 			return Taint{V: v}
-		case v1.Taint:
+		case core.Taint:
 			return Taint{V: &v}
 		default:
 			return skylark.None
@@ -9726,11 +10331,14 @@ func init() {
 }
 
 func createTaint(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Taint
+	box := Taint{V: &core.Taint{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Taint) Underlying() interface{} { return t.V }
-func (t Taint) Package() util.Package   { return util.V1 }
-func (t Taint) Type() string            { return "k8s_v1_Taint" }
+func (t Taint) DeepCopy() boxed         { return Taint{V: t.V.DeepCopy()} }
+func (t Taint) Package() util.Package   { return util.Core }
+func (t Taint) Type() string            { return "k8s_core_Taint" }
 func (t Taint) String() string          { return t.V.String() }
 func (t Taint) Freeze()                 {} // TODO
 func (t Taint) Truth() skylark.Bool     { return skylark.True }
@@ -9741,8 +10349,8 @@ func (t Taint) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bo
 }
 func (t Taint) AttrNames() []string { return Taint_attrs }
 func (t Taint) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Taint_fields, Taint_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Taint_fields, Taint_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9751,7 +10359,7 @@ func (t Taint) SetField(name string, value skylark.Value) error {
 }
 
 type Toleration struct {
-	V *v1.Toleration
+	V *core.Toleration
 }
 
 var (
@@ -9763,12 +10371,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Toleration)(nil)).Elem()
+	t := reflect.TypeOf((*core.Toleration)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Toleration:
+		case *core.Toleration:
 			return Toleration{V: v}
-		case v1.Toleration:
+		case core.Toleration:
 			return Toleration{V: &v}
 		default:
 			return skylark.None
@@ -9779,11 +10387,14 @@ func init() {
 }
 
 func createToleration(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Toleration
+	box := Toleration{V: &core.Toleration{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Toleration) Underlying() interface{} { return t.V }
-func (t Toleration) Package() util.Package   { return util.V1 }
-func (t Toleration) Type() string            { return "k8s_v1_Toleration" }
+func (t Toleration) DeepCopy() boxed         { return Toleration{V: t.V.DeepCopy()} }
+func (t Toleration) Package() util.Package   { return util.Core }
+func (t Toleration) Type() string            { return "k8s_core_Toleration" }
 func (t Toleration) String() string          { return t.V.String() }
 func (t Toleration) Freeze()                 {} // TODO
 func (t Toleration) Truth() skylark.Bool     { return skylark.True }
@@ -9794,8 +10405,8 @@ func (t Toleration) CompareSameType(op syntax.Token, y_ skylark.Value, depth int
 }
 func (t Toleration) AttrNames() []string { return Toleration_attrs }
 func (t Toleration) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Toleration_fields, Toleration_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Toleration_fields, Toleration_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9804,7 +10415,7 @@ func (t Toleration) SetField(name string, value skylark.Value) error {
 }
 
 type TopologySelectorLabelRequirement struct {
-	V *v1.TopologySelectorLabelRequirement
+	V *core.TopologySelectorLabelRequirement
 }
 
 var (
@@ -9816,12 +10427,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.TopologySelectorLabelRequirement)(nil)).Elem()
+	t := reflect.TypeOf((*core.TopologySelectorLabelRequirement)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.TopologySelectorLabelRequirement:
+		case *core.TopologySelectorLabelRequirement:
 			return TopologySelectorLabelRequirement{V: v}
-		case v1.TopologySelectorLabelRequirement:
+		case core.TopologySelectorLabelRequirement:
 			return TopologySelectorLabelRequirement{V: &v}
 		default:
 			return skylark.None
@@ -9832,12 +10443,17 @@ func init() {
 }
 
 func createTopologySelectorLabelRequirement(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for TopologySelectorLabelRequirement
+	box := TopologySelectorLabelRequirement{V: &core.TopologySelectorLabelRequirement{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t TopologySelectorLabelRequirement) Underlying() interface{} { return t.V }
-func (t TopologySelectorLabelRequirement) Package() util.Package   { return util.V1 }
+func (t TopologySelectorLabelRequirement) DeepCopy() boxed {
+	return TopologySelectorLabelRequirement{V: t.V.DeepCopy()}
+}
+func (t TopologySelectorLabelRequirement) Package() util.Package { return util.Core }
 func (t TopologySelectorLabelRequirement) Type() string {
-	return "k8s_v1_TopologySelectorLabelRequirement"
+	return "k8s_core_TopologySelectorLabelRequirement"
 }
 func (t TopologySelectorLabelRequirement) String() string        { return t.V.String() }
 func (t TopologySelectorLabelRequirement) Freeze()               {} // TODO
@@ -9851,8 +10467,8 @@ func (t TopologySelectorLabelRequirement) AttrNames() []string {
 	return TopologySelectorLabelRequirement_attrs
 }
 func (t TopologySelectorLabelRequirement) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, TopologySelectorLabelRequirement_fields, TopologySelectorLabelRequirement_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TopologySelectorLabelRequirement_fields, TopologySelectorLabelRequirement_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9861,7 +10477,7 @@ func (t TopologySelectorLabelRequirement) SetField(name string, value skylark.Va
 }
 
 type TopologySelectorTerm struct {
-	V *v1.TopologySelectorTerm
+	V *core.TopologySelectorTerm
 }
 
 var (
@@ -9873,12 +10489,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.TopologySelectorTerm)(nil)).Elem()
+	t := reflect.TypeOf((*core.TopologySelectorTerm)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.TopologySelectorTerm:
+		case *core.TopologySelectorTerm:
 			return TopologySelectorTerm{V: v}
-		case v1.TopologySelectorTerm:
+		case core.TopologySelectorTerm:
 			return TopologySelectorTerm{V: &v}
 		default:
 			return skylark.None
@@ -9889,11 +10505,14 @@ func init() {
 }
 
 func createTopologySelectorTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for TopologySelectorTerm
+	box := TopologySelectorTerm{V: &core.TopologySelectorTerm{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t TopologySelectorTerm) Underlying() interface{} { return t.V }
-func (t TopologySelectorTerm) Package() util.Package   { return util.V1 }
-func (t TopologySelectorTerm) Type() string            { return "k8s_v1_TopologySelectorTerm" }
+func (t TopologySelectorTerm) DeepCopy() boxed         { return TopologySelectorTerm{V: t.V.DeepCopy()} }
+func (t TopologySelectorTerm) Package() util.Package   { return util.Core }
+func (t TopologySelectorTerm) Type() string            { return "k8s_core_TopologySelectorTerm" }
 func (t TopologySelectorTerm) String() string          { return t.V.String() }
 func (t TopologySelectorTerm) Freeze()                 {} // TODO
 func (t TopologySelectorTerm) Truth() skylark.Bool     { return skylark.True }
@@ -9904,8 +10523,8 @@ func (t TopologySelectorTerm) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t TopologySelectorTerm) AttrNames() []string { return TopologySelectorTerm_attrs }
 func (t TopologySelectorTerm) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, TopologySelectorTerm_fields, TopologySelectorTerm_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TopologySelectorTerm_fields, TopologySelectorTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9914,7 +10533,7 @@ func (t TopologySelectorTerm) SetField(name string, value skylark.Value) error {
 }
 
 type Volume struct {
-	V *v1.Volume
+	V *core.Volume
 }
 
 var (
@@ -9926,12 +10545,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.Volume)(nil)).Elem()
+	t := reflect.TypeOf((*core.Volume)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.Volume:
+		case *core.Volume:
 			return Volume{V: v}
-		case v1.Volume:
+		case core.Volume:
 			return Volume{V: &v}
 		default:
 			return skylark.None
@@ -9942,11 +10561,14 @@ func init() {
 }
 
 func createVolume(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Volume
+	box := Volume{V: &core.Volume{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Volume) Underlying() interface{} { return t.V }
-func (t Volume) Package() util.Package   { return util.V1 }
-func (t Volume) Type() string            { return "k8s_v1_Volume" }
+func (t Volume) DeepCopy() boxed         { return Volume{V: t.V.DeepCopy()} }
+func (t Volume) Package() util.Package   { return util.Core }
+func (t Volume) Type() string            { return "k8s_core_Volume" }
 func (t Volume) String() string          { return t.V.String() }
 func (t Volume) Freeze()                 {} // TODO
 func (t Volume) Truth() skylark.Bool     { return skylark.True }
@@ -9957,8 +10579,8 @@ func (t Volume) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (b
 }
 func (t Volume) AttrNames() []string { return Volume_attrs }
 func (t Volume) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Volume_fields, Volume_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Volume_fields, Volume_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -9967,7 +10589,7 @@ func (t Volume) SetField(name string, value skylark.Value) error {
 }
 
 type VolumeDevice struct {
-	V *v1.VolumeDevice
+	V *core.VolumeDevice
 }
 
 var (
@@ -9979,12 +10601,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.VolumeDevice)(nil)).Elem()
+	t := reflect.TypeOf((*core.VolumeDevice)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.VolumeDevice:
+		case *core.VolumeDevice:
 			return VolumeDevice{V: v}
-		case v1.VolumeDevice:
+		case core.VolumeDevice:
 			return VolumeDevice{V: &v}
 		default:
 			return skylark.None
@@ -9995,11 +10617,14 @@ func init() {
 }
 
 func createVolumeDevice(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for VolumeDevice
+	box := VolumeDevice{V: &core.VolumeDevice{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t VolumeDevice) Underlying() interface{} { return t.V }
-func (t VolumeDevice) Package() util.Package   { return util.V1 }
-func (t VolumeDevice) Type() string            { return "k8s_v1_VolumeDevice" }
+func (t VolumeDevice) DeepCopy() boxed         { return VolumeDevice{V: t.V.DeepCopy()} }
+func (t VolumeDevice) Package() util.Package   { return util.Core }
+func (t VolumeDevice) Type() string            { return "k8s_core_VolumeDevice" }
 func (t VolumeDevice) String() string          { return t.V.String() }
 func (t VolumeDevice) Freeze()                 {} // TODO
 func (t VolumeDevice) Truth() skylark.Bool     { return skylark.True }
@@ -10010,8 +10635,8 @@ func (t VolumeDevice) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t VolumeDevice) AttrNames() []string { return VolumeDevice_attrs }
 func (t VolumeDevice) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, VolumeDevice_fields, VolumeDevice_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, VolumeDevice_fields, VolumeDevice_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10020,7 +10645,7 @@ func (t VolumeDevice) SetField(name string, value skylark.Value) error {
 }
 
 type VolumeMount struct {
-	V *v1.VolumeMount
+	V *core.VolumeMount
 }
 
 var (
@@ -10032,12 +10657,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.VolumeMount)(nil)).Elem()
+	t := reflect.TypeOf((*core.VolumeMount)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.VolumeMount:
+		case *core.VolumeMount:
 			return VolumeMount{V: v}
-		case v1.VolumeMount:
+		case core.VolumeMount:
 			return VolumeMount{V: &v}
 		default:
 			return skylark.None
@@ -10048,11 +10673,14 @@ func init() {
 }
 
 func createVolumeMount(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for VolumeMount
+	box := VolumeMount{V: &core.VolumeMount{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t VolumeMount) Underlying() interface{} { return t.V }
-func (t VolumeMount) Package() util.Package   { return util.V1 }
-func (t VolumeMount) Type() string            { return "k8s_v1_VolumeMount" }
+func (t VolumeMount) DeepCopy() boxed         { return VolumeMount{V: t.V.DeepCopy()} }
+func (t VolumeMount) Package() util.Package   { return util.Core }
+func (t VolumeMount) Type() string            { return "k8s_core_VolumeMount" }
 func (t VolumeMount) String() string          { return t.V.String() }
 func (t VolumeMount) Freeze()                 {} // TODO
 func (t VolumeMount) Truth() skylark.Bool     { return skylark.True }
@@ -10063,8 +10691,8 @@ func (t VolumeMount) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t VolumeMount) AttrNames() []string { return VolumeMount_attrs }
 func (t VolumeMount) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, VolumeMount_fields, VolumeMount_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, VolumeMount_fields, VolumeMount_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10073,7 +10701,7 @@ func (t VolumeMount) SetField(name string, value skylark.Value) error {
 }
 
 type VolumeNodeAffinity struct {
-	V *v1.VolumeNodeAffinity
+	V *core.VolumeNodeAffinity
 }
 
 var (
@@ -10085,12 +10713,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.VolumeNodeAffinity)(nil)).Elem()
+	t := reflect.TypeOf((*core.VolumeNodeAffinity)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.VolumeNodeAffinity:
+		case *core.VolumeNodeAffinity:
 			return VolumeNodeAffinity{V: v}
-		case v1.VolumeNodeAffinity:
+		case core.VolumeNodeAffinity:
 			return VolumeNodeAffinity{V: &v}
 		default:
 			return skylark.None
@@ -10101,11 +10729,14 @@ func init() {
 }
 
 func createVolumeNodeAffinity(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for VolumeNodeAffinity
+	box := VolumeNodeAffinity{V: &core.VolumeNodeAffinity{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t VolumeNodeAffinity) Underlying() interface{} { return t.V }
-func (t VolumeNodeAffinity) Package() util.Package   { return util.V1 }
-func (t VolumeNodeAffinity) Type() string            { return "k8s_v1_VolumeNodeAffinity" }
+func (t VolumeNodeAffinity) DeepCopy() boxed         { return VolumeNodeAffinity{V: t.V.DeepCopy()} }
+func (t VolumeNodeAffinity) Package() util.Package   { return util.Core }
+func (t VolumeNodeAffinity) Type() string            { return "k8s_core_VolumeNodeAffinity" }
 func (t VolumeNodeAffinity) String() string          { return t.V.String() }
 func (t VolumeNodeAffinity) Freeze()                 {} // TODO
 func (t VolumeNodeAffinity) Truth() skylark.Bool     { return skylark.True }
@@ -10116,8 +10747,8 @@ func (t VolumeNodeAffinity) CompareSameType(op syntax.Token, y_ skylark.Value, d
 }
 func (t VolumeNodeAffinity) AttrNames() []string { return VolumeNodeAffinity_attrs }
 func (t VolumeNodeAffinity) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, VolumeNodeAffinity_fields, VolumeNodeAffinity_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, VolumeNodeAffinity_fields, VolumeNodeAffinity_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10126,7 +10757,7 @@ func (t VolumeNodeAffinity) SetField(name string, value skylark.Value) error {
 }
 
 type VolumeProjection struct {
-	V *v1.VolumeProjection
+	V *core.VolumeProjection
 }
 
 var (
@@ -10138,12 +10769,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.VolumeProjection)(nil)).Elem()
+	t := reflect.TypeOf((*core.VolumeProjection)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.VolumeProjection:
+		case *core.VolumeProjection:
 			return VolumeProjection{V: v}
-		case v1.VolumeProjection:
+		case core.VolumeProjection:
 			return VolumeProjection{V: &v}
 		default:
 			return skylark.None
@@ -10154,11 +10785,14 @@ func init() {
 }
 
 func createVolumeProjection(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for VolumeProjection
+	box := VolumeProjection{V: &core.VolumeProjection{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t VolumeProjection) Underlying() interface{} { return t.V }
-func (t VolumeProjection) Package() util.Package   { return util.V1 }
-func (t VolumeProjection) Type() string            { return "k8s_v1_VolumeProjection" }
+func (t VolumeProjection) DeepCopy() boxed         { return VolumeProjection{V: t.V.DeepCopy()} }
+func (t VolumeProjection) Package() util.Package   { return util.Core }
+func (t VolumeProjection) Type() string            { return "k8s_core_VolumeProjection" }
 func (t VolumeProjection) String() string          { return t.V.String() }
 func (t VolumeProjection) Freeze()                 {} // TODO
 func (t VolumeProjection) Truth() skylark.Bool     { return skylark.True }
@@ -10169,8 +10803,8 @@ func (t VolumeProjection) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t VolumeProjection) AttrNames() []string { return VolumeProjection_attrs }
 func (t VolumeProjection) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, VolumeProjection_fields, VolumeProjection_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, VolumeProjection_fields, VolumeProjection_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10179,7 +10813,7 @@ func (t VolumeProjection) SetField(name string, value skylark.Value) error {
 }
 
 type VolumeSource struct {
-	V *v1.VolumeSource
+	V *core.VolumeSource
 }
 
 var (
@@ -10191,12 +10825,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.VolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.VolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.VolumeSource:
+		case *core.VolumeSource:
 			return VolumeSource{V: v}
-		case v1.VolumeSource:
+		case core.VolumeSource:
 			return VolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -10207,11 +10841,14 @@ func init() {
 }
 
 func createVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for VolumeSource
+	box := VolumeSource{V: &core.VolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t VolumeSource) Underlying() interface{} { return t.V }
-func (t VolumeSource) Package() util.Package   { return util.V1 }
-func (t VolumeSource) Type() string            { return "k8s_v1_VolumeSource" }
+func (t VolumeSource) DeepCopy() boxed         { return VolumeSource{V: t.V.DeepCopy()} }
+func (t VolumeSource) Package() util.Package   { return util.Core }
+func (t VolumeSource) Type() string            { return "k8s_core_VolumeSource" }
 func (t VolumeSource) String() string          { return t.V.String() }
 func (t VolumeSource) Freeze()                 {} // TODO
 func (t VolumeSource) Truth() skylark.Bool     { return skylark.True }
@@ -10222,8 +10859,8 @@ func (t VolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t VolumeSource) AttrNames() []string { return VolumeSource_attrs }
 func (t VolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, VolumeSource_fields, VolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, VolumeSource_fields, VolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10232,7 +10869,7 @@ func (t VolumeSource) SetField(name string, value skylark.Value) error {
 }
 
 type VsphereVirtualDiskVolumeSource struct {
-	V *v1.VsphereVirtualDiskVolumeSource
+	V *core.VsphereVirtualDiskVolumeSource
 }
 
 var (
@@ -10244,12 +10881,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.VsphereVirtualDiskVolumeSource)(nil)).Elem()
+	t := reflect.TypeOf((*core.VsphereVirtualDiskVolumeSource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.VsphereVirtualDiskVolumeSource:
+		case *core.VsphereVirtualDiskVolumeSource:
 			return VsphereVirtualDiskVolumeSource{V: v}
-		case v1.VsphereVirtualDiskVolumeSource:
+		case core.VsphereVirtualDiskVolumeSource:
 			return VsphereVirtualDiskVolumeSource{V: &v}
 		default:
 			return skylark.None
@@ -10260,15 +10897,22 @@ func init() {
 }
 
 func createVsphereVirtualDiskVolumeSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for VsphereVirtualDiskVolumeSource
+	box := VsphereVirtualDiskVolumeSource{V: &core.VsphereVirtualDiskVolumeSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t VsphereVirtualDiskVolumeSource) Underlying() interface{} { return t.V }
-func (t VsphereVirtualDiskVolumeSource) Package() util.Package   { return util.V1 }
-func (t VsphereVirtualDiskVolumeSource) Type() string            { return "k8s_v1_VsphereVirtualDiskVolumeSource" }
-func (t VsphereVirtualDiskVolumeSource) String() string          { return t.V.String() }
-func (t VsphereVirtualDiskVolumeSource) Freeze()                 {} // TODO
-func (t VsphereVirtualDiskVolumeSource) Truth() skylark.Bool     { return skylark.True }
-func (t VsphereVirtualDiskVolumeSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t VsphereVirtualDiskVolumeSource) DeepCopy() boxed {
+	return VsphereVirtualDiskVolumeSource{V: t.V.DeepCopy()}
+}
+func (t VsphereVirtualDiskVolumeSource) Package() util.Package { return util.Core }
+func (t VsphereVirtualDiskVolumeSource) Type() string {
+	return "k8s_core_VsphereVirtualDiskVolumeSource"
+}
+func (t VsphereVirtualDiskVolumeSource) String() string        { return t.V.String() }
+func (t VsphereVirtualDiskVolumeSource) Freeze()               {} // TODO
+func (t VsphereVirtualDiskVolumeSource) Truth() skylark.Bool   { return skylark.True }
+func (t VsphereVirtualDiskVolumeSource) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t VsphereVirtualDiskVolumeSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*VsphereVirtualDiskVolumeSource)
 	return compareSameType(t, op, y, t.Type(), depth)
@@ -10277,8 +10921,8 @@ func (t VsphereVirtualDiskVolumeSource) AttrNames() []string {
 	return VsphereVirtualDiskVolumeSource_attrs
 }
 func (t VsphereVirtualDiskVolumeSource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, VsphereVirtualDiskVolumeSource_fields, VsphereVirtualDiskVolumeSource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, VsphereVirtualDiskVolumeSource_fields, VsphereVirtualDiskVolumeSource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10287,7 +10931,7 @@ func (t VsphereVirtualDiskVolumeSource) SetField(name string, value skylark.Valu
 }
 
 type WeightedPodAffinityTerm struct {
-	V *v1.WeightedPodAffinityTerm
+	V *core.WeightedPodAffinityTerm
 }
 
 var (
@@ -10299,12 +10943,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*v1.WeightedPodAffinityTerm)(nil)).Elem()
+	t := reflect.TypeOf((*core.WeightedPodAffinityTerm)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *v1.WeightedPodAffinityTerm:
+		case *core.WeightedPodAffinityTerm:
 			return WeightedPodAffinityTerm{V: v}
-		case v1.WeightedPodAffinityTerm:
+		case core.WeightedPodAffinityTerm:
 			return WeightedPodAffinityTerm{V: &v}
 		default:
 			return skylark.None
@@ -10315,11 +10959,14 @@ func init() {
 }
 
 func createWeightedPodAffinityTerm(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for WeightedPodAffinityTerm
+	box := WeightedPodAffinityTerm{V: &core.WeightedPodAffinityTerm{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t WeightedPodAffinityTerm) Underlying() interface{} { return t.V }
-func (t WeightedPodAffinityTerm) Package() util.Package   { return util.V1 }
-func (t WeightedPodAffinityTerm) Type() string            { return "k8s_v1_WeightedPodAffinityTerm" }
+func (t WeightedPodAffinityTerm) DeepCopy() boxed         { return WeightedPodAffinityTerm{V: t.V.DeepCopy()} }
+func (t WeightedPodAffinityTerm) Package() util.Package   { return util.Core }
+func (t WeightedPodAffinityTerm) Type() string            { return "k8s_core_WeightedPodAffinityTerm" }
 func (t WeightedPodAffinityTerm) String() string          { return t.V.String() }
 func (t WeightedPodAffinityTerm) Freeze()                 {} // TODO
 func (t WeightedPodAffinityTerm) Truth() skylark.Bool     { return skylark.True }
@@ -10330,8 +10977,8 @@ func (t WeightedPodAffinityTerm) CompareSameType(op syntax.Token, y_ skylark.Val
 }
 func (t WeightedPodAffinityTerm) AttrNames() []string { return WeightedPodAffinityTerm_attrs }
 func (t WeightedPodAffinityTerm) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, WeightedPodAffinityTerm_fields, WeightedPodAffinityTerm_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, WeightedPodAffinityTerm_fields, WeightedPodAffinityTerm_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10339,8 +10986,5370 @@ func (t WeightedPodAffinityTerm) SetField(name string, value skylark.Value) erro
 	return setAttr(t, name, value, WeightedPodAffinityTerm_fields, WeightedPodAffinityTerm_inline)
 }
 
+type ControllerRevision struct {
+	V *apps.ControllerRevision
+}
+
+var (
+	_ boxed = (*ControllerRevision)(nil)
+
+	ControllerRevision_fields = map[string]util.FieldSpec{}
+	ControllerRevision_inline = map[string]util.FieldSpec{}
+	ControllerRevision_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.ControllerRevision)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.ControllerRevision:
+			return ControllerRevision{V: v}
+		case apps.ControllerRevision:
+			return ControllerRevision{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ControllerRevision_attrs = setFieldTypes(t, ControllerRevision_fields, ControllerRevision_inline)
+	Library["ControllerRevision"] = skylark.NewBuiltin("ControllerRevision", createControllerRevision)
+}
+
+func createControllerRevision(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ControllerRevision{V: &apps.ControllerRevision{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ControllerRevision) Underlying() interface{} { return t.V }
+func (t ControllerRevision) DeepCopy() boxed         { return ControllerRevision{V: t.V.DeepCopy()} }
+func (t ControllerRevision) Package() util.Package   { return util.Apps }
+func (t ControllerRevision) Type() string            { return "k8s_apps_ControllerRevision" }
+func (t ControllerRevision) String() string          { return t.V.String() }
+func (t ControllerRevision) Freeze()                 {} // TODO
+func (t ControllerRevision) Truth() skylark.Bool     { return skylark.True }
+func (t ControllerRevision) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ControllerRevision) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ControllerRevision)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ControllerRevision) AttrNames() []string { return ControllerRevision_attrs }
+func (t ControllerRevision) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ControllerRevision_fields, ControllerRevision_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ControllerRevision) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ControllerRevision_fields, ControllerRevision_inline)
+}
+
+type ControllerRevisionList struct {
+	V *apps.ControllerRevisionList
+}
+
+var (
+	_ boxed = (*ControllerRevisionList)(nil)
+
+	ControllerRevisionList_fields = map[string]util.FieldSpec{}
+	ControllerRevisionList_inline = map[string]util.FieldSpec{}
+	ControllerRevisionList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.ControllerRevisionList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.ControllerRevisionList:
+			return ControllerRevisionList{V: v}
+		case apps.ControllerRevisionList:
+			return ControllerRevisionList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ControllerRevisionList_attrs = setFieldTypes(t, ControllerRevisionList_fields, ControllerRevisionList_inline)
+	Library["ControllerRevisionList"] = skylark.NewBuiltin("ControllerRevisionList", createControllerRevisionList)
+}
+
+func createControllerRevisionList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ControllerRevisionList{V: &apps.ControllerRevisionList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ControllerRevisionList) Underlying() interface{} { return t.V }
+func (t ControllerRevisionList) DeepCopy() boxed         { return ControllerRevisionList{V: t.V.DeepCopy()} }
+func (t ControllerRevisionList) Package() util.Package   { return util.Apps }
+func (t ControllerRevisionList) Type() string            { return "k8s_apps_ControllerRevisionList" }
+func (t ControllerRevisionList) String() string          { return t.V.String() }
+func (t ControllerRevisionList) Freeze()                 {} // TODO
+func (t ControllerRevisionList) Truth() skylark.Bool     { return skylark.True }
+func (t ControllerRevisionList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ControllerRevisionList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ControllerRevisionList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ControllerRevisionList) AttrNames() []string { return ControllerRevisionList_attrs }
+func (t ControllerRevisionList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ControllerRevisionList_fields, ControllerRevisionList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ControllerRevisionList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ControllerRevisionList_fields, ControllerRevisionList_inline)
+}
+
+type DaemonSet struct {
+	V *apps.DaemonSet
+}
+
+var (
+	_ boxed = (*DaemonSet)(nil)
+
+	DaemonSet_fields = map[string]util.FieldSpec{}
+	DaemonSet_inline = map[string]util.FieldSpec{}
+	DaemonSet_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DaemonSet)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DaemonSet:
+			return DaemonSet{V: v}
+		case apps.DaemonSet:
+			return DaemonSet{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DaemonSet_attrs = setFieldTypes(t, DaemonSet_fields, DaemonSet_inline)
+	Library["DaemonSet"] = skylark.NewBuiltin("DaemonSet", createDaemonSet)
+}
+
+func createDaemonSet(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DaemonSet{V: &apps.DaemonSet{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DaemonSet) Underlying() interface{} { return t.V }
+func (t DaemonSet) DeepCopy() boxed         { return DaemonSet{V: t.V.DeepCopy()} }
+func (t DaemonSet) Package() util.Package   { return util.Apps }
+func (t DaemonSet) Type() string            { return "k8s_apps_DaemonSet" }
+func (t DaemonSet) String() string          { return t.V.String() }
+func (t DaemonSet) Freeze()                 {} // TODO
+func (t DaemonSet) Truth() skylark.Bool     { return skylark.True }
+func (t DaemonSet) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DaemonSet) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DaemonSet)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DaemonSet) AttrNames() []string { return DaemonSet_attrs }
+func (t DaemonSet) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DaemonSet_fields, DaemonSet_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DaemonSet) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DaemonSet_fields, DaemonSet_inline)
+}
+
+type DaemonSetCondition struct {
+	V *apps.DaemonSetCondition
+}
+
+var (
+	_ boxed = (*DaemonSetCondition)(nil)
+
+	DaemonSetCondition_fields = map[string]util.FieldSpec{}
+	DaemonSetCondition_inline = map[string]util.FieldSpec{}
+	DaemonSetCondition_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DaemonSetCondition)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DaemonSetCondition:
+			return DaemonSetCondition{V: v}
+		case apps.DaemonSetCondition:
+			return DaemonSetCondition{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DaemonSetCondition_attrs = setFieldTypes(t, DaemonSetCondition_fields, DaemonSetCondition_inline)
+	Library["DaemonSetCondition"] = skylark.NewBuiltin("DaemonSetCondition", createDaemonSetCondition)
+}
+
+func createDaemonSetCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DaemonSetCondition{V: &apps.DaemonSetCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DaemonSetCondition) Underlying() interface{} { return t.V }
+func (t DaemonSetCondition) DeepCopy() boxed         { return DaemonSetCondition{V: t.V.DeepCopy()} }
+func (t DaemonSetCondition) Package() util.Package   { return util.Apps }
+func (t DaemonSetCondition) Type() string            { return "k8s_apps_DaemonSetCondition" }
+func (t DaemonSetCondition) String() string          { return t.V.String() }
+func (t DaemonSetCondition) Freeze()                 {} // TODO
+func (t DaemonSetCondition) Truth() skylark.Bool     { return skylark.True }
+func (t DaemonSetCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DaemonSetCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DaemonSetCondition)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DaemonSetCondition) AttrNames() []string { return DaemonSetCondition_attrs }
+func (t DaemonSetCondition) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DaemonSetCondition_fields, DaemonSetCondition_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DaemonSetCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DaemonSetCondition_fields, DaemonSetCondition_inline)
+}
+
+type DaemonSetList struct {
+	V *apps.DaemonSetList
+}
+
+var (
+	_ boxed = (*DaemonSetList)(nil)
+
+	DaemonSetList_fields = map[string]util.FieldSpec{}
+	DaemonSetList_inline = map[string]util.FieldSpec{}
+	DaemonSetList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DaemonSetList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DaemonSetList:
+			return DaemonSetList{V: v}
+		case apps.DaemonSetList:
+			return DaemonSetList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DaemonSetList_attrs = setFieldTypes(t, DaemonSetList_fields, DaemonSetList_inline)
+	Library["DaemonSetList"] = skylark.NewBuiltin("DaemonSetList", createDaemonSetList)
+}
+
+func createDaemonSetList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DaemonSetList{V: &apps.DaemonSetList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DaemonSetList) Underlying() interface{} { return t.V }
+func (t DaemonSetList) DeepCopy() boxed         { return DaemonSetList{V: t.V.DeepCopy()} }
+func (t DaemonSetList) Package() util.Package   { return util.Apps }
+func (t DaemonSetList) Type() string            { return "k8s_apps_DaemonSetList" }
+func (t DaemonSetList) String() string          { return t.V.String() }
+func (t DaemonSetList) Freeze()                 {} // TODO
+func (t DaemonSetList) Truth() skylark.Bool     { return skylark.True }
+func (t DaemonSetList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DaemonSetList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DaemonSetList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DaemonSetList) AttrNames() []string { return DaemonSetList_attrs }
+func (t DaemonSetList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DaemonSetList_fields, DaemonSetList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DaemonSetList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DaemonSetList_fields, DaemonSetList_inline)
+}
+
+type DaemonSetSpec struct {
+	V *apps.DaemonSetSpec
+}
+
+var (
+	_ boxed = (*DaemonSetSpec)(nil)
+
+	DaemonSetSpec_fields = map[string]util.FieldSpec{}
+	DaemonSetSpec_inline = map[string]util.FieldSpec{}
+	DaemonSetSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DaemonSetSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DaemonSetSpec:
+			return DaemonSetSpec{V: v}
+		case apps.DaemonSetSpec:
+			return DaemonSetSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DaemonSetSpec_attrs = setFieldTypes(t, DaemonSetSpec_fields, DaemonSetSpec_inline)
+	Library["DaemonSetSpec"] = skylark.NewBuiltin("DaemonSetSpec", createDaemonSetSpec)
+}
+
+func createDaemonSetSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DaemonSetSpec{V: &apps.DaemonSetSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DaemonSetSpec) Underlying() interface{} { return t.V }
+func (t DaemonSetSpec) DeepCopy() boxed         { return DaemonSetSpec{V: t.V.DeepCopy()} }
+func (t DaemonSetSpec) Package() util.Package   { return util.Apps }
+func (t DaemonSetSpec) Type() string            { return "k8s_apps_DaemonSetSpec" }
+func (t DaemonSetSpec) String() string          { return t.V.String() }
+func (t DaemonSetSpec) Freeze()                 {} // TODO
+func (t DaemonSetSpec) Truth() skylark.Bool     { return skylark.True }
+func (t DaemonSetSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DaemonSetSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DaemonSetSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DaemonSetSpec) AttrNames() []string { return DaemonSetSpec_attrs }
+func (t DaemonSetSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DaemonSetSpec_fields, DaemonSetSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DaemonSetSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DaemonSetSpec_fields, DaemonSetSpec_inline)
+}
+
+type DaemonSetStatus struct {
+	V *apps.DaemonSetStatus
+}
+
+var (
+	_ boxed = (*DaemonSetStatus)(nil)
+
+	DaemonSetStatus_fields = map[string]util.FieldSpec{}
+	DaemonSetStatus_inline = map[string]util.FieldSpec{}
+	DaemonSetStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DaemonSetStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DaemonSetStatus:
+			return DaemonSetStatus{V: v}
+		case apps.DaemonSetStatus:
+			return DaemonSetStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DaemonSetStatus_attrs = setFieldTypes(t, DaemonSetStatus_fields, DaemonSetStatus_inline)
+	Library["DaemonSetStatus"] = skylark.NewBuiltin("DaemonSetStatus", createDaemonSetStatus)
+}
+
+func createDaemonSetStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DaemonSetStatus{V: &apps.DaemonSetStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DaemonSetStatus) Underlying() interface{} { return t.V }
+func (t DaemonSetStatus) DeepCopy() boxed         { return DaemonSetStatus{V: t.V.DeepCopy()} }
+func (t DaemonSetStatus) Package() util.Package   { return util.Apps }
+func (t DaemonSetStatus) Type() string            { return "k8s_apps_DaemonSetStatus" }
+func (t DaemonSetStatus) String() string          { return t.V.String() }
+func (t DaemonSetStatus) Freeze()                 {} // TODO
+func (t DaemonSetStatus) Truth() skylark.Bool     { return skylark.True }
+func (t DaemonSetStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DaemonSetStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DaemonSetStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DaemonSetStatus) AttrNames() []string { return DaemonSetStatus_attrs }
+func (t DaemonSetStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DaemonSetStatus_fields, DaemonSetStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DaemonSetStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DaemonSetStatus_fields, DaemonSetStatus_inline)
+}
+
+type DaemonSetUpdateStrategy struct {
+	V *apps.DaemonSetUpdateStrategy
+}
+
+var (
+	_ boxed = (*DaemonSetUpdateStrategy)(nil)
+
+	DaemonSetUpdateStrategy_fields = map[string]util.FieldSpec{}
+	DaemonSetUpdateStrategy_inline = map[string]util.FieldSpec{}
+	DaemonSetUpdateStrategy_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DaemonSetUpdateStrategy)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DaemonSetUpdateStrategy:
+			return DaemonSetUpdateStrategy{V: v}
+		case apps.DaemonSetUpdateStrategy:
+			return DaemonSetUpdateStrategy{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DaemonSetUpdateStrategy_attrs = setFieldTypes(t, DaemonSetUpdateStrategy_fields, DaemonSetUpdateStrategy_inline)
+	Library["DaemonSetUpdateStrategy"] = skylark.NewBuiltin("DaemonSetUpdateStrategy", createDaemonSetUpdateStrategy)
+}
+
+func createDaemonSetUpdateStrategy(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DaemonSetUpdateStrategy{V: &apps.DaemonSetUpdateStrategy{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DaemonSetUpdateStrategy) Underlying() interface{} { return t.V }
+func (t DaemonSetUpdateStrategy) DeepCopy() boxed         { return DaemonSetUpdateStrategy{V: t.V.DeepCopy()} }
+func (t DaemonSetUpdateStrategy) Package() util.Package   { return util.Apps }
+func (t DaemonSetUpdateStrategy) Type() string            { return "k8s_apps_DaemonSetUpdateStrategy" }
+func (t DaemonSetUpdateStrategy) String() string          { return t.V.String() }
+func (t DaemonSetUpdateStrategy) Freeze()                 {} // TODO
+func (t DaemonSetUpdateStrategy) Truth() skylark.Bool     { return skylark.True }
+func (t DaemonSetUpdateStrategy) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DaemonSetUpdateStrategy) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DaemonSetUpdateStrategy)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DaemonSetUpdateStrategy) AttrNames() []string { return DaemonSetUpdateStrategy_attrs }
+func (t DaemonSetUpdateStrategy) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DaemonSetUpdateStrategy_fields, DaemonSetUpdateStrategy_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DaemonSetUpdateStrategy) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DaemonSetUpdateStrategy_fields, DaemonSetUpdateStrategy_inline)
+}
+
+type Deployment struct {
+	V *apps.Deployment
+}
+
+var (
+	_ boxed = (*Deployment)(nil)
+
+	Deployment_fields = map[string]util.FieldSpec{}
+	Deployment_inline = map[string]util.FieldSpec{}
+	Deployment_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.Deployment)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.Deployment:
+			return Deployment{V: v}
+		case apps.Deployment:
+			return Deployment{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	Deployment_attrs = setFieldTypes(t, Deployment_fields, Deployment_inline)
+	Library["Deployment"] = skylark.NewBuiltin("Deployment", createDeployment)
+}
+
+func createDeployment(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := Deployment{V: &apps.Deployment{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t Deployment) Underlying() interface{} { return t.V }
+func (t Deployment) DeepCopy() boxed         { return Deployment{V: t.V.DeepCopy()} }
+func (t Deployment) Package() util.Package   { return util.Apps }
+func (t Deployment) Type() string            { return "k8s_apps_Deployment" }
+func (t Deployment) String() string          { return t.V.String() }
+func (t Deployment) Freeze()                 {} // TODO
+func (t Deployment) Truth() skylark.Bool     { return skylark.True }
+func (t Deployment) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t Deployment) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*Deployment)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t Deployment) AttrNames() []string { return Deployment_attrs }
+func (t Deployment) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Deployment_fields, Deployment_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Deployment) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Deployment_fields, Deployment_inline)
+}
+
+type DeploymentCondition struct {
+	V *apps.DeploymentCondition
+}
+
+var (
+	_ boxed = (*DeploymentCondition)(nil)
+
+	DeploymentCondition_fields = map[string]util.FieldSpec{}
+	DeploymentCondition_inline = map[string]util.FieldSpec{}
+	DeploymentCondition_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DeploymentCondition)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DeploymentCondition:
+			return DeploymentCondition{V: v}
+		case apps.DeploymentCondition:
+			return DeploymentCondition{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DeploymentCondition_attrs = setFieldTypes(t, DeploymentCondition_fields, DeploymentCondition_inline)
+	Library["DeploymentCondition"] = skylark.NewBuiltin("DeploymentCondition", createDeploymentCondition)
+}
+
+func createDeploymentCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DeploymentCondition{V: &apps.DeploymentCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DeploymentCondition) Underlying() interface{} { return t.V }
+func (t DeploymentCondition) DeepCopy() boxed         { return DeploymentCondition{V: t.V.DeepCopy()} }
+func (t DeploymentCondition) Package() util.Package   { return util.Apps }
+func (t DeploymentCondition) Type() string            { return "k8s_apps_DeploymentCondition" }
+func (t DeploymentCondition) String() string          { return t.V.String() }
+func (t DeploymentCondition) Freeze()                 {} // TODO
+func (t DeploymentCondition) Truth() skylark.Bool     { return skylark.True }
+func (t DeploymentCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DeploymentCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DeploymentCondition)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DeploymentCondition) AttrNames() []string { return DeploymentCondition_attrs }
+func (t DeploymentCondition) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DeploymentCondition_fields, DeploymentCondition_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DeploymentCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DeploymentCondition_fields, DeploymentCondition_inline)
+}
+
+type DeploymentList struct {
+	V *apps.DeploymentList
+}
+
+var (
+	_ boxed = (*DeploymentList)(nil)
+
+	DeploymentList_fields = map[string]util.FieldSpec{}
+	DeploymentList_inline = map[string]util.FieldSpec{}
+	DeploymentList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DeploymentList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DeploymentList:
+			return DeploymentList{V: v}
+		case apps.DeploymentList:
+			return DeploymentList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DeploymentList_attrs = setFieldTypes(t, DeploymentList_fields, DeploymentList_inline)
+	Library["DeploymentList"] = skylark.NewBuiltin("DeploymentList", createDeploymentList)
+}
+
+func createDeploymentList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DeploymentList{V: &apps.DeploymentList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DeploymentList) Underlying() interface{} { return t.V }
+func (t DeploymentList) DeepCopy() boxed         { return DeploymentList{V: t.V.DeepCopy()} }
+func (t DeploymentList) Package() util.Package   { return util.Apps }
+func (t DeploymentList) Type() string            { return "k8s_apps_DeploymentList" }
+func (t DeploymentList) String() string          { return t.V.String() }
+func (t DeploymentList) Freeze()                 {} // TODO
+func (t DeploymentList) Truth() skylark.Bool     { return skylark.True }
+func (t DeploymentList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DeploymentList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DeploymentList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DeploymentList) AttrNames() []string { return DeploymentList_attrs }
+func (t DeploymentList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DeploymentList_fields, DeploymentList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DeploymentList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DeploymentList_fields, DeploymentList_inline)
+}
+
+type DeploymentSpec struct {
+	V *apps.DeploymentSpec
+}
+
+var (
+	_ boxed = (*DeploymentSpec)(nil)
+
+	DeploymentSpec_fields = map[string]util.FieldSpec{}
+	DeploymentSpec_inline = map[string]util.FieldSpec{}
+	DeploymentSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DeploymentSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DeploymentSpec:
+			return DeploymentSpec{V: v}
+		case apps.DeploymentSpec:
+			return DeploymentSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DeploymentSpec_attrs = setFieldTypes(t, DeploymentSpec_fields, DeploymentSpec_inline)
+	Library["DeploymentSpec"] = skylark.NewBuiltin("DeploymentSpec", createDeploymentSpec)
+}
+
+func createDeploymentSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DeploymentSpec{V: &apps.DeploymentSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DeploymentSpec) Underlying() interface{} { return t.V }
+func (t DeploymentSpec) DeepCopy() boxed         { return DeploymentSpec{V: t.V.DeepCopy()} }
+func (t DeploymentSpec) Package() util.Package   { return util.Apps }
+func (t DeploymentSpec) Type() string            { return "k8s_apps_DeploymentSpec" }
+func (t DeploymentSpec) String() string          { return t.V.String() }
+func (t DeploymentSpec) Freeze()                 {} // TODO
+func (t DeploymentSpec) Truth() skylark.Bool     { return skylark.True }
+func (t DeploymentSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DeploymentSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DeploymentSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DeploymentSpec) AttrNames() []string { return DeploymentSpec_attrs }
+func (t DeploymentSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DeploymentSpec_fields, DeploymentSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DeploymentSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DeploymentSpec_fields, DeploymentSpec_inline)
+}
+
+type DeploymentStatus struct {
+	V *apps.DeploymentStatus
+}
+
+var (
+	_ boxed = (*DeploymentStatus)(nil)
+
+	DeploymentStatus_fields = map[string]util.FieldSpec{}
+	DeploymentStatus_inline = map[string]util.FieldSpec{}
+	DeploymentStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DeploymentStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DeploymentStatus:
+			return DeploymentStatus{V: v}
+		case apps.DeploymentStatus:
+			return DeploymentStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DeploymentStatus_attrs = setFieldTypes(t, DeploymentStatus_fields, DeploymentStatus_inline)
+	Library["DeploymentStatus"] = skylark.NewBuiltin("DeploymentStatus", createDeploymentStatus)
+}
+
+func createDeploymentStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DeploymentStatus{V: &apps.DeploymentStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DeploymentStatus) Underlying() interface{} { return t.V }
+func (t DeploymentStatus) DeepCopy() boxed         { return DeploymentStatus{V: t.V.DeepCopy()} }
+func (t DeploymentStatus) Package() util.Package   { return util.Apps }
+func (t DeploymentStatus) Type() string            { return "k8s_apps_DeploymentStatus" }
+func (t DeploymentStatus) String() string          { return t.V.String() }
+func (t DeploymentStatus) Freeze()                 {} // TODO
+func (t DeploymentStatus) Truth() skylark.Bool     { return skylark.True }
+func (t DeploymentStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DeploymentStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DeploymentStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DeploymentStatus) AttrNames() []string { return DeploymentStatus_attrs }
+func (t DeploymentStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DeploymentStatus_fields, DeploymentStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DeploymentStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DeploymentStatus_fields, DeploymentStatus_inline)
+}
+
+type DeploymentStrategy struct {
+	V *apps.DeploymentStrategy
+}
+
+var (
+	_ boxed = (*DeploymentStrategy)(nil)
+
+	DeploymentStrategy_fields = map[string]util.FieldSpec{}
+	DeploymentStrategy_inline = map[string]util.FieldSpec{}
+	DeploymentStrategy_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.DeploymentStrategy)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.DeploymentStrategy:
+			return DeploymentStrategy{V: v}
+		case apps.DeploymentStrategy:
+			return DeploymentStrategy{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	DeploymentStrategy_attrs = setFieldTypes(t, DeploymentStrategy_fields, DeploymentStrategy_inline)
+	Library["DeploymentStrategy"] = skylark.NewBuiltin("DeploymentStrategy", createDeploymentStrategy)
+}
+
+func createDeploymentStrategy(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := DeploymentStrategy{V: &apps.DeploymentStrategy{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t DeploymentStrategy) Underlying() interface{} { return t.V }
+func (t DeploymentStrategy) DeepCopy() boxed         { return DeploymentStrategy{V: t.V.DeepCopy()} }
+func (t DeploymentStrategy) Package() util.Package   { return util.Apps }
+func (t DeploymentStrategy) Type() string            { return "k8s_apps_DeploymentStrategy" }
+func (t DeploymentStrategy) String() string          { return t.V.String() }
+func (t DeploymentStrategy) Freeze()                 {} // TODO
+func (t DeploymentStrategy) Truth() skylark.Bool     { return skylark.True }
+func (t DeploymentStrategy) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t DeploymentStrategy) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*DeploymentStrategy)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t DeploymentStrategy) AttrNames() []string { return DeploymentStrategy_attrs }
+func (t DeploymentStrategy) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DeploymentStrategy_fields, DeploymentStrategy_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t DeploymentStrategy) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, DeploymentStrategy_fields, DeploymentStrategy_inline)
+}
+
+type ReplicaSet struct {
+	V *apps.ReplicaSet
+}
+
+var (
+	_ boxed = (*ReplicaSet)(nil)
+
+	ReplicaSet_fields = map[string]util.FieldSpec{}
+	ReplicaSet_inline = map[string]util.FieldSpec{}
+	ReplicaSet_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.ReplicaSet)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.ReplicaSet:
+			return ReplicaSet{V: v}
+		case apps.ReplicaSet:
+			return ReplicaSet{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ReplicaSet_attrs = setFieldTypes(t, ReplicaSet_fields, ReplicaSet_inline)
+	Library["ReplicaSet"] = skylark.NewBuiltin("ReplicaSet", createReplicaSet)
+}
+
+func createReplicaSet(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ReplicaSet{V: &apps.ReplicaSet{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ReplicaSet) Underlying() interface{} { return t.V }
+func (t ReplicaSet) DeepCopy() boxed         { return ReplicaSet{V: t.V.DeepCopy()} }
+func (t ReplicaSet) Package() util.Package   { return util.Apps }
+func (t ReplicaSet) Type() string            { return "k8s_apps_ReplicaSet" }
+func (t ReplicaSet) String() string          { return t.V.String() }
+func (t ReplicaSet) Freeze()                 {} // TODO
+func (t ReplicaSet) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicaSet) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ReplicaSet) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ReplicaSet)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ReplicaSet) AttrNames() []string { return ReplicaSet_attrs }
+func (t ReplicaSet) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicaSet_fields, ReplicaSet_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicaSet) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicaSet_fields, ReplicaSet_inline)
+}
+
+type ReplicaSetCondition struct {
+	V *apps.ReplicaSetCondition
+}
+
+var (
+	_ boxed = (*ReplicaSetCondition)(nil)
+
+	ReplicaSetCondition_fields = map[string]util.FieldSpec{}
+	ReplicaSetCondition_inline = map[string]util.FieldSpec{}
+	ReplicaSetCondition_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.ReplicaSetCondition)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.ReplicaSetCondition:
+			return ReplicaSetCondition{V: v}
+		case apps.ReplicaSetCondition:
+			return ReplicaSetCondition{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ReplicaSetCondition_attrs = setFieldTypes(t, ReplicaSetCondition_fields, ReplicaSetCondition_inline)
+	Library["ReplicaSetCondition"] = skylark.NewBuiltin("ReplicaSetCondition", createReplicaSetCondition)
+}
+
+func createReplicaSetCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ReplicaSetCondition{V: &apps.ReplicaSetCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ReplicaSetCondition) Underlying() interface{} { return t.V }
+func (t ReplicaSetCondition) DeepCopy() boxed         { return ReplicaSetCondition{V: t.V.DeepCopy()} }
+func (t ReplicaSetCondition) Package() util.Package   { return util.Apps }
+func (t ReplicaSetCondition) Type() string            { return "k8s_apps_ReplicaSetCondition" }
+func (t ReplicaSetCondition) String() string          { return t.V.String() }
+func (t ReplicaSetCondition) Freeze()                 {} // TODO
+func (t ReplicaSetCondition) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicaSetCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ReplicaSetCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ReplicaSetCondition)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ReplicaSetCondition) AttrNames() []string { return ReplicaSetCondition_attrs }
+func (t ReplicaSetCondition) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicaSetCondition_fields, ReplicaSetCondition_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicaSetCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicaSetCondition_fields, ReplicaSetCondition_inline)
+}
+
+type ReplicaSetList struct {
+	V *apps.ReplicaSetList
+}
+
+var (
+	_ boxed = (*ReplicaSetList)(nil)
+
+	ReplicaSetList_fields = map[string]util.FieldSpec{}
+	ReplicaSetList_inline = map[string]util.FieldSpec{}
+	ReplicaSetList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.ReplicaSetList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.ReplicaSetList:
+			return ReplicaSetList{V: v}
+		case apps.ReplicaSetList:
+			return ReplicaSetList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ReplicaSetList_attrs = setFieldTypes(t, ReplicaSetList_fields, ReplicaSetList_inline)
+	Library["ReplicaSetList"] = skylark.NewBuiltin("ReplicaSetList", createReplicaSetList)
+}
+
+func createReplicaSetList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ReplicaSetList{V: &apps.ReplicaSetList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ReplicaSetList) Underlying() interface{} { return t.V }
+func (t ReplicaSetList) DeepCopy() boxed         { return ReplicaSetList{V: t.V.DeepCopy()} }
+func (t ReplicaSetList) Package() util.Package   { return util.Apps }
+func (t ReplicaSetList) Type() string            { return "k8s_apps_ReplicaSetList" }
+func (t ReplicaSetList) String() string          { return t.V.String() }
+func (t ReplicaSetList) Freeze()                 {} // TODO
+func (t ReplicaSetList) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicaSetList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ReplicaSetList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ReplicaSetList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ReplicaSetList) AttrNames() []string { return ReplicaSetList_attrs }
+func (t ReplicaSetList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicaSetList_fields, ReplicaSetList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicaSetList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicaSetList_fields, ReplicaSetList_inline)
+}
+
+type ReplicaSetSpec struct {
+	V *apps.ReplicaSetSpec
+}
+
+var (
+	_ boxed = (*ReplicaSetSpec)(nil)
+
+	ReplicaSetSpec_fields = map[string]util.FieldSpec{}
+	ReplicaSetSpec_inline = map[string]util.FieldSpec{}
+	ReplicaSetSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.ReplicaSetSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.ReplicaSetSpec:
+			return ReplicaSetSpec{V: v}
+		case apps.ReplicaSetSpec:
+			return ReplicaSetSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ReplicaSetSpec_attrs = setFieldTypes(t, ReplicaSetSpec_fields, ReplicaSetSpec_inline)
+	Library["ReplicaSetSpec"] = skylark.NewBuiltin("ReplicaSetSpec", createReplicaSetSpec)
+}
+
+func createReplicaSetSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ReplicaSetSpec{V: &apps.ReplicaSetSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ReplicaSetSpec) Underlying() interface{} { return t.V }
+func (t ReplicaSetSpec) DeepCopy() boxed         { return ReplicaSetSpec{V: t.V.DeepCopy()} }
+func (t ReplicaSetSpec) Package() util.Package   { return util.Apps }
+func (t ReplicaSetSpec) Type() string            { return "k8s_apps_ReplicaSetSpec" }
+func (t ReplicaSetSpec) String() string          { return t.V.String() }
+func (t ReplicaSetSpec) Freeze()                 {} // TODO
+func (t ReplicaSetSpec) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicaSetSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ReplicaSetSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ReplicaSetSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ReplicaSetSpec) AttrNames() []string { return ReplicaSetSpec_attrs }
+func (t ReplicaSetSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicaSetSpec_fields, ReplicaSetSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicaSetSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicaSetSpec_fields, ReplicaSetSpec_inline)
+}
+
+type ReplicaSetStatus struct {
+	V *apps.ReplicaSetStatus
+}
+
+var (
+	_ boxed = (*ReplicaSetStatus)(nil)
+
+	ReplicaSetStatus_fields = map[string]util.FieldSpec{}
+	ReplicaSetStatus_inline = map[string]util.FieldSpec{}
+	ReplicaSetStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.ReplicaSetStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.ReplicaSetStatus:
+			return ReplicaSetStatus{V: v}
+		case apps.ReplicaSetStatus:
+			return ReplicaSetStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ReplicaSetStatus_attrs = setFieldTypes(t, ReplicaSetStatus_fields, ReplicaSetStatus_inline)
+	Library["ReplicaSetStatus"] = skylark.NewBuiltin("ReplicaSetStatus", createReplicaSetStatus)
+}
+
+func createReplicaSetStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ReplicaSetStatus{V: &apps.ReplicaSetStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ReplicaSetStatus) Underlying() interface{} { return t.V }
+func (t ReplicaSetStatus) DeepCopy() boxed         { return ReplicaSetStatus{V: t.V.DeepCopy()} }
+func (t ReplicaSetStatus) Package() util.Package   { return util.Apps }
+func (t ReplicaSetStatus) Type() string            { return "k8s_apps_ReplicaSetStatus" }
+func (t ReplicaSetStatus) String() string          { return t.V.String() }
+func (t ReplicaSetStatus) Freeze()                 {} // TODO
+func (t ReplicaSetStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ReplicaSetStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ReplicaSetStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ReplicaSetStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ReplicaSetStatus) AttrNames() []string { return ReplicaSetStatus_attrs }
+func (t ReplicaSetStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ReplicaSetStatus_fields, ReplicaSetStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ReplicaSetStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ReplicaSetStatus_fields, ReplicaSetStatus_inline)
+}
+
+type RollingUpdateDaemonSet struct {
+	V *apps.RollingUpdateDaemonSet
+}
+
+var (
+	_ boxed = (*RollingUpdateDaemonSet)(nil)
+
+	RollingUpdateDaemonSet_fields = map[string]util.FieldSpec{}
+	RollingUpdateDaemonSet_inline = map[string]util.FieldSpec{}
+	RollingUpdateDaemonSet_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.RollingUpdateDaemonSet)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.RollingUpdateDaemonSet:
+			return RollingUpdateDaemonSet{V: v}
+		case apps.RollingUpdateDaemonSet:
+			return RollingUpdateDaemonSet{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	RollingUpdateDaemonSet_attrs = setFieldTypes(t, RollingUpdateDaemonSet_fields, RollingUpdateDaemonSet_inline)
+	Library["RollingUpdateDaemonSet"] = skylark.NewBuiltin("RollingUpdateDaemonSet", createRollingUpdateDaemonSet)
+}
+
+func createRollingUpdateDaemonSet(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := RollingUpdateDaemonSet{V: &apps.RollingUpdateDaemonSet{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t RollingUpdateDaemonSet) Underlying() interface{} { return t.V }
+func (t RollingUpdateDaemonSet) DeepCopy() boxed         { return RollingUpdateDaemonSet{V: t.V.DeepCopy()} }
+func (t RollingUpdateDaemonSet) Package() util.Package   { return util.Apps }
+func (t RollingUpdateDaemonSet) Type() string            { return "k8s_apps_RollingUpdateDaemonSet" }
+func (t RollingUpdateDaemonSet) String() string          { return t.V.String() }
+func (t RollingUpdateDaemonSet) Freeze()                 {} // TODO
+func (t RollingUpdateDaemonSet) Truth() skylark.Bool     { return skylark.True }
+func (t RollingUpdateDaemonSet) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t RollingUpdateDaemonSet) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*RollingUpdateDaemonSet)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t RollingUpdateDaemonSet) AttrNames() []string { return RollingUpdateDaemonSet_attrs }
+func (t RollingUpdateDaemonSet) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RollingUpdateDaemonSet_fields, RollingUpdateDaemonSet_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RollingUpdateDaemonSet) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RollingUpdateDaemonSet_fields, RollingUpdateDaemonSet_inline)
+}
+
+type RollingUpdateDeployment struct {
+	V *apps.RollingUpdateDeployment
+}
+
+var (
+	_ boxed = (*RollingUpdateDeployment)(nil)
+
+	RollingUpdateDeployment_fields = map[string]util.FieldSpec{}
+	RollingUpdateDeployment_inline = map[string]util.FieldSpec{}
+	RollingUpdateDeployment_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.RollingUpdateDeployment)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.RollingUpdateDeployment:
+			return RollingUpdateDeployment{V: v}
+		case apps.RollingUpdateDeployment:
+			return RollingUpdateDeployment{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	RollingUpdateDeployment_attrs = setFieldTypes(t, RollingUpdateDeployment_fields, RollingUpdateDeployment_inline)
+	Library["RollingUpdateDeployment"] = skylark.NewBuiltin("RollingUpdateDeployment", createRollingUpdateDeployment)
+}
+
+func createRollingUpdateDeployment(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := RollingUpdateDeployment{V: &apps.RollingUpdateDeployment{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t RollingUpdateDeployment) Underlying() interface{} { return t.V }
+func (t RollingUpdateDeployment) DeepCopy() boxed         { return RollingUpdateDeployment{V: t.V.DeepCopy()} }
+func (t RollingUpdateDeployment) Package() util.Package   { return util.Apps }
+func (t RollingUpdateDeployment) Type() string            { return "k8s_apps_RollingUpdateDeployment" }
+func (t RollingUpdateDeployment) String() string          { return t.V.String() }
+func (t RollingUpdateDeployment) Freeze()                 {} // TODO
+func (t RollingUpdateDeployment) Truth() skylark.Bool     { return skylark.True }
+func (t RollingUpdateDeployment) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t RollingUpdateDeployment) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*RollingUpdateDeployment)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t RollingUpdateDeployment) AttrNames() []string { return RollingUpdateDeployment_attrs }
+func (t RollingUpdateDeployment) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RollingUpdateDeployment_fields, RollingUpdateDeployment_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RollingUpdateDeployment) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RollingUpdateDeployment_fields, RollingUpdateDeployment_inline)
+}
+
+type RollingUpdateStatefulSetStrategy struct {
+	V *apps.RollingUpdateStatefulSetStrategy
+}
+
+var (
+	_ boxed = (*RollingUpdateStatefulSetStrategy)(nil)
+
+	RollingUpdateStatefulSetStrategy_fields = map[string]util.FieldSpec{}
+	RollingUpdateStatefulSetStrategy_inline = map[string]util.FieldSpec{}
+	RollingUpdateStatefulSetStrategy_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.RollingUpdateStatefulSetStrategy)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.RollingUpdateStatefulSetStrategy:
+			return RollingUpdateStatefulSetStrategy{V: v}
+		case apps.RollingUpdateStatefulSetStrategy:
+			return RollingUpdateStatefulSetStrategy{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	RollingUpdateStatefulSetStrategy_attrs = setFieldTypes(t, RollingUpdateStatefulSetStrategy_fields, RollingUpdateStatefulSetStrategy_inline)
+	Library["RollingUpdateStatefulSetStrategy"] = skylark.NewBuiltin("RollingUpdateStatefulSetStrategy", createRollingUpdateStatefulSetStrategy)
+}
+
+func createRollingUpdateStatefulSetStrategy(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := RollingUpdateStatefulSetStrategy{V: &apps.RollingUpdateStatefulSetStrategy{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t RollingUpdateStatefulSetStrategy) Underlying() interface{} { return t.V }
+func (t RollingUpdateStatefulSetStrategy) DeepCopy() boxed {
+	return RollingUpdateStatefulSetStrategy{V: t.V.DeepCopy()}
+}
+func (t RollingUpdateStatefulSetStrategy) Package() util.Package { return util.Apps }
+func (t RollingUpdateStatefulSetStrategy) Type() string {
+	return "k8s_apps_RollingUpdateStatefulSetStrategy"
+}
+func (t RollingUpdateStatefulSetStrategy) String() string        { return t.V.String() }
+func (t RollingUpdateStatefulSetStrategy) Freeze()               {} // TODO
+func (t RollingUpdateStatefulSetStrategy) Truth() skylark.Bool   { return skylark.True }
+func (t RollingUpdateStatefulSetStrategy) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t RollingUpdateStatefulSetStrategy) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*RollingUpdateStatefulSetStrategy)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t RollingUpdateStatefulSetStrategy) AttrNames() []string {
+	return RollingUpdateStatefulSetStrategy_attrs
+}
+func (t RollingUpdateStatefulSetStrategy) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RollingUpdateStatefulSetStrategy_fields, RollingUpdateStatefulSetStrategy_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RollingUpdateStatefulSetStrategy) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RollingUpdateStatefulSetStrategy_fields, RollingUpdateStatefulSetStrategy_inline)
+}
+
+type StatefulSet struct {
+	V *apps.StatefulSet
+}
+
+var (
+	_ boxed = (*StatefulSet)(nil)
+
+	StatefulSet_fields = map[string]util.FieldSpec{}
+	StatefulSet_inline = map[string]util.FieldSpec{}
+	StatefulSet_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.StatefulSet)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.StatefulSet:
+			return StatefulSet{V: v}
+		case apps.StatefulSet:
+			return StatefulSet{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	StatefulSet_attrs = setFieldTypes(t, StatefulSet_fields, StatefulSet_inline)
+	Library["StatefulSet"] = skylark.NewBuiltin("StatefulSet", createStatefulSet)
+}
+
+func createStatefulSet(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := StatefulSet{V: &apps.StatefulSet{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t StatefulSet) Underlying() interface{} { return t.V }
+func (t StatefulSet) DeepCopy() boxed         { return StatefulSet{V: t.V.DeepCopy()} }
+func (t StatefulSet) Package() util.Package   { return util.Apps }
+func (t StatefulSet) Type() string            { return "k8s_apps_StatefulSet" }
+func (t StatefulSet) String() string          { return t.V.String() }
+func (t StatefulSet) Freeze()                 {} // TODO
+func (t StatefulSet) Truth() skylark.Bool     { return skylark.True }
+func (t StatefulSet) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t StatefulSet) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*StatefulSet)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t StatefulSet) AttrNames() []string { return StatefulSet_attrs }
+func (t StatefulSet) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StatefulSet_fields, StatefulSet_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StatefulSet) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StatefulSet_fields, StatefulSet_inline)
+}
+
+type StatefulSetCondition struct {
+	V *apps.StatefulSetCondition
+}
+
+var (
+	_ boxed = (*StatefulSetCondition)(nil)
+
+	StatefulSetCondition_fields = map[string]util.FieldSpec{}
+	StatefulSetCondition_inline = map[string]util.FieldSpec{}
+	StatefulSetCondition_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.StatefulSetCondition)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.StatefulSetCondition:
+			return StatefulSetCondition{V: v}
+		case apps.StatefulSetCondition:
+			return StatefulSetCondition{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	StatefulSetCondition_attrs = setFieldTypes(t, StatefulSetCondition_fields, StatefulSetCondition_inline)
+	Library["StatefulSetCondition"] = skylark.NewBuiltin("StatefulSetCondition", createStatefulSetCondition)
+}
+
+func createStatefulSetCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := StatefulSetCondition{V: &apps.StatefulSetCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t StatefulSetCondition) Underlying() interface{} { return t.V }
+func (t StatefulSetCondition) DeepCopy() boxed         { return StatefulSetCondition{V: t.V.DeepCopy()} }
+func (t StatefulSetCondition) Package() util.Package   { return util.Apps }
+func (t StatefulSetCondition) Type() string            { return "k8s_apps_StatefulSetCondition" }
+func (t StatefulSetCondition) String() string          { return t.V.String() }
+func (t StatefulSetCondition) Freeze()                 {} // TODO
+func (t StatefulSetCondition) Truth() skylark.Bool     { return skylark.True }
+func (t StatefulSetCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t StatefulSetCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*StatefulSetCondition)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t StatefulSetCondition) AttrNames() []string { return StatefulSetCondition_attrs }
+func (t StatefulSetCondition) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StatefulSetCondition_fields, StatefulSetCondition_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StatefulSetCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StatefulSetCondition_fields, StatefulSetCondition_inline)
+}
+
+type StatefulSetList struct {
+	V *apps.StatefulSetList
+}
+
+var (
+	_ boxed = (*StatefulSetList)(nil)
+
+	StatefulSetList_fields = map[string]util.FieldSpec{}
+	StatefulSetList_inline = map[string]util.FieldSpec{}
+	StatefulSetList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.StatefulSetList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.StatefulSetList:
+			return StatefulSetList{V: v}
+		case apps.StatefulSetList:
+			return StatefulSetList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	StatefulSetList_attrs = setFieldTypes(t, StatefulSetList_fields, StatefulSetList_inline)
+	Library["StatefulSetList"] = skylark.NewBuiltin("StatefulSetList", createStatefulSetList)
+}
+
+func createStatefulSetList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := StatefulSetList{V: &apps.StatefulSetList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t StatefulSetList) Underlying() interface{} { return t.V }
+func (t StatefulSetList) DeepCopy() boxed         { return StatefulSetList{V: t.V.DeepCopy()} }
+func (t StatefulSetList) Package() util.Package   { return util.Apps }
+func (t StatefulSetList) Type() string            { return "k8s_apps_StatefulSetList" }
+func (t StatefulSetList) String() string          { return t.V.String() }
+func (t StatefulSetList) Freeze()                 {} // TODO
+func (t StatefulSetList) Truth() skylark.Bool     { return skylark.True }
+func (t StatefulSetList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t StatefulSetList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*StatefulSetList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t StatefulSetList) AttrNames() []string { return StatefulSetList_attrs }
+func (t StatefulSetList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StatefulSetList_fields, StatefulSetList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StatefulSetList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StatefulSetList_fields, StatefulSetList_inline)
+}
+
+type StatefulSetSpec struct {
+	V *apps.StatefulSetSpec
+}
+
+var (
+	_ boxed = (*StatefulSetSpec)(nil)
+
+	StatefulSetSpec_fields = map[string]util.FieldSpec{}
+	StatefulSetSpec_inline = map[string]util.FieldSpec{}
+	StatefulSetSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.StatefulSetSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.StatefulSetSpec:
+			return StatefulSetSpec{V: v}
+		case apps.StatefulSetSpec:
+			return StatefulSetSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	StatefulSetSpec_attrs = setFieldTypes(t, StatefulSetSpec_fields, StatefulSetSpec_inline)
+	Library["StatefulSetSpec"] = skylark.NewBuiltin("StatefulSetSpec", createStatefulSetSpec)
+}
+
+func createStatefulSetSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := StatefulSetSpec{V: &apps.StatefulSetSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t StatefulSetSpec) Underlying() interface{} { return t.V }
+func (t StatefulSetSpec) DeepCopy() boxed         { return StatefulSetSpec{V: t.V.DeepCopy()} }
+func (t StatefulSetSpec) Package() util.Package   { return util.Apps }
+func (t StatefulSetSpec) Type() string            { return "k8s_apps_StatefulSetSpec" }
+func (t StatefulSetSpec) String() string          { return t.V.String() }
+func (t StatefulSetSpec) Freeze()                 {} // TODO
+func (t StatefulSetSpec) Truth() skylark.Bool     { return skylark.True }
+func (t StatefulSetSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t StatefulSetSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*StatefulSetSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t StatefulSetSpec) AttrNames() []string { return StatefulSetSpec_attrs }
+func (t StatefulSetSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StatefulSetSpec_fields, StatefulSetSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StatefulSetSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StatefulSetSpec_fields, StatefulSetSpec_inline)
+}
+
+type StatefulSetStatus struct {
+	V *apps.StatefulSetStatus
+}
+
+var (
+	_ boxed = (*StatefulSetStatus)(nil)
+
+	StatefulSetStatus_fields = map[string]util.FieldSpec{}
+	StatefulSetStatus_inline = map[string]util.FieldSpec{}
+	StatefulSetStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.StatefulSetStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.StatefulSetStatus:
+			return StatefulSetStatus{V: v}
+		case apps.StatefulSetStatus:
+			return StatefulSetStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	StatefulSetStatus_attrs = setFieldTypes(t, StatefulSetStatus_fields, StatefulSetStatus_inline)
+	Library["StatefulSetStatus"] = skylark.NewBuiltin("StatefulSetStatus", createStatefulSetStatus)
+}
+
+func createStatefulSetStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := StatefulSetStatus{V: &apps.StatefulSetStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t StatefulSetStatus) Underlying() interface{} { return t.V }
+func (t StatefulSetStatus) DeepCopy() boxed         { return StatefulSetStatus{V: t.V.DeepCopy()} }
+func (t StatefulSetStatus) Package() util.Package   { return util.Apps }
+func (t StatefulSetStatus) Type() string            { return "k8s_apps_StatefulSetStatus" }
+func (t StatefulSetStatus) String() string          { return t.V.String() }
+func (t StatefulSetStatus) Freeze()                 {} // TODO
+func (t StatefulSetStatus) Truth() skylark.Bool     { return skylark.True }
+func (t StatefulSetStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t StatefulSetStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*StatefulSetStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t StatefulSetStatus) AttrNames() []string { return StatefulSetStatus_attrs }
+func (t StatefulSetStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StatefulSetStatus_fields, StatefulSetStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StatefulSetStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StatefulSetStatus_fields, StatefulSetStatus_inline)
+}
+
+type StatefulSetUpdateStrategy struct {
+	V *apps.StatefulSetUpdateStrategy
+}
+
+var (
+	_ boxed = (*StatefulSetUpdateStrategy)(nil)
+
+	StatefulSetUpdateStrategy_fields = map[string]util.FieldSpec{}
+	StatefulSetUpdateStrategy_inline = map[string]util.FieldSpec{}
+	StatefulSetUpdateStrategy_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*apps.StatefulSetUpdateStrategy)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *apps.StatefulSetUpdateStrategy:
+			return StatefulSetUpdateStrategy{V: v}
+		case apps.StatefulSetUpdateStrategy:
+			return StatefulSetUpdateStrategy{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	StatefulSetUpdateStrategy_attrs = setFieldTypes(t, StatefulSetUpdateStrategy_fields, StatefulSetUpdateStrategy_inline)
+	Library["StatefulSetUpdateStrategy"] = skylark.NewBuiltin("StatefulSetUpdateStrategy", createStatefulSetUpdateStrategy)
+}
+
+func createStatefulSetUpdateStrategy(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := StatefulSetUpdateStrategy{V: &apps.StatefulSetUpdateStrategy{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t StatefulSetUpdateStrategy) Underlying() interface{} { return t.V }
+func (t StatefulSetUpdateStrategy) DeepCopy() boxed {
+	return StatefulSetUpdateStrategy{V: t.V.DeepCopy()}
+}
+func (t StatefulSetUpdateStrategy) Package() util.Package { return util.Apps }
+func (t StatefulSetUpdateStrategy) Type() string          { return "k8s_apps_StatefulSetUpdateStrategy" }
+func (t StatefulSetUpdateStrategy) String() string        { return t.V.String() }
+func (t StatefulSetUpdateStrategy) Freeze()               {} // TODO
+func (t StatefulSetUpdateStrategy) Truth() skylark.Bool   { return skylark.True }
+func (t StatefulSetUpdateStrategy) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t StatefulSetUpdateStrategy) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*StatefulSetUpdateStrategy)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t StatefulSetUpdateStrategy) AttrNames() []string { return StatefulSetUpdateStrategy_attrs }
+func (t StatefulSetUpdateStrategy) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StatefulSetUpdateStrategy_fields, StatefulSetUpdateStrategy_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StatefulSetUpdateStrategy) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StatefulSetUpdateStrategy_fields, StatefulSetUpdateStrategy_inline)
+}
+
+type CrossVersionObjectReference struct {
+	V *autoscaling.CrossVersionObjectReference
+}
+
+var (
+	_ boxed = (*CrossVersionObjectReference)(nil)
+
+	CrossVersionObjectReference_fields = map[string]util.FieldSpec{}
+	CrossVersionObjectReference_inline = map[string]util.FieldSpec{}
+	CrossVersionObjectReference_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.CrossVersionObjectReference)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.CrossVersionObjectReference:
+			return CrossVersionObjectReference{V: v}
+		case autoscaling.CrossVersionObjectReference:
+			return CrossVersionObjectReference{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	CrossVersionObjectReference_attrs = setFieldTypes(t, CrossVersionObjectReference_fields, CrossVersionObjectReference_inline)
+	Library["CrossVersionObjectReference"] = skylark.NewBuiltin("CrossVersionObjectReference", createCrossVersionObjectReference)
+}
+
+func createCrossVersionObjectReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := CrossVersionObjectReference{V: &autoscaling.CrossVersionObjectReference{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t CrossVersionObjectReference) Underlying() interface{} { return t.V }
+func (t CrossVersionObjectReference) DeepCopy() boxed {
+	return CrossVersionObjectReference{V: t.V.DeepCopy()}
+}
+func (t CrossVersionObjectReference) Package() util.Package { return util.Autoscaling }
+func (t CrossVersionObjectReference) Type() string {
+	return "k8s_autoscaling_CrossVersionObjectReference"
+}
+func (t CrossVersionObjectReference) String() string        { return t.V.String() }
+func (t CrossVersionObjectReference) Freeze()               {} // TODO
+func (t CrossVersionObjectReference) Truth() skylark.Bool   { return skylark.True }
+func (t CrossVersionObjectReference) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t CrossVersionObjectReference) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*CrossVersionObjectReference)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t CrossVersionObjectReference) AttrNames() []string { return CrossVersionObjectReference_attrs }
+func (t CrossVersionObjectReference) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, CrossVersionObjectReference_fields, CrossVersionObjectReference_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t CrossVersionObjectReference) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, CrossVersionObjectReference_fields, CrossVersionObjectReference_inline)
+}
+
+type ExternalMetricSource struct {
+	V *autoscaling.ExternalMetricSource
+}
+
+var (
+	_ boxed = (*ExternalMetricSource)(nil)
+
+	ExternalMetricSource_fields = map[string]util.FieldSpec{}
+	ExternalMetricSource_inline = map[string]util.FieldSpec{}
+	ExternalMetricSource_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.ExternalMetricSource)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.ExternalMetricSource:
+			return ExternalMetricSource{V: v}
+		case autoscaling.ExternalMetricSource:
+			return ExternalMetricSource{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ExternalMetricSource_attrs = setFieldTypes(t, ExternalMetricSource_fields, ExternalMetricSource_inline)
+	Library["ExternalMetricSource"] = skylark.NewBuiltin("ExternalMetricSource", createExternalMetricSource)
+}
+
+func createExternalMetricSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ExternalMetricSource{V: &autoscaling.ExternalMetricSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ExternalMetricSource) Underlying() interface{} { return t.V }
+func (t ExternalMetricSource) DeepCopy() boxed         { return ExternalMetricSource{V: t.V.DeepCopy()} }
+func (t ExternalMetricSource) Package() util.Package   { return util.Autoscaling }
+func (t ExternalMetricSource) Type() string            { return "k8s_autoscaling_ExternalMetricSource" }
+func (t ExternalMetricSource) String() string          { return t.V.String() }
+func (t ExternalMetricSource) Freeze()                 {} // TODO
+func (t ExternalMetricSource) Truth() skylark.Bool     { return skylark.True }
+func (t ExternalMetricSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ExternalMetricSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ExternalMetricSource)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ExternalMetricSource) AttrNames() []string { return ExternalMetricSource_attrs }
+func (t ExternalMetricSource) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ExternalMetricSource_fields, ExternalMetricSource_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ExternalMetricSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ExternalMetricSource_fields, ExternalMetricSource_inline)
+}
+
+type ExternalMetricStatus struct {
+	V *autoscaling.ExternalMetricStatus
+}
+
+var (
+	_ boxed = (*ExternalMetricStatus)(nil)
+
+	ExternalMetricStatus_fields = map[string]util.FieldSpec{}
+	ExternalMetricStatus_inline = map[string]util.FieldSpec{}
+	ExternalMetricStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.ExternalMetricStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.ExternalMetricStatus:
+			return ExternalMetricStatus{V: v}
+		case autoscaling.ExternalMetricStatus:
+			return ExternalMetricStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ExternalMetricStatus_attrs = setFieldTypes(t, ExternalMetricStatus_fields, ExternalMetricStatus_inline)
+	Library["ExternalMetricStatus"] = skylark.NewBuiltin("ExternalMetricStatus", createExternalMetricStatus)
+}
+
+func createExternalMetricStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ExternalMetricStatus{V: &autoscaling.ExternalMetricStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ExternalMetricStatus) Underlying() interface{} { return t.V }
+func (t ExternalMetricStatus) DeepCopy() boxed         { return ExternalMetricStatus{V: t.V.DeepCopy()} }
+func (t ExternalMetricStatus) Package() util.Package   { return util.Autoscaling }
+func (t ExternalMetricStatus) Type() string            { return "k8s_autoscaling_ExternalMetricStatus" }
+func (t ExternalMetricStatus) String() string          { return t.V.String() }
+func (t ExternalMetricStatus) Freeze()                 {} // TODO
+func (t ExternalMetricStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ExternalMetricStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ExternalMetricStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ExternalMetricStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ExternalMetricStatus) AttrNames() []string { return ExternalMetricStatus_attrs }
+func (t ExternalMetricStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ExternalMetricStatus_fields, ExternalMetricStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ExternalMetricStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ExternalMetricStatus_fields, ExternalMetricStatus_inline)
+}
+
+type HorizontalPodAutoscaler struct {
+	V *autoscaling.HorizontalPodAutoscaler
+}
+
+var (
+	_ boxed = (*HorizontalPodAutoscaler)(nil)
+
+	HorizontalPodAutoscaler_fields = map[string]util.FieldSpec{}
+	HorizontalPodAutoscaler_inline = map[string]util.FieldSpec{}
+	HorizontalPodAutoscaler_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.HorizontalPodAutoscaler)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.HorizontalPodAutoscaler:
+			return HorizontalPodAutoscaler{V: v}
+		case autoscaling.HorizontalPodAutoscaler:
+			return HorizontalPodAutoscaler{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	HorizontalPodAutoscaler_attrs = setFieldTypes(t, HorizontalPodAutoscaler_fields, HorizontalPodAutoscaler_inline)
+	Library["HorizontalPodAutoscaler"] = skylark.NewBuiltin("HorizontalPodAutoscaler", createHorizontalPodAutoscaler)
+}
+
+func createHorizontalPodAutoscaler(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := HorizontalPodAutoscaler{V: &autoscaling.HorizontalPodAutoscaler{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t HorizontalPodAutoscaler) Underlying() interface{} { return t.V }
+func (t HorizontalPodAutoscaler) DeepCopy() boxed         { return HorizontalPodAutoscaler{V: t.V.DeepCopy()} }
+func (t HorizontalPodAutoscaler) Package() util.Package   { return util.Autoscaling }
+func (t HorizontalPodAutoscaler) Type() string            { return "k8s_autoscaling_HorizontalPodAutoscaler" }
+func (t HorizontalPodAutoscaler) String() string          { return t.V.String() }
+func (t HorizontalPodAutoscaler) Freeze()                 {} // TODO
+func (t HorizontalPodAutoscaler) Truth() skylark.Bool     { return skylark.True }
+func (t HorizontalPodAutoscaler) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t HorizontalPodAutoscaler) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*HorizontalPodAutoscaler)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t HorizontalPodAutoscaler) AttrNames() []string { return HorizontalPodAutoscaler_attrs }
+func (t HorizontalPodAutoscaler) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, HorizontalPodAutoscaler_fields, HorizontalPodAutoscaler_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t HorizontalPodAutoscaler) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, HorizontalPodAutoscaler_fields, HorizontalPodAutoscaler_inline)
+}
+
+type HorizontalPodAutoscalerCondition struct {
+	V *autoscaling.HorizontalPodAutoscalerCondition
+}
+
+var (
+	_ boxed = (*HorizontalPodAutoscalerCondition)(nil)
+
+	HorizontalPodAutoscalerCondition_fields = map[string]util.FieldSpec{}
+	HorizontalPodAutoscalerCondition_inline = map[string]util.FieldSpec{}
+	HorizontalPodAutoscalerCondition_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.HorizontalPodAutoscalerCondition)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.HorizontalPodAutoscalerCondition:
+			return HorizontalPodAutoscalerCondition{V: v}
+		case autoscaling.HorizontalPodAutoscalerCondition:
+			return HorizontalPodAutoscalerCondition{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	HorizontalPodAutoscalerCondition_attrs = setFieldTypes(t, HorizontalPodAutoscalerCondition_fields, HorizontalPodAutoscalerCondition_inline)
+	Library["HorizontalPodAutoscalerCondition"] = skylark.NewBuiltin("HorizontalPodAutoscalerCondition", createHorizontalPodAutoscalerCondition)
+}
+
+func createHorizontalPodAutoscalerCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := HorizontalPodAutoscalerCondition{V: &autoscaling.HorizontalPodAutoscalerCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t HorizontalPodAutoscalerCondition) Underlying() interface{} { return t.V }
+func (t HorizontalPodAutoscalerCondition) DeepCopy() boxed {
+	return HorizontalPodAutoscalerCondition{V: t.V.DeepCopy()}
+}
+func (t HorizontalPodAutoscalerCondition) Package() util.Package { return util.Autoscaling }
+func (t HorizontalPodAutoscalerCondition) Type() string {
+	return "k8s_autoscaling_HorizontalPodAutoscalerCondition"
+}
+func (t HorizontalPodAutoscalerCondition) String() string        { return t.V.String() }
+func (t HorizontalPodAutoscalerCondition) Freeze()               {} // TODO
+func (t HorizontalPodAutoscalerCondition) Truth() skylark.Bool   { return skylark.True }
+func (t HorizontalPodAutoscalerCondition) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t HorizontalPodAutoscalerCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*HorizontalPodAutoscalerCondition)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t HorizontalPodAutoscalerCondition) AttrNames() []string {
+	return HorizontalPodAutoscalerCondition_attrs
+}
+func (t HorizontalPodAutoscalerCondition) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, HorizontalPodAutoscalerCondition_fields, HorizontalPodAutoscalerCondition_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t HorizontalPodAutoscalerCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, HorizontalPodAutoscalerCondition_fields, HorizontalPodAutoscalerCondition_inline)
+}
+
+type HorizontalPodAutoscalerList struct {
+	V *autoscaling.HorizontalPodAutoscalerList
+}
+
+var (
+	_ boxed = (*HorizontalPodAutoscalerList)(nil)
+
+	HorizontalPodAutoscalerList_fields = map[string]util.FieldSpec{}
+	HorizontalPodAutoscalerList_inline = map[string]util.FieldSpec{}
+	HorizontalPodAutoscalerList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.HorizontalPodAutoscalerList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.HorizontalPodAutoscalerList:
+			return HorizontalPodAutoscalerList{V: v}
+		case autoscaling.HorizontalPodAutoscalerList:
+			return HorizontalPodAutoscalerList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	HorizontalPodAutoscalerList_attrs = setFieldTypes(t, HorizontalPodAutoscalerList_fields, HorizontalPodAutoscalerList_inline)
+	Library["HorizontalPodAutoscalerList"] = skylark.NewBuiltin("HorizontalPodAutoscalerList", createHorizontalPodAutoscalerList)
+}
+
+func createHorizontalPodAutoscalerList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := HorizontalPodAutoscalerList{V: &autoscaling.HorizontalPodAutoscalerList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t HorizontalPodAutoscalerList) Underlying() interface{} { return t.V }
+func (t HorizontalPodAutoscalerList) DeepCopy() boxed {
+	return HorizontalPodAutoscalerList{V: t.V.DeepCopy()}
+}
+func (t HorizontalPodAutoscalerList) Package() util.Package { return util.Autoscaling }
+func (t HorizontalPodAutoscalerList) Type() string {
+	return "k8s_autoscaling_HorizontalPodAutoscalerList"
+}
+func (t HorizontalPodAutoscalerList) String() string        { return t.V.String() }
+func (t HorizontalPodAutoscalerList) Freeze()               {} // TODO
+func (t HorizontalPodAutoscalerList) Truth() skylark.Bool   { return skylark.True }
+func (t HorizontalPodAutoscalerList) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t HorizontalPodAutoscalerList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*HorizontalPodAutoscalerList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t HorizontalPodAutoscalerList) AttrNames() []string { return HorizontalPodAutoscalerList_attrs }
+func (t HorizontalPodAutoscalerList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, HorizontalPodAutoscalerList_fields, HorizontalPodAutoscalerList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t HorizontalPodAutoscalerList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, HorizontalPodAutoscalerList_fields, HorizontalPodAutoscalerList_inline)
+}
+
+type HorizontalPodAutoscalerSpec struct {
+	V *autoscaling.HorizontalPodAutoscalerSpec
+}
+
+var (
+	_ boxed = (*HorizontalPodAutoscalerSpec)(nil)
+
+	HorizontalPodAutoscalerSpec_fields = map[string]util.FieldSpec{}
+	HorizontalPodAutoscalerSpec_inline = map[string]util.FieldSpec{}
+	HorizontalPodAutoscalerSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.HorizontalPodAutoscalerSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.HorizontalPodAutoscalerSpec:
+			return HorizontalPodAutoscalerSpec{V: v}
+		case autoscaling.HorizontalPodAutoscalerSpec:
+			return HorizontalPodAutoscalerSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	HorizontalPodAutoscalerSpec_attrs = setFieldTypes(t, HorizontalPodAutoscalerSpec_fields, HorizontalPodAutoscalerSpec_inline)
+	Library["HorizontalPodAutoscalerSpec"] = skylark.NewBuiltin("HorizontalPodAutoscalerSpec", createHorizontalPodAutoscalerSpec)
+}
+
+func createHorizontalPodAutoscalerSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := HorizontalPodAutoscalerSpec{V: &autoscaling.HorizontalPodAutoscalerSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t HorizontalPodAutoscalerSpec) Underlying() interface{} { return t.V }
+func (t HorizontalPodAutoscalerSpec) DeepCopy() boxed {
+	return HorizontalPodAutoscalerSpec{V: t.V.DeepCopy()}
+}
+func (t HorizontalPodAutoscalerSpec) Package() util.Package { return util.Autoscaling }
+func (t HorizontalPodAutoscalerSpec) Type() string {
+	return "k8s_autoscaling_HorizontalPodAutoscalerSpec"
+}
+func (t HorizontalPodAutoscalerSpec) String() string        { return t.V.String() }
+func (t HorizontalPodAutoscalerSpec) Freeze()               {} // TODO
+func (t HorizontalPodAutoscalerSpec) Truth() skylark.Bool   { return skylark.True }
+func (t HorizontalPodAutoscalerSpec) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t HorizontalPodAutoscalerSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*HorizontalPodAutoscalerSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t HorizontalPodAutoscalerSpec) AttrNames() []string { return HorizontalPodAutoscalerSpec_attrs }
+func (t HorizontalPodAutoscalerSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, HorizontalPodAutoscalerSpec_fields, HorizontalPodAutoscalerSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t HorizontalPodAutoscalerSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, HorizontalPodAutoscalerSpec_fields, HorizontalPodAutoscalerSpec_inline)
+}
+
+type HorizontalPodAutoscalerStatus struct {
+	V *autoscaling.HorizontalPodAutoscalerStatus
+}
+
+var (
+	_ boxed = (*HorizontalPodAutoscalerStatus)(nil)
+
+	HorizontalPodAutoscalerStatus_fields = map[string]util.FieldSpec{}
+	HorizontalPodAutoscalerStatus_inline = map[string]util.FieldSpec{}
+	HorizontalPodAutoscalerStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.HorizontalPodAutoscalerStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.HorizontalPodAutoscalerStatus:
+			return HorizontalPodAutoscalerStatus{V: v}
+		case autoscaling.HorizontalPodAutoscalerStatus:
+			return HorizontalPodAutoscalerStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	HorizontalPodAutoscalerStatus_attrs = setFieldTypes(t, HorizontalPodAutoscalerStatus_fields, HorizontalPodAutoscalerStatus_inline)
+	Library["HorizontalPodAutoscalerStatus"] = skylark.NewBuiltin("HorizontalPodAutoscalerStatus", createHorizontalPodAutoscalerStatus)
+}
+
+func createHorizontalPodAutoscalerStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := HorizontalPodAutoscalerStatus{V: &autoscaling.HorizontalPodAutoscalerStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t HorizontalPodAutoscalerStatus) Underlying() interface{} { return t.V }
+func (t HorizontalPodAutoscalerStatus) DeepCopy() boxed {
+	return HorizontalPodAutoscalerStatus{V: t.V.DeepCopy()}
+}
+func (t HorizontalPodAutoscalerStatus) Package() util.Package { return util.Autoscaling }
+func (t HorizontalPodAutoscalerStatus) Type() string {
+	return "k8s_autoscaling_HorizontalPodAutoscalerStatus"
+}
+func (t HorizontalPodAutoscalerStatus) String() string        { return t.V.String() }
+func (t HorizontalPodAutoscalerStatus) Freeze()               {} // TODO
+func (t HorizontalPodAutoscalerStatus) Truth() skylark.Bool   { return skylark.True }
+func (t HorizontalPodAutoscalerStatus) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t HorizontalPodAutoscalerStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*HorizontalPodAutoscalerStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t HorizontalPodAutoscalerStatus) AttrNames() []string {
+	return HorizontalPodAutoscalerStatus_attrs
+}
+func (t HorizontalPodAutoscalerStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, HorizontalPodAutoscalerStatus_fields, HorizontalPodAutoscalerStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t HorizontalPodAutoscalerStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, HorizontalPodAutoscalerStatus_fields, HorizontalPodAutoscalerStatus_inline)
+}
+
+type MetricSpec struct {
+	V *autoscaling.MetricSpec
+}
+
+var (
+	_ boxed = (*MetricSpec)(nil)
+
+	MetricSpec_fields = map[string]util.FieldSpec{}
+	MetricSpec_inline = map[string]util.FieldSpec{}
+	MetricSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.MetricSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.MetricSpec:
+			return MetricSpec{V: v}
+		case autoscaling.MetricSpec:
+			return MetricSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	MetricSpec_attrs = setFieldTypes(t, MetricSpec_fields, MetricSpec_inline)
+	Library["MetricSpec"] = skylark.NewBuiltin("MetricSpec", createMetricSpec)
+}
+
+func createMetricSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := MetricSpec{V: &autoscaling.MetricSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t MetricSpec) Underlying() interface{} { return t.V }
+func (t MetricSpec) DeepCopy() boxed         { return MetricSpec{V: t.V.DeepCopy()} }
+func (t MetricSpec) Package() util.Package   { return util.Autoscaling }
+func (t MetricSpec) Type() string            { return "k8s_autoscaling_MetricSpec" }
+func (t MetricSpec) String() string          { return t.V.String() }
+func (t MetricSpec) Freeze()                 {} // TODO
+func (t MetricSpec) Truth() skylark.Bool     { return skylark.True }
+func (t MetricSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t MetricSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*MetricSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t MetricSpec) AttrNames() []string { return MetricSpec_attrs }
+func (t MetricSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, MetricSpec_fields, MetricSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t MetricSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, MetricSpec_fields, MetricSpec_inline)
+}
+
+type MetricStatus struct {
+	V *autoscaling.MetricStatus
+}
+
+var (
+	_ boxed = (*MetricStatus)(nil)
+
+	MetricStatus_fields = map[string]util.FieldSpec{}
+	MetricStatus_inline = map[string]util.FieldSpec{}
+	MetricStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.MetricStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.MetricStatus:
+			return MetricStatus{V: v}
+		case autoscaling.MetricStatus:
+			return MetricStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	MetricStatus_attrs = setFieldTypes(t, MetricStatus_fields, MetricStatus_inline)
+	Library["MetricStatus"] = skylark.NewBuiltin("MetricStatus", createMetricStatus)
+}
+
+func createMetricStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := MetricStatus{V: &autoscaling.MetricStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t MetricStatus) Underlying() interface{} { return t.V }
+func (t MetricStatus) DeepCopy() boxed         { return MetricStatus{V: t.V.DeepCopy()} }
+func (t MetricStatus) Package() util.Package   { return util.Autoscaling }
+func (t MetricStatus) Type() string            { return "k8s_autoscaling_MetricStatus" }
+func (t MetricStatus) String() string          { return t.V.String() }
+func (t MetricStatus) Freeze()                 {} // TODO
+func (t MetricStatus) Truth() skylark.Bool     { return skylark.True }
+func (t MetricStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t MetricStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*MetricStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t MetricStatus) AttrNames() []string { return MetricStatus_attrs }
+func (t MetricStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, MetricStatus_fields, MetricStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t MetricStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, MetricStatus_fields, MetricStatus_inline)
+}
+
+type ObjectMetricSource struct {
+	V *autoscaling.ObjectMetricSource
+}
+
+var (
+	_ boxed = (*ObjectMetricSource)(nil)
+
+	ObjectMetricSource_fields = map[string]util.FieldSpec{}
+	ObjectMetricSource_inline = map[string]util.FieldSpec{}
+	ObjectMetricSource_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.ObjectMetricSource)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.ObjectMetricSource:
+			return ObjectMetricSource{V: v}
+		case autoscaling.ObjectMetricSource:
+			return ObjectMetricSource{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ObjectMetricSource_attrs = setFieldTypes(t, ObjectMetricSource_fields, ObjectMetricSource_inline)
+	Library["ObjectMetricSource"] = skylark.NewBuiltin("ObjectMetricSource", createObjectMetricSource)
+}
+
+func createObjectMetricSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ObjectMetricSource{V: &autoscaling.ObjectMetricSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ObjectMetricSource) Underlying() interface{} { return t.V }
+func (t ObjectMetricSource) DeepCopy() boxed         { return ObjectMetricSource{V: t.V.DeepCopy()} }
+func (t ObjectMetricSource) Package() util.Package   { return util.Autoscaling }
+func (t ObjectMetricSource) Type() string            { return "k8s_autoscaling_ObjectMetricSource" }
+func (t ObjectMetricSource) String() string          { return t.V.String() }
+func (t ObjectMetricSource) Freeze()                 {} // TODO
+func (t ObjectMetricSource) Truth() skylark.Bool     { return skylark.True }
+func (t ObjectMetricSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ObjectMetricSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ObjectMetricSource)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ObjectMetricSource) AttrNames() []string { return ObjectMetricSource_attrs }
+func (t ObjectMetricSource) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ObjectMetricSource_fields, ObjectMetricSource_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ObjectMetricSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ObjectMetricSource_fields, ObjectMetricSource_inline)
+}
+
+type ObjectMetricStatus struct {
+	V *autoscaling.ObjectMetricStatus
+}
+
+var (
+	_ boxed = (*ObjectMetricStatus)(nil)
+
+	ObjectMetricStatus_fields = map[string]util.FieldSpec{}
+	ObjectMetricStatus_inline = map[string]util.FieldSpec{}
+	ObjectMetricStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.ObjectMetricStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.ObjectMetricStatus:
+			return ObjectMetricStatus{V: v}
+		case autoscaling.ObjectMetricStatus:
+			return ObjectMetricStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ObjectMetricStatus_attrs = setFieldTypes(t, ObjectMetricStatus_fields, ObjectMetricStatus_inline)
+	Library["ObjectMetricStatus"] = skylark.NewBuiltin("ObjectMetricStatus", createObjectMetricStatus)
+}
+
+func createObjectMetricStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ObjectMetricStatus{V: &autoscaling.ObjectMetricStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ObjectMetricStatus) Underlying() interface{} { return t.V }
+func (t ObjectMetricStatus) DeepCopy() boxed         { return ObjectMetricStatus{V: t.V.DeepCopy()} }
+func (t ObjectMetricStatus) Package() util.Package   { return util.Autoscaling }
+func (t ObjectMetricStatus) Type() string            { return "k8s_autoscaling_ObjectMetricStatus" }
+func (t ObjectMetricStatus) String() string          { return t.V.String() }
+func (t ObjectMetricStatus) Freeze()                 {} // TODO
+func (t ObjectMetricStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ObjectMetricStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ObjectMetricStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ObjectMetricStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ObjectMetricStatus) AttrNames() []string { return ObjectMetricStatus_attrs }
+func (t ObjectMetricStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ObjectMetricStatus_fields, ObjectMetricStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ObjectMetricStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ObjectMetricStatus_fields, ObjectMetricStatus_inline)
+}
+
+type PodsMetricSource struct {
+	V *autoscaling.PodsMetricSource
+}
+
+var (
+	_ boxed = (*PodsMetricSource)(nil)
+
+	PodsMetricSource_fields = map[string]util.FieldSpec{}
+	PodsMetricSource_inline = map[string]util.FieldSpec{}
+	PodsMetricSource_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.PodsMetricSource)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.PodsMetricSource:
+			return PodsMetricSource{V: v}
+		case autoscaling.PodsMetricSource:
+			return PodsMetricSource{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	PodsMetricSource_attrs = setFieldTypes(t, PodsMetricSource_fields, PodsMetricSource_inline)
+	Library["PodsMetricSource"] = skylark.NewBuiltin("PodsMetricSource", createPodsMetricSource)
+}
+
+func createPodsMetricSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := PodsMetricSource{V: &autoscaling.PodsMetricSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t PodsMetricSource) Underlying() interface{} { return t.V }
+func (t PodsMetricSource) DeepCopy() boxed         { return PodsMetricSource{V: t.V.DeepCopy()} }
+func (t PodsMetricSource) Package() util.Package   { return util.Autoscaling }
+func (t PodsMetricSource) Type() string            { return "k8s_autoscaling_PodsMetricSource" }
+func (t PodsMetricSource) String() string          { return t.V.String() }
+func (t PodsMetricSource) Freeze()                 {} // TODO
+func (t PodsMetricSource) Truth() skylark.Bool     { return skylark.True }
+func (t PodsMetricSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t PodsMetricSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*PodsMetricSource)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t PodsMetricSource) AttrNames() []string { return PodsMetricSource_attrs }
+func (t PodsMetricSource) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodsMetricSource_fields, PodsMetricSource_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodsMetricSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodsMetricSource_fields, PodsMetricSource_inline)
+}
+
+type PodsMetricStatus struct {
+	V *autoscaling.PodsMetricStatus
+}
+
+var (
+	_ boxed = (*PodsMetricStatus)(nil)
+
+	PodsMetricStatus_fields = map[string]util.FieldSpec{}
+	PodsMetricStatus_inline = map[string]util.FieldSpec{}
+	PodsMetricStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.PodsMetricStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.PodsMetricStatus:
+			return PodsMetricStatus{V: v}
+		case autoscaling.PodsMetricStatus:
+			return PodsMetricStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	PodsMetricStatus_attrs = setFieldTypes(t, PodsMetricStatus_fields, PodsMetricStatus_inline)
+	Library["PodsMetricStatus"] = skylark.NewBuiltin("PodsMetricStatus", createPodsMetricStatus)
+}
+
+func createPodsMetricStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := PodsMetricStatus{V: &autoscaling.PodsMetricStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t PodsMetricStatus) Underlying() interface{} { return t.V }
+func (t PodsMetricStatus) DeepCopy() boxed         { return PodsMetricStatus{V: t.V.DeepCopy()} }
+func (t PodsMetricStatus) Package() util.Package   { return util.Autoscaling }
+func (t PodsMetricStatus) Type() string            { return "k8s_autoscaling_PodsMetricStatus" }
+func (t PodsMetricStatus) String() string          { return t.V.String() }
+func (t PodsMetricStatus) Freeze()                 {} // TODO
+func (t PodsMetricStatus) Truth() skylark.Bool     { return skylark.True }
+func (t PodsMetricStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t PodsMetricStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*PodsMetricStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t PodsMetricStatus) AttrNames() []string { return PodsMetricStatus_attrs }
+func (t PodsMetricStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PodsMetricStatus_fields, PodsMetricStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PodsMetricStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PodsMetricStatus_fields, PodsMetricStatus_inline)
+}
+
+type ResourceMetricSource struct {
+	V *autoscaling.ResourceMetricSource
+}
+
+var (
+	_ boxed = (*ResourceMetricSource)(nil)
+
+	ResourceMetricSource_fields = map[string]util.FieldSpec{}
+	ResourceMetricSource_inline = map[string]util.FieldSpec{}
+	ResourceMetricSource_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.ResourceMetricSource)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.ResourceMetricSource:
+			return ResourceMetricSource{V: v}
+		case autoscaling.ResourceMetricSource:
+			return ResourceMetricSource{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ResourceMetricSource_attrs = setFieldTypes(t, ResourceMetricSource_fields, ResourceMetricSource_inline)
+	Library["ResourceMetricSource"] = skylark.NewBuiltin("ResourceMetricSource", createResourceMetricSource)
+}
+
+func createResourceMetricSource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ResourceMetricSource{V: &autoscaling.ResourceMetricSource{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ResourceMetricSource) Underlying() interface{} { return t.V }
+func (t ResourceMetricSource) DeepCopy() boxed         { return ResourceMetricSource{V: t.V.DeepCopy()} }
+func (t ResourceMetricSource) Package() util.Package   { return util.Autoscaling }
+func (t ResourceMetricSource) Type() string            { return "k8s_autoscaling_ResourceMetricSource" }
+func (t ResourceMetricSource) String() string          { return t.V.String() }
+func (t ResourceMetricSource) Freeze()                 {} // TODO
+func (t ResourceMetricSource) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceMetricSource) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ResourceMetricSource) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ResourceMetricSource)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ResourceMetricSource) AttrNames() []string { return ResourceMetricSource_attrs }
+func (t ResourceMetricSource) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceMetricSource_fields, ResourceMetricSource_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceMetricSource) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceMetricSource_fields, ResourceMetricSource_inline)
+}
+
+type ResourceMetricStatus struct {
+	V *autoscaling.ResourceMetricStatus
+}
+
+var (
+	_ boxed = (*ResourceMetricStatus)(nil)
+
+	ResourceMetricStatus_fields = map[string]util.FieldSpec{}
+	ResourceMetricStatus_inline = map[string]util.FieldSpec{}
+	ResourceMetricStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.ResourceMetricStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.ResourceMetricStatus:
+			return ResourceMetricStatus{V: v}
+		case autoscaling.ResourceMetricStatus:
+			return ResourceMetricStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ResourceMetricStatus_attrs = setFieldTypes(t, ResourceMetricStatus_fields, ResourceMetricStatus_inline)
+	Library["ResourceMetricStatus"] = skylark.NewBuiltin("ResourceMetricStatus", createResourceMetricStatus)
+}
+
+func createResourceMetricStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ResourceMetricStatus{V: &autoscaling.ResourceMetricStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ResourceMetricStatus) Underlying() interface{} { return t.V }
+func (t ResourceMetricStatus) DeepCopy() boxed         { return ResourceMetricStatus{V: t.V.DeepCopy()} }
+func (t ResourceMetricStatus) Package() util.Package   { return util.Autoscaling }
+func (t ResourceMetricStatus) Type() string            { return "k8s_autoscaling_ResourceMetricStatus" }
+func (t ResourceMetricStatus) String() string          { return t.V.String() }
+func (t ResourceMetricStatus) Freeze()                 {} // TODO
+func (t ResourceMetricStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceMetricStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ResourceMetricStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ResourceMetricStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ResourceMetricStatus) AttrNames() []string { return ResourceMetricStatus_attrs }
+func (t ResourceMetricStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceMetricStatus_fields, ResourceMetricStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceMetricStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceMetricStatus_fields, ResourceMetricStatus_inline)
+}
+
+type Scale struct {
+	V *autoscaling.Scale
+}
+
+var (
+	_ boxed = (*Scale)(nil)
+
+	Scale_fields = map[string]util.FieldSpec{}
+	Scale_inline = map[string]util.FieldSpec{}
+	Scale_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.Scale)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.Scale:
+			return Scale{V: v}
+		case autoscaling.Scale:
+			return Scale{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	Scale_attrs = setFieldTypes(t, Scale_fields, Scale_inline)
+	Library["Scale"] = skylark.NewBuiltin("Scale", createScale)
+}
+
+func createScale(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := Scale{V: &autoscaling.Scale{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t Scale) Underlying() interface{} { return t.V }
+func (t Scale) DeepCopy() boxed         { return Scale{V: t.V.DeepCopy()} }
+func (t Scale) Package() util.Package   { return util.Autoscaling }
+func (t Scale) Type() string            { return "k8s_autoscaling_Scale" }
+func (t Scale) String() string          { return t.V.String() }
+func (t Scale) Freeze()                 {} // TODO
+func (t Scale) Truth() skylark.Bool     { return skylark.True }
+func (t Scale) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t Scale) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*Scale)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t Scale) AttrNames() []string { return Scale_attrs }
+func (t Scale) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Scale_fields, Scale_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Scale) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Scale_fields, Scale_inline)
+}
+
+type ScaleSpec struct {
+	V *autoscaling.ScaleSpec
+}
+
+var (
+	_ boxed = (*ScaleSpec)(nil)
+
+	ScaleSpec_fields = map[string]util.FieldSpec{}
+	ScaleSpec_inline = map[string]util.FieldSpec{}
+	ScaleSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.ScaleSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.ScaleSpec:
+			return ScaleSpec{V: v}
+		case autoscaling.ScaleSpec:
+			return ScaleSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ScaleSpec_attrs = setFieldTypes(t, ScaleSpec_fields, ScaleSpec_inline)
+	Library["ScaleSpec"] = skylark.NewBuiltin("ScaleSpec", createScaleSpec)
+}
+
+func createScaleSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ScaleSpec{V: &autoscaling.ScaleSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ScaleSpec) Underlying() interface{} { return t.V }
+func (t ScaleSpec) DeepCopy() boxed         { return ScaleSpec{V: t.V.DeepCopy()} }
+func (t ScaleSpec) Package() util.Package   { return util.Autoscaling }
+func (t ScaleSpec) Type() string            { return "k8s_autoscaling_ScaleSpec" }
+func (t ScaleSpec) String() string          { return t.V.String() }
+func (t ScaleSpec) Freeze()                 {} // TODO
+func (t ScaleSpec) Truth() skylark.Bool     { return skylark.True }
+func (t ScaleSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ScaleSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ScaleSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ScaleSpec) AttrNames() []string { return ScaleSpec_attrs }
+func (t ScaleSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ScaleSpec_fields, ScaleSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ScaleSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ScaleSpec_fields, ScaleSpec_inline)
+}
+
+type ScaleStatus struct {
+	V *autoscaling.ScaleStatus
+}
+
+var (
+	_ boxed = (*ScaleStatus)(nil)
+
+	ScaleStatus_fields = map[string]util.FieldSpec{}
+	ScaleStatus_inline = map[string]util.FieldSpec{}
+	ScaleStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*autoscaling.ScaleStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *autoscaling.ScaleStatus:
+			return ScaleStatus{V: v}
+		case autoscaling.ScaleStatus:
+			return ScaleStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ScaleStatus_attrs = setFieldTypes(t, ScaleStatus_fields, ScaleStatus_inline)
+	Library["ScaleStatus"] = skylark.NewBuiltin("ScaleStatus", createScaleStatus)
+}
+
+func createScaleStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ScaleStatus{V: &autoscaling.ScaleStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ScaleStatus) Underlying() interface{} { return t.V }
+func (t ScaleStatus) DeepCopy() boxed         { return ScaleStatus{V: t.V.DeepCopy()} }
+func (t ScaleStatus) Package() util.Package   { return util.Autoscaling }
+func (t ScaleStatus) Type() string            { return "k8s_autoscaling_ScaleStatus" }
+func (t ScaleStatus) String() string          { return t.V.String() }
+func (t ScaleStatus) Freeze()                 {} // TODO
+func (t ScaleStatus) Truth() skylark.Bool     { return skylark.True }
+func (t ScaleStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ScaleStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ScaleStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ScaleStatus) AttrNames() []string { return ScaleStatus_attrs }
+func (t ScaleStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ScaleStatus_fields, ScaleStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ScaleStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ScaleStatus_fields, ScaleStatus_inline)
+}
+
+type Job struct {
+	V *batch.Job
+}
+
+var (
+	_ boxed = (*Job)(nil)
+
+	Job_fields = map[string]util.FieldSpec{}
+	Job_inline = map[string]util.FieldSpec{}
+	Job_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*batch.Job)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *batch.Job:
+			return Job{V: v}
+		case batch.Job:
+			return Job{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	Job_attrs = setFieldTypes(t, Job_fields, Job_inline)
+	Library["Job"] = skylark.NewBuiltin("Job", createJob)
+}
+
+func createJob(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := Job{V: &batch.Job{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t Job) Underlying() interface{} { return t.V }
+func (t Job) DeepCopy() boxed         { return Job{V: t.V.DeepCopy()} }
+func (t Job) Package() util.Package   { return util.Batch }
+func (t Job) Type() string            { return "k8s_batch_Job" }
+func (t Job) String() string          { return t.V.String() }
+func (t Job) Freeze()                 {} // TODO
+func (t Job) Truth() skylark.Bool     { return skylark.True }
+func (t Job) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t Job) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*Job)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t Job) AttrNames() []string { return Job_attrs }
+func (t Job) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Job_fields, Job_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Job) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Job_fields, Job_inline)
+}
+
+type JobCondition struct {
+	V *batch.JobCondition
+}
+
+var (
+	_ boxed = (*JobCondition)(nil)
+
+	JobCondition_fields = map[string]util.FieldSpec{}
+	JobCondition_inline = map[string]util.FieldSpec{}
+	JobCondition_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*batch.JobCondition)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *batch.JobCondition:
+			return JobCondition{V: v}
+		case batch.JobCondition:
+			return JobCondition{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	JobCondition_attrs = setFieldTypes(t, JobCondition_fields, JobCondition_inline)
+	Library["JobCondition"] = skylark.NewBuiltin("JobCondition", createJobCondition)
+}
+
+func createJobCondition(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := JobCondition{V: &batch.JobCondition{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t JobCondition) Underlying() interface{} { return t.V }
+func (t JobCondition) DeepCopy() boxed         { return JobCondition{V: t.V.DeepCopy()} }
+func (t JobCondition) Package() util.Package   { return util.Batch }
+func (t JobCondition) Type() string            { return "k8s_batch_JobCondition" }
+func (t JobCondition) String() string          { return t.V.String() }
+func (t JobCondition) Freeze()                 {} // TODO
+func (t JobCondition) Truth() skylark.Bool     { return skylark.True }
+func (t JobCondition) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t JobCondition) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*JobCondition)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t JobCondition) AttrNames() []string { return JobCondition_attrs }
+func (t JobCondition) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, JobCondition_fields, JobCondition_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t JobCondition) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, JobCondition_fields, JobCondition_inline)
+}
+
+type JobList struct {
+	V *batch.JobList
+}
+
+var (
+	_ boxed = (*JobList)(nil)
+
+	JobList_fields = map[string]util.FieldSpec{}
+	JobList_inline = map[string]util.FieldSpec{}
+	JobList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*batch.JobList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *batch.JobList:
+			return JobList{V: v}
+		case batch.JobList:
+			return JobList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	JobList_attrs = setFieldTypes(t, JobList_fields, JobList_inline)
+	Library["JobList"] = skylark.NewBuiltin("JobList", createJobList)
+}
+
+func createJobList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := JobList{V: &batch.JobList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t JobList) Underlying() interface{} { return t.V }
+func (t JobList) DeepCopy() boxed         { return JobList{V: t.V.DeepCopy()} }
+func (t JobList) Package() util.Package   { return util.Batch }
+func (t JobList) Type() string            { return "k8s_batch_JobList" }
+func (t JobList) String() string          { return t.V.String() }
+func (t JobList) Freeze()                 {} // TODO
+func (t JobList) Truth() skylark.Bool     { return skylark.True }
+func (t JobList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t JobList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*JobList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t JobList) AttrNames() []string { return JobList_attrs }
+func (t JobList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, JobList_fields, JobList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t JobList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, JobList_fields, JobList_inline)
+}
+
+type JobSpec struct {
+	V *batch.JobSpec
+}
+
+var (
+	_ boxed = (*JobSpec)(nil)
+
+	JobSpec_fields = map[string]util.FieldSpec{}
+	JobSpec_inline = map[string]util.FieldSpec{}
+	JobSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*batch.JobSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *batch.JobSpec:
+			return JobSpec{V: v}
+		case batch.JobSpec:
+			return JobSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	JobSpec_attrs = setFieldTypes(t, JobSpec_fields, JobSpec_inline)
+	Library["JobSpec"] = skylark.NewBuiltin("JobSpec", createJobSpec)
+}
+
+func createJobSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := JobSpec{V: &batch.JobSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t JobSpec) Underlying() interface{} { return t.V }
+func (t JobSpec) DeepCopy() boxed         { return JobSpec{V: t.V.DeepCopy()} }
+func (t JobSpec) Package() util.Package   { return util.Batch }
+func (t JobSpec) Type() string            { return "k8s_batch_JobSpec" }
+func (t JobSpec) String() string          { return t.V.String() }
+func (t JobSpec) Freeze()                 {} // TODO
+func (t JobSpec) Truth() skylark.Bool     { return skylark.True }
+func (t JobSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t JobSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*JobSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t JobSpec) AttrNames() []string { return JobSpec_attrs }
+func (t JobSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, JobSpec_fields, JobSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t JobSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, JobSpec_fields, JobSpec_inline)
+}
+
+type JobStatus struct {
+	V *batch.JobStatus
+}
+
+var (
+	_ boxed = (*JobStatus)(nil)
+
+	JobStatus_fields = map[string]util.FieldSpec{}
+	JobStatus_inline = map[string]util.FieldSpec{}
+	JobStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*batch.JobStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *batch.JobStatus:
+			return JobStatus{V: v}
+		case batch.JobStatus:
+			return JobStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	JobStatus_attrs = setFieldTypes(t, JobStatus_fields, JobStatus_inline)
+	Library["JobStatus"] = skylark.NewBuiltin("JobStatus", createJobStatus)
+}
+
+func createJobStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := JobStatus{V: &batch.JobStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t JobStatus) Underlying() interface{} { return t.V }
+func (t JobStatus) DeepCopy() boxed         { return JobStatus{V: t.V.DeepCopy()} }
+func (t JobStatus) Package() util.Package   { return util.Batch }
+func (t JobStatus) Type() string            { return "k8s_batch_JobStatus" }
+func (t JobStatus) String() string          { return t.V.String() }
+func (t JobStatus) Freeze()                 {} // TODO
+func (t JobStatus) Truth() skylark.Bool     { return skylark.True }
+func (t JobStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t JobStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*JobStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t JobStatus) AttrNames() []string { return JobStatus_attrs }
+func (t JobStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, JobStatus_fields, JobStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t JobStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, JobStatus_fields, JobStatus_inline)
+}
+
+type BoundObjectReference struct {
+	V *authentication.BoundObjectReference
+}
+
+var (
+	_ boxed = (*BoundObjectReference)(nil)
+
+	BoundObjectReference_fields = map[string]util.FieldSpec{}
+	BoundObjectReference_inline = map[string]util.FieldSpec{}
+	BoundObjectReference_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authentication.BoundObjectReference)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authentication.BoundObjectReference:
+			return BoundObjectReference{V: v}
+		case authentication.BoundObjectReference:
+			return BoundObjectReference{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	BoundObjectReference_attrs = setFieldTypes(t, BoundObjectReference_fields, BoundObjectReference_inline)
+	Library["BoundObjectReference"] = skylark.NewBuiltin("BoundObjectReference", createBoundObjectReference)
+}
+
+func createBoundObjectReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := BoundObjectReference{V: &authentication.BoundObjectReference{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t BoundObjectReference) Underlying() interface{} { return t.V }
+func (t BoundObjectReference) DeepCopy() boxed         { return BoundObjectReference{V: t.V.DeepCopy()} }
+func (t BoundObjectReference) Package() util.Package   { return util.Authentication }
+func (t BoundObjectReference) Type() string            { return "k8s_authentication_BoundObjectReference" }
+func (t BoundObjectReference) String() string          { return t.V.String() }
+func (t BoundObjectReference) Freeze()                 {} // TODO
+func (t BoundObjectReference) Truth() skylark.Bool     { return skylark.True }
+func (t BoundObjectReference) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t BoundObjectReference) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*BoundObjectReference)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t BoundObjectReference) AttrNames() []string { return BoundObjectReference_attrs }
+func (t BoundObjectReference) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, BoundObjectReference_fields, BoundObjectReference_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t BoundObjectReference) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, BoundObjectReference_fields, BoundObjectReference_inline)
+}
+
+type TokenRequest struct {
+	V *authentication.TokenRequest
+}
+
+var (
+	_ boxed = (*TokenRequest)(nil)
+
+	TokenRequest_fields = map[string]util.FieldSpec{}
+	TokenRequest_inline = map[string]util.FieldSpec{}
+	TokenRequest_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authentication.TokenRequest)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authentication.TokenRequest:
+			return TokenRequest{V: v}
+		case authentication.TokenRequest:
+			return TokenRequest{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	TokenRequest_attrs = setFieldTypes(t, TokenRequest_fields, TokenRequest_inline)
+	Library["TokenRequest"] = skylark.NewBuiltin("TokenRequest", createTokenRequest)
+}
+
+func createTokenRequest(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := TokenRequest{V: &authentication.TokenRequest{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t TokenRequest) Underlying() interface{} { return t.V }
+func (t TokenRequest) DeepCopy() boxed         { return TokenRequest{V: t.V.DeepCopy()} }
+func (t TokenRequest) Package() util.Package   { return util.Authentication }
+func (t TokenRequest) Type() string            { return "k8s_authentication_TokenRequest" }
+func (t TokenRequest) String() string          { return t.V.String() }
+func (t TokenRequest) Freeze()                 {} // TODO
+func (t TokenRequest) Truth() skylark.Bool     { return skylark.True }
+func (t TokenRequest) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t TokenRequest) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*TokenRequest)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t TokenRequest) AttrNames() []string { return TokenRequest_attrs }
+func (t TokenRequest) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TokenRequest_fields, TokenRequest_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TokenRequest) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TokenRequest_fields, TokenRequest_inline)
+}
+
+type TokenRequestSpec struct {
+	V *authentication.TokenRequestSpec
+}
+
+var (
+	_ boxed = (*TokenRequestSpec)(nil)
+
+	TokenRequestSpec_fields = map[string]util.FieldSpec{}
+	TokenRequestSpec_inline = map[string]util.FieldSpec{}
+	TokenRequestSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authentication.TokenRequestSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authentication.TokenRequestSpec:
+			return TokenRequestSpec{V: v}
+		case authentication.TokenRequestSpec:
+			return TokenRequestSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	TokenRequestSpec_attrs = setFieldTypes(t, TokenRequestSpec_fields, TokenRequestSpec_inline)
+	Library["TokenRequestSpec"] = skylark.NewBuiltin("TokenRequestSpec", createTokenRequestSpec)
+}
+
+func createTokenRequestSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := TokenRequestSpec{V: &authentication.TokenRequestSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t TokenRequestSpec) Underlying() interface{} { return t.V }
+func (t TokenRequestSpec) DeepCopy() boxed         { return TokenRequestSpec{V: t.V.DeepCopy()} }
+func (t TokenRequestSpec) Package() util.Package   { return util.Authentication }
+func (t TokenRequestSpec) Type() string            { return "k8s_authentication_TokenRequestSpec" }
+func (t TokenRequestSpec) String() string          { return t.V.String() }
+func (t TokenRequestSpec) Freeze()                 {} // TODO
+func (t TokenRequestSpec) Truth() skylark.Bool     { return skylark.True }
+func (t TokenRequestSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t TokenRequestSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*TokenRequestSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t TokenRequestSpec) AttrNames() []string { return TokenRequestSpec_attrs }
+func (t TokenRequestSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TokenRequestSpec_fields, TokenRequestSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TokenRequestSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TokenRequestSpec_fields, TokenRequestSpec_inline)
+}
+
+type TokenRequestStatus struct {
+	V *authentication.TokenRequestStatus
+}
+
+var (
+	_ boxed = (*TokenRequestStatus)(nil)
+
+	TokenRequestStatus_fields = map[string]util.FieldSpec{}
+	TokenRequestStatus_inline = map[string]util.FieldSpec{}
+	TokenRequestStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authentication.TokenRequestStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authentication.TokenRequestStatus:
+			return TokenRequestStatus{V: v}
+		case authentication.TokenRequestStatus:
+			return TokenRequestStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	TokenRequestStatus_attrs = setFieldTypes(t, TokenRequestStatus_fields, TokenRequestStatus_inline)
+	Library["TokenRequestStatus"] = skylark.NewBuiltin("TokenRequestStatus", createTokenRequestStatus)
+}
+
+func createTokenRequestStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := TokenRequestStatus{V: &authentication.TokenRequestStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t TokenRequestStatus) Underlying() interface{} { return t.V }
+func (t TokenRequestStatus) DeepCopy() boxed         { return TokenRequestStatus{V: t.V.DeepCopy()} }
+func (t TokenRequestStatus) Package() util.Package   { return util.Authentication }
+func (t TokenRequestStatus) Type() string            { return "k8s_authentication_TokenRequestStatus" }
+func (t TokenRequestStatus) String() string          { return t.V.String() }
+func (t TokenRequestStatus) Freeze()                 {} // TODO
+func (t TokenRequestStatus) Truth() skylark.Bool     { return skylark.True }
+func (t TokenRequestStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t TokenRequestStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*TokenRequestStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t TokenRequestStatus) AttrNames() []string { return TokenRequestStatus_attrs }
+func (t TokenRequestStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TokenRequestStatus_fields, TokenRequestStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TokenRequestStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TokenRequestStatus_fields, TokenRequestStatus_inline)
+}
+
+type TokenReview struct {
+	V *authentication.TokenReview
+}
+
+var (
+	_ boxed = (*TokenReview)(nil)
+
+	TokenReview_fields = map[string]util.FieldSpec{}
+	TokenReview_inline = map[string]util.FieldSpec{}
+	TokenReview_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authentication.TokenReview)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authentication.TokenReview:
+			return TokenReview{V: v}
+		case authentication.TokenReview:
+			return TokenReview{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	TokenReview_attrs = setFieldTypes(t, TokenReview_fields, TokenReview_inline)
+	Library["TokenReview"] = skylark.NewBuiltin("TokenReview", createTokenReview)
+}
+
+func createTokenReview(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := TokenReview{V: &authentication.TokenReview{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t TokenReview) Underlying() interface{} { return t.V }
+func (t TokenReview) DeepCopy() boxed         { return TokenReview{V: t.V.DeepCopy()} }
+func (t TokenReview) Package() util.Package   { return util.Authentication }
+func (t TokenReview) Type() string            { return "k8s_authentication_TokenReview" }
+func (t TokenReview) String() string          { return t.V.String() }
+func (t TokenReview) Freeze()                 {} // TODO
+func (t TokenReview) Truth() skylark.Bool     { return skylark.True }
+func (t TokenReview) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t TokenReview) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*TokenReview)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t TokenReview) AttrNames() []string { return TokenReview_attrs }
+func (t TokenReview) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TokenReview_fields, TokenReview_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TokenReview) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TokenReview_fields, TokenReview_inline)
+}
+
+type TokenReviewSpec struct {
+	V *authentication.TokenReviewSpec
+}
+
+var (
+	_ boxed = (*TokenReviewSpec)(nil)
+
+	TokenReviewSpec_fields = map[string]util.FieldSpec{}
+	TokenReviewSpec_inline = map[string]util.FieldSpec{}
+	TokenReviewSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authentication.TokenReviewSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authentication.TokenReviewSpec:
+			return TokenReviewSpec{V: v}
+		case authentication.TokenReviewSpec:
+			return TokenReviewSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	TokenReviewSpec_attrs = setFieldTypes(t, TokenReviewSpec_fields, TokenReviewSpec_inline)
+	Library["TokenReviewSpec"] = skylark.NewBuiltin("TokenReviewSpec", createTokenReviewSpec)
+}
+
+func createTokenReviewSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := TokenReviewSpec{V: &authentication.TokenReviewSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t TokenReviewSpec) Underlying() interface{} { return t.V }
+func (t TokenReviewSpec) DeepCopy() boxed         { return TokenReviewSpec{V: t.V.DeepCopy()} }
+func (t TokenReviewSpec) Package() util.Package   { return util.Authentication }
+func (t TokenReviewSpec) Type() string            { return "k8s_authentication_TokenReviewSpec" }
+func (t TokenReviewSpec) String() string          { return t.V.String() }
+func (t TokenReviewSpec) Freeze()                 {} // TODO
+func (t TokenReviewSpec) Truth() skylark.Bool     { return skylark.True }
+func (t TokenReviewSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t TokenReviewSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*TokenReviewSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t TokenReviewSpec) AttrNames() []string { return TokenReviewSpec_attrs }
+func (t TokenReviewSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TokenReviewSpec_fields, TokenReviewSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TokenReviewSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TokenReviewSpec_fields, TokenReviewSpec_inline)
+}
+
+type TokenReviewStatus struct {
+	V *authentication.TokenReviewStatus
+}
+
+var (
+	_ boxed = (*TokenReviewStatus)(nil)
+
+	TokenReviewStatus_fields = map[string]util.FieldSpec{}
+	TokenReviewStatus_inline = map[string]util.FieldSpec{}
+	TokenReviewStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authentication.TokenReviewStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authentication.TokenReviewStatus:
+			return TokenReviewStatus{V: v}
+		case authentication.TokenReviewStatus:
+			return TokenReviewStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	TokenReviewStatus_attrs = setFieldTypes(t, TokenReviewStatus_fields, TokenReviewStatus_inline)
+	Library["TokenReviewStatus"] = skylark.NewBuiltin("TokenReviewStatus", createTokenReviewStatus)
+}
+
+func createTokenReviewStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := TokenReviewStatus{V: &authentication.TokenReviewStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t TokenReviewStatus) Underlying() interface{} { return t.V }
+func (t TokenReviewStatus) DeepCopy() boxed         { return TokenReviewStatus{V: t.V.DeepCopy()} }
+func (t TokenReviewStatus) Package() util.Package   { return util.Authentication }
+func (t TokenReviewStatus) Type() string            { return "k8s_authentication_TokenReviewStatus" }
+func (t TokenReviewStatus) String() string          { return t.V.String() }
+func (t TokenReviewStatus) Freeze()                 {} // TODO
+func (t TokenReviewStatus) Truth() skylark.Bool     { return skylark.True }
+func (t TokenReviewStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t TokenReviewStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*TokenReviewStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t TokenReviewStatus) AttrNames() []string { return TokenReviewStatus_attrs }
+func (t TokenReviewStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TokenReviewStatus_fields, TokenReviewStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t TokenReviewStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, TokenReviewStatus_fields, TokenReviewStatus_inline)
+}
+
+type UserInfo struct {
+	V *authentication.UserInfo
+}
+
+var (
+	_ boxed = (*UserInfo)(nil)
+
+	UserInfo_fields = map[string]util.FieldSpec{}
+	UserInfo_inline = map[string]util.FieldSpec{}
+	UserInfo_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authentication.UserInfo)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authentication.UserInfo:
+			return UserInfo{V: v}
+		case authentication.UserInfo:
+			return UserInfo{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	UserInfo_attrs = setFieldTypes(t, UserInfo_fields, UserInfo_inline)
+	Library["UserInfo"] = skylark.NewBuiltin("UserInfo", createUserInfo)
+}
+
+func createUserInfo(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := UserInfo{V: &authentication.UserInfo{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t UserInfo) Underlying() interface{} { return t.V }
+func (t UserInfo) DeepCopy() boxed         { return UserInfo{V: t.V.DeepCopy()} }
+func (t UserInfo) Package() util.Package   { return util.Authentication }
+func (t UserInfo) Type() string            { return "k8s_authentication_UserInfo" }
+func (t UserInfo) String() string          { return t.V.String() }
+func (t UserInfo) Freeze()                 {} // TODO
+func (t UserInfo) Truth() skylark.Bool     { return skylark.True }
+func (t UserInfo) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t UserInfo) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*UserInfo)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t UserInfo) AttrNames() []string { return UserInfo_attrs }
+func (t UserInfo) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, UserInfo_fields, UserInfo_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t UserInfo) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, UserInfo_fields, UserInfo_inline)
+}
+
+type LocalSubjectAccessReview struct {
+	V *authorization.LocalSubjectAccessReview
+}
+
+var (
+	_ boxed = (*LocalSubjectAccessReview)(nil)
+
+	LocalSubjectAccessReview_fields = map[string]util.FieldSpec{}
+	LocalSubjectAccessReview_inline = map[string]util.FieldSpec{}
+	LocalSubjectAccessReview_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.LocalSubjectAccessReview)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.LocalSubjectAccessReview:
+			return LocalSubjectAccessReview{V: v}
+		case authorization.LocalSubjectAccessReview:
+			return LocalSubjectAccessReview{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	LocalSubjectAccessReview_attrs = setFieldTypes(t, LocalSubjectAccessReview_fields, LocalSubjectAccessReview_inline)
+	Library["LocalSubjectAccessReview"] = skylark.NewBuiltin("LocalSubjectAccessReview", createLocalSubjectAccessReview)
+}
+
+func createLocalSubjectAccessReview(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := LocalSubjectAccessReview{V: &authorization.LocalSubjectAccessReview{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t LocalSubjectAccessReview) Underlying() interface{} { return t.V }
+func (t LocalSubjectAccessReview) DeepCopy() boxed         { return LocalSubjectAccessReview{V: t.V.DeepCopy()} }
+func (t LocalSubjectAccessReview) Package() util.Package   { return util.Authorization }
+func (t LocalSubjectAccessReview) Type() string            { return "k8s_authorization_LocalSubjectAccessReview" }
+func (t LocalSubjectAccessReview) String() string          { return t.V.String() }
+func (t LocalSubjectAccessReview) Freeze()                 {} // TODO
+func (t LocalSubjectAccessReview) Truth() skylark.Bool     { return skylark.True }
+func (t LocalSubjectAccessReview) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t LocalSubjectAccessReview) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*LocalSubjectAccessReview)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t LocalSubjectAccessReview) AttrNames() []string { return LocalSubjectAccessReview_attrs }
+func (t LocalSubjectAccessReview) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LocalSubjectAccessReview_fields, LocalSubjectAccessReview_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t LocalSubjectAccessReview) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, LocalSubjectAccessReview_fields, LocalSubjectAccessReview_inline)
+}
+
+type NonResourceAttributes struct {
+	V *authorization.NonResourceAttributes
+}
+
+var (
+	_ boxed = (*NonResourceAttributes)(nil)
+
+	NonResourceAttributes_fields = map[string]util.FieldSpec{}
+	NonResourceAttributes_inline = map[string]util.FieldSpec{}
+	NonResourceAttributes_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.NonResourceAttributes)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.NonResourceAttributes:
+			return NonResourceAttributes{V: v}
+		case authorization.NonResourceAttributes:
+			return NonResourceAttributes{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	NonResourceAttributes_attrs = setFieldTypes(t, NonResourceAttributes_fields, NonResourceAttributes_inline)
+	Library["NonResourceAttributes"] = skylark.NewBuiltin("NonResourceAttributes", createNonResourceAttributes)
+}
+
+func createNonResourceAttributes(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := NonResourceAttributes{V: &authorization.NonResourceAttributes{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t NonResourceAttributes) Underlying() interface{} { return t.V }
+func (t NonResourceAttributes) DeepCopy() boxed         { return NonResourceAttributes{V: t.V.DeepCopy()} }
+func (t NonResourceAttributes) Package() util.Package   { return util.Authorization }
+func (t NonResourceAttributes) Type() string            { return "k8s_authorization_NonResourceAttributes" }
+func (t NonResourceAttributes) String() string          { return t.V.String() }
+func (t NonResourceAttributes) Freeze()                 {} // TODO
+func (t NonResourceAttributes) Truth() skylark.Bool     { return skylark.True }
+func (t NonResourceAttributes) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t NonResourceAttributes) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*NonResourceAttributes)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t NonResourceAttributes) AttrNames() []string { return NonResourceAttributes_attrs }
+func (t NonResourceAttributes) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NonResourceAttributes_fields, NonResourceAttributes_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NonResourceAttributes) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NonResourceAttributes_fields, NonResourceAttributes_inline)
+}
+
+type NonResourceRule struct {
+	V *authorization.NonResourceRule
+}
+
+var (
+	_ boxed = (*NonResourceRule)(nil)
+
+	NonResourceRule_fields = map[string]util.FieldSpec{}
+	NonResourceRule_inline = map[string]util.FieldSpec{}
+	NonResourceRule_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.NonResourceRule)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.NonResourceRule:
+			return NonResourceRule{V: v}
+		case authorization.NonResourceRule:
+			return NonResourceRule{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	NonResourceRule_attrs = setFieldTypes(t, NonResourceRule_fields, NonResourceRule_inline)
+	Library["NonResourceRule"] = skylark.NewBuiltin("NonResourceRule", createNonResourceRule)
+}
+
+func createNonResourceRule(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := NonResourceRule{V: &authorization.NonResourceRule{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t NonResourceRule) Underlying() interface{} { return t.V }
+func (t NonResourceRule) DeepCopy() boxed         { return NonResourceRule{V: t.V.DeepCopy()} }
+func (t NonResourceRule) Package() util.Package   { return util.Authorization }
+func (t NonResourceRule) Type() string            { return "k8s_authorization_NonResourceRule" }
+func (t NonResourceRule) String() string          { return t.V.String() }
+func (t NonResourceRule) Freeze()                 {} // TODO
+func (t NonResourceRule) Truth() skylark.Bool     { return skylark.True }
+func (t NonResourceRule) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t NonResourceRule) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*NonResourceRule)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t NonResourceRule) AttrNames() []string { return NonResourceRule_attrs }
+func (t NonResourceRule) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NonResourceRule_fields, NonResourceRule_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NonResourceRule) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NonResourceRule_fields, NonResourceRule_inline)
+}
+
+type ResourceAttributes struct {
+	V *authorization.ResourceAttributes
+}
+
+var (
+	_ boxed = (*ResourceAttributes)(nil)
+
+	ResourceAttributes_fields = map[string]util.FieldSpec{}
+	ResourceAttributes_inline = map[string]util.FieldSpec{}
+	ResourceAttributes_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.ResourceAttributes)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.ResourceAttributes:
+			return ResourceAttributes{V: v}
+		case authorization.ResourceAttributes:
+			return ResourceAttributes{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ResourceAttributes_attrs = setFieldTypes(t, ResourceAttributes_fields, ResourceAttributes_inline)
+	Library["ResourceAttributes"] = skylark.NewBuiltin("ResourceAttributes", createResourceAttributes)
+}
+
+func createResourceAttributes(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ResourceAttributes{V: &authorization.ResourceAttributes{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ResourceAttributes) Underlying() interface{} { return t.V }
+func (t ResourceAttributes) DeepCopy() boxed         { return ResourceAttributes{V: t.V.DeepCopy()} }
+func (t ResourceAttributes) Package() util.Package   { return util.Authorization }
+func (t ResourceAttributes) Type() string            { return "k8s_authorization_ResourceAttributes" }
+func (t ResourceAttributes) String() string          { return t.V.String() }
+func (t ResourceAttributes) Freeze()                 {} // TODO
+func (t ResourceAttributes) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceAttributes) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ResourceAttributes) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ResourceAttributes)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ResourceAttributes) AttrNames() []string { return ResourceAttributes_attrs }
+func (t ResourceAttributes) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceAttributes_fields, ResourceAttributes_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceAttributes) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceAttributes_fields, ResourceAttributes_inline)
+}
+
+type ResourceRule struct {
+	V *authorization.ResourceRule
+}
+
+var (
+	_ boxed = (*ResourceRule)(nil)
+
+	ResourceRule_fields = map[string]util.FieldSpec{}
+	ResourceRule_inline = map[string]util.FieldSpec{}
+	ResourceRule_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.ResourceRule)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.ResourceRule:
+			return ResourceRule{V: v}
+		case authorization.ResourceRule:
+			return ResourceRule{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ResourceRule_attrs = setFieldTypes(t, ResourceRule_fields, ResourceRule_inline)
+	Library["ResourceRule"] = skylark.NewBuiltin("ResourceRule", createResourceRule)
+}
+
+func createResourceRule(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ResourceRule{V: &authorization.ResourceRule{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ResourceRule) Underlying() interface{} { return t.V }
+func (t ResourceRule) DeepCopy() boxed         { return ResourceRule{V: t.V.DeepCopy()} }
+func (t ResourceRule) Package() util.Package   { return util.Authorization }
+func (t ResourceRule) Type() string            { return "k8s_authorization_ResourceRule" }
+func (t ResourceRule) String() string          { return t.V.String() }
+func (t ResourceRule) Freeze()                 {} // TODO
+func (t ResourceRule) Truth() skylark.Bool     { return skylark.True }
+func (t ResourceRule) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ResourceRule) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ResourceRule)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ResourceRule) AttrNames() []string { return ResourceRule_attrs }
+func (t ResourceRule) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ResourceRule_fields, ResourceRule_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ResourceRule) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ResourceRule_fields, ResourceRule_inline)
+}
+
+type SelfSubjectAccessReview struct {
+	V *authorization.SelfSubjectAccessReview
+}
+
+var (
+	_ boxed = (*SelfSubjectAccessReview)(nil)
+
+	SelfSubjectAccessReview_fields = map[string]util.FieldSpec{}
+	SelfSubjectAccessReview_inline = map[string]util.FieldSpec{}
+	SelfSubjectAccessReview_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.SelfSubjectAccessReview)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.SelfSubjectAccessReview:
+			return SelfSubjectAccessReview{V: v}
+		case authorization.SelfSubjectAccessReview:
+			return SelfSubjectAccessReview{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	SelfSubjectAccessReview_attrs = setFieldTypes(t, SelfSubjectAccessReview_fields, SelfSubjectAccessReview_inline)
+	Library["SelfSubjectAccessReview"] = skylark.NewBuiltin("SelfSubjectAccessReview", createSelfSubjectAccessReview)
+}
+
+func createSelfSubjectAccessReview(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := SelfSubjectAccessReview{V: &authorization.SelfSubjectAccessReview{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t SelfSubjectAccessReview) Underlying() interface{} { return t.V }
+func (t SelfSubjectAccessReview) DeepCopy() boxed         { return SelfSubjectAccessReview{V: t.V.DeepCopy()} }
+func (t SelfSubjectAccessReview) Package() util.Package   { return util.Authorization }
+func (t SelfSubjectAccessReview) Type() string            { return "k8s_authorization_SelfSubjectAccessReview" }
+func (t SelfSubjectAccessReview) String() string          { return t.V.String() }
+func (t SelfSubjectAccessReview) Freeze()                 {} // TODO
+func (t SelfSubjectAccessReview) Truth() skylark.Bool     { return skylark.True }
+func (t SelfSubjectAccessReview) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t SelfSubjectAccessReview) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*SelfSubjectAccessReview)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t SelfSubjectAccessReview) AttrNames() []string { return SelfSubjectAccessReview_attrs }
+func (t SelfSubjectAccessReview) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SelfSubjectAccessReview_fields, SelfSubjectAccessReview_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SelfSubjectAccessReview) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SelfSubjectAccessReview_fields, SelfSubjectAccessReview_inline)
+}
+
+type SelfSubjectAccessReviewSpec struct {
+	V *authorization.SelfSubjectAccessReviewSpec
+}
+
+var (
+	_ boxed = (*SelfSubjectAccessReviewSpec)(nil)
+
+	SelfSubjectAccessReviewSpec_fields = map[string]util.FieldSpec{}
+	SelfSubjectAccessReviewSpec_inline = map[string]util.FieldSpec{}
+	SelfSubjectAccessReviewSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.SelfSubjectAccessReviewSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.SelfSubjectAccessReviewSpec:
+			return SelfSubjectAccessReviewSpec{V: v}
+		case authorization.SelfSubjectAccessReviewSpec:
+			return SelfSubjectAccessReviewSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	SelfSubjectAccessReviewSpec_attrs = setFieldTypes(t, SelfSubjectAccessReviewSpec_fields, SelfSubjectAccessReviewSpec_inline)
+	Library["SelfSubjectAccessReviewSpec"] = skylark.NewBuiltin("SelfSubjectAccessReviewSpec", createSelfSubjectAccessReviewSpec)
+}
+
+func createSelfSubjectAccessReviewSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := SelfSubjectAccessReviewSpec{V: &authorization.SelfSubjectAccessReviewSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t SelfSubjectAccessReviewSpec) Underlying() interface{} { return t.V }
+func (t SelfSubjectAccessReviewSpec) DeepCopy() boxed {
+	return SelfSubjectAccessReviewSpec{V: t.V.DeepCopy()}
+}
+func (t SelfSubjectAccessReviewSpec) Package() util.Package { return util.Authorization }
+func (t SelfSubjectAccessReviewSpec) Type() string {
+	return "k8s_authorization_SelfSubjectAccessReviewSpec"
+}
+func (t SelfSubjectAccessReviewSpec) String() string        { return t.V.String() }
+func (t SelfSubjectAccessReviewSpec) Freeze()               {} // TODO
+func (t SelfSubjectAccessReviewSpec) Truth() skylark.Bool   { return skylark.True }
+func (t SelfSubjectAccessReviewSpec) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t SelfSubjectAccessReviewSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*SelfSubjectAccessReviewSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t SelfSubjectAccessReviewSpec) AttrNames() []string { return SelfSubjectAccessReviewSpec_attrs }
+func (t SelfSubjectAccessReviewSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SelfSubjectAccessReviewSpec_fields, SelfSubjectAccessReviewSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SelfSubjectAccessReviewSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SelfSubjectAccessReviewSpec_fields, SelfSubjectAccessReviewSpec_inline)
+}
+
+type SelfSubjectRulesReview struct {
+	V *authorization.SelfSubjectRulesReview
+}
+
+var (
+	_ boxed = (*SelfSubjectRulesReview)(nil)
+
+	SelfSubjectRulesReview_fields = map[string]util.FieldSpec{}
+	SelfSubjectRulesReview_inline = map[string]util.FieldSpec{}
+	SelfSubjectRulesReview_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.SelfSubjectRulesReview)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.SelfSubjectRulesReview:
+			return SelfSubjectRulesReview{V: v}
+		case authorization.SelfSubjectRulesReview:
+			return SelfSubjectRulesReview{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	SelfSubjectRulesReview_attrs = setFieldTypes(t, SelfSubjectRulesReview_fields, SelfSubjectRulesReview_inline)
+	Library["SelfSubjectRulesReview"] = skylark.NewBuiltin("SelfSubjectRulesReview", createSelfSubjectRulesReview)
+}
+
+func createSelfSubjectRulesReview(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := SelfSubjectRulesReview{V: &authorization.SelfSubjectRulesReview{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t SelfSubjectRulesReview) Underlying() interface{} { return t.V }
+func (t SelfSubjectRulesReview) DeepCopy() boxed         { return SelfSubjectRulesReview{V: t.V.DeepCopy()} }
+func (t SelfSubjectRulesReview) Package() util.Package   { return util.Authorization }
+func (t SelfSubjectRulesReview) Type() string            { return "k8s_authorization_SelfSubjectRulesReview" }
+func (t SelfSubjectRulesReview) String() string          { return t.V.String() }
+func (t SelfSubjectRulesReview) Freeze()                 {} // TODO
+func (t SelfSubjectRulesReview) Truth() skylark.Bool     { return skylark.True }
+func (t SelfSubjectRulesReview) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t SelfSubjectRulesReview) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*SelfSubjectRulesReview)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t SelfSubjectRulesReview) AttrNames() []string { return SelfSubjectRulesReview_attrs }
+func (t SelfSubjectRulesReview) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SelfSubjectRulesReview_fields, SelfSubjectRulesReview_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SelfSubjectRulesReview) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SelfSubjectRulesReview_fields, SelfSubjectRulesReview_inline)
+}
+
+type SelfSubjectRulesReviewSpec struct {
+	V *authorization.SelfSubjectRulesReviewSpec
+}
+
+var (
+	_ boxed = (*SelfSubjectRulesReviewSpec)(nil)
+
+	SelfSubjectRulesReviewSpec_fields = map[string]util.FieldSpec{}
+	SelfSubjectRulesReviewSpec_inline = map[string]util.FieldSpec{}
+	SelfSubjectRulesReviewSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.SelfSubjectRulesReviewSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.SelfSubjectRulesReviewSpec:
+			return SelfSubjectRulesReviewSpec{V: v}
+		case authorization.SelfSubjectRulesReviewSpec:
+			return SelfSubjectRulesReviewSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	SelfSubjectRulesReviewSpec_attrs = setFieldTypes(t, SelfSubjectRulesReviewSpec_fields, SelfSubjectRulesReviewSpec_inline)
+	Library["SelfSubjectRulesReviewSpec"] = skylark.NewBuiltin("SelfSubjectRulesReviewSpec", createSelfSubjectRulesReviewSpec)
+}
+
+func createSelfSubjectRulesReviewSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := SelfSubjectRulesReviewSpec{V: &authorization.SelfSubjectRulesReviewSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t SelfSubjectRulesReviewSpec) Underlying() interface{} { return t.V }
+func (t SelfSubjectRulesReviewSpec) DeepCopy() boxed {
+	return SelfSubjectRulesReviewSpec{V: t.V.DeepCopy()}
+}
+func (t SelfSubjectRulesReviewSpec) Package() util.Package { return util.Authorization }
+func (t SelfSubjectRulesReviewSpec) Type() string {
+	return "k8s_authorization_SelfSubjectRulesReviewSpec"
+}
+func (t SelfSubjectRulesReviewSpec) String() string        { return t.V.String() }
+func (t SelfSubjectRulesReviewSpec) Freeze()               {} // TODO
+func (t SelfSubjectRulesReviewSpec) Truth() skylark.Bool   { return skylark.True }
+func (t SelfSubjectRulesReviewSpec) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t SelfSubjectRulesReviewSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*SelfSubjectRulesReviewSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t SelfSubjectRulesReviewSpec) AttrNames() []string { return SelfSubjectRulesReviewSpec_attrs }
+func (t SelfSubjectRulesReviewSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SelfSubjectRulesReviewSpec_fields, SelfSubjectRulesReviewSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SelfSubjectRulesReviewSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SelfSubjectRulesReviewSpec_fields, SelfSubjectRulesReviewSpec_inline)
+}
+
+type SubjectAccessReview struct {
+	V *authorization.SubjectAccessReview
+}
+
+var (
+	_ boxed = (*SubjectAccessReview)(nil)
+
+	SubjectAccessReview_fields = map[string]util.FieldSpec{}
+	SubjectAccessReview_inline = map[string]util.FieldSpec{}
+	SubjectAccessReview_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.SubjectAccessReview)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.SubjectAccessReview:
+			return SubjectAccessReview{V: v}
+		case authorization.SubjectAccessReview:
+			return SubjectAccessReview{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	SubjectAccessReview_attrs = setFieldTypes(t, SubjectAccessReview_fields, SubjectAccessReview_inline)
+	Library["SubjectAccessReview"] = skylark.NewBuiltin("SubjectAccessReview", createSubjectAccessReview)
+}
+
+func createSubjectAccessReview(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := SubjectAccessReview{V: &authorization.SubjectAccessReview{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t SubjectAccessReview) Underlying() interface{} { return t.V }
+func (t SubjectAccessReview) DeepCopy() boxed         { return SubjectAccessReview{V: t.V.DeepCopy()} }
+func (t SubjectAccessReview) Package() util.Package   { return util.Authorization }
+func (t SubjectAccessReview) Type() string            { return "k8s_authorization_SubjectAccessReview" }
+func (t SubjectAccessReview) String() string          { return t.V.String() }
+func (t SubjectAccessReview) Freeze()                 {} // TODO
+func (t SubjectAccessReview) Truth() skylark.Bool     { return skylark.True }
+func (t SubjectAccessReview) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t SubjectAccessReview) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*SubjectAccessReview)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t SubjectAccessReview) AttrNames() []string { return SubjectAccessReview_attrs }
+func (t SubjectAccessReview) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SubjectAccessReview_fields, SubjectAccessReview_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SubjectAccessReview) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SubjectAccessReview_fields, SubjectAccessReview_inline)
+}
+
+type SubjectAccessReviewSpec struct {
+	V *authorization.SubjectAccessReviewSpec
+}
+
+var (
+	_ boxed = (*SubjectAccessReviewSpec)(nil)
+
+	SubjectAccessReviewSpec_fields = map[string]util.FieldSpec{}
+	SubjectAccessReviewSpec_inline = map[string]util.FieldSpec{}
+	SubjectAccessReviewSpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.SubjectAccessReviewSpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.SubjectAccessReviewSpec:
+			return SubjectAccessReviewSpec{V: v}
+		case authorization.SubjectAccessReviewSpec:
+			return SubjectAccessReviewSpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	SubjectAccessReviewSpec_attrs = setFieldTypes(t, SubjectAccessReviewSpec_fields, SubjectAccessReviewSpec_inline)
+	Library["SubjectAccessReviewSpec"] = skylark.NewBuiltin("SubjectAccessReviewSpec", createSubjectAccessReviewSpec)
+}
+
+func createSubjectAccessReviewSpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := SubjectAccessReviewSpec{V: &authorization.SubjectAccessReviewSpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t SubjectAccessReviewSpec) Underlying() interface{} { return t.V }
+func (t SubjectAccessReviewSpec) DeepCopy() boxed         { return SubjectAccessReviewSpec{V: t.V.DeepCopy()} }
+func (t SubjectAccessReviewSpec) Package() util.Package   { return util.Authorization }
+func (t SubjectAccessReviewSpec) Type() string            { return "k8s_authorization_SubjectAccessReviewSpec" }
+func (t SubjectAccessReviewSpec) String() string          { return t.V.String() }
+func (t SubjectAccessReviewSpec) Freeze()                 {} // TODO
+func (t SubjectAccessReviewSpec) Truth() skylark.Bool     { return skylark.True }
+func (t SubjectAccessReviewSpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t SubjectAccessReviewSpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*SubjectAccessReviewSpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t SubjectAccessReviewSpec) AttrNames() []string { return SubjectAccessReviewSpec_attrs }
+func (t SubjectAccessReviewSpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SubjectAccessReviewSpec_fields, SubjectAccessReviewSpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SubjectAccessReviewSpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SubjectAccessReviewSpec_fields, SubjectAccessReviewSpec_inline)
+}
+
+type SubjectAccessReviewStatus struct {
+	V *authorization.SubjectAccessReviewStatus
+}
+
+var (
+	_ boxed = (*SubjectAccessReviewStatus)(nil)
+
+	SubjectAccessReviewStatus_fields = map[string]util.FieldSpec{}
+	SubjectAccessReviewStatus_inline = map[string]util.FieldSpec{}
+	SubjectAccessReviewStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.SubjectAccessReviewStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.SubjectAccessReviewStatus:
+			return SubjectAccessReviewStatus{V: v}
+		case authorization.SubjectAccessReviewStatus:
+			return SubjectAccessReviewStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	SubjectAccessReviewStatus_attrs = setFieldTypes(t, SubjectAccessReviewStatus_fields, SubjectAccessReviewStatus_inline)
+	Library["SubjectAccessReviewStatus"] = skylark.NewBuiltin("SubjectAccessReviewStatus", createSubjectAccessReviewStatus)
+}
+
+func createSubjectAccessReviewStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := SubjectAccessReviewStatus{V: &authorization.SubjectAccessReviewStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t SubjectAccessReviewStatus) Underlying() interface{} { return t.V }
+func (t SubjectAccessReviewStatus) DeepCopy() boxed {
+	return SubjectAccessReviewStatus{V: t.V.DeepCopy()}
+}
+func (t SubjectAccessReviewStatus) Package() util.Package { return util.Authorization }
+func (t SubjectAccessReviewStatus) Type() string          { return "k8s_authorization_SubjectAccessReviewStatus" }
+func (t SubjectAccessReviewStatus) String() string        { return t.V.String() }
+func (t SubjectAccessReviewStatus) Freeze()               {} // TODO
+func (t SubjectAccessReviewStatus) Truth() skylark.Bool   { return skylark.True }
+func (t SubjectAccessReviewStatus) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
+func (t SubjectAccessReviewStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*SubjectAccessReviewStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t SubjectAccessReviewStatus) AttrNames() []string { return SubjectAccessReviewStatus_attrs }
+func (t SubjectAccessReviewStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SubjectAccessReviewStatus_fields, SubjectAccessReviewStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SubjectAccessReviewStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SubjectAccessReviewStatus_fields, SubjectAccessReviewStatus_inline)
+}
+
+type SubjectRulesReviewStatus struct {
+	V *authorization.SubjectRulesReviewStatus
+}
+
+var (
+	_ boxed = (*SubjectRulesReviewStatus)(nil)
+
+	SubjectRulesReviewStatus_fields = map[string]util.FieldSpec{}
+	SubjectRulesReviewStatus_inline = map[string]util.FieldSpec{}
+	SubjectRulesReviewStatus_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*authorization.SubjectRulesReviewStatus)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *authorization.SubjectRulesReviewStatus:
+			return SubjectRulesReviewStatus{V: v}
+		case authorization.SubjectRulesReviewStatus:
+			return SubjectRulesReviewStatus{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	SubjectRulesReviewStatus_attrs = setFieldTypes(t, SubjectRulesReviewStatus_fields, SubjectRulesReviewStatus_inline)
+	Library["SubjectRulesReviewStatus"] = skylark.NewBuiltin("SubjectRulesReviewStatus", createSubjectRulesReviewStatus)
+}
+
+func createSubjectRulesReviewStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := SubjectRulesReviewStatus{V: &authorization.SubjectRulesReviewStatus{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t SubjectRulesReviewStatus) Underlying() interface{} { return t.V }
+func (t SubjectRulesReviewStatus) DeepCopy() boxed         { return SubjectRulesReviewStatus{V: t.V.DeepCopy()} }
+func (t SubjectRulesReviewStatus) Package() util.Package   { return util.Authorization }
+func (t SubjectRulesReviewStatus) Type() string            { return "k8s_authorization_SubjectRulesReviewStatus" }
+func (t SubjectRulesReviewStatus) String() string          { return t.V.String() }
+func (t SubjectRulesReviewStatus) Freeze()                 {} // TODO
+func (t SubjectRulesReviewStatus) Truth() skylark.Bool     { return skylark.True }
+func (t SubjectRulesReviewStatus) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t SubjectRulesReviewStatus) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*SubjectRulesReviewStatus)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t SubjectRulesReviewStatus) AttrNames() []string { return SubjectRulesReviewStatus_attrs }
+func (t SubjectRulesReviewStatus) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, SubjectRulesReviewStatus_fields, SubjectRulesReviewStatus_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t SubjectRulesReviewStatus) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, SubjectRulesReviewStatus_fields, SubjectRulesReviewStatus_inline)
+}
+
+type IPBlock struct {
+	V *networking.IPBlock
+}
+
+var (
+	_ boxed = (*IPBlock)(nil)
+
+	IPBlock_fields = map[string]util.FieldSpec{}
+	IPBlock_inline = map[string]util.FieldSpec{}
+	IPBlock_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*networking.IPBlock)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *networking.IPBlock:
+			return IPBlock{V: v}
+		case networking.IPBlock:
+			return IPBlock{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	IPBlock_attrs = setFieldTypes(t, IPBlock_fields, IPBlock_inline)
+	Library["IPBlock"] = skylark.NewBuiltin("IPBlock", createIPBlock)
+}
+
+func createIPBlock(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := IPBlock{V: &networking.IPBlock{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t IPBlock) Underlying() interface{} { return t.V }
+func (t IPBlock) DeepCopy() boxed         { return IPBlock{V: t.V.DeepCopy()} }
+func (t IPBlock) Package() util.Package   { return util.Networking }
+func (t IPBlock) Type() string            { return "k8s_networking_IPBlock" }
+func (t IPBlock) String() string          { return t.V.String() }
+func (t IPBlock) Freeze()                 {} // TODO
+func (t IPBlock) Truth() skylark.Bool     { return skylark.True }
+func (t IPBlock) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t IPBlock) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*IPBlock)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t IPBlock) AttrNames() []string { return IPBlock_attrs }
+func (t IPBlock) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, IPBlock_fields, IPBlock_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t IPBlock) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, IPBlock_fields, IPBlock_inline)
+}
+
+type NetworkPolicy struct {
+	V *networking.NetworkPolicy
+}
+
+var (
+	_ boxed = (*NetworkPolicy)(nil)
+
+	NetworkPolicy_fields = map[string]util.FieldSpec{}
+	NetworkPolicy_inline = map[string]util.FieldSpec{}
+	NetworkPolicy_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*networking.NetworkPolicy)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *networking.NetworkPolicy:
+			return NetworkPolicy{V: v}
+		case networking.NetworkPolicy:
+			return NetworkPolicy{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	NetworkPolicy_attrs = setFieldTypes(t, NetworkPolicy_fields, NetworkPolicy_inline)
+	Library["NetworkPolicy"] = skylark.NewBuiltin("NetworkPolicy", createNetworkPolicy)
+}
+
+func createNetworkPolicy(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := NetworkPolicy{V: &networking.NetworkPolicy{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t NetworkPolicy) Underlying() interface{} { return t.V }
+func (t NetworkPolicy) DeepCopy() boxed         { return NetworkPolicy{V: t.V.DeepCopy()} }
+func (t NetworkPolicy) Package() util.Package   { return util.Networking }
+func (t NetworkPolicy) Type() string            { return "k8s_networking_NetworkPolicy" }
+func (t NetworkPolicy) String() string          { return t.V.String() }
+func (t NetworkPolicy) Freeze()                 {} // TODO
+func (t NetworkPolicy) Truth() skylark.Bool     { return skylark.True }
+func (t NetworkPolicy) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t NetworkPolicy) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*NetworkPolicy)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t NetworkPolicy) AttrNames() []string { return NetworkPolicy_attrs }
+func (t NetworkPolicy) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NetworkPolicy_fields, NetworkPolicy_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NetworkPolicy) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NetworkPolicy_fields, NetworkPolicy_inline)
+}
+
+type NetworkPolicyEgressRule struct {
+	V *networking.NetworkPolicyEgressRule
+}
+
+var (
+	_ boxed = (*NetworkPolicyEgressRule)(nil)
+
+	NetworkPolicyEgressRule_fields = map[string]util.FieldSpec{}
+	NetworkPolicyEgressRule_inline = map[string]util.FieldSpec{}
+	NetworkPolicyEgressRule_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*networking.NetworkPolicyEgressRule)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *networking.NetworkPolicyEgressRule:
+			return NetworkPolicyEgressRule{V: v}
+		case networking.NetworkPolicyEgressRule:
+			return NetworkPolicyEgressRule{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	NetworkPolicyEgressRule_attrs = setFieldTypes(t, NetworkPolicyEgressRule_fields, NetworkPolicyEgressRule_inline)
+	Library["NetworkPolicyEgressRule"] = skylark.NewBuiltin("NetworkPolicyEgressRule", createNetworkPolicyEgressRule)
+}
+
+func createNetworkPolicyEgressRule(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := NetworkPolicyEgressRule{V: &networking.NetworkPolicyEgressRule{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t NetworkPolicyEgressRule) Underlying() interface{} { return t.V }
+func (t NetworkPolicyEgressRule) DeepCopy() boxed         { return NetworkPolicyEgressRule{V: t.V.DeepCopy()} }
+func (t NetworkPolicyEgressRule) Package() util.Package   { return util.Networking }
+func (t NetworkPolicyEgressRule) Type() string            { return "k8s_networking_NetworkPolicyEgressRule" }
+func (t NetworkPolicyEgressRule) String() string          { return t.V.String() }
+func (t NetworkPolicyEgressRule) Freeze()                 {} // TODO
+func (t NetworkPolicyEgressRule) Truth() skylark.Bool     { return skylark.True }
+func (t NetworkPolicyEgressRule) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t NetworkPolicyEgressRule) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*NetworkPolicyEgressRule)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t NetworkPolicyEgressRule) AttrNames() []string { return NetworkPolicyEgressRule_attrs }
+func (t NetworkPolicyEgressRule) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NetworkPolicyEgressRule_fields, NetworkPolicyEgressRule_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NetworkPolicyEgressRule) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NetworkPolicyEgressRule_fields, NetworkPolicyEgressRule_inline)
+}
+
+type NetworkPolicyIngressRule struct {
+	V *networking.NetworkPolicyIngressRule
+}
+
+var (
+	_ boxed = (*NetworkPolicyIngressRule)(nil)
+
+	NetworkPolicyIngressRule_fields = map[string]util.FieldSpec{}
+	NetworkPolicyIngressRule_inline = map[string]util.FieldSpec{}
+	NetworkPolicyIngressRule_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*networking.NetworkPolicyIngressRule)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *networking.NetworkPolicyIngressRule:
+			return NetworkPolicyIngressRule{V: v}
+		case networking.NetworkPolicyIngressRule:
+			return NetworkPolicyIngressRule{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	NetworkPolicyIngressRule_attrs = setFieldTypes(t, NetworkPolicyIngressRule_fields, NetworkPolicyIngressRule_inline)
+	Library["NetworkPolicyIngressRule"] = skylark.NewBuiltin("NetworkPolicyIngressRule", createNetworkPolicyIngressRule)
+}
+
+func createNetworkPolicyIngressRule(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := NetworkPolicyIngressRule{V: &networking.NetworkPolicyIngressRule{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t NetworkPolicyIngressRule) Underlying() interface{} { return t.V }
+func (t NetworkPolicyIngressRule) DeepCopy() boxed         { return NetworkPolicyIngressRule{V: t.V.DeepCopy()} }
+func (t NetworkPolicyIngressRule) Package() util.Package   { return util.Networking }
+func (t NetworkPolicyIngressRule) Type() string            { return "k8s_networking_NetworkPolicyIngressRule" }
+func (t NetworkPolicyIngressRule) String() string          { return t.V.String() }
+func (t NetworkPolicyIngressRule) Freeze()                 {} // TODO
+func (t NetworkPolicyIngressRule) Truth() skylark.Bool     { return skylark.True }
+func (t NetworkPolicyIngressRule) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t NetworkPolicyIngressRule) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*NetworkPolicyIngressRule)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t NetworkPolicyIngressRule) AttrNames() []string { return NetworkPolicyIngressRule_attrs }
+func (t NetworkPolicyIngressRule) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NetworkPolicyIngressRule_fields, NetworkPolicyIngressRule_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NetworkPolicyIngressRule) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NetworkPolicyIngressRule_fields, NetworkPolicyIngressRule_inline)
+}
+
+type NetworkPolicyList struct {
+	V *networking.NetworkPolicyList
+}
+
+var (
+	_ boxed = (*NetworkPolicyList)(nil)
+
+	NetworkPolicyList_fields = map[string]util.FieldSpec{}
+	NetworkPolicyList_inline = map[string]util.FieldSpec{}
+	NetworkPolicyList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*networking.NetworkPolicyList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *networking.NetworkPolicyList:
+			return NetworkPolicyList{V: v}
+		case networking.NetworkPolicyList:
+			return NetworkPolicyList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	NetworkPolicyList_attrs = setFieldTypes(t, NetworkPolicyList_fields, NetworkPolicyList_inline)
+	Library["NetworkPolicyList"] = skylark.NewBuiltin("NetworkPolicyList", createNetworkPolicyList)
+}
+
+func createNetworkPolicyList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := NetworkPolicyList{V: &networking.NetworkPolicyList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t NetworkPolicyList) Underlying() interface{} { return t.V }
+func (t NetworkPolicyList) DeepCopy() boxed         { return NetworkPolicyList{V: t.V.DeepCopy()} }
+func (t NetworkPolicyList) Package() util.Package   { return util.Networking }
+func (t NetworkPolicyList) Type() string            { return "k8s_networking_NetworkPolicyList" }
+func (t NetworkPolicyList) String() string          { return t.V.String() }
+func (t NetworkPolicyList) Freeze()                 {} // TODO
+func (t NetworkPolicyList) Truth() skylark.Bool     { return skylark.True }
+func (t NetworkPolicyList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t NetworkPolicyList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*NetworkPolicyList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t NetworkPolicyList) AttrNames() []string { return NetworkPolicyList_attrs }
+func (t NetworkPolicyList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NetworkPolicyList_fields, NetworkPolicyList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NetworkPolicyList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NetworkPolicyList_fields, NetworkPolicyList_inline)
+}
+
+type NetworkPolicyPeer struct {
+	V *networking.NetworkPolicyPeer
+}
+
+var (
+	_ boxed = (*NetworkPolicyPeer)(nil)
+
+	NetworkPolicyPeer_fields = map[string]util.FieldSpec{}
+	NetworkPolicyPeer_inline = map[string]util.FieldSpec{}
+	NetworkPolicyPeer_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*networking.NetworkPolicyPeer)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *networking.NetworkPolicyPeer:
+			return NetworkPolicyPeer{V: v}
+		case networking.NetworkPolicyPeer:
+			return NetworkPolicyPeer{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	NetworkPolicyPeer_attrs = setFieldTypes(t, NetworkPolicyPeer_fields, NetworkPolicyPeer_inline)
+	Library["NetworkPolicyPeer"] = skylark.NewBuiltin("NetworkPolicyPeer", createNetworkPolicyPeer)
+}
+
+func createNetworkPolicyPeer(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := NetworkPolicyPeer{V: &networking.NetworkPolicyPeer{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t NetworkPolicyPeer) Underlying() interface{} { return t.V }
+func (t NetworkPolicyPeer) DeepCopy() boxed         { return NetworkPolicyPeer{V: t.V.DeepCopy()} }
+func (t NetworkPolicyPeer) Package() util.Package   { return util.Networking }
+func (t NetworkPolicyPeer) Type() string            { return "k8s_networking_NetworkPolicyPeer" }
+func (t NetworkPolicyPeer) String() string          { return t.V.String() }
+func (t NetworkPolicyPeer) Freeze()                 {} // TODO
+func (t NetworkPolicyPeer) Truth() skylark.Bool     { return skylark.True }
+func (t NetworkPolicyPeer) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t NetworkPolicyPeer) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*NetworkPolicyPeer)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t NetworkPolicyPeer) AttrNames() []string { return NetworkPolicyPeer_attrs }
+func (t NetworkPolicyPeer) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NetworkPolicyPeer_fields, NetworkPolicyPeer_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NetworkPolicyPeer) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NetworkPolicyPeer_fields, NetworkPolicyPeer_inline)
+}
+
+type NetworkPolicyPort struct {
+	V *networking.NetworkPolicyPort
+}
+
+var (
+	_ boxed = (*NetworkPolicyPort)(nil)
+
+	NetworkPolicyPort_fields = map[string]util.FieldSpec{}
+	NetworkPolicyPort_inline = map[string]util.FieldSpec{}
+	NetworkPolicyPort_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*networking.NetworkPolicyPort)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *networking.NetworkPolicyPort:
+			return NetworkPolicyPort{V: v}
+		case networking.NetworkPolicyPort:
+			return NetworkPolicyPort{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	NetworkPolicyPort_attrs = setFieldTypes(t, NetworkPolicyPort_fields, NetworkPolicyPort_inline)
+	Library["NetworkPolicyPort"] = skylark.NewBuiltin("NetworkPolicyPort", createNetworkPolicyPort)
+}
+
+func createNetworkPolicyPort(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := NetworkPolicyPort{V: &networking.NetworkPolicyPort{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t NetworkPolicyPort) Underlying() interface{} { return t.V }
+func (t NetworkPolicyPort) DeepCopy() boxed         { return NetworkPolicyPort{V: t.V.DeepCopy()} }
+func (t NetworkPolicyPort) Package() util.Package   { return util.Networking }
+func (t NetworkPolicyPort) Type() string            { return "k8s_networking_NetworkPolicyPort" }
+func (t NetworkPolicyPort) String() string          { return t.V.String() }
+func (t NetworkPolicyPort) Freeze()                 {} // TODO
+func (t NetworkPolicyPort) Truth() skylark.Bool     { return skylark.True }
+func (t NetworkPolicyPort) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t NetworkPolicyPort) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*NetworkPolicyPort)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t NetworkPolicyPort) AttrNames() []string { return NetworkPolicyPort_attrs }
+func (t NetworkPolicyPort) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NetworkPolicyPort_fields, NetworkPolicyPort_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NetworkPolicyPort) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NetworkPolicyPort_fields, NetworkPolicyPort_inline)
+}
+
+type NetworkPolicySpec struct {
+	V *networking.NetworkPolicySpec
+}
+
+var (
+	_ boxed = (*NetworkPolicySpec)(nil)
+
+	NetworkPolicySpec_fields = map[string]util.FieldSpec{}
+	NetworkPolicySpec_inline = map[string]util.FieldSpec{}
+	NetworkPolicySpec_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*networking.NetworkPolicySpec)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *networking.NetworkPolicySpec:
+			return NetworkPolicySpec{V: v}
+		case networking.NetworkPolicySpec:
+			return NetworkPolicySpec{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	NetworkPolicySpec_attrs = setFieldTypes(t, NetworkPolicySpec_fields, NetworkPolicySpec_inline)
+	Library["NetworkPolicySpec"] = skylark.NewBuiltin("NetworkPolicySpec", createNetworkPolicySpec)
+}
+
+func createNetworkPolicySpec(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := NetworkPolicySpec{V: &networking.NetworkPolicySpec{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t NetworkPolicySpec) Underlying() interface{} { return t.V }
+func (t NetworkPolicySpec) DeepCopy() boxed         { return NetworkPolicySpec{V: t.V.DeepCopy()} }
+func (t NetworkPolicySpec) Package() util.Package   { return util.Networking }
+func (t NetworkPolicySpec) Type() string            { return "k8s_networking_NetworkPolicySpec" }
+func (t NetworkPolicySpec) String() string          { return t.V.String() }
+func (t NetworkPolicySpec) Freeze()                 {} // TODO
+func (t NetworkPolicySpec) Truth() skylark.Bool     { return skylark.True }
+func (t NetworkPolicySpec) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t NetworkPolicySpec) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*NetworkPolicySpec)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t NetworkPolicySpec) AttrNames() []string { return NetworkPolicySpec_attrs }
+func (t NetworkPolicySpec) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, NetworkPolicySpec_fields, NetworkPolicySpec_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t NetworkPolicySpec) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, NetworkPolicySpec_fields, NetworkPolicySpec_inline)
+}
+
+type AggregationRule struct {
+	V *rbac.AggregationRule
+}
+
+var (
+	_ boxed = (*AggregationRule)(nil)
+
+	AggregationRule_fields = map[string]util.FieldSpec{}
+	AggregationRule_inline = map[string]util.FieldSpec{}
+	AggregationRule_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.AggregationRule)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.AggregationRule:
+			return AggregationRule{V: v}
+		case rbac.AggregationRule:
+			return AggregationRule{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	AggregationRule_attrs = setFieldTypes(t, AggregationRule_fields, AggregationRule_inline)
+	Library["AggregationRule"] = skylark.NewBuiltin("AggregationRule", createAggregationRule)
+}
+
+func createAggregationRule(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := AggregationRule{V: &rbac.AggregationRule{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t AggregationRule) Underlying() interface{} { return t.V }
+func (t AggregationRule) DeepCopy() boxed         { return AggregationRule{V: t.V.DeepCopy()} }
+func (t AggregationRule) Package() util.Package   { return util.Rbac }
+func (t AggregationRule) Type() string            { return "k8s_rbac_AggregationRule" }
+func (t AggregationRule) String() string          { return t.V.String() }
+func (t AggregationRule) Freeze()                 {} // TODO
+func (t AggregationRule) Truth() skylark.Bool     { return skylark.True }
+func (t AggregationRule) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t AggregationRule) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*AggregationRule)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t AggregationRule) AttrNames() []string { return AggregationRule_attrs }
+func (t AggregationRule) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, AggregationRule_fields, AggregationRule_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t AggregationRule) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, AggregationRule_fields, AggregationRule_inline)
+}
+
+type ClusterRole struct {
+	V *rbac.ClusterRole
+}
+
+var (
+	_ boxed = (*ClusterRole)(nil)
+
+	ClusterRole_fields = map[string]util.FieldSpec{}
+	ClusterRole_inline = map[string]util.FieldSpec{}
+	ClusterRole_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.ClusterRole)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.ClusterRole:
+			return ClusterRole{V: v}
+		case rbac.ClusterRole:
+			return ClusterRole{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ClusterRole_attrs = setFieldTypes(t, ClusterRole_fields, ClusterRole_inline)
+	Library["ClusterRole"] = skylark.NewBuiltin("ClusterRole", createClusterRole)
+}
+
+func createClusterRole(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ClusterRole{V: &rbac.ClusterRole{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ClusterRole) Underlying() interface{} { return t.V }
+func (t ClusterRole) DeepCopy() boxed         { return ClusterRole{V: t.V.DeepCopy()} }
+func (t ClusterRole) Package() util.Package   { return util.Rbac }
+func (t ClusterRole) Type() string            { return "k8s_rbac_ClusterRole" }
+func (t ClusterRole) String() string          { return t.V.String() }
+func (t ClusterRole) Freeze()                 {} // TODO
+func (t ClusterRole) Truth() skylark.Bool     { return skylark.True }
+func (t ClusterRole) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ClusterRole) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ClusterRole)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ClusterRole) AttrNames() []string { return ClusterRole_attrs }
+func (t ClusterRole) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ClusterRole_fields, ClusterRole_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ClusterRole) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ClusterRole_fields, ClusterRole_inline)
+}
+
+type ClusterRoleBinding struct {
+	V *rbac.ClusterRoleBinding
+}
+
+var (
+	_ boxed = (*ClusterRoleBinding)(nil)
+
+	ClusterRoleBinding_fields = map[string]util.FieldSpec{}
+	ClusterRoleBinding_inline = map[string]util.FieldSpec{}
+	ClusterRoleBinding_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.ClusterRoleBinding)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.ClusterRoleBinding:
+			return ClusterRoleBinding{V: v}
+		case rbac.ClusterRoleBinding:
+			return ClusterRoleBinding{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ClusterRoleBinding_attrs = setFieldTypes(t, ClusterRoleBinding_fields, ClusterRoleBinding_inline)
+	Library["ClusterRoleBinding"] = skylark.NewBuiltin("ClusterRoleBinding", createClusterRoleBinding)
+}
+
+func createClusterRoleBinding(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ClusterRoleBinding{V: &rbac.ClusterRoleBinding{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ClusterRoleBinding) Underlying() interface{} { return t.V }
+func (t ClusterRoleBinding) DeepCopy() boxed         { return ClusterRoleBinding{V: t.V.DeepCopy()} }
+func (t ClusterRoleBinding) Package() util.Package   { return util.Rbac }
+func (t ClusterRoleBinding) Type() string            { return "k8s_rbac_ClusterRoleBinding" }
+func (t ClusterRoleBinding) String() string          { return t.V.String() }
+func (t ClusterRoleBinding) Freeze()                 {} // TODO
+func (t ClusterRoleBinding) Truth() skylark.Bool     { return skylark.True }
+func (t ClusterRoleBinding) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ClusterRoleBinding) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ClusterRoleBinding)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ClusterRoleBinding) AttrNames() []string { return ClusterRoleBinding_attrs }
+func (t ClusterRoleBinding) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ClusterRoleBinding_fields, ClusterRoleBinding_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ClusterRoleBinding) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ClusterRoleBinding_fields, ClusterRoleBinding_inline)
+}
+
+type ClusterRoleBindingList struct {
+	V *rbac.ClusterRoleBindingList
+}
+
+var (
+	_ boxed = (*ClusterRoleBindingList)(nil)
+
+	ClusterRoleBindingList_fields = map[string]util.FieldSpec{}
+	ClusterRoleBindingList_inline = map[string]util.FieldSpec{}
+	ClusterRoleBindingList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.ClusterRoleBindingList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.ClusterRoleBindingList:
+			return ClusterRoleBindingList{V: v}
+		case rbac.ClusterRoleBindingList:
+			return ClusterRoleBindingList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ClusterRoleBindingList_attrs = setFieldTypes(t, ClusterRoleBindingList_fields, ClusterRoleBindingList_inline)
+	Library["ClusterRoleBindingList"] = skylark.NewBuiltin("ClusterRoleBindingList", createClusterRoleBindingList)
+}
+
+func createClusterRoleBindingList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ClusterRoleBindingList{V: &rbac.ClusterRoleBindingList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ClusterRoleBindingList) Underlying() interface{} { return t.V }
+func (t ClusterRoleBindingList) DeepCopy() boxed         { return ClusterRoleBindingList{V: t.V.DeepCopy()} }
+func (t ClusterRoleBindingList) Package() util.Package   { return util.Rbac }
+func (t ClusterRoleBindingList) Type() string            { return "k8s_rbac_ClusterRoleBindingList" }
+func (t ClusterRoleBindingList) String() string          { return t.V.String() }
+func (t ClusterRoleBindingList) Freeze()                 {} // TODO
+func (t ClusterRoleBindingList) Truth() skylark.Bool     { return skylark.True }
+func (t ClusterRoleBindingList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ClusterRoleBindingList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ClusterRoleBindingList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ClusterRoleBindingList) AttrNames() []string { return ClusterRoleBindingList_attrs }
+func (t ClusterRoleBindingList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ClusterRoleBindingList_fields, ClusterRoleBindingList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ClusterRoleBindingList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ClusterRoleBindingList_fields, ClusterRoleBindingList_inline)
+}
+
+type ClusterRoleList struct {
+	V *rbac.ClusterRoleList
+}
+
+var (
+	_ boxed = (*ClusterRoleList)(nil)
+
+	ClusterRoleList_fields = map[string]util.FieldSpec{}
+	ClusterRoleList_inline = map[string]util.FieldSpec{}
+	ClusterRoleList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.ClusterRoleList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.ClusterRoleList:
+			return ClusterRoleList{V: v}
+		case rbac.ClusterRoleList:
+			return ClusterRoleList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	ClusterRoleList_attrs = setFieldTypes(t, ClusterRoleList_fields, ClusterRoleList_inline)
+	Library["ClusterRoleList"] = skylark.NewBuiltin("ClusterRoleList", createClusterRoleList)
+}
+
+func createClusterRoleList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := ClusterRoleList{V: &rbac.ClusterRoleList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t ClusterRoleList) Underlying() interface{} { return t.V }
+func (t ClusterRoleList) DeepCopy() boxed         { return ClusterRoleList{V: t.V.DeepCopy()} }
+func (t ClusterRoleList) Package() util.Package   { return util.Rbac }
+func (t ClusterRoleList) Type() string            { return "k8s_rbac_ClusterRoleList" }
+func (t ClusterRoleList) String() string          { return t.V.String() }
+func (t ClusterRoleList) Freeze()                 {} // TODO
+func (t ClusterRoleList) Truth() skylark.Bool     { return skylark.True }
+func (t ClusterRoleList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ClusterRoleList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*ClusterRoleList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t ClusterRoleList) AttrNames() []string { return ClusterRoleList_attrs }
+func (t ClusterRoleList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ClusterRoleList_fields, ClusterRoleList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t ClusterRoleList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, ClusterRoleList_fields, ClusterRoleList_inline)
+}
+
+type PolicyRule struct {
+	V *rbac.PolicyRule
+}
+
+var (
+	_ boxed = (*PolicyRule)(nil)
+
+	PolicyRule_fields = map[string]util.FieldSpec{}
+	PolicyRule_inline = map[string]util.FieldSpec{}
+	PolicyRule_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.PolicyRule)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.PolicyRule:
+			return PolicyRule{V: v}
+		case rbac.PolicyRule:
+			return PolicyRule{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	PolicyRule_attrs = setFieldTypes(t, PolicyRule_fields, PolicyRule_inline)
+	Library["PolicyRule"] = skylark.NewBuiltin("PolicyRule", createPolicyRule)
+}
+
+func createPolicyRule(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := PolicyRule{V: &rbac.PolicyRule{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t PolicyRule) Underlying() interface{} { return t.V }
+func (t PolicyRule) DeepCopy() boxed         { return PolicyRule{V: t.V.DeepCopy()} }
+func (t PolicyRule) Package() util.Package   { return util.Rbac }
+func (t PolicyRule) Type() string            { return "k8s_rbac_PolicyRule" }
+func (t PolicyRule) String() string          { return t.V.String() }
+func (t PolicyRule) Freeze()                 {} // TODO
+func (t PolicyRule) Truth() skylark.Bool     { return skylark.True }
+func (t PolicyRule) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t PolicyRule) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*PolicyRule)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t PolicyRule) AttrNames() []string { return PolicyRule_attrs }
+func (t PolicyRule) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, PolicyRule_fields, PolicyRule_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t PolicyRule) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, PolicyRule_fields, PolicyRule_inline)
+}
+
+type Role struct {
+	V *rbac.Role
+}
+
+var (
+	_ boxed = (*Role)(nil)
+
+	Role_fields = map[string]util.FieldSpec{}
+	Role_inline = map[string]util.FieldSpec{}
+	Role_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.Role)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.Role:
+			return Role{V: v}
+		case rbac.Role:
+			return Role{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	Role_attrs = setFieldTypes(t, Role_fields, Role_inline)
+	Library["Role"] = skylark.NewBuiltin("Role", createRole)
+}
+
+func createRole(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := Role{V: &rbac.Role{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t Role) Underlying() interface{} { return t.V }
+func (t Role) DeepCopy() boxed         { return Role{V: t.V.DeepCopy()} }
+func (t Role) Package() util.Package   { return util.Rbac }
+func (t Role) Type() string            { return "k8s_rbac_Role" }
+func (t Role) String() string          { return t.V.String() }
+func (t Role) Freeze()                 {} // TODO
+func (t Role) Truth() skylark.Bool     { return skylark.True }
+func (t Role) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t Role) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*Role)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t Role) AttrNames() []string { return Role_attrs }
+func (t Role) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Role_fields, Role_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Role) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Role_fields, Role_inline)
+}
+
+type RoleBinding struct {
+	V *rbac.RoleBinding
+}
+
+var (
+	_ boxed = (*RoleBinding)(nil)
+
+	RoleBinding_fields = map[string]util.FieldSpec{}
+	RoleBinding_inline = map[string]util.FieldSpec{}
+	RoleBinding_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.RoleBinding)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.RoleBinding:
+			return RoleBinding{V: v}
+		case rbac.RoleBinding:
+			return RoleBinding{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	RoleBinding_attrs = setFieldTypes(t, RoleBinding_fields, RoleBinding_inline)
+	Library["RoleBinding"] = skylark.NewBuiltin("RoleBinding", createRoleBinding)
+}
+
+func createRoleBinding(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := RoleBinding{V: &rbac.RoleBinding{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t RoleBinding) Underlying() interface{} { return t.V }
+func (t RoleBinding) DeepCopy() boxed         { return RoleBinding{V: t.V.DeepCopy()} }
+func (t RoleBinding) Package() util.Package   { return util.Rbac }
+func (t RoleBinding) Type() string            { return "k8s_rbac_RoleBinding" }
+func (t RoleBinding) String() string          { return t.V.String() }
+func (t RoleBinding) Freeze()                 {} // TODO
+func (t RoleBinding) Truth() skylark.Bool     { return skylark.True }
+func (t RoleBinding) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t RoleBinding) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*RoleBinding)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t RoleBinding) AttrNames() []string { return RoleBinding_attrs }
+func (t RoleBinding) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RoleBinding_fields, RoleBinding_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RoleBinding) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RoleBinding_fields, RoleBinding_inline)
+}
+
+type RoleBindingList struct {
+	V *rbac.RoleBindingList
+}
+
+var (
+	_ boxed = (*RoleBindingList)(nil)
+
+	RoleBindingList_fields = map[string]util.FieldSpec{}
+	RoleBindingList_inline = map[string]util.FieldSpec{}
+	RoleBindingList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.RoleBindingList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.RoleBindingList:
+			return RoleBindingList{V: v}
+		case rbac.RoleBindingList:
+			return RoleBindingList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	RoleBindingList_attrs = setFieldTypes(t, RoleBindingList_fields, RoleBindingList_inline)
+	Library["RoleBindingList"] = skylark.NewBuiltin("RoleBindingList", createRoleBindingList)
+}
+
+func createRoleBindingList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := RoleBindingList{V: &rbac.RoleBindingList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t RoleBindingList) Underlying() interface{} { return t.V }
+func (t RoleBindingList) DeepCopy() boxed         { return RoleBindingList{V: t.V.DeepCopy()} }
+func (t RoleBindingList) Package() util.Package   { return util.Rbac }
+func (t RoleBindingList) Type() string            { return "k8s_rbac_RoleBindingList" }
+func (t RoleBindingList) String() string          { return t.V.String() }
+func (t RoleBindingList) Freeze()                 {} // TODO
+func (t RoleBindingList) Truth() skylark.Bool     { return skylark.True }
+func (t RoleBindingList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t RoleBindingList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*RoleBindingList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t RoleBindingList) AttrNames() []string { return RoleBindingList_attrs }
+func (t RoleBindingList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RoleBindingList_fields, RoleBindingList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RoleBindingList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RoleBindingList_fields, RoleBindingList_inline)
+}
+
+type RoleList struct {
+	V *rbac.RoleList
+}
+
+var (
+	_ boxed = (*RoleList)(nil)
+
+	RoleList_fields = map[string]util.FieldSpec{}
+	RoleList_inline = map[string]util.FieldSpec{}
+	RoleList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.RoleList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.RoleList:
+			return RoleList{V: v}
+		case rbac.RoleList:
+			return RoleList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	RoleList_attrs = setFieldTypes(t, RoleList_fields, RoleList_inline)
+	Library["RoleList"] = skylark.NewBuiltin("RoleList", createRoleList)
+}
+
+func createRoleList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := RoleList{V: &rbac.RoleList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t RoleList) Underlying() interface{} { return t.V }
+func (t RoleList) DeepCopy() boxed         { return RoleList{V: t.V.DeepCopy()} }
+func (t RoleList) Package() util.Package   { return util.Rbac }
+func (t RoleList) Type() string            { return "k8s_rbac_RoleList" }
+func (t RoleList) String() string          { return t.V.String() }
+func (t RoleList) Freeze()                 {} // TODO
+func (t RoleList) Truth() skylark.Bool     { return skylark.True }
+func (t RoleList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t RoleList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*RoleList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t RoleList) AttrNames() []string { return RoleList_attrs }
+func (t RoleList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RoleList_fields, RoleList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RoleList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RoleList_fields, RoleList_inline)
+}
+
+type RoleRef struct {
+	V *rbac.RoleRef
+}
+
+var (
+	_ boxed = (*RoleRef)(nil)
+
+	RoleRef_fields = map[string]util.FieldSpec{}
+	RoleRef_inline = map[string]util.FieldSpec{}
+	RoleRef_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.RoleRef)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.RoleRef:
+			return RoleRef{V: v}
+		case rbac.RoleRef:
+			return RoleRef{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	RoleRef_attrs = setFieldTypes(t, RoleRef_fields, RoleRef_inline)
+	Library["RoleRef"] = skylark.NewBuiltin("RoleRef", createRoleRef)
+}
+
+func createRoleRef(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := RoleRef{V: &rbac.RoleRef{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t RoleRef) Underlying() interface{} { return t.V }
+func (t RoleRef) DeepCopy() boxed         { return RoleRef{V: t.V.DeepCopy()} }
+func (t RoleRef) Package() util.Package   { return util.Rbac }
+func (t RoleRef) Type() string            { return "k8s_rbac_RoleRef" }
+func (t RoleRef) String() string          { return t.V.String() }
+func (t RoleRef) Freeze()                 {} // TODO
+func (t RoleRef) Truth() skylark.Bool     { return skylark.True }
+func (t RoleRef) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t RoleRef) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*RoleRef)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t RoleRef) AttrNames() []string { return RoleRef_attrs }
+func (t RoleRef) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RoleRef_fields, RoleRef_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t RoleRef) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, RoleRef_fields, RoleRef_inline)
+}
+
+type Subject struct {
+	V *rbac.Subject
+}
+
+var (
+	_ boxed = (*Subject)(nil)
+
+	Subject_fields = map[string]util.FieldSpec{}
+	Subject_inline = map[string]util.FieldSpec{}
+	Subject_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*rbac.Subject)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *rbac.Subject:
+			return Subject{V: v}
+		case rbac.Subject:
+			return Subject{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	Subject_attrs = setFieldTypes(t, Subject_fields, Subject_inline)
+	Library["Subject"] = skylark.NewBuiltin("Subject", createSubject)
+}
+
+func createSubject(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := Subject{V: &rbac.Subject{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t Subject) Underlying() interface{} { return t.V }
+func (t Subject) DeepCopy() boxed         { return Subject{V: t.V.DeepCopy()} }
+func (t Subject) Package() util.Package   { return util.Rbac }
+func (t Subject) Type() string            { return "k8s_rbac_Subject" }
+func (t Subject) String() string          { return t.V.String() }
+func (t Subject) Freeze()                 {} // TODO
+func (t Subject) Truth() skylark.Bool     { return skylark.True }
+func (t Subject) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t Subject) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*Subject)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t Subject) AttrNames() []string { return Subject_attrs }
+func (t Subject) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Subject_fields, Subject_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t Subject) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, Subject_fields, Subject_inline)
+}
+
+type StorageClass struct {
+	V *storage.StorageClass
+}
+
+var (
+	_ boxed = (*StorageClass)(nil)
+
+	StorageClass_fields = map[string]util.FieldSpec{}
+	StorageClass_inline = map[string]util.FieldSpec{}
+	StorageClass_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*storage.StorageClass)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *storage.StorageClass:
+			return StorageClass{V: v}
+		case storage.StorageClass:
+			return StorageClass{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	StorageClass_attrs = setFieldTypes(t, StorageClass_fields, StorageClass_inline)
+	Library["StorageClass"] = skylark.NewBuiltin("StorageClass", createStorageClass)
+}
+
+func createStorageClass(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := StorageClass{V: &storage.StorageClass{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t StorageClass) Underlying() interface{} { return t.V }
+func (t StorageClass) DeepCopy() boxed         { return StorageClass{V: t.V.DeepCopy()} }
+func (t StorageClass) Package() util.Package   { return util.Storage }
+func (t StorageClass) Type() string            { return "k8s_storage_StorageClass" }
+func (t StorageClass) String() string          { return t.V.String() }
+func (t StorageClass) Freeze()                 {} // TODO
+func (t StorageClass) Truth() skylark.Bool     { return skylark.True }
+func (t StorageClass) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t StorageClass) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*StorageClass)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t StorageClass) AttrNames() []string { return StorageClass_attrs }
+func (t StorageClass) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StorageClass_fields, StorageClass_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StorageClass) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StorageClass_fields, StorageClass_inline)
+}
+
+type StorageClassList struct {
+	V *storage.StorageClassList
+}
+
+var (
+	_ boxed = (*StorageClassList)(nil)
+
+	StorageClassList_fields = map[string]util.FieldSpec{}
+	StorageClassList_inline = map[string]util.FieldSpec{}
+	StorageClassList_attrs  []string
+)
+
+func init() {
+	t := reflect.TypeOf((*storage.StorageClassList)(nil)).Elem()
+	g2s[t] = func(iface interface{}) skylark.Value {
+		switch v := iface.(type) {
+		case *storage.StorageClassList:
+			return StorageClassList{V: v}
+		case storage.StorageClassList:
+			return StorageClassList{V: &v}
+		default:
+			return skylark.None
+		}
+	}
+	StorageClassList_attrs = setFieldTypes(t, StorageClassList_fields, StorageClassList_inline)
+	Library["StorageClassList"] = skylark.NewBuiltin("StorageClassList", createStorageClassList)
+}
+
+func createStorageClassList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+	box := StorageClassList{V: &storage.StorageClassList{}}
+	err := construct(box, args, kwargs)
+	return box, err
+}
+func (t StorageClassList) Underlying() interface{} { return t.V }
+func (t StorageClassList) DeepCopy() boxed         { return StorageClassList{V: t.V.DeepCopy()} }
+func (t StorageClassList) Package() util.Package   { return util.Storage }
+func (t StorageClassList) Type() string            { return "k8s_storage_StorageClassList" }
+func (t StorageClassList) String() string          { return t.V.String() }
+func (t StorageClassList) Freeze()                 {} // TODO
+func (t StorageClassList) Truth() skylark.Bool     { return skylark.True }
+func (t StorageClassList) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t StorageClassList) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
+	y := y_.(*StorageClassList)
+	return compareSameType(t, op, y, t.Type(), depth)
+}
+func (t StorageClassList) AttrNames() []string { return StorageClassList_attrs }
+func (t StorageClassList) Attr(name string) (skylark.Value, error) {
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StorageClassList_fields, StorageClassList_inline)
+	}
+	return skylark.None, uninitialized(t.Type(), name)
+}
+func (t StorageClassList) SetField(name string, value skylark.Value) error {
+	return setAttr(t, name, value, StorageClassList_fields, StorageClassList_inline)
+}
+
 type APIGroup struct {
-	V *metav1.APIGroup
+	V *meta.APIGroup
 }
 
 var (
@@ -10352,12 +16361,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.APIGroup)(nil)).Elem()
+	t := reflect.TypeOf((*meta.APIGroup)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.APIGroup:
+		case *meta.APIGroup:
 			return APIGroup{V: v}
-		case metav1.APIGroup:
+		case meta.APIGroup:
 			return APIGroup{V: &v}
 		default:
 			return skylark.None
@@ -10368,11 +16377,14 @@ func init() {
 }
 
 func createAPIGroup(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for APIGroup
+	box := APIGroup{V: &meta.APIGroup{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t APIGroup) Underlying() interface{} { return t.V }
-func (t APIGroup) Package() util.Package   { return util.Metav1 }
-func (t APIGroup) Type() string            { return "k8s_metav1_APIGroup" }
+func (t APIGroup) DeepCopy() boxed         { return APIGroup{V: t.V.DeepCopy()} }
+func (t APIGroup) Package() util.Package   { return util.Meta }
+func (t APIGroup) Type() string            { return "k8s_meta_APIGroup" }
 func (t APIGroup) String() string          { return t.V.String() }
 func (t APIGroup) Freeze()                 {} // TODO
 func (t APIGroup) Truth() skylark.Bool     { return skylark.True }
@@ -10383,8 +16395,8 @@ func (t APIGroup) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) 
 }
 func (t APIGroup) AttrNames() []string { return APIGroup_attrs }
 func (t APIGroup) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, APIGroup_fields, APIGroup_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, APIGroup_fields, APIGroup_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10393,7 +16405,7 @@ func (t APIGroup) SetField(name string, value skylark.Value) error {
 }
 
 type APIGroupList struct {
-	V *metav1.APIGroupList
+	V *meta.APIGroupList
 }
 
 var (
@@ -10405,12 +16417,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.APIGroupList)(nil)).Elem()
+	t := reflect.TypeOf((*meta.APIGroupList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.APIGroupList:
+		case *meta.APIGroupList:
 			return APIGroupList{V: v}
-		case metav1.APIGroupList:
+		case meta.APIGroupList:
 			return APIGroupList{V: &v}
 		default:
 			return skylark.None
@@ -10421,11 +16433,14 @@ func init() {
 }
 
 func createAPIGroupList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for APIGroupList
+	box := APIGroupList{V: &meta.APIGroupList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t APIGroupList) Underlying() interface{} { return t.V }
-func (t APIGroupList) Package() util.Package   { return util.Metav1 }
-func (t APIGroupList) Type() string            { return "k8s_metav1_APIGroupList" }
+func (t APIGroupList) DeepCopy() boxed         { return APIGroupList{V: t.V.DeepCopy()} }
+func (t APIGroupList) Package() util.Package   { return util.Meta }
+func (t APIGroupList) Type() string            { return "k8s_meta_APIGroupList" }
 func (t APIGroupList) String() string          { return t.V.String() }
 func (t APIGroupList) Freeze()                 {} // TODO
 func (t APIGroupList) Truth() skylark.Bool     { return skylark.True }
@@ -10436,8 +16451,8 @@ func (t APIGroupList) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t APIGroupList) AttrNames() []string { return APIGroupList_attrs }
 func (t APIGroupList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, APIGroupList_fields, APIGroupList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, APIGroupList_fields, APIGroupList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10446,7 +16461,7 @@ func (t APIGroupList) SetField(name string, value skylark.Value) error {
 }
 
 type APIResource struct {
-	V *metav1.APIResource
+	V *meta.APIResource
 }
 
 var (
@@ -10458,12 +16473,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.APIResource)(nil)).Elem()
+	t := reflect.TypeOf((*meta.APIResource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.APIResource:
+		case *meta.APIResource:
 			return APIResource{V: v}
-		case metav1.APIResource:
+		case meta.APIResource:
 			return APIResource{V: &v}
 		default:
 			return skylark.None
@@ -10474,11 +16489,14 @@ func init() {
 }
 
 func createAPIResource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for APIResource
+	box := APIResource{V: &meta.APIResource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t APIResource) Underlying() interface{} { return t.V }
-func (t APIResource) Package() util.Package   { return util.Metav1 }
-func (t APIResource) Type() string            { return "k8s_metav1_APIResource" }
+func (t APIResource) DeepCopy() boxed         { return APIResource{V: t.V.DeepCopy()} }
+func (t APIResource) Package() util.Package   { return util.Meta }
+func (t APIResource) Type() string            { return "k8s_meta_APIResource" }
 func (t APIResource) String() string          { return t.V.String() }
 func (t APIResource) Freeze()                 {} // TODO
 func (t APIResource) Truth() skylark.Bool     { return skylark.True }
@@ -10489,8 +16507,8 @@ func (t APIResource) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t APIResource) AttrNames() []string { return APIResource_attrs }
 func (t APIResource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, APIResource_fields, APIResource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, APIResource_fields, APIResource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10499,7 +16517,7 @@ func (t APIResource) SetField(name string, value skylark.Value) error {
 }
 
 type APIResourceList struct {
-	V *metav1.APIResourceList
+	V *meta.APIResourceList
 }
 
 var (
@@ -10511,12 +16529,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.APIResourceList)(nil)).Elem()
+	t := reflect.TypeOf((*meta.APIResourceList)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.APIResourceList:
+		case *meta.APIResourceList:
 			return APIResourceList{V: v}
-		case metav1.APIResourceList:
+		case meta.APIResourceList:
 			return APIResourceList{V: &v}
 		default:
 			return skylark.None
@@ -10527,11 +16545,14 @@ func init() {
 }
 
 func createAPIResourceList(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for APIResourceList
+	box := APIResourceList{V: &meta.APIResourceList{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t APIResourceList) Underlying() interface{} { return t.V }
-func (t APIResourceList) Package() util.Package   { return util.Metav1 }
-func (t APIResourceList) Type() string            { return "k8s_metav1_APIResourceList" }
+func (t APIResourceList) DeepCopy() boxed         { return APIResourceList{V: t.V.DeepCopy()} }
+func (t APIResourceList) Package() util.Package   { return util.Meta }
+func (t APIResourceList) Type() string            { return "k8s_meta_APIResourceList" }
 func (t APIResourceList) String() string          { return t.V.String() }
 func (t APIResourceList) Freeze()                 {} // TODO
 func (t APIResourceList) Truth() skylark.Bool     { return skylark.True }
@@ -10542,8 +16563,8 @@ func (t APIResourceList) CompareSameType(op syntax.Token, y_ skylark.Value, dept
 }
 func (t APIResourceList) AttrNames() []string { return APIResourceList_attrs }
 func (t APIResourceList) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, APIResourceList_fields, APIResourceList_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, APIResourceList_fields, APIResourceList_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10552,7 +16573,7 @@ func (t APIResourceList) SetField(name string, value skylark.Value) error {
 }
 
 type APIVersions struct {
-	V *metav1.APIVersions
+	V *meta.APIVersions
 }
 
 var (
@@ -10564,12 +16585,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.APIVersions)(nil)).Elem()
+	t := reflect.TypeOf((*meta.APIVersions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.APIVersions:
+		case *meta.APIVersions:
 			return APIVersions{V: v}
-		case metav1.APIVersions:
+		case meta.APIVersions:
 			return APIVersions{V: &v}
 		default:
 			return skylark.None
@@ -10580,11 +16601,14 @@ func init() {
 }
 
 func createAPIVersions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for APIVersions
+	box := APIVersions{V: &meta.APIVersions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t APIVersions) Underlying() interface{} { return t.V }
-func (t APIVersions) Package() util.Package   { return util.Metav1 }
-func (t APIVersions) Type() string            { return "k8s_metav1_APIVersions" }
+func (t APIVersions) DeepCopy() boxed         { return APIVersions{V: t.V.DeepCopy()} }
+func (t APIVersions) Package() util.Package   { return util.Meta }
+func (t APIVersions) Type() string            { return "k8s_meta_APIVersions" }
 func (t APIVersions) String() string          { return t.V.String() }
 func (t APIVersions) Freeze()                 {} // TODO
 func (t APIVersions) Truth() skylark.Bool     { return skylark.True }
@@ -10595,8 +16619,8 @@ func (t APIVersions) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t APIVersions) AttrNames() []string { return APIVersions_attrs }
 func (t APIVersions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, APIVersions_fields, APIVersions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, APIVersions_fields, APIVersions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10605,7 +16629,7 @@ func (t APIVersions) SetField(name string, value skylark.Value) error {
 }
 
 type CreateOptions struct {
-	V *metav1.CreateOptions
+	V *meta.CreateOptions
 }
 
 var (
@@ -10617,12 +16641,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.CreateOptions)(nil)).Elem()
+	t := reflect.TypeOf((*meta.CreateOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.CreateOptions:
+		case *meta.CreateOptions:
 			return CreateOptions{V: v}
-		case metav1.CreateOptions:
+		case meta.CreateOptions:
 			return CreateOptions{V: &v}
 		default:
 			return skylark.None
@@ -10633,11 +16657,14 @@ func init() {
 }
 
 func createCreateOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for CreateOptions
+	box := CreateOptions{V: &meta.CreateOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t CreateOptions) Underlying() interface{} { return t.V }
-func (t CreateOptions) Package() util.Package   { return util.Metav1 }
-func (t CreateOptions) Type() string            { return "k8s_metav1_CreateOptions" }
+func (t CreateOptions) DeepCopy() boxed         { return CreateOptions{V: t.V.DeepCopy()} }
+func (t CreateOptions) Package() util.Package   { return util.Meta }
+func (t CreateOptions) Type() string            { return "k8s_meta_CreateOptions" }
 func (t CreateOptions) String() string          { return t.V.String() }
 func (t CreateOptions) Freeze()                 {} // TODO
 func (t CreateOptions) Truth() skylark.Bool     { return skylark.True }
@@ -10648,8 +16675,8 @@ func (t CreateOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t CreateOptions) AttrNames() []string { return CreateOptions_attrs }
 func (t CreateOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, CreateOptions_fields, CreateOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, CreateOptions_fields, CreateOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10658,7 +16685,7 @@ func (t CreateOptions) SetField(name string, value skylark.Value) error {
 }
 
 type DeleteOptions struct {
-	V *metav1.DeleteOptions
+	V *meta.DeleteOptions
 }
 
 var (
@@ -10670,12 +16697,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.DeleteOptions)(nil)).Elem()
+	t := reflect.TypeOf((*meta.DeleteOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.DeleteOptions:
+		case *meta.DeleteOptions:
 			return DeleteOptions{V: v}
-		case metav1.DeleteOptions:
+		case meta.DeleteOptions:
 			return DeleteOptions{V: &v}
 		default:
 			return skylark.None
@@ -10686,11 +16713,14 @@ func init() {
 }
 
 func createDeleteOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for DeleteOptions
+	box := DeleteOptions{V: &meta.DeleteOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t DeleteOptions) Underlying() interface{} { return t.V }
-func (t DeleteOptions) Package() util.Package   { return util.Metav1 }
-func (t DeleteOptions) Type() string            { return "k8s_metav1_DeleteOptions" }
+func (t DeleteOptions) DeepCopy() boxed         { return DeleteOptions{V: t.V.DeepCopy()} }
+func (t DeleteOptions) Package() util.Package   { return util.Meta }
+func (t DeleteOptions) Type() string            { return "k8s_meta_DeleteOptions" }
 func (t DeleteOptions) String() string          { return t.V.String() }
 func (t DeleteOptions) Freeze()                 {} // TODO
 func (t DeleteOptions) Truth() skylark.Bool     { return skylark.True }
@@ -10701,8 +16731,8 @@ func (t DeleteOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t DeleteOptions) AttrNames() []string { return DeleteOptions_attrs }
 func (t DeleteOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, DeleteOptions_fields, DeleteOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, DeleteOptions_fields, DeleteOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10710,61 +16740,8 @@ func (t DeleteOptions) SetField(name string, value skylark.Value) error {
 	return setAttr(t, name, value, DeleteOptions_fields, DeleteOptions_inline)
 }
 
-type Duration struct {
-	V *metav1.Duration
-}
-
-var (
-	_ boxed = (*Duration)(nil)
-
-	Duration_fields = map[string]util.FieldSpec{}
-	Duration_inline = map[string]util.FieldSpec{}
-	Duration_attrs  []string
-)
-
-func init() {
-	t := reflect.TypeOf((*metav1.Duration)(nil)).Elem()
-	g2s[t] = func(iface interface{}) skylark.Value {
-		switch v := iface.(type) {
-		case *metav1.Duration:
-			return Duration{V: v}
-		case metav1.Duration:
-			return Duration{V: &v}
-		default:
-			return skylark.None
-		}
-	}
-	Duration_attrs = setFieldTypes(t, Duration_fields, Duration_inline)
-	Library["Duration"] = skylark.NewBuiltin("Duration", createDuration)
-}
-
-func createDuration(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Duration
-}
-func (t Duration) Underlying() interface{} { return t.V }
-func (t Duration) Package() util.Package   { return util.Metav1 }
-func (t Duration) Type() string            { return "k8s_metav1_Duration" }
-func (t Duration) String() string          { return t.V.String() }
-func (t Duration) Freeze()                 {} // TODO
-func (t Duration) Truth() skylark.Bool     { return skylark.True }
-func (t Duration) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
-func (t Duration) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
-	y := y_.(*Duration)
-	return compareSameType(t, op, y, t.Type(), depth)
-}
-func (t Duration) AttrNames() []string { return Duration_attrs }
-func (t Duration) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Duration_fields, Duration_inline)
-	}
-	return skylark.None, uninitialized(t.Type(), name)
-}
-func (t Duration) SetField(name string, value skylark.Value) error {
-	return setAttr(t, name, value, Duration_fields, Duration_inline)
-}
-
 type ExportOptions struct {
-	V *metav1.ExportOptions
+	V *meta.ExportOptions
 }
 
 var (
@@ -10776,12 +16753,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.ExportOptions)(nil)).Elem()
+	t := reflect.TypeOf((*meta.ExportOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.ExportOptions:
+		case *meta.ExportOptions:
 			return ExportOptions{V: v}
-		case metav1.ExportOptions:
+		case meta.ExportOptions:
 			return ExportOptions{V: &v}
 		default:
 			return skylark.None
@@ -10792,11 +16769,14 @@ func init() {
 }
 
 func createExportOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ExportOptions
+	box := ExportOptions{V: &meta.ExportOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ExportOptions) Underlying() interface{} { return t.V }
-func (t ExportOptions) Package() util.Package   { return util.Metav1 }
-func (t ExportOptions) Type() string            { return "k8s_metav1_ExportOptions" }
+func (t ExportOptions) DeepCopy() boxed         { return ExportOptions{V: t.V.DeepCopy()} }
+func (t ExportOptions) Package() util.Package   { return util.Meta }
+func (t ExportOptions) Type() string            { return "k8s_meta_ExportOptions" }
 func (t ExportOptions) String() string          { return t.V.String() }
 func (t ExportOptions) Freeze()                 {} // TODO
 func (t ExportOptions) Truth() skylark.Bool     { return skylark.True }
@@ -10807,8 +16787,8 @@ func (t ExportOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t ExportOptions) AttrNames() []string { return ExportOptions_attrs }
 func (t ExportOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ExportOptions_fields, ExportOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ExportOptions_fields, ExportOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10817,7 +16797,7 @@ func (t ExportOptions) SetField(name string, value skylark.Value) error {
 }
 
 type GetOptions struct {
-	V *metav1.GetOptions
+	V *meta.GetOptions
 }
 
 var (
@@ -10829,12 +16809,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.GetOptions)(nil)).Elem()
+	t := reflect.TypeOf((*meta.GetOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.GetOptions:
+		case *meta.GetOptions:
 			return GetOptions{V: v}
-		case metav1.GetOptions:
+		case meta.GetOptions:
 			return GetOptions{V: &v}
 		default:
 			return skylark.None
@@ -10845,11 +16825,14 @@ func init() {
 }
 
 func createGetOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GetOptions
+	box := GetOptions{V: &meta.GetOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GetOptions) Underlying() interface{} { return t.V }
-func (t GetOptions) Package() util.Package   { return util.Metav1 }
-func (t GetOptions) Type() string            { return "k8s_metav1_GetOptions" }
+func (t GetOptions) DeepCopy() boxed         { return GetOptions{V: t.V.DeepCopy()} }
+func (t GetOptions) Package() util.Package   { return util.Meta }
+func (t GetOptions) Type() string            { return "k8s_meta_GetOptions" }
 func (t GetOptions) String() string          { return t.V.String() }
 func (t GetOptions) Freeze()                 {} // TODO
 func (t GetOptions) Truth() skylark.Bool     { return skylark.True }
@@ -10860,8 +16843,8 @@ func (t GetOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth int
 }
 func (t GetOptions) AttrNames() []string { return GetOptions_attrs }
 func (t GetOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GetOptions_fields, GetOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GetOptions_fields, GetOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10870,7 +16853,7 @@ func (t GetOptions) SetField(name string, value skylark.Value) error {
 }
 
 type GroupKind struct {
-	V *metav1.GroupKind
+	V *meta.GroupKind
 }
 
 var (
@@ -10882,12 +16865,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.GroupKind)(nil)).Elem()
+	t := reflect.TypeOf((*meta.GroupKind)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.GroupKind:
+		case *meta.GroupKind:
 			return GroupKind{V: v}
-		case metav1.GroupKind:
+		case meta.GroupKind:
 			return GroupKind{V: &v}
 		default:
 			return skylark.None
@@ -10898,11 +16881,14 @@ func init() {
 }
 
 func createGroupKind(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GroupKind
+	box := GroupKind{V: &meta.GroupKind{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GroupKind) Underlying() interface{} { return t.V }
-func (t GroupKind) Package() util.Package   { return util.Metav1 }
-func (t GroupKind) Type() string            { return "k8s_metav1_GroupKind" }
+func (t GroupKind) DeepCopy() boxed         { return GroupKind{V: t.V.DeepCopy()} }
+func (t GroupKind) Package() util.Package   { return util.Meta }
+func (t GroupKind) Type() string            { return "k8s_meta_GroupKind" }
 func (t GroupKind) String() string          { return t.V.String() }
 func (t GroupKind) Freeze()                 {} // TODO
 func (t GroupKind) Truth() skylark.Bool     { return skylark.True }
@@ -10913,8 +16899,8 @@ func (t GroupKind) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t GroupKind) AttrNames() []string { return GroupKind_attrs }
 func (t GroupKind) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GroupKind_fields, GroupKind_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GroupKind_fields, GroupKind_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10923,7 +16909,7 @@ func (t GroupKind) SetField(name string, value skylark.Value) error {
 }
 
 type GroupResource struct {
-	V *metav1.GroupResource
+	V *meta.GroupResource
 }
 
 var (
@@ -10935,12 +16921,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.GroupResource)(nil)).Elem()
+	t := reflect.TypeOf((*meta.GroupResource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.GroupResource:
+		case *meta.GroupResource:
 			return GroupResource{V: v}
-		case metav1.GroupResource:
+		case meta.GroupResource:
 			return GroupResource{V: &v}
 		default:
 			return skylark.None
@@ -10951,11 +16937,14 @@ func init() {
 }
 
 func createGroupResource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GroupResource
+	box := GroupResource{V: &meta.GroupResource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GroupResource) Underlying() interface{} { return t.V }
-func (t GroupResource) Package() util.Package   { return util.Metav1 }
-func (t GroupResource) Type() string            { return "k8s_metav1_GroupResource" }
+func (t GroupResource) DeepCopy() boxed         { return GroupResource{V: t.V.DeepCopy()} }
+func (t GroupResource) Package() util.Package   { return util.Meta }
+func (t GroupResource) Type() string            { return "k8s_meta_GroupResource" }
 func (t GroupResource) String() string          { return t.V.String() }
 func (t GroupResource) Freeze()                 {} // TODO
 func (t GroupResource) Truth() skylark.Bool     { return skylark.True }
@@ -10966,8 +16955,8 @@ func (t GroupResource) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t GroupResource) AttrNames() []string { return GroupResource_attrs }
 func (t GroupResource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GroupResource_fields, GroupResource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GroupResource_fields, GroupResource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -10976,7 +16965,7 @@ func (t GroupResource) SetField(name string, value skylark.Value) error {
 }
 
 type GroupVersion struct {
-	V *metav1.GroupVersion
+	V *meta.GroupVersion
 }
 
 var (
@@ -10988,12 +16977,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.GroupVersion)(nil)).Elem()
+	t := reflect.TypeOf((*meta.GroupVersion)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.GroupVersion:
+		case *meta.GroupVersion:
 			return GroupVersion{V: v}
-		case metav1.GroupVersion:
+		case meta.GroupVersion:
 			return GroupVersion{V: &v}
 		default:
 			return skylark.None
@@ -11004,11 +16993,14 @@ func init() {
 }
 
 func createGroupVersion(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GroupVersion
+	box := GroupVersion{V: &meta.GroupVersion{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GroupVersion) Underlying() interface{} { return t.V }
-func (t GroupVersion) Package() util.Package   { return util.Metav1 }
-func (t GroupVersion) Type() string            { return "k8s_metav1_GroupVersion" }
+func (t GroupVersion) DeepCopy() boxed         { return GroupVersion{V: t.V.DeepCopy()} }
+func (t GroupVersion) Package() util.Package   { return util.Meta }
+func (t GroupVersion) Type() string            { return "k8s_meta_GroupVersion" }
 func (t GroupVersion) String() string          { return t.V.String() }
 func (t GroupVersion) Freeze()                 {} // TODO
 func (t GroupVersion) Truth() skylark.Bool     { return skylark.True }
@@ -11019,8 +17011,8 @@ func (t GroupVersion) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t GroupVersion) AttrNames() []string { return GroupVersion_attrs }
 func (t GroupVersion) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GroupVersion_fields, GroupVersion_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GroupVersion_fields, GroupVersion_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11029,7 +17021,7 @@ func (t GroupVersion) SetField(name string, value skylark.Value) error {
 }
 
 type GroupVersionForDiscovery struct {
-	V *metav1.GroupVersionForDiscovery
+	V *meta.GroupVersionForDiscovery
 }
 
 var (
@@ -11041,12 +17033,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.GroupVersionForDiscovery)(nil)).Elem()
+	t := reflect.TypeOf((*meta.GroupVersionForDiscovery)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.GroupVersionForDiscovery:
+		case *meta.GroupVersionForDiscovery:
 			return GroupVersionForDiscovery{V: v}
-		case metav1.GroupVersionForDiscovery:
+		case meta.GroupVersionForDiscovery:
 			return GroupVersionForDiscovery{V: &v}
 		default:
 			return skylark.None
@@ -11057,11 +17049,14 @@ func init() {
 }
 
 func createGroupVersionForDiscovery(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GroupVersionForDiscovery
+	box := GroupVersionForDiscovery{V: &meta.GroupVersionForDiscovery{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GroupVersionForDiscovery) Underlying() interface{} { return t.V }
-func (t GroupVersionForDiscovery) Package() util.Package   { return util.Metav1 }
-func (t GroupVersionForDiscovery) Type() string            { return "k8s_metav1_GroupVersionForDiscovery" }
+func (t GroupVersionForDiscovery) DeepCopy() boxed         { return GroupVersionForDiscovery{V: t.V.DeepCopy()} }
+func (t GroupVersionForDiscovery) Package() util.Package   { return util.Meta }
+func (t GroupVersionForDiscovery) Type() string            { return "k8s_meta_GroupVersionForDiscovery" }
 func (t GroupVersionForDiscovery) String() string          { return t.V.String() }
 func (t GroupVersionForDiscovery) Freeze()                 {} // TODO
 func (t GroupVersionForDiscovery) Truth() skylark.Bool     { return skylark.True }
@@ -11072,8 +17067,8 @@ func (t GroupVersionForDiscovery) CompareSameType(op syntax.Token, y_ skylark.Va
 }
 func (t GroupVersionForDiscovery) AttrNames() []string { return GroupVersionForDiscovery_attrs }
 func (t GroupVersionForDiscovery) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GroupVersionForDiscovery_fields, GroupVersionForDiscovery_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GroupVersionForDiscovery_fields, GroupVersionForDiscovery_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11082,7 +17077,7 @@ func (t GroupVersionForDiscovery) SetField(name string, value skylark.Value) err
 }
 
 type GroupVersionKind struct {
-	V *metav1.GroupVersionKind
+	V *meta.GroupVersionKind
 }
 
 var (
@@ -11094,12 +17089,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.GroupVersionKind)(nil)).Elem()
+	t := reflect.TypeOf((*meta.GroupVersionKind)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.GroupVersionKind:
+		case *meta.GroupVersionKind:
 			return GroupVersionKind{V: v}
-		case metav1.GroupVersionKind:
+		case meta.GroupVersionKind:
 			return GroupVersionKind{V: &v}
 		default:
 			return skylark.None
@@ -11110,11 +17105,14 @@ func init() {
 }
 
 func createGroupVersionKind(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GroupVersionKind
+	box := GroupVersionKind{V: &meta.GroupVersionKind{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GroupVersionKind) Underlying() interface{} { return t.V }
-func (t GroupVersionKind) Package() util.Package   { return util.Metav1 }
-func (t GroupVersionKind) Type() string            { return "k8s_metav1_GroupVersionKind" }
+func (t GroupVersionKind) DeepCopy() boxed         { return GroupVersionKind{V: t.V.DeepCopy()} }
+func (t GroupVersionKind) Package() util.Package   { return util.Meta }
+func (t GroupVersionKind) Type() string            { return "k8s_meta_GroupVersionKind" }
 func (t GroupVersionKind) String() string          { return t.V.String() }
 func (t GroupVersionKind) Freeze()                 {} // TODO
 func (t GroupVersionKind) Truth() skylark.Bool     { return skylark.True }
@@ -11125,8 +17123,8 @@ func (t GroupVersionKind) CompareSameType(op syntax.Token, y_ skylark.Value, dep
 }
 func (t GroupVersionKind) AttrNames() []string { return GroupVersionKind_attrs }
 func (t GroupVersionKind) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GroupVersionKind_fields, GroupVersionKind_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GroupVersionKind_fields, GroupVersionKind_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11135,7 +17133,7 @@ func (t GroupVersionKind) SetField(name string, value skylark.Value) error {
 }
 
 type GroupVersionResource struct {
-	V *metav1.GroupVersionResource
+	V *meta.GroupVersionResource
 }
 
 var (
@@ -11147,12 +17145,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.GroupVersionResource)(nil)).Elem()
+	t := reflect.TypeOf((*meta.GroupVersionResource)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.GroupVersionResource:
+		case *meta.GroupVersionResource:
 			return GroupVersionResource{V: v}
-		case metav1.GroupVersionResource:
+		case meta.GroupVersionResource:
 			return GroupVersionResource{V: &v}
 		default:
 			return skylark.None
@@ -11163,11 +17161,14 @@ func init() {
 }
 
 func createGroupVersionResource(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for GroupVersionResource
+	box := GroupVersionResource{V: &meta.GroupVersionResource{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t GroupVersionResource) Underlying() interface{} { return t.V }
-func (t GroupVersionResource) Package() util.Package   { return util.Metav1 }
-func (t GroupVersionResource) Type() string            { return "k8s_metav1_GroupVersionResource" }
+func (t GroupVersionResource) DeepCopy() boxed         { return GroupVersionResource{V: t.V.DeepCopy()} }
+func (t GroupVersionResource) Package() util.Package   { return util.Meta }
+func (t GroupVersionResource) Type() string            { return "k8s_meta_GroupVersionResource" }
 func (t GroupVersionResource) String() string          { return t.V.String() }
 func (t GroupVersionResource) Freeze()                 {} // TODO
 func (t GroupVersionResource) Truth() skylark.Bool     { return skylark.True }
@@ -11178,8 +17179,8 @@ func (t GroupVersionResource) CompareSameType(op syntax.Token, y_ skylark.Value,
 }
 func (t GroupVersionResource) AttrNames() []string { return GroupVersionResource_attrs }
 func (t GroupVersionResource) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, GroupVersionResource_fields, GroupVersionResource_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, GroupVersionResource_fields, GroupVersionResource_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11188,7 +17189,7 @@ func (t GroupVersionResource) SetField(name string, value skylark.Value) error {
 }
 
 type Initializer struct {
-	V *metav1.Initializer
+	V *meta.Initializer
 }
 
 var (
@@ -11200,12 +17201,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.Initializer)(nil)).Elem()
+	t := reflect.TypeOf((*meta.Initializer)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.Initializer:
+		case *meta.Initializer:
 			return Initializer{V: v}
-		case metav1.Initializer:
+		case meta.Initializer:
 			return Initializer{V: &v}
 		default:
 			return skylark.None
@@ -11216,11 +17217,14 @@ func init() {
 }
 
 func createInitializer(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Initializer
+	box := Initializer{V: &meta.Initializer{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Initializer) Underlying() interface{} { return t.V }
-func (t Initializer) Package() util.Package   { return util.Metav1 }
-func (t Initializer) Type() string            { return "k8s_metav1_Initializer" }
+func (t Initializer) DeepCopy() boxed         { return Initializer{V: t.V.DeepCopy()} }
+func (t Initializer) Package() util.Package   { return util.Meta }
+func (t Initializer) Type() string            { return "k8s_meta_Initializer" }
 func (t Initializer) String() string          { return t.V.String() }
 func (t Initializer) Freeze()                 {} // TODO
 func (t Initializer) Truth() skylark.Bool     { return skylark.True }
@@ -11231,8 +17235,8 @@ func (t Initializer) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t Initializer) AttrNames() []string { return Initializer_attrs }
 func (t Initializer) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Initializer_fields, Initializer_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Initializer_fields, Initializer_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11241,7 +17245,7 @@ func (t Initializer) SetField(name string, value skylark.Value) error {
 }
 
 type Initializers struct {
-	V *metav1.Initializers
+	V *meta.Initializers
 }
 
 var (
@@ -11253,12 +17257,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.Initializers)(nil)).Elem()
+	t := reflect.TypeOf((*meta.Initializers)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.Initializers:
+		case *meta.Initializers:
 			return Initializers{V: v}
-		case metav1.Initializers:
+		case meta.Initializers:
 			return Initializers{V: &v}
 		default:
 			return skylark.None
@@ -11269,11 +17273,14 @@ func init() {
 }
 
 func createInitializers(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Initializers
+	box := Initializers{V: &meta.Initializers{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Initializers) Underlying() interface{} { return t.V }
-func (t Initializers) Package() util.Package   { return util.Metav1 }
-func (t Initializers) Type() string            { return "k8s_metav1_Initializers" }
+func (t Initializers) DeepCopy() boxed         { return Initializers{V: t.V.DeepCopy()} }
+func (t Initializers) Package() util.Package   { return util.Meta }
+func (t Initializers) Type() string            { return "k8s_meta_Initializers" }
 func (t Initializers) String() string          { return t.V.String() }
 func (t Initializers) Freeze()                 {} // TODO
 func (t Initializers) Truth() skylark.Bool     { return skylark.True }
@@ -11284,8 +17291,8 @@ func (t Initializers) CompareSameType(op syntax.Token, y_ skylark.Value, depth i
 }
 func (t Initializers) AttrNames() []string { return Initializers_attrs }
 func (t Initializers) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Initializers_fields, Initializers_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Initializers_fields, Initializers_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11294,7 +17301,7 @@ func (t Initializers) SetField(name string, value skylark.Value) error {
 }
 
 type InternalEvent struct {
-	V *metav1.InternalEvent
+	V *meta.InternalEvent
 }
 
 var (
@@ -11306,12 +17313,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.InternalEvent)(nil)).Elem()
+	t := reflect.TypeOf((*meta.InternalEvent)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.InternalEvent:
+		case *meta.InternalEvent:
 			return InternalEvent{V: v}
-		case metav1.InternalEvent:
+		case meta.InternalEvent:
 			return InternalEvent{V: &v}
 		default:
 			return skylark.None
@@ -11322,11 +17329,14 @@ func init() {
 }
 
 func createInternalEvent(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for InternalEvent
+	box := InternalEvent{V: &meta.InternalEvent{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t InternalEvent) Underlying() interface{} { return t.V }
-func (t InternalEvent) Package() util.Package   { return util.Metav1 }
-func (t InternalEvent) Type() string            { return "k8s_metav1_InternalEvent" }
+func (t InternalEvent) DeepCopy() boxed         { return InternalEvent{V: t.V.DeepCopy()} }
+func (t InternalEvent) Package() util.Package   { return util.Meta }
+func (t InternalEvent) Type() string            { return "k8s_meta_InternalEvent" }
 func (t InternalEvent) String() string          { return genericStringMethod(t.V) }
 func (t InternalEvent) Freeze()                 {} // TODO
 func (t InternalEvent) Truth() skylark.Bool     { return skylark.True }
@@ -11337,8 +17347,8 @@ func (t InternalEvent) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t InternalEvent) AttrNames() []string { return InternalEvent_attrs }
 func (t InternalEvent) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, InternalEvent_fields, InternalEvent_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, InternalEvent_fields, InternalEvent_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11347,7 +17357,7 @@ func (t InternalEvent) SetField(name string, value skylark.Value) error {
 }
 
 type LabelSelector struct {
-	V *metav1.LabelSelector
+	V *meta.LabelSelector
 }
 
 var (
@@ -11359,12 +17369,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.LabelSelector)(nil)).Elem()
+	t := reflect.TypeOf((*meta.LabelSelector)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.LabelSelector:
+		case *meta.LabelSelector:
 			return LabelSelector{V: v}
-		case metav1.LabelSelector:
+		case meta.LabelSelector:
 			return LabelSelector{V: &v}
 		default:
 			return skylark.None
@@ -11375,11 +17385,14 @@ func init() {
 }
 
 func createLabelSelector(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LabelSelector
+	box := LabelSelector{V: &meta.LabelSelector{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LabelSelector) Underlying() interface{} { return t.V }
-func (t LabelSelector) Package() util.Package   { return util.Metav1 }
-func (t LabelSelector) Type() string            { return "k8s_metav1_LabelSelector" }
+func (t LabelSelector) DeepCopy() boxed         { return LabelSelector{V: t.V.DeepCopy()} }
+func (t LabelSelector) Package() util.Package   { return util.Meta }
+func (t LabelSelector) Type() string            { return "k8s_meta_LabelSelector" }
 func (t LabelSelector) String() string          { return t.V.String() }
 func (t LabelSelector) Freeze()                 {} // TODO
 func (t LabelSelector) Truth() skylark.Bool     { return skylark.True }
@@ -11390,8 +17403,8 @@ func (t LabelSelector) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t LabelSelector) AttrNames() []string { return LabelSelector_attrs }
 func (t LabelSelector) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LabelSelector_fields, LabelSelector_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LabelSelector_fields, LabelSelector_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11400,7 +17413,7 @@ func (t LabelSelector) SetField(name string, value skylark.Value) error {
 }
 
 type LabelSelectorRequirement struct {
-	V *metav1.LabelSelectorRequirement
+	V *meta.LabelSelectorRequirement
 }
 
 var (
@@ -11412,12 +17425,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.LabelSelectorRequirement)(nil)).Elem()
+	t := reflect.TypeOf((*meta.LabelSelectorRequirement)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.LabelSelectorRequirement:
+		case *meta.LabelSelectorRequirement:
 			return LabelSelectorRequirement{V: v}
-		case metav1.LabelSelectorRequirement:
+		case meta.LabelSelectorRequirement:
 			return LabelSelectorRequirement{V: &v}
 		default:
 			return skylark.None
@@ -11428,11 +17441,14 @@ func init() {
 }
 
 func createLabelSelectorRequirement(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for LabelSelectorRequirement
+	box := LabelSelectorRequirement{V: &meta.LabelSelectorRequirement{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t LabelSelectorRequirement) Underlying() interface{} { return t.V }
-func (t LabelSelectorRequirement) Package() util.Package   { return util.Metav1 }
-func (t LabelSelectorRequirement) Type() string            { return "k8s_metav1_LabelSelectorRequirement" }
+func (t LabelSelectorRequirement) DeepCopy() boxed         { return LabelSelectorRequirement{V: t.V.DeepCopy()} }
+func (t LabelSelectorRequirement) Package() util.Package   { return util.Meta }
+func (t LabelSelectorRequirement) Type() string            { return "k8s_meta_LabelSelectorRequirement" }
 func (t LabelSelectorRequirement) String() string          { return t.V.String() }
 func (t LabelSelectorRequirement) Freeze()                 {} // TODO
 func (t LabelSelectorRequirement) Truth() skylark.Bool     { return skylark.True }
@@ -11443,8 +17459,8 @@ func (t LabelSelectorRequirement) CompareSameType(op syntax.Token, y_ skylark.Va
 }
 func (t LabelSelectorRequirement) AttrNames() []string { return LabelSelectorRequirement_attrs }
 func (t LabelSelectorRequirement) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, LabelSelectorRequirement_fields, LabelSelectorRequirement_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, LabelSelectorRequirement_fields, LabelSelectorRequirement_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11453,7 +17469,7 @@ func (t LabelSelectorRequirement) SetField(name string, value skylark.Value) err
 }
 
 type ListMeta struct {
-	V *metav1.ListMeta
+	V *meta.ListMeta
 }
 
 var (
@@ -11465,12 +17481,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.ListMeta)(nil)).Elem()
+	t := reflect.TypeOf((*meta.ListMeta)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.ListMeta:
+		case *meta.ListMeta:
 			return ListMeta{V: v}
-		case metav1.ListMeta:
+		case meta.ListMeta:
 			return ListMeta{V: &v}
 		default:
 			return skylark.None
@@ -11481,11 +17497,14 @@ func init() {
 }
 
 func createListMeta(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ListMeta
+	box := ListMeta{V: &meta.ListMeta{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ListMeta) Underlying() interface{} { return t.V }
-func (t ListMeta) Package() util.Package   { return util.Metav1 }
-func (t ListMeta) Type() string            { return "k8s_metav1_ListMeta" }
+func (t ListMeta) DeepCopy() boxed         { return ListMeta{V: t.V.DeepCopy()} }
+func (t ListMeta) Package() util.Package   { return util.Meta }
+func (t ListMeta) Type() string            { return "k8s_meta_ListMeta" }
 func (t ListMeta) String() string          { return t.V.String() }
 func (t ListMeta) Freeze()                 {} // TODO
 func (t ListMeta) Truth() skylark.Bool     { return skylark.True }
@@ -11496,8 +17515,8 @@ func (t ListMeta) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) 
 }
 func (t ListMeta) AttrNames() []string { return ListMeta_attrs }
 func (t ListMeta) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ListMeta_fields, ListMeta_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ListMeta_fields, ListMeta_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11506,7 +17525,7 @@ func (t ListMeta) SetField(name string, value skylark.Value) error {
 }
 
 type ListOptions struct {
-	V *metav1.ListOptions
+	V *meta.ListOptions
 }
 
 var (
@@ -11518,12 +17537,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.ListOptions)(nil)).Elem()
+	t := reflect.TypeOf((*meta.ListOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.ListOptions:
+		case *meta.ListOptions:
 			return ListOptions{V: v}
-		case metav1.ListOptions:
+		case meta.ListOptions:
 			return ListOptions{V: &v}
 		default:
 			return skylark.None
@@ -11534,11 +17553,14 @@ func init() {
 }
 
 func createListOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ListOptions
+	box := ListOptions{V: &meta.ListOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ListOptions) Underlying() interface{} { return t.V }
-func (t ListOptions) Package() util.Package   { return util.Metav1 }
-func (t ListOptions) Type() string            { return "k8s_metav1_ListOptions" }
+func (t ListOptions) DeepCopy() boxed         { return ListOptions{V: t.V.DeepCopy()} }
+func (t ListOptions) Package() util.Package   { return util.Meta }
+func (t ListOptions) Type() string            { return "k8s_meta_ListOptions" }
 func (t ListOptions) String() string          { return t.V.String() }
 func (t ListOptions) Freeze()                 {} // TODO
 func (t ListOptions) Truth() skylark.Bool     { return skylark.True }
@@ -11549,8 +17571,8 @@ func (t ListOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t ListOptions) AttrNames() []string { return ListOptions_attrs }
 func (t ListOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ListOptions_fields, ListOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ListOptions_fields, ListOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11559,7 +17581,7 @@ func (t ListOptions) SetField(name string, value skylark.Value) error {
 }
 
 type ObjectMeta struct {
-	V *metav1.ObjectMeta
+	V *meta.ObjectMeta
 }
 
 var (
@@ -11571,12 +17593,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.ObjectMeta)(nil)).Elem()
+	t := reflect.TypeOf((*meta.ObjectMeta)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.ObjectMeta:
+		case *meta.ObjectMeta:
 			return ObjectMeta{V: v}
-		case metav1.ObjectMeta:
+		case meta.ObjectMeta:
 			return ObjectMeta{V: &v}
 		default:
 			return skylark.None
@@ -11587,11 +17609,14 @@ func init() {
 }
 
 func createObjectMeta(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ObjectMeta
+	box := ObjectMeta{V: &meta.ObjectMeta{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ObjectMeta) Underlying() interface{} { return t.V }
-func (t ObjectMeta) Package() util.Package   { return util.Metav1 }
-func (t ObjectMeta) Type() string            { return "k8s_metav1_ObjectMeta" }
+func (t ObjectMeta) DeepCopy() boxed         { return ObjectMeta{V: t.V.DeepCopy()} }
+func (t ObjectMeta) Package() util.Package   { return util.Meta }
+func (t ObjectMeta) Type() string            { return "k8s_meta_ObjectMeta" }
 func (t ObjectMeta) String() string          { return t.V.String() }
 func (t ObjectMeta) Freeze()                 {} // TODO
 func (t ObjectMeta) Truth() skylark.Bool     { return skylark.True }
@@ -11602,8 +17627,8 @@ func (t ObjectMeta) CompareSameType(op syntax.Token, y_ skylark.Value, depth int
 }
 func (t ObjectMeta) AttrNames() []string { return ObjectMeta_attrs }
 func (t ObjectMeta) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ObjectMeta_fields, ObjectMeta_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ObjectMeta_fields, ObjectMeta_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11612,7 +17637,7 @@ func (t ObjectMeta) SetField(name string, value skylark.Value) error {
 }
 
 type OwnerReference struct {
-	V *metav1.OwnerReference
+	V *meta.OwnerReference
 }
 
 var (
@@ -11624,12 +17649,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.OwnerReference)(nil)).Elem()
+	t := reflect.TypeOf((*meta.OwnerReference)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.OwnerReference:
+		case *meta.OwnerReference:
 			return OwnerReference{V: v}
-		case metav1.OwnerReference:
+		case meta.OwnerReference:
 			return OwnerReference{V: &v}
 		default:
 			return skylark.None
@@ -11640,11 +17665,14 @@ func init() {
 }
 
 func createOwnerReference(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for OwnerReference
+	box := OwnerReference{V: &meta.OwnerReference{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t OwnerReference) Underlying() interface{} { return t.V }
-func (t OwnerReference) Package() util.Package   { return util.Metav1 }
-func (t OwnerReference) Type() string            { return "k8s_metav1_OwnerReference" }
+func (t OwnerReference) DeepCopy() boxed         { return OwnerReference{V: t.V.DeepCopy()} }
+func (t OwnerReference) Package() util.Package   { return util.Meta }
+func (t OwnerReference) Type() string            { return "k8s_meta_OwnerReference" }
 func (t OwnerReference) String() string          { return t.V.String() }
 func (t OwnerReference) Freeze()                 {} // TODO
 func (t OwnerReference) Truth() skylark.Bool     { return skylark.True }
@@ -11655,8 +17683,8 @@ func (t OwnerReference) CompareSameType(op syntax.Token, y_ skylark.Value, depth
 }
 func (t OwnerReference) AttrNames() []string { return OwnerReference_attrs }
 func (t OwnerReference) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, OwnerReference_fields, OwnerReference_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, OwnerReference_fields, OwnerReference_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11665,7 +17693,7 @@ func (t OwnerReference) SetField(name string, value skylark.Value) error {
 }
 
 type Patch struct {
-	V *metav1.Patch
+	V *meta.Patch
 }
 
 var (
@@ -11677,12 +17705,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.Patch)(nil)).Elem()
+	t := reflect.TypeOf((*meta.Patch)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.Patch:
+		case *meta.Patch:
 			return Patch{V: v}
-		case metav1.Patch:
+		case meta.Patch:
 			return Patch{V: &v}
 		default:
 			return skylark.None
@@ -11693,11 +17721,14 @@ func init() {
 }
 
 func createPatch(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Patch
+	box := Patch{V: &meta.Patch{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Patch) Underlying() interface{} { return t.V }
-func (t Patch) Package() util.Package   { return util.Metav1 }
-func (t Patch) Type() string            { return "k8s_metav1_Patch" }
+func (t Patch) DeepCopy() boxed         { return Patch{V: t.V.DeepCopy()} }
+func (t Patch) Package() util.Package   { return util.Meta }
+func (t Patch) Type() string            { return "k8s_meta_Patch" }
 func (t Patch) String() string          { return t.V.String() }
 func (t Patch) Freeze()                 {} // TODO
 func (t Patch) Truth() skylark.Bool     { return skylark.True }
@@ -11708,8 +17739,8 @@ func (t Patch) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bo
 }
 func (t Patch) AttrNames() []string { return Patch_attrs }
 func (t Patch) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Patch_fields, Patch_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Patch_fields, Patch_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11718,7 +17749,7 @@ func (t Patch) SetField(name string, value skylark.Value) error {
 }
 
 type RootPaths struct {
-	V *metav1.RootPaths
+	V *meta.RootPaths
 }
 
 var (
@@ -11730,12 +17761,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.RootPaths)(nil)).Elem()
+	t := reflect.TypeOf((*meta.RootPaths)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.RootPaths:
+		case *meta.RootPaths:
 			return RootPaths{V: v}
-		case metav1.RootPaths:
+		case meta.RootPaths:
 			return RootPaths{V: &v}
 		default:
 			return skylark.None
@@ -11746,11 +17777,14 @@ func init() {
 }
 
 func createRootPaths(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for RootPaths
+	box := RootPaths{V: &meta.RootPaths{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t RootPaths) Underlying() interface{} { return t.V }
-func (t RootPaths) Package() util.Package   { return util.Metav1 }
-func (t RootPaths) Type() string            { return "k8s_metav1_RootPaths" }
+func (t RootPaths) DeepCopy() boxed         { return RootPaths{V: t.V.DeepCopy()} }
+func (t RootPaths) Package() util.Package   { return util.Meta }
+func (t RootPaths) Type() string            { return "k8s_meta_RootPaths" }
 func (t RootPaths) String() string          { return t.V.String() }
 func (t RootPaths) Freeze()                 {} // TODO
 func (t RootPaths) Truth() skylark.Bool     { return skylark.True }
@@ -11761,8 +17795,8 @@ func (t RootPaths) CompareSameType(op syntax.Token, y_ skylark.Value, depth int)
 }
 func (t RootPaths) AttrNames() []string { return RootPaths_attrs }
 func (t RootPaths) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, RootPaths_fields, RootPaths_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, RootPaths_fields, RootPaths_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11771,7 +17805,7 @@ func (t RootPaths) SetField(name string, value skylark.Value) error {
 }
 
 type ServerAddressByClientCIDR struct {
-	V *metav1.ServerAddressByClientCIDR
+	V *meta.ServerAddressByClientCIDR
 }
 
 var (
@@ -11783,12 +17817,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.ServerAddressByClientCIDR)(nil)).Elem()
+	t := reflect.TypeOf((*meta.ServerAddressByClientCIDR)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.ServerAddressByClientCIDR:
+		case *meta.ServerAddressByClientCIDR:
 			return ServerAddressByClientCIDR{V: v}
-		case metav1.ServerAddressByClientCIDR:
+		case meta.ServerAddressByClientCIDR:
 			return ServerAddressByClientCIDR{V: &v}
 		default:
 			return skylark.None
@@ -11799,23 +17833,28 @@ func init() {
 }
 
 func createServerAddressByClientCIDR(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for ServerAddressByClientCIDR
+	box := ServerAddressByClientCIDR{V: &meta.ServerAddressByClientCIDR{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t ServerAddressByClientCIDR) Underlying() interface{} { return t.V }
-func (t ServerAddressByClientCIDR) Package() util.Package   { return util.Metav1 }
-func (t ServerAddressByClientCIDR) Type() string            { return "k8s_metav1_ServerAddressByClientCIDR" }
-func (t ServerAddressByClientCIDR) String() string          { return t.V.String() }
-func (t ServerAddressByClientCIDR) Freeze()                 {} // TODO
-func (t ServerAddressByClientCIDR) Truth() skylark.Bool     { return skylark.True }
-func (t ServerAddressByClientCIDR) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t ServerAddressByClientCIDR) DeepCopy() boxed {
+	return ServerAddressByClientCIDR{V: t.V.DeepCopy()}
+}
+func (t ServerAddressByClientCIDR) Package() util.Package { return util.Meta }
+func (t ServerAddressByClientCIDR) Type() string          { return "k8s_meta_ServerAddressByClientCIDR" }
+func (t ServerAddressByClientCIDR) String() string        { return t.V.String() }
+func (t ServerAddressByClientCIDR) Freeze()               {} // TODO
+func (t ServerAddressByClientCIDR) Truth() skylark.Bool   { return skylark.True }
+func (t ServerAddressByClientCIDR) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t ServerAddressByClientCIDR) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*ServerAddressByClientCIDR)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t ServerAddressByClientCIDR) AttrNames() []string { return ServerAddressByClientCIDR_attrs }
 func (t ServerAddressByClientCIDR) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, ServerAddressByClientCIDR_fields, ServerAddressByClientCIDR_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, ServerAddressByClientCIDR_fields, ServerAddressByClientCIDR_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11824,7 +17863,7 @@ func (t ServerAddressByClientCIDR) SetField(name string, value skylark.Value) er
 }
 
 type Status struct {
-	V *metav1.Status
+	V *meta.Status
 }
 
 var (
@@ -11836,12 +17875,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.Status)(nil)).Elem()
+	t := reflect.TypeOf((*meta.Status)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.Status:
+		case *meta.Status:
 			return Status{V: v}
-		case metav1.Status:
+		case meta.Status:
 			return Status{V: &v}
 		default:
 			return skylark.None
@@ -11852,11 +17891,14 @@ func init() {
 }
 
 func createStatus(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for Status
+	box := Status{V: &meta.Status{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t Status) Underlying() interface{} { return t.V }
-func (t Status) Package() util.Package   { return util.Metav1 }
-func (t Status) Type() string            { return "k8s_metav1_Status" }
+func (t Status) DeepCopy() boxed         { return Status{V: t.V.DeepCopy()} }
+func (t Status) Package() util.Package   { return util.Meta }
+func (t Status) Type() string            { return "k8s_meta_Status" }
 func (t Status) String() string          { return t.V.String() }
 func (t Status) Freeze()                 {} // TODO
 func (t Status) Truth() skylark.Bool     { return skylark.True }
@@ -11867,8 +17909,8 @@ func (t Status) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (b
 }
 func (t Status) AttrNames() []string { return Status_attrs }
 func (t Status) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, Status_fields, Status_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, Status_fields, Status_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11877,7 +17919,7 @@ func (t Status) SetField(name string, value skylark.Value) error {
 }
 
 type StatusCause struct {
-	V *metav1.StatusCause
+	V *meta.StatusCause
 }
 
 var (
@@ -11889,12 +17931,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.StatusCause)(nil)).Elem()
+	t := reflect.TypeOf((*meta.StatusCause)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.StatusCause:
+		case *meta.StatusCause:
 			return StatusCause{V: v}
-		case metav1.StatusCause:
+		case meta.StatusCause:
 			return StatusCause{V: &v}
 		default:
 			return skylark.None
@@ -11905,11 +17947,14 @@ func init() {
 }
 
 func createStatusCause(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for StatusCause
+	box := StatusCause{V: &meta.StatusCause{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t StatusCause) Underlying() interface{} { return t.V }
-func (t StatusCause) Package() util.Package   { return util.Metav1 }
-func (t StatusCause) Type() string            { return "k8s_metav1_StatusCause" }
+func (t StatusCause) DeepCopy() boxed         { return StatusCause{V: t.V.DeepCopy()} }
+func (t StatusCause) Package() util.Package   { return util.Meta }
+func (t StatusCause) Type() string            { return "k8s_meta_StatusCause" }
 func (t StatusCause) String() string          { return t.V.String() }
 func (t StatusCause) Freeze()                 {} // TODO
 func (t StatusCause) Truth() skylark.Bool     { return skylark.True }
@@ -11920,8 +17965,8 @@ func (t StatusCause) CompareSameType(op syntax.Token, y_ skylark.Value, depth in
 }
 func (t StatusCause) AttrNames() []string { return StatusCause_attrs }
 func (t StatusCause) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, StatusCause_fields, StatusCause_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StatusCause_fields, StatusCause_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11930,7 +17975,7 @@ func (t StatusCause) SetField(name string, value skylark.Value) error {
 }
 
 type StatusDetails struct {
-	V *metav1.StatusDetails
+	V *meta.StatusDetails
 }
 
 var (
@@ -11942,12 +17987,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.StatusDetails)(nil)).Elem()
+	t := reflect.TypeOf((*meta.StatusDetails)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.StatusDetails:
+		case *meta.StatusDetails:
 			return StatusDetails{V: v}
-		case metav1.StatusDetails:
+		case meta.StatusDetails:
 			return StatusDetails{V: &v}
 		default:
 			return skylark.None
@@ -11958,11 +18003,14 @@ func init() {
 }
 
 func createStatusDetails(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for StatusDetails
+	box := StatusDetails{V: &meta.StatusDetails{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t StatusDetails) Underlying() interface{} { return t.V }
-func (t StatusDetails) Package() util.Package   { return util.Metav1 }
-func (t StatusDetails) Type() string            { return "k8s_metav1_StatusDetails" }
+func (t StatusDetails) DeepCopy() boxed         { return StatusDetails{V: t.V.DeepCopy()} }
+func (t StatusDetails) Package() util.Package   { return util.Meta }
+func (t StatusDetails) Type() string            { return "k8s_meta_StatusDetails" }
 func (t StatusDetails) String() string          { return t.V.String() }
 func (t StatusDetails) Freeze()                 {} // TODO
 func (t StatusDetails) Truth() skylark.Bool     { return skylark.True }
@@ -11973,8 +18021,8 @@ func (t StatusDetails) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t StatusDetails) AttrNames() []string { return StatusDetails_attrs }
 func (t StatusDetails) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, StatusDetails_fields, StatusDetails_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, StatusDetails_fields, StatusDetails_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -11983,7 +18031,7 @@ func (t StatusDetails) SetField(name string, value skylark.Value) error {
 }
 
 type TypeMeta struct {
-	V *metav1.TypeMeta
+	V *meta.TypeMeta
 }
 
 var (
@@ -11995,12 +18043,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.TypeMeta)(nil)).Elem()
+	t := reflect.TypeOf((*meta.TypeMeta)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.TypeMeta:
+		case *meta.TypeMeta:
 			return TypeMeta{V: v}
-		case metav1.TypeMeta:
+		case meta.TypeMeta:
 			return TypeMeta{V: &v}
 		default:
 			return skylark.None
@@ -12011,23 +18059,32 @@ func init() {
 }
 
 func createTypeMeta(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for TypeMeta
+	box := TypeMeta{V: &meta.TypeMeta{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t TypeMeta) Underlying() interface{} { return t.V }
-func (t TypeMeta) Package() util.Package   { return util.Metav1 }
-func (t TypeMeta) Type() string            { return "k8s_metav1_TypeMeta" }
-func (t TypeMeta) String() string          { return t.V.String() }
-func (t TypeMeta) Freeze()                 {} // TODO
-func (t TypeMeta) Truth() skylark.Bool     { return skylark.True }
-func (t TypeMeta) Hash() (uint32, error)   { return 0, unhashable(t.Type()) }
+func (t TypeMeta) DeepCopy() boxed {
+	if t.V == nil {
+		return TypeMeta{}
+	}
+	v := *t.V
+	return TypeMeta{V: &v}
+}
+func (t TypeMeta) Package() util.Package { return util.Meta }
+func (t TypeMeta) Type() string          { return "k8s_meta_TypeMeta" }
+func (t TypeMeta) String() string        { return t.V.String() }
+func (t TypeMeta) Freeze()               {} // TODO
+func (t TypeMeta) Truth() skylark.Bool   { return skylark.True }
+func (t TypeMeta) Hash() (uint32, error) { return 0, unhashable(t.Type()) }
 func (t TypeMeta) CompareSameType(op syntax.Token, y_ skylark.Value, depth int) (bool, error) {
 	y := y_.(*TypeMeta)
 	return compareSameType(t, op, y, t.Type(), depth)
 }
 func (t TypeMeta) AttrNames() []string { return TypeMeta_attrs }
 func (t TypeMeta) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, TypeMeta_fields, TypeMeta_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, TypeMeta_fields, TypeMeta_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -12036,7 +18093,7 @@ func (t TypeMeta) SetField(name string, value skylark.Value) error {
 }
 
 type UpdateOptions struct {
-	V *metav1.UpdateOptions
+	V *meta.UpdateOptions
 }
 
 var (
@@ -12048,12 +18105,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.UpdateOptions)(nil)).Elem()
+	t := reflect.TypeOf((*meta.UpdateOptions)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.UpdateOptions:
+		case *meta.UpdateOptions:
 			return UpdateOptions{V: v}
-		case metav1.UpdateOptions:
+		case meta.UpdateOptions:
 			return UpdateOptions{V: &v}
 		default:
 			return skylark.None
@@ -12064,11 +18121,14 @@ func init() {
 }
 
 func createUpdateOptions(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for UpdateOptions
+	box := UpdateOptions{V: &meta.UpdateOptions{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t UpdateOptions) Underlying() interface{} { return t.V }
-func (t UpdateOptions) Package() util.Package   { return util.Metav1 }
-func (t UpdateOptions) Type() string            { return "k8s_metav1_UpdateOptions" }
+func (t UpdateOptions) DeepCopy() boxed         { return UpdateOptions{V: t.V.DeepCopy()} }
+func (t UpdateOptions) Package() util.Package   { return util.Meta }
+func (t UpdateOptions) Type() string            { return "k8s_meta_UpdateOptions" }
 func (t UpdateOptions) String() string          { return t.V.String() }
 func (t UpdateOptions) Freeze()                 {} // TODO
 func (t UpdateOptions) Truth() skylark.Bool     { return skylark.True }
@@ -12079,8 +18139,8 @@ func (t UpdateOptions) CompareSameType(op syntax.Token, y_ skylark.Value, depth 
 }
 func (t UpdateOptions) AttrNames() []string { return UpdateOptions_attrs }
 func (t UpdateOptions) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, UpdateOptions_fields, UpdateOptions_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, UpdateOptions_fields, UpdateOptions_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }
@@ -12089,7 +18149,7 @@ func (t UpdateOptions) SetField(name string, value skylark.Value) error {
 }
 
 type WatchEvent struct {
-	V *metav1.WatchEvent
+	V *meta.WatchEvent
 }
 
 var (
@@ -12101,12 +18161,12 @@ var (
 )
 
 func init() {
-	t := reflect.TypeOf((*metav1.WatchEvent)(nil)).Elem()
+	t := reflect.TypeOf((*meta.WatchEvent)(nil)).Elem()
 	g2s[t] = func(iface interface{}) skylark.Value {
 		switch v := iface.(type) {
-		case *metav1.WatchEvent:
+		case *meta.WatchEvent:
 			return WatchEvent{V: v}
-		case metav1.WatchEvent:
+		case meta.WatchEvent:
 			return WatchEvent{V: &v}
 		default:
 			return skylark.None
@@ -12117,11 +18177,14 @@ func init() {
 }
 
 func createWatchEvent(thread *skylark.Thread, fn *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-	return nil, nil // TODO: add constructor for WatchEvent
+	box := WatchEvent{V: &meta.WatchEvent{}}
+	err := construct(box, args, kwargs)
+	return box, err
 }
 func (t WatchEvent) Underlying() interface{} { return t.V }
-func (t WatchEvent) Package() util.Package   { return util.Metav1 }
-func (t WatchEvent) Type() string            { return "k8s_metav1_WatchEvent" }
+func (t WatchEvent) DeepCopy() boxed         { return WatchEvent{V: t.V.DeepCopy()} }
+func (t WatchEvent) Package() util.Package   { return util.Meta }
+func (t WatchEvent) Type() string            { return "k8s_meta_WatchEvent" }
 func (t WatchEvent) String() string          { return t.V.String() }
 func (t WatchEvent) Freeze()                 {} // TODO
 func (t WatchEvent) Truth() skylark.Bool     { return skylark.True }
@@ -12132,8 +18195,8 @@ func (t WatchEvent) CompareSameType(op syntax.Token, y_ skylark.Value, depth int
 }
 func (t WatchEvent) AttrNames() []string { return WatchEvent_attrs }
 func (t WatchEvent) Attr(name string) (skylark.Value, error) {
-	if u := t.V; u != nil {
-		return getAttr(reflect.ValueOf(u), name, WatchEvent_fields, WatchEvent_inline)
+	if t.V != nil {
+		return getAttr(reflect.ValueOf(t.V), name, WatchEvent_fields, WatchEvent_inline)
 	}
 	return skylark.None, uninitialized(t.Type(), name)
 }

@@ -11,28 +11,46 @@ import (
 type Package byte
 
 const (
-	V1 Package = iota + 1
+	None Package = iota
+	Core
+	Apps
+	Authentication
+	Authorization
+	Autoscaling
+	Batch
+	Networking
+	Rbac
+	Storage
 	Resource
-	Metav1
+	Meta
 	Types
 	Intstr
-	Other
+	Apiextensions
 )
 
 var packagePaths = [...]string{
-	V1:       "k8s.io/api/core/v1",
-	Resource: "k8s.io/apimachinery/pkg/api/resource",
-	Metav1:   "k8s.io/apimachinery/pkg/apis/meta/v1",
-	Types:    "k8s.io/apimachinery/pkg/types",
-	Intstr:   "k8s.io/apimachinery/pkg/util/intstr",
+	Core:           "k8s.io/api/core/v1",
+	Apps:           "k8s.io/api/apps/v1",
+	Authentication: "k8s.io/api/authentication/v1",
+	Authorization:  "k8s.io/api/authorization/v1",
+	Autoscaling:    "k8s.io/api/autoscaling/v1",
+	Batch:          "k8s.io/api/batch/v1",
+	Networking:     "k8s.io/api/networking/v1",
+	Rbac:           "k8s.io/api/rbac/v1",
+	Storage:        "k8s.io/api/storage/v1",
+	Resource:       "k8s.io/apimachinery/pkg/api/resource",
+	Meta:           "k8s.io/apimachinery/pkg/apis/meta/v1",
+	Types:          "k8s.io/apimachinery/pkg/types",
+	Intstr:         "k8s.io/apimachinery/pkg/util/intstr",
+	Apiextensions:  "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions",
 }
 
-var packageEnums = map[string]Package{
-	"k8s.io/api/core/v1":                   V1,
-	"k8s.io/apimachinery/pkg/api/resource": Resource,
-	"k8s.io/apimachinery/pkg/apis/meta/v1": Metav1,
-	"k8s.io/apimachinery/pkg/types":        Types,
-	"k8s.io/apimachinery/pkg/util/intstr":  Intstr,
+var packageEnums = map[string]Package{}
+
+func init() {
+	for enum, path := range packagePaths {
+		packageEnums[path] = Package(enum)
+	}
 }
 
 // Path returns the import path for p
@@ -45,5 +63,5 @@ type FieldSpec struct {
 	FieldIndex uint8
 	Package    Package
 
-	Inline, Omitempty, Primitive, Pointer, Slice bool // TODO(wdamron): pack flags into a uint8
+	Inline, Omitempty, Primitive, Pointer, Slice, _ bool // TODO(wdamron): pack flags into a uint8
 }
