@@ -8,23 +8,13 @@ import (
 	"testing"
 
 	"github.com/google/skylark"
-	"github.com/google/skylark/sk8s"
-	"github.com/google/skylark/sk8s/kinds"
+	. "github.com/google/skylark/sk8s"
 	"github.com/google/skylark/skylarktest"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestBasicInlineAttr(t *testing.T) {
-	if len(kinds.Pod_attrs) == 0 {
-		t.Fatalf("Expected Pod_attrs to contain attr names")
-	}
-	if len(kinds.Pod_fields) == 0 {
-		t.Fatalf("Expected Pod_fields to contain field specs")
-	}
-	if len(kinds.Pod_inline) == 0 {
-		t.Fatalf("Expected Pod_inline to contain inline-field specs")
-	}
 
 	v1pod := &v1.Pod{
 		TypeMeta:   metav1.TypeMeta{Kind: "Pod"},
@@ -32,11 +22,11 @@ func TestBasicInlineAttr(t *testing.T) {
 	}
 
 	for _, inner := range []interface{}{v1pod, *v1pod} {
-		conv, err := sk8s.ToSky(inner)
+		conv, err := ToSky(inner)
 		if err != nil {
 			t.Fatal(err)
 		}
-		pod := conv.(kinds.Pod)
+		pod := conv.(Boxed)
 		kind, err := pod.Attr("kind")
 		if err != nil {
 			t.Fatal(err)
@@ -48,15 +38,13 @@ func TestBasicInlineAttr(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		name, err := meta.(kinds.ObjectMeta).Attr("name")
+		name, err := meta.(Boxed).Attr("name")
 		if err != nil {
 			t.Fatal(err)
 		}
 		if name.(skylark.String) != skylark.String("my-pod") {
 			t.Fatalf("Expected name = my-pod\n")
 		}
-
-		t.Logf("Pod: %s\n", pod.String())
 	}
 }
 
@@ -65,12 +53,12 @@ func TestResourceSliceAttr(t *testing.T) {
 		Add: []v1.Capability{"my-capability"},
 	}
 
-	conv, err := sk8s.ToSky(v1caps)
+	conv, err := ToSky(v1caps)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	caps := conv.(kinds.Capabilities)
+	caps := conv.(Boxed)
 	add, err := caps.Attr("add")
 	if err != nil {
 		t.Fatal(err)
@@ -91,12 +79,12 @@ func TestBasicInlineSetAttr(t *testing.T) {
 		ObjectMeta: metav1.ObjectMeta{Name: "my-pod"},
 	}
 
-	v, err := sk8s.ToSky(v1pod)
+	v, err := ToSky(v1pod)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	pod := v.(kinds.Pod)
+	pod := v.(Boxed)
 
 	if err = pod.SetField("kind", skylark.String("NotPod")); err != nil {
 		t.Fatal(err)
@@ -117,10 +105,10 @@ func TestBasicInlineSetAttr(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = meta.(kinds.ObjectMeta).SetField("name", skylark.String("not-my-pod")); err != nil {
+	if err = meta.(Boxed).SetField("name", skylark.String("not-my-pod")); err != nil {
 		t.Fatal(err)
 	}
-	name, err := meta.(kinds.ObjectMeta).Attr("name")
+	name, err := meta.(Boxed).Attr("name")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -135,12 +123,12 @@ func TestBasicInlineSetAttr(t *testing.T) {
 func TestResourceSliceSetAttr(t *testing.T) {
 	v1caps := &v1.Capabilities{}
 
-	conv, err := sk8s.ToSky(v1caps)
+	conv, err := ToSky(v1caps)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	caps := conv.(kinds.Capabilities)
+	caps := conv.(Boxed)
 	list := skylark.NewList([]skylark.Value{skylark.String("my-capability")})
 	if err := caps.SetField("add", list); err != nil {
 		t.Fatal(err)
@@ -172,8 +160,8 @@ func TestResourceSliceSetAttr(t *testing.T) {
 func TestConstructors(t *testing.T) {
 	filename := "sk8s_test.sky"
 	predeclared := skylark.StringDict{
-		"Pod":        sk8s.Library["Pod"],
-		"ObjectMeta": sk8s.Library["ObjectMeta"],
+		"Pod":        Library["Pod"],
+		"ObjectMeta": Library["ObjectMeta"],
 	}
 
 	script := `
@@ -191,13 +179,15 @@ pod5 = Pod(Pod(kind="Pod"), metadata=meta)
 
 pod6 = Pod()
 pod6.kind = "Pod"
-pod6.metadata.name = "my-pod"
+pod6.metadata.name = meta.name
 
 pod7 = Pod(None, kind="Pod", metadata=meta)
 
 pod8 = Pod({}, kind="Pod", metadata=meta)
 
-pod9 = Pod({}, kind="Pod", metadata={"name": "my-pod"})
+pod9 = Pod({}, kind="Pod", metadata={"name": meta.name})
+
+pod10 = Pod({"kind": "Pod", "metadata": {"name": meta.name}})
 `
 
 	thread := &skylark.Thread{}
@@ -214,8 +204,8 @@ pod9 = Pod({}, kind="Pod", metadata={"name": "my-pod"})
 		return
 	}
 
-	for _, global := range []string{"pod1", "pod2", "pod3", "pod4", "pod5", "pod6", "pod7", "pod8", "pod9"} {
-		pod := result[global].(kinds.Pod)
+	for _, global := range []string{"pod1", "pod2", "pod3", "pod4", "pod5", "pod6", "pod7", "pod8", "pod9", "pod10"} {
+		pod := result[global].(Boxed)
 
 		kind, err := pod.Attr("kind")
 		if err != nil {
@@ -228,7 +218,7 @@ pod9 = Pod({}, kind="Pod", metadata={"name": "my-pod"})
 		if err != nil {
 			t.Fatal(err)
 		}
-		name, err := meta.(kinds.ObjectMeta).Attr("name")
+		name, err := meta.(Boxed).Attr("name")
 		if err != nil {
 			t.Fatal(err)
 		}
