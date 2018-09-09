@@ -5,11 +5,13 @@
 package sk8s_test
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/google/skylark"
 	. "github.com/google/skylark/sk8s"
 	"github.com/google/skylark/skylarktest"
+	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -243,6 +245,70 @@ pod10 = Pod({"kind": "Pod", "metadata": {"name": meta.name}})
 		if name.(skylark.String) != skylark.String("my-pod") {
 			t.Fatalf("Expected name = my-pod\n")
 		}
+	}
+
+}
+
+func TestNestedConstruction(t *testing.T) {
+	filename := "sk8s_test.sky"
+	predeclared := skylark.StringDict{}
+	for name, builtin := range Library {
+		predeclared[name] = builtin
+	}
+
+	script := `
+deployment = Deployment({
+	"kind": "Deployment",
+	"metadata": {
+		"name": "kafka-trigger-controller",
+		"labels": {
+			"kubeless": "kafka-trigger-controller"
+		}
+	},
+	"spec": {
+		"replicas": 3,
+		"selector": {
+		    "matchLabels": {
+		    	"kubeless": "kafka-trigger-controller"
+		    }
+		}
+	}
+})
+`
+
+	thread := &skylark.Thread{}
+	skylarktest.SetReporter(thread, t)
+
+	globals, err := skylark.ExecFile(thread, filename, script, predeclared)
+	switch err := err.(type) {
+	case *skylark.EvalError:
+		t.Fatal(err.Backtrace())
+	case nil:
+		// success
+	default:
+		t.Error(err)
+		return
+	}
+
+	depl := globals["deployment"].(Boxed).Underlying().(*appsv1.Deployment)
+
+	replicas := int32(3)
+	expected := &appsv1.Deployment{
+		TypeMeta: metav1.TypeMeta{Kind: "Deployment"},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:   "kafka-trigger-controller",
+			Labels: map[string]string{"kubeless": "kafka-trigger-controller"},
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: &replicas,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{"kubeless": "kafka-trigger-controller"},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(depl, expected) {
+		t.Fatalf("Mismatched value: %s", depl.String())
 	}
 
 }

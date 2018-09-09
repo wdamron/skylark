@@ -1041,6 +1041,9 @@ func registerType(t reflect.Type) {
 	if t.Kind() != reflect.Struct {
 		log.Fatalf("expected struct type, found %s", t.String())
 	}
+	if _, registered := Library[t.Name()]; registered {
+		return
+	}
 	n := t.NumField()
 	if n == 0 {
 		return
