@@ -108,6 +108,10 @@ type Boxed interface {
 	Underlying() interface{}
 }
 
+type hasDeepCopy interface {
+	DeepCopyObject() runtime.Object
+}
+
 type boxed struct {
 	v              reflect.Value
 	fields, inline map[string]util.FieldSpec
@@ -161,6 +165,13 @@ func construct(box *boxed, args skylark.Tuple, kwargs []skylark.Tuple) error {
 		case *boxed:
 			if arg.Type() != box.Type() {
 				return skylark.TypeErrorf("unable to construct %s from %s", box.Type(), arg.Type())
+			}
+			if dc, ok := arg.Underlying().(hasDeepCopy); ok {
+				conv := reflect.ValueOf(dc.DeepCopyObject()).Convert(box.v.Type())
+				if !conv.IsNil() {
+					box.v.Elem().Set(conv.Elem())
+				}
+				break
 			}
 			for name, _ := range arg.fields {
 				v, err := arg.Attr(name)
