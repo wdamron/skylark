@@ -121,15 +121,17 @@ type boxed struct {
 func toBoxed(v reflect.Value) (*boxed, error) {
 	t := v.Type()
 	k := t.Kind()
-	if k != reflect.Ptr && k != reflect.Struct {
-		return nil, skylark.TypeErrorf("unhandled type %s", t.Name())
-	}
-	if k == reflect.Ptr {
-		t = t.Elem()
-	} else {
+	if k == reflect.Struct {
 		from := v
-		v = reflect.New(t)
+		v = reflect.New(v.Type())
 		v.Elem().Set(from)
+	}
+	for k == reflect.Ptr {
+		t = t.Elem()
+		k = t.Kind()
+	}
+	if k != reflect.Struct {
+		return nil, skylark.TypeErrorf("unhandled type %s", t.String())
 	}
 	b := &boxed{
 		v:      v,
@@ -137,7 +139,7 @@ func toBoxed(v reflect.Value) (*boxed, error) {
 		inline: inlineFieldsMap[t],
 	}
 	if b.fields == nil || b.inline == nil {
-		return nil, skylark.TypeErrorf("unhandled type %s", t.Name())
+		return nil, skylark.TypeErrorf("unhandled type %s", t.String())
 	}
 	return b, nil
 }
