@@ -159,12 +159,15 @@ func TestResourceSliceSetAttr(t *testing.T) {
 
 func TestConstructors(t *testing.T) {
 	filename := "sk8s_test.sky"
-	predeclared := skylark.StringDict{
-		"Pod":        Library["Pod"],
-		"ObjectMeta": Library["ObjectMeta"],
+	predeclared := skylark.StringDict{}
+	for name, builtin := range Library {
+		predeclared[name] = builtin
 	}
 
 	script := `
+caps = Capabilities({"add": ["my-capability"]})
+caps.add += ["my-other-capability"]
+
 meta = ObjectMeta(name="my-pod")
 
 pod1 = Pod(kind="Pod", metadata=meta)
@@ -193,7 +196,7 @@ pod10 = Pod({"kind": "Pod", "metadata": {"name": meta.name}})
 	thread := &skylark.Thread{}
 	skylarktest.SetReporter(thread, t)
 
-	result, err := skylark.ExecFile(thread, filename, script, predeclared)
+	globals, err := skylark.ExecFile(thread, filename, script, predeclared)
 	switch err := err.(type) {
 	case *skylark.EvalError:
 		t.Fatal(err.Backtrace())
@@ -204,8 +207,23 @@ pod10 = Pod({"kind": "Pod", "metadata": {"name": meta.name}})
 		return
 	}
 
+	caps := globals["caps"].(Boxed)
+	if caps.Type() != "Capabilities" {
+		t.Errorf("expected type(caps) = Capabilities, found %s", caps.Type())
+	}
+	add, err := caps.Attr("add")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if add.(*skylark.List).Index(0).(skylark.String) != skylark.String("my-capability") {
+		t.Errorf("expected caps.add[0] = my-capability, found add = %s", add.String())
+	}
+	if add.(*skylark.List).Index(1).(skylark.String) != skylark.String("my-other-capability") {
+		t.Errorf("expected caps.add[0] = my-other-capability, found add = %s", add.String())
+	}
+
 	for _, global := range []string{"pod1", "pod2", "pod3", "pod4", "pod5", "pod6", "pod7", "pod8", "pod9", "pod10"} {
-		pod := result[global].(Boxed)
+		pod := globals[global].(Boxed)
 
 		kind, err := pod.Attr("kind")
 		if err != nil {
