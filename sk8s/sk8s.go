@@ -2,13 +2,23 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// package sk8s provides Skylark value implementations for Kubernetes API types.
+// package sk8s provides a Skylark value interface for Kubernetes API types.
 //
 // See the following packages:
-// 		* godoc.org/k8s.io/api/core/v1
-// 		* godoc.org/k8s.io/apimachinery/pkg/apis/meta/v1
-// 		* godoc.org/k8s.io/apimachinery/pkg/api/resource
-// 		* godoc.org/k8s.io/apimachinery/pkg/util/intstr
+//
+//		* appsv1: https://godoc.org/k8s.io/api/apps/v1
+//		* authenticationv1: https://godoc.org/k8s.io/api/authentication/v1
+//		* authorizationv1: https://godoc.org/k8s.io/api/authorization/v1
+//		* autoscalingv1: https://godoc.org/k8s.io/api/autoscaling/v1
+//		* batchv1: https://godoc.org/k8s.io/api/batch/v1
+//		* corev1: https://godoc.org/k8s.io/api/core/v1
+//		* networkingv1: https://godoc.org/k8s.io/api/networking/v1
+//		* rbacv1: https://godoc.org/k8s.io/api/rbac/v1
+//		* storagev1: https://godoc.org/k8s.io/api/storage/v1
+//
+//		* resource: https://godoc.org/k8s.io/apimachinery/pkg/api/resource
+//		* metav1: https://godoc.org/k8s.io/apimachinery/pkg/apis/meta/v1
+//		* intstr: https://godoc.org/k8s.io/apimachinery/pkg/util/intstr
 package sk8s
 
 import (
