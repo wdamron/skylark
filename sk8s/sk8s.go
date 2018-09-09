@@ -79,8 +79,17 @@ func init() {
 			log.Fatal(err)
 		}
 	}
-	for _, t := range Scheme.AllKnownTypes() {
+	kinds := Scheme.AllKnownTypes()
+	for _, t := range kinds {
 		registerType(t)
+	}
+
+	for t, _ := range fieldsMap {
+		if len(fieldsMap[t]) == 0 {
+			delete(Library, t.Name())
+			delete(fieldsMap, t)
+			delete(inlineFieldsMap, t)
+		}
 	}
 }
 
