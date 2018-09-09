@@ -69,11 +69,9 @@ func init() {
 			log.Fatal(err)
 		}
 	}
-	metav1.AddToGroupVersion(Scheme, metav1.SchemeGroupVersion)
 	for _, t := range Scheme.AllKnownTypes() {
 		registerType(t)
 	}
-	registerType(reflect.TypeOf((*corev1.Capabilities)(nil))) // not sure why this isn't otherwise added
 }
 
 func ToSky(v interface{}) (skylark.Value, error) {
@@ -176,7 +174,7 @@ func construct(box *boxed, args skylark.Tuple, kwargs []skylark.Tuple) error {
 
 func (b *boxed) Underlying() interface{} { return b.v.Interface() }
 
-func (b *boxed) Type() string          { return "k8s" + b.v.Type().Elem().Name() }
+func (b *boxed) Type() string          { return b.v.Type().Elem().Name() }
 func (b *boxed) String() string        { return fmt.Sprintf("%v", b.v.Interface()) }
 func (b *boxed) Freeze()               { b.frozen = true }
 func (b *boxed) Truth() skylark.Bool   { return skylark.True }
@@ -343,18 +341,15 @@ func setFieldValue(container reflect.Value, spec util.FieldSpec, name string, va
 	return nil
 }
 
-var (
-	emptyValue = reflect.ValueOf(false)
-	trueValue  = reflect.ValueOf(true)
-	falseValue = reflect.ValueOf(false)
-)
-
-var boolType = trueValue.Type()
+var boolType = reflect.TypeOf(false)
 var int32Type = reflect.TypeOf(int32(0))
 var int64Type = reflect.TypeOf(int64(0))
 var float32Type = reflect.TypeOf(float32(0.0))
 var float64Type = reflect.TypeOf(float64(0.0))
 var stringType = reflect.TypeOf("")
+var byteSliceType = reflect.TypeOf(([]byte)(nil))
+var int32SliceType = reflect.TypeOf(([]int32)(nil))
+var int64SliceType = reflect.TypeOf(([]int64)(nil))
 var sliceStringType = reflect.TypeOf(([]string)(nil))
 var verbsSliceType = reflect.TypeOf((metav1.Verbs)(nil))
 var mapStringStringType = reflect.TypeOf((map[string]string)(nil))
@@ -372,6 +367,9 @@ var commonTypes = map[reflect.Type]bool{
 	float32Type:                 true,
 	float64Type:                 true,
 	stringType:                  true,
+	byteSliceType:               true,
+	int32SliceType:              true,
+	int64SliceType:              true,
 	sliceStringType:             true,
 	mapStringStringType:         true,
 	mapStringSliceByteType:      true,
@@ -516,6 +514,20 @@ func primitiveToSkylarkValue(r reflect.Value, t reflect.Type) (skylark.Value, bo
 		return skylark.Float(v), true
 	case string:
 		return skylark.String(v), true
+	case []byte:
+		return skylark.String(base64.StdEncoding.EncodeToString(v)), true
+	case []int32:
+		elems := make([]skylark.Value, len(v))
+		for i, i32 := range v {
+			elems[i] = skylark.MakeInt64(int64(i32))
+		}
+		return skylark.NewList(elems), true
+	case []int64:
+		elems := make([]skylark.Value, len(v))
+		for i, i64 := range v {
+			elems[i] = skylark.MakeInt64(i64)
+		}
+		return skylark.NewList(elems), true
 	case []string:
 		return toStringList(v), true
 	case metav1.Verbs:
@@ -662,6 +674,107 @@ func setPrimitiveField(field reflect.Value, value skylark.Value, spec util.Field
 			return nil
 		default:
 			return skylark.TypeErrorf("unable to assign %v to string", v.Type())
+		}
+	case byteSliceType:
+		switch v := value.(type) {
+		case *skylark.List:
+			if v == nil || v.Len() == 0 {
+				field.Set(reflect.ValueOf(([]byte)(nil)))
+				return nil
+			}
+			length := v.Len()
+			raw := make([]byte, length)
+			for i := 0; i < length; i++ {
+				vi := v.Index(i)
+				ii, ok := vi.(skylark.Int)
+				if !ok {
+					return skylark.TypeErrorf("unable to assign %s to element of byte slice", vi.Type())
+				}
+				u64, ok := ii.Uint64()
+				if !ok || u64 > math.MaxUint8 {
+					return skylark.ValueErrorf("value exceeds the range of uint8")
+				}
+				raw[i] = byte(u64)
+			}
+			if spec.Pointer {
+				field.Set(reflect.ValueOf(&raw))
+			} else {
+				field.Set(reflect.ValueOf(raw))
+			}
+			return nil
+		case skylark.String:
+			raw, err := base64.StdEncoding.DecodeString(string(v))
+			if err != nil {
+				return skylark.ValueErrorf("error decoding base64 data: %v", err)
+			}
+			if spec.Pointer {
+				field.Set(reflect.ValueOf(&raw))
+			} else {
+				field.Set(reflect.ValueOf(raw))
+			}
+			return nil
+		default:
+			return skylark.TypeErrorf("unable to assign %v to uint8 slice", v.Type())
+		}
+	case int32SliceType:
+		switch v := value.(type) {
+		case *skylark.List:
+			if v == nil || v.Len() == 0 {
+				field.Set(reflect.ValueOf(([]int32)(nil)))
+				return nil
+			}
+			length := v.Len()
+			slice := make([]int32, length)
+			for i := 0; i < length; i++ {
+				vi := v.Index(i)
+				ii, ok := vi.(skylark.Int)
+				if !ok {
+					return skylark.TypeErrorf("unable to assign %s to element of string slice", vi.Type())
+				}
+				i64, ok := ii.Int64()
+				if !ok || i64 < math.MinInt32 || i64 > math.MaxInt32 {
+					return skylark.ValueErrorf("value exceeds the range of int32")
+				}
+				slice[i] = int32(i64)
+			}
+			if spec.Pointer {
+				field.Set(reflect.ValueOf(&slice))
+			} else {
+				field.Set(reflect.ValueOf(slice))
+			}
+			return nil
+		default:
+			return skylark.TypeErrorf("unable to assign %v to int32 slice", v.Type())
+		}
+	case int64SliceType:
+		switch v := value.(type) {
+		case *skylark.List:
+			if v == nil || v.Len() == 0 {
+				field.Set(reflect.ValueOf(([]int64)(nil)))
+				return nil
+			}
+			length := v.Len()
+			slice := make([]int64, length)
+			for i := 0; i < length; i++ {
+				vi := v.Index(i)
+				ii, ok := vi.(skylark.Int)
+				if !ok {
+					return skylark.TypeErrorf("unable to assign %s to element of string slice", vi.Type())
+				}
+				i64, ok := ii.Int64()
+				if !ok {
+					return skylark.ValueErrorf("value exceeds the range of int64")
+				}
+				slice[i] = i64
+			}
+			if spec.Pointer {
+				field.Set(reflect.ValueOf(&slice))
+			} else {
+				field.Set(reflect.ValueOf(slice))
+			}
+			return nil
+		default:
+			return skylark.TypeErrorf("unable to assign %v to int64 slice", v.Type())
 		}
 	case sliceStringType:
 		switch v := value.(type) {
@@ -894,9 +1007,29 @@ func setPrimitiveField(field reflect.Value, value skylark.Value, spec util.Field
 	return skylark.TypeErrorf("unhandled assignment from %v to %v", value.Type(), elem.Name())
 }
 
+func parseTag(tag string) (name string, inline bool, omitempty bool) {
+	if tag == "" || tag == "-" {
+		return
+	}
+	parts := strings.Split(tag, ",")
+	name = parts[0]
+	for _, part := range parts[1:] {
+		switch part {
+		case "inline":
+			inline = true
+		case "omitempty":
+			omitempty = true
+		}
+	}
+	return
+}
+
 func registerType(t reflect.Type) {
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
+	}
+	if t.Kind() != reflect.Struct {
+		log.Fatalf("expected struct type, found %s", t.String())
 	}
 	n := t.NumField()
 	if n == 0 {
@@ -914,23 +1047,6 @@ func registerType(t reflect.Type) {
 	inlineFields := map[string]util.FieldSpec{}
 	fieldsMap[t] = fields
 	inlineFieldsMap[t] = inlineFields
-	parseTag := func(tag string) (string, bool, bool) {
-		var inline, omitempty bool
-		if tag == "" || tag == "-" {
-			return "", inline, omitempty
-		}
-		parts := strings.Split(tag, ",")
-		jsonName := parts[0]
-		for _, part := range parts[1:] {
-			switch part {
-			case "inline":
-				inline = true
-			case "omitempty":
-				omitempty = true
-			}
-		}
-		return jsonName, inline, omitempty
-	}
 
 	for i := 0; i < n; i++ {
 		field := t.FieldByIndex([]int{i})
@@ -958,7 +1074,18 @@ func registerType(t reflect.Type) {
 				elem = elem.Elem()
 			}
 			if _, ok := fieldsMap[elem]; !ok {
-				registerType(field.Type)
+				registerType(elem)
+			}
+		}
+		if slice && !primitive {
+			elem := field.Type.Elem()
+			if pointer {
+				elem = elem.Elem()
+			}
+			if elem.Kind() != reflect.String {
+				if _, ok := fieldsMap[elem]; !ok {
+					registerType(elem)
+				}
 			}
 		}
 		if !inline {
@@ -970,6 +1097,7 @@ func registerType(t reflect.Type) {
 			ft = ft.Elem()
 		}
 		m := ft.NumField()
+		// A single level of nesting is allowed:
 		for j := 0; j < m; j++ {
 			field := ft.FieldByIndex([]int{j})
 			kind := field.Type.Kind()
@@ -998,7 +1126,19 @@ func registerType(t reflect.Type) {
 					elem = elem.Elem()
 				}
 				if _, ok := fieldsMap[elem]; !ok {
-					registerType(field.Type)
+					registerType(elem)
+				}
+				continue
+			}
+			if slice && !primitive {
+				elem := field.Type.Elem()
+				if pointer {
+					elem = elem.Elem()
+				}
+				if elem.Kind() != reflect.String {
+					if _, ok := fieldsMap[elem]; !ok {
+						registerType(elem)
+					}
 				}
 			}
 		}
