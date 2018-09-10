@@ -14,6 +14,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/diff"
 )
 
 func TestBasicInlineAttr(t *testing.T) {
@@ -28,23 +29,23 @@ func TestBasicInlineAttr(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		pod := conv.(Boxed)
+		pod := conv.(Kind)
 		kind, err := pod.Attr("kind")
 		if err != nil {
 			t.Fatal(err)
 		}
-		if kind.(skylark.String) != skylark.String("Pod") {
+		if kind.(skylark.String) != "Pod" {
 			t.Fatalf("Expected kind = Pod\n")
 		}
 		meta, err := pod.Attr("metadata")
 		if err != nil {
 			t.Fatal(err)
 		}
-		name, err := meta.(Boxed).Attr("name")
+		name, err := meta.(Kind).Attr("name")
 		if err != nil {
 			t.Fatal(err)
 		}
-		if name.(skylark.String) != skylark.String("my-pod") {
+		if name.(skylark.String) != "my-pod" {
 			t.Fatalf("Expected name = my-pod\n")
 		}
 	}
@@ -60,7 +61,7 @@ func TestResourceSliceAttr(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	caps := conv.(Boxed)
+	caps := conv.(Kind)
 	add, err := caps.Attr("add")
 	if err != nil {
 		t.Fatal(err)
@@ -70,7 +71,7 @@ func TestResourceSliceAttr(t *testing.T) {
 	if list.Len() == 0 {
 		t.Fatalf("Expected a non-empty list of capabilities")
 	}
-	if list.Index(0).(skylark.String) != skylark.String("my-capability") {
+	if list.Index(0).(skylark.String) != "my-capability" {
 		t.Fatalf("Expected a list containing my-capability, found %#+v", list.Index(0))
 	}
 }
@@ -86,7 +87,7 @@ func TestBasicInlineSetAttr(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	pod := v.(Boxed)
+	pod := v.(Kind)
 
 	if err = pod.SetField("kind", skylark.String("NotPod")); err != nil {
 		t.Fatal(err)
@@ -96,7 +97,7 @@ func TestBasicInlineSetAttr(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if kind.(skylark.String) != skylark.String("NotPod") {
+	if kind.(skylark.String) != "NotPod" {
 		t.Fatalf("Expected kind = NotPod, found %v", kind)
 	}
 	if v1pod.TypeMeta.Kind != "NotPod" {
@@ -107,14 +108,14 @@ func TestBasicInlineSetAttr(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = meta.(Boxed).SetField("name", skylark.String("not-my-pod")); err != nil {
+	if err = meta.(Kind).SetField("name", skylark.String("not-my-pod")); err != nil {
 		t.Fatal(err)
 	}
-	name, err := meta.(Boxed).Attr("name")
+	name, err := meta.(Kind).Attr("name")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if name.(skylark.String) != skylark.String("not-my-pod") {
+	if name.(skylark.String) != "not-my-pod" {
 		t.Fatalf("Expected name = not-my-pod, found %v", name)
 	}
 	if v1pod.ObjectMeta.Name != "not-my-pod" {
@@ -130,7 +131,7 @@ func TestResourceSliceSetAttr(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	caps := conv.(Boxed)
+	caps := conv.(Kind)
 	list := skylark.NewList([]skylark.Value{skylark.String("my-capability")})
 	if err := caps.SetField("add", list); err != nil {
 		t.Fatal(err)
@@ -144,7 +145,7 @@ func TestResourceSliceSetAttr(t *testing.T) {
 	if list.Len() == 0 {
 		t.Fatalf("Expected a non-empty list of capabilities")
 	}
-	if list.Index(0).(skylark.String) != skylark.String("my-capability") {
+	if list.Index(0).(skylark.String) != "my-capability" {
 		t.Fatalf("Expected a list containing my-capability, found %#+v", list.Index(0))
 	}
 	if len(v1caps.Add) == 0 || string(v1caps.Add[0]) != "my-capability" {
@@ -209,7 +210,7 @@ pod10 = Pod({"kind": "Pod", "metadata": {"name": meta.name}})
 		return
 	}
 
-	caps := globals["caps"].(Boxed)
+	caps := globals["caps"].(Kind)
 	if caps.Type() != "Capabilities" {
 		t.Errorf("expected type(caps) = Capabilities, found %s", caps.Type())
 	}
@@ -217,32 +218,32 @@ pod10 = Pod({"kind": "Pod", "metadata": {"name": meta.name}})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if add.(*skylark.List).Index(0).(skylark.String) != skylark.String("my-capability") {
+	if add.(*skylark.List).Index(0).(skylark.String) != "my-capability" {
 		t.Errorf("expected caps.add[0] = my-capability, found add = %s", add.String())
 	}
-	if add.(*skylark.List).Index(1).(skylark.String) != skylark.String("my-other-capability") {
+	if add.(*skylark.List).Index(1).(skylark.String) != "my-other-capability" {
 		t.Errorf("expected caps.add[0] = my-other-capability, found add = %s", add.String())
 	}
 
 	for _, global := range []string{"pod1", "pod2", "pod3", "pod4", "pod5", "pod6", "pod7", "pod8", "pod9", "pod10"} {
-		pod := globals[global].(Boxed)
+		pod := globals[global].(Kind)
 
 		kind, err := pod.Attr("kind")
 		if err != nil {
 			t.Fatal(err)
 		}
-		if kind.(skylark.String) != skylark.String("Pod") {
+		if kind.(skylark.String) != "Pod" {
 			t.Fatalf("Expected kind = Pod\n")
 		}
 		meta, err := pod.Attr("metadata")
 		if err != nil {
 			t.Fatal(err)
 		}
-		name, err := meta.(Boxed).Attr("name")
+		name, err := meta.(Kind).Attr("name")
 		if err != nil {
 			t.Fatal(err)
 		}
-		if name.(skylark.String) != skylark.String("my-pod") {
+		if name.(skylark.String) != "my-pod" {
 			t.Fatalf("Expected name = my-pod\n")
 		}
 	}
@@ -258,7 +259,6 @@ func TestNestedConstruction(t *testing.T) {
 
 	script := `
 deployment = Deployment({
-	"kind": "Deployment",
 	"metadata": {
 		"name": "kafka-trigger-controller",
 		"labels": {
@@ -272,8 +272,17 @@ deployment = Deployment({
 		    	"kubeless": "kafka-trigger-controller"
 		    }
 		}
-	}
-})
+	}})
+
+pod = Pod({
+	"metadata": {
+		"name": "my-pod"
+	},
+	"spec": {
+		"containers": [{"name": "my-container", "image": "my-image:latest", "imagePullPolicy": "Always"}]
+	}})
+
+pod.spec.containers[0].imagePullPolicy = "IfNotPresent"
 `
 
 	thread := &skylark.Thread{}
@@ -290,11 +299,10 @@ deployment = Deployment({
 		return
 	}
 
-	depl := globals["deployment"].(Boxed).Underlying().(*appsv1.Deployment)
-
+	depl := globals["deployment"].(Kind).Underlying().(*appsv1.Deployment)
 	replicas := int32(3)
-	expected := &appsv1.Deployment{
-		TypeMeta: metav1.TypeMeta{Kind: "Deployment"},
+	expectedDepl := &appsv1.Deployment{
+		TypeMeta: metav1.TypeMeta{Kind: "Deployment", APIVersion: "apps/v1"},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   "kafka-trigger-controller",
 			Labels: map[string]string{"kubeless": "kafka-trigger-controller"},
@@ -307,8 +315,29 @@ deployment = Deployment({
 		},
 	}
 
-	if !reflect.DeepEqual(depl, expected) {
-		t.Fatalf("Mismatched value: %s", depl.String())
+	if !reflect.DeepEqual(depl, expectedDepl) {
+		t.Fatalf("Unexpected difference(s) in Deployment: %s", diff.ObjectReflectDiff(expectedDepl, depl))
+	}
+
+	pod := globals["pod"].(Kind).Underlying().(*v1.Pod)
+	expectedPod := &v1.Pod{
+		TypeMeta: metav1.TypeMeta{Kind: "Pod", APIVersion: "v1"},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "my-pod",
+		},
+		Spec: v1.PodSpec{
+			Containers: []v1.Container{
+				v1.Container{
+					Name:            "my-container",
+					Image:           "my-image:latest",
+					ImagePullPolicy: v1.PullIfNotPresent,
+				},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(expectedPod, pod) {
+		t.Fatalf("Unexpected difference(s) in Pod: %s", diff.ObjectReflectDiff(expectedPod, pod))
 	}
 
 }

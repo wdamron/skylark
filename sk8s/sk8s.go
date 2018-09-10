@@ -56,10 +56,9 @@ const debugfieldtypes = true
 var (
 	Library = map[string]*skylark.Builtin{}
 
-	Scheme = runtime.NewScheme()
+	scheme = runtime.NewScheme()
 
-	fieldsMap       = map[reflect.Type]map[string]util.FieldSpec{}
-	inlineFieldsMap = map[reflect.Type]map[string]util.FieldSpec{}
+	kinds = map[reflect.Type]*util.TypeSpec{}
 )
 
 func init() {
@@ -75,21 +74,31 @@ func init() {
 		storagev1.AddToScheme,
 	}
 	for _, adder := range adders {
-		if err := adder(Scheme); err != nil {
+		if err := adder(scheme); err != nil {
 			log.Fatal(err)
 		}
 	}
-	kinds := Scheme.AllKnownTypes()
-	for _, t := range kinds {
+	schemeKinds := scheme.AllKnownTypes()
+	for _, t := range schemeKinds {
 		registerType(t)
 	}
 
-	for t, _ := range fieldsMap {
-		if len(fieldsMap[t]) == 0 {
+	for t, _ := range kinds {
+		if len(kinds[t].Fields) == 0 {
 			delete(Library, t.Name())
-			delete(fieldsMap, t)
-			delete(inlineFieldsMap, t)
+			delete(kinds, t)
 		}
+	}
+
+	for gvk, t := range schemeKinds {
+		for t.Kind() == reflect.Ptr {
+			t = t.Elem()
+		}
+		existing, ok := kinds[t]
+		if !ok {
+			continue
+		}
+		existing.GVK = metav1.GroupVersionKind{Group: gvk.Group, Version: gvk.Version, Kind: gvk.Kind}
 	}
 }
 
@@ -109,12 +118,17 @@ func ToSky(v interface{}) (skylark.Value, error) {
 	if rk == reflect.Slice {
 		return sliceToSkylarkValue(rv, rt)
 	}
-	return toBoxed(rv)
+	box, err := toBoxed(rv)
+	if err != nil {
+		return nil, err
+	}
+	return box, applyTypeMeta(box)
 }
 
-type Boxed interface {
+type Kind interface {
 	skylark.HasSetField
 	Underlying() interface{}
+	GroupVersionKind() metav1.GroupVersionKind
 }
 
 type hasDeepCopy interface {
@@ -122,9 +136,9 @@ type hasDeepCopy interface {
 }
 
 type boxed struct {
-	v              reflect.Value
-	fields, inline map[string]util.FieldSpec
-	frozen         bool
+	v      reflect.Value
+	spec   *util.TypeSpec
+	frozen bool
 }
 
 func toBoxed(v reflect.Value) (*boxed, error) {
@@ -143,19 +157,60 @@ func toBoxed(v reflect.Value) (*boxed, error) {
 		return nil, skylark.TypeErrorf("unhandled type %s", t.String())
 	}
 	b := &boxed{
-		v:      v,
-		fields: fieldsMap[t],
-		inline: inlineFieldsMap[t],
+		v:    v,
+		spec: kinds[t],
 	}
-	if b.fields == nil || b.inline == nil {
+	if b.spec == nil {
 		return nil, skylark.TypeErrorf("unhandled type %s", t.String())
 	}
 	return b, nil
 }
 
-func construct(box *boxed, args skylark.Tuple, kwargs []skylark.Tuple) error {
+var typeMetaType = reflect.TypeOf(metav1.TypeMeta{})
+
+func applyTypeMeta(box *boxed) error {
+	gvk := box.spec.GVK
+	if box.spec.Type != typeMetaType && !box.v.IsNil() && gvk.Kind != "" {
+		attr, _ := box.Attr("kind")
+		if kind, _ := attr.(skylark.String); kind == "" {
+			if err := box.SetField("kind", skylark.String(gvk.Kind)); err != nil {
+				return err
+			}
+		}
+		attr, _ = box.Attr("apiVersion")
+		if apiVersion, _ := attr.(skylark.String); apiVersion == "" {
+			if gvk.Group != "" {
+				apiVersion = skylark.String(gvk.Group + "/" + gvk.Version)
+			} else if gvk.Version != "" {
+				apiVersion = skylark.String(gvk.Version)
+			}
+			if err := box.SetField("apiVersion", apiVersion); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func derefStruct(v reflect.Value) (reflect.Value, bool, error) {
+	t := v.Type()
+	k := t.Kind()
+	if k == reflect.Ptr {
+		if v.IsNil() {
+			return v, true, nil // uninitialized
+		}
+		return v.Elem(), false, nil // deref
+	}
+	return v, false, nil // noop
+}
+
+func construct(t reflect.Type, args skylark.Tuple, kwargs []skylark.Tuple) (*boxed, error) {
+	box, err := toBoxed(reflect.New(t))
+	if err != nil {
+		return box, err
+	}
 	if len(args) > 1 {
-		return skylark.TypeErrorf("unable to construct %s from more than 1 positional argument", box.Type())
+		return box, skylark.TypeErrorf("unable to construct %s from more than 1 positional argument", box.Type())
 	}
 	if len(args) != 0 {
 		switch arg := args[0].(type) {
@@ -166,16 +221,16 @@ func construct(box *boxed, args skylark.Tuple, kwargs []skylark.Tuple) error {
 			for iter.Next(&k) {
 				ks, ok := k.(skylark.String)
 				if !ok {
-					return skylark.TypeErrorf("unable to assign %v key in %v", k.Type(), box.Type())
+					return box, skylark.TypeErrorf("unable to assign %v key in %v", k.Type(), box.Type())
 				}
 				v, _, _ := arg.Get(ks)
 				if err := box.SetField(string(ks), v); err != nil {
-					return err
+					return box, err
 				}
 			}
 		case *boxed:
 			if arg.Type() != box.Type() {
-				return skylark.TypeErrorf("unable to construct %s from %s", box.Type(), arg.Type())
+				return box, skylark.TypeErrorf("unable to construct %s from %s", box.Type(), arg.Type())
 			}
 			if dc, ok := arg.Underlying().(hasDeepCopy); ok {
 				conv := reflect.ValueOf(dc.DeepCopyObject()).Convert(box.v.Type())
@@ -184,13 +239,13 @@ func construct(box *boxed, args skylark.Tuple, kwargs []skylark.Tuple) error {
 				}
 				break
 			}
-			for name, _ := range arg.fields {
+			for name, _ := range arg.spec.Fields {
 				v, err := arg.Attr(name)
 				if err != nil {
-					return err
+					return box, err
 				}
 				if err = box.SetField(name, v); err != nil {
-					return err
+					return box, err
 				}
 			}
 		}
@@ -198,13 +253,14 @@ func construct(box *boxed, args skylark.Tuple, kwargs []skylark.Tuple) error {
 	for _, pair := range kwargs {
 		k, _ := pair[0].(skylark.String)
 		if err := box.SetField(string(k), pair[1]); err != nil {
-			return err
+			return box, err
 		}
 	}
-	return nil
+	return box, applyTypeMeta(box)
 }
 
-func (b *boxed) Underlying() interface{} { return b.v.Interface() }
+func (b *boxed) Underlying() interface{}                   { return b.v.Interface() }
+func (b *boxed) GroupVersionKind() metav1.GroupVersionKind { return b.spec.GVK }
 
 func (b *boxed) Type() string          { return b.v.Type().Elem().Name() }
 func (b *boxed) String() string        { return fmt.Sprintf("%v", b.v.Interface()) }
@@ -227,7 +283,7 @@ func (b *boxed) AttrNames() []string {
 	t := b.v.Type().Elem()
 	n := t.NumField()
 	names := make([]string, 0, n)
-	for name, _ := range fieldsMap[t] {
+	for name, _ := range kinds[t].Fields {
 		names = append(names, name)
 	}
 	sort.Strings(names)
@@ -236,35 +292,22 @@ func (b *boxed) AttrNames() []string {
 
 func (b *boxed) Attr(name string) (skylark.Value, error) {
 	if b.v.IsNil() {
-		return skylark.None, nil // no such attr
+		return skylark.None, uninitialized(b.Type(), name)
 	}
-	spec, ok := b.fields[name]
+	container := b.v.Elem()
+	fieldSpec, ok := b.spec.Fields[name]
 	if !ok {
 		return skylark.None, nil // no such attr
 	}
-	container, isNil, err := derefStruct(b.v)
-	if err != nil {
-		return skylark.None, err
-	}
-	if isNil {
-		return skylark.None, nil
-	}
-	if !spec.Inline {
-		return fieldValue(container, spec, name)
+	if !fieldSpec.Inline {
+		return fieldValue(container, fieldSpec, name)
 	}
 	// nested field lookup:
-	spec, ok = b.inline[name]
-	if !ok {
-		return skylark.None, nil // no such attr
-	}
-	container, isNil, err = derefStruct(container.FieldByIndex([]int{int(spec.FieldIndex)}))
-	if err != nil {
+	container, isNil, err := derefStruct(container.FieldByIndex([]int{int(fieldSpec.FieldIndex)}))
+	if err != nil || isNil {
 		return skylark.None, err
 	}
-	if isNil {
-		return skylark.None, nil
-	}
-	return fieldValue(container, spec, name)
+	return fieldValue(container, b.spec.Inline[name], name)
 }
 
 func (b *boxed) SetField(name string, value skylark.Value) error {
@@ -274,35 +317,22 @@ func (b *boxed) SetField(name string, value skylark.Value) error {
 	if b.frozen {
 		return skylark.TypeErrorf("unable to set field %s in frozen %s", name, b.Type())
 	}
-	spec, ok := b.fields[name]
+	container := b.v.Elem()
+	fieldSpec, ok := b.spec.Fields[name]
 	if !ok {
 		return skylark.TypeErrorf("unable to set field %s in type %s", name, b.Type())
 	}
-	container, isNil, err := derefStruct(b.v)
+	if !fieldSpec.Inline {
+		return setFieldValue(container, fieldSpec, name, value)
+	}
+	container, isNil, err := derefStruct(container.FieldByIndex([]int{int(fieldSpec.FieldIndex)}))
 	if err != nil {
 		return skylark.TypeErrorf("unable to set field %s in type %s: %v", name, b.Type(), err)
 	}
 	if isNil {
 		return uninitialized(b.Type(), name)
 	}
-	if !spec.Inline {
-		return setFieldValue(container, spec, name, value)
-	}
-	spec, ok = b.inline[name]
-	if !ok {
-		return skylark.TypeErrorf("unable to set field %s in type %s", name, b.Type())
-	}
-	container, isNil, err = derefStruct(container.FieldByIndex([]int{int(spec.FieldIndex)}))
-	if err != nil {
-		return skylark.TypeErrorf("unable to set field %s in type %s: %v", name, b.Type(), err)
-	}
-	if isNil {
-		return uninitialized(b.Type(), name)
-	}
-	if !ok {
-		return skylark.TypeErrorf("unable to set field %s in type %s", name, b.Type())
-	}
-	return setFieldValue(container, spec, name, value)
+	return setFieldValue(container, b.spec.Inline[name], name, value)
 }
 
 func fieldValue(container reflect.Value, spec util.FieldSpec, name string) (skylark.Value, error) {
@@ -318,7 +348,11 @@ func fieldValue(container reflect.Value, spec util.FieldSpec, name string) (skyl
 	if !spec.Pointer && field.CanAddr() {
 		field = field.Addr()
 	}
-	return toBoxed(field)
+	box, err := toBoxed(field)
+	if err != nil {
+		return nil, err
+	}
+	return box, applyTypeMeta(box)
 }
 
 func setFieldValue(container reflect.Value, spec util.FieldSpec, name string, value skylark.Value) error {
@@ -336,28 +370,18 @@ func setFieldValue(container reflect.Value, spec util.FieldSpec, name string, va
 	var u reflect.Value
 	switch v := value.(type) {
 	case *boxed:
+		if err := applyTypeMeta(v); err != nil {
+			return err
+		}
 		u = reflect.ValueOf(v.Underlying())
 	case *skylark.Dict:
 		t := spec.FieldType
 		if t.Kind() == reflect.Ptr {
 			t = t.Elem()
 		}
-		box, err := toBoxed(reflect.New(t))
+		box, err := construct(t, skylark.Tuple{v}, nil)
 		if err != nil {
 			return err
-		}
-		var k skylark.Value
-		iter := v.Iterate()
-		defer iter.Done()
-		for iter.Next(&k) {
-			attrName, ok := k.(skylark.String)
-			if !ok {
-				return skylark.TypeErrorf("unable to assign %v key in %v", k.Type(), box.Type())
-			}
-			attrValue, _, _ := v.Get(attrName)
-			if err := box.SetField(string(attrName), attrValue); err != nil {
-				return err
-			}
 		}
 		u = reflect.ValueOf(box.Underlying())
 	default:
@@ -369,6 +393,95 @@ func setFieldValue(container reflect.Value, spec util.FieldSpec, name string, va
 		field.Set(reflect.Zero(spec.FieldType))
 	} else {
 		field.Set(u.Elem())
+	}
+	return nil
+}
+
+func sliceToSkylarkValue(slice reflect.Value, t reflect.Type) (skylark.Value, error) {
+	if t.Kind() == reflect.Ptr {
+		if slice.IsNil() {
+			return skylark.None, nil
+		}
+		slice = slice.Elem()
+		t = t.Elem()
+	}
+	if t.Kind() != reflect.Slice {
+		return skylark.None, skylark.TypeErrorf("unexpected %s for conversion from slice", t.Name())
+	}
+	t = t.Elem()
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	n := slice.Len()
+	elems := make([]skylark.Value, n)
+	switch t.Kind() {
+	case reflect.String:
+		for i := 0; i < n; i++ {
+			elems[i] = skylark.String(slice.Index(i).Convert(stringType).Interface().(string))
+		}
+	case reflect.Struct:
+		for i := 0; i < n; i++ {
+			elem := slice.Index(i)
+			if elem.CanAddr() {
+				elem = elem.Addr()
+			}
+			b, err := toBoxed(elem)
+			if err != nil {
+				return nil, err
+			}
+			if err = applyTypeMeta(b); err != nil {
+				return nil, err
+			}
+			elems[i] = b
+		}
+	}
+	return skylark.NewList(elems), nil
+}
+
+func setSliceField(field reflect.Value, value skylark.Value, spec util.FieldSpec) error {
+	t := spec.FieldType
+	if spec.Pointer {
+		t = t.Elem()
+	}
+	elem := t.Elem()
+	list, ok := value.(*skylark.List)
+	if !ok {
+		return skylark.TypeErrorf("unable to assign %s to slice of %s", value.Type(), elem.Name())
+	}
+	length := list.Len()
+	slice := reflect.MakeSlice(t, length, length)
+	switch elem.Kind() {
+	// Some types embed a slice of a named string type:
+	case reflect.String:
+		for i := 0; i < length; i++ {
+			s, ok := list.Index(i).(skylark.String)
+			if !ok {
+				return skylark.TypeErrorf("unable to assign %s to element of string slice", list.Index(i).Type())
+			}
+			slice.Index(i).Set(reflect.ValueOf(s).Convert(elem))
+		}
+	case reflect.Struct:
+		for i := 0; i < length; i++ {
+			switch vi := list.Index(i).(type) {
+			case *boxed:
+				slice.Index(i).Set(vi.v.Elem())
+			case *skylark.Dict:
+				box, err := construct(elem, skylark.Tuple{vi}, nil)
+				if err != nil {
+					return err
+				}
+				slice.Index(i).Set(box.v.Elem())
+			default:
+				return skylark.TypeErrorf("unable to assign %s to element of slice", list.Index(i).Type())
+			}
+		}
+	default:
+		return skylark.TypeErrorf("unable to assign %s to slice of %s", value.Type(), elem.Name())
+	}
+	if spec.Pointer {
+		field.Set(slice.Addr())
+	} else {
+		field.Set(slice)
 	}
 	return nil
 }
@@ -414,22 +527,10 @@ var commonTypes = map[reflect.Type]bool{
 }
 
 func isPrimitive(t reflect.Type) bool {
-	if t.Kind() == reflect.Ptr {
+	for t.Kind() == reflect.Ptr {
 		t = t.Elem()
 	}
-	return commonTypes[t]
-}
-
-func derefStruct(v reflect.Value) (reflect.Value, bool, error) {
-	t := v.Type()
-	k := t.Kind()
-	if k == reflect.Ptr {
-		if v.IsNil() {
-			return v, true, nil // uninitialized
-		}
-		return v.Elem(), false, nil // deref
-	}
-	return v, false, nil // noop
+	return t.Kind() == reflect.String || commonTypes[t]
 }
 
 func toSkylarkString(v interface{}) skylark.Value {
@@ -442,87 +543,6 @@ func toStringList(ss []string) *skylark.List {
 		elems[i] = skylark.String(s)
 	}
 	return skylark.NewList(elems)
-}
-
-func sliceToSkylarkValue(slice reflect.Value, t reflect.Type) (skylark.Value, error) {
-	if t.Kind() == reflect.Ptr {
-		if slice.IsNil() {
-			return skylark.None, nil
-		}
-		slice = slice.Elem()
-		t = t.Elem()
-	}
-	if t.Kind() != reflect.Slice {
-		return skylark.None, skylark.TypeErrorf("unexpected %s for conversion from slice", t.Name())
-	}
-	t = t.Elem()
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
-	}
-	n := slice.Len()
-	elems := make([]skylark.Value, n)
-	switch t.Kind() {
-	case reflect.String:
-		for i := 0; i < n; i++ {
-			elems[i] = skylark.String(slice.Index(i).Convert(stringType).Interface().(string))
-		}
-	case reflect.Struct:
-		for i := 0; i < n; i++ {
-			b, err := toBoxed(slice.Index(i))
-			if err != nil {
-				return nil, err
-			}
-			elems[i] = b
-		}
-	}
-	return skylark.NewList(elems), nil
-}
-
-func setSliceField(field reflect.Value, value skylark.Value, spec util.FieldSpec) error {
-	t := spec.FieldType
-	if spec.Pointer {
-		t = t.Elem()
-	}
-	if debugfieldtypes && t.Kind() != reflect.Slice {
-		return skylark.TypeErrorf("unable to assign %s to %s", value.Type(), t.Kind())
-	}
-	elem := t.Elem()
-	list, ok := value.(*skylark.List)
-	if !ok {
-		return skylark.TypeErrorf("unable to assign %s to slice of %s", value.Type(), elem.Name())
-	}
-	length := list.Len()
-	slice := reflect.MakeSlice(t, length, length)
-	switch elem.Kind() {
-	// Some types embed a slice of a named string type:
-	case reflect.String:
-		for i := 0; i < length; i++ {
-			s, ok := list.Index(i).(skylark.String)
-			if !ok {
-				return skylark.TypeErrorf("unable to assign %s to element of string slice", list.Index(i).Type())
-			}
-			slice.Index(i).Set(reflect.ValueOf(s).Convert(elem))
-		}
-	case reflect.Struct:
-		for i := 0; i < length; i++ {
-			b, ok := list.Index(i).(*boxed)
-			if !ok {
-				return skylark.TypeErrorf("unable to assign %s to element of slice", list.Index(i).Type())
-			}
-			slice.Index(i).Set(reflect.ValueOf(b.Underlying()).Elem())
-		}
-	default:
-		if debugfieldtypes {
-			return skylark.TypeErrorf("unable to assign %s to slice of %s", value.Type(), elem.Name())
-		}
-		return nil
-	}
-	if spec.Pointer {
-		field.Set(slice.Addr())
-	} else {
-		field.Set(slice)
-	}
-	return nil
 }
 
 func primitiveToSkylarkValue(r reflect.Value, t reflect.Type) (skylark.Value, bool) {
@@ -609,6 +629,9 @@ func primitiveToSkylarkValue(r reflect.Value, t reflect.Type) (skylark.Value, bo
 	case nil:
 		return skylark.None, true
 	default:
+		for t.Kind() == reflect.Ptr {
+			t = t.Elem()
+		}
 		// Some types embed a slice of a named string type:
 		if t.Kind() == reflect.String {
 			return toSkylarkString(v), true
@@ -1070,18 +1093,14 @@ func registerType(t reflect.Type) {
 	if n == 0 {
 		return
 	}
-	Library[t.Name()] = skylark.NewBuiltin(t.Name(), func(thread *skylark.Thread, builtin *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
-		box, err := toBoxed(reflect.New(t))
-		if err != nil {
-			return skylark.None, err
-		}
-		err = construct(box, args, kwargs)
-		return box, err
-	})
-	fields := map[string]util.FieldSpec{}
-	inlineFields := map[string]util.FieldSpec{}
-	fieldsMap[t] = fields
-	inlineFieldsMap[t] = inlineFields
+
+	Library[t.Name()] = skylark.NewBuiltin(t.Name(),
+		func(thread *skylark.Thread, builtin *skylark.Builtin, args skylark.Tuple, kwargs []skylark.Tuple) (skylark.Value, error) {
+			return construct(t, args, kwargs)
+		})
+
+	fields, inlineFields := map[string]util.FieldSpec{}, map[string]util.FieldSpec{}
+	kinds[t] = &util.TypeSpec{Type: t, Fields: fields, Inline: inlineFields}
 
 	for i := 0; i < n; i++ {
 		field := t.FieldByIndex([]int{i})
@@ -1095,7 +1114,7 @@ func registerType(t reflect.Type) {
 		slice := kind == reflect.Slice || (pointer && field.Type.Elem().Kind() == reflect.Slice)
 		spec := util.FieldSpec{
 			FieldType:  field.Type,
-			FieldIndex: uint8(i),
+			FieldIndex: uint16(i),
 			Package:    util.PackageForPath(field.PkgPath),
 			Inline:     inline,
 			Omitempty:  omitempty,
@@ -1108,7 +1127,7 @@ func registerType(t reflect.Type) {
 			if pointer {
 				elem = elem.Elem()
 			}
-			if _, ok := fieldsMap[elem]; !ok {
+			if _, ok := kinds[elem]; !ok {
 				registerType(elem)
 			}
 		}
@@ -1118,7 +1137,7 @@ func registerType(t reflect.Type) {
 				elem = elem.Elem()
 			}
 			if elem.Kind() != reflect.String {
-				if _, ok := fieldsMap[elem]; !ok {
+				if _, ok := kinds[elem]; !ok {
 					registerType(elem)
 				}
 			}
@@ -1128,7 +1147,7 @@ func registerType(t reflect.Type) {
 			continue
 		}
 		ft := field.Type
-		if pointer {
+		if ft.Kind() == reflect.Ptr {
 			ft = ft.Elem()
 		}
 		m := ft.NumField()
@@ -1145,7 +1164,7 @@ func registerType(t reflect.Type) {
 			slice := kind == reflect.Slice || (pointer && field.Type.Elem().Kind() == reflect.Slice)
 			inlineSpec := util.FieldSpec{
 				FieldType:  field.Type,
-				FieldIndex: uint8(j),
+				FieldIndex: uint16(j),
 				Package:    util.PackageForPath(field.PkgPath),
 				Inline:     false,
 				Omitempty:  omitempty,
@@ -1160,7 +1179,7 @@ func registerType(t reflect.Type) {
 				if pointer {
 					elem = elem.Elem()
 				}
-				if _, ok := fieldsMap[elem]; !ok {
+				if _, ok := kinds[elem]; !ok {
 					registerType(elem)
 				}
 				continue
@@ -1171,7 +1190,7 @@ func registerType(t reflect.Type) {
 					elem = elem.Elem()
 				}
 				if elem.Kind() != reflect.String {
-					if _, ok := fieldsMap[elem]; !ok {
+					if _, ok := kinds[elem]; !ok {
 						registerType(elem)
 					}
 				}

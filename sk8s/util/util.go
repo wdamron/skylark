@@ -6,6 +6,8 @@ package util
 
 import (
 	"reflect"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type Package byte
@@ -60,8 +62,14 @@ func PackageForPath(path string) Package { return packageEnums[path] }
 
 type FieldSpec struct {
 	FieldType  reflect.Type
-	FieldIndex uint8
+	FieldIndex uint16
 	Package    Package
 
-	Inline, Omitempty, Primitive, Pointer, Slice, _ bool // TODO(wdamron): pack flags into a uint8
+	Inline, Omitempty, Primitive, Pointer, Slice bool // TODO(wdamron): pack flags into a uint8
+}
+
+type TypeSpec struct {
+	Type           reflect.Type
+	Fields, Inline map[string]FieldSpec
+	GVK            metav1.GroupVersionKind
 }
